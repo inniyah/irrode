@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="..\include\IrrOdeCar\CCar.h" open="0" top="0" tabpos="4">
+		<Cursor position="421" topLine="13" />
+	</File>
+	<File name="..\include\IrrOdeCar\CController.h" open="0" top="0" tabpos="1">
+		<Cursor position="407" topLine="0" />
+	</File>
+	<File name="..\include\IrrOdeCar\CHeli.h" open="0" top="0" tabpos="5">
+		<Cursor position="691" topLine="14" />
+	</File>
+	<File name="..\include\IrrOdeCar\CIrrOdeCarState.h" open="0" top="0" tabpos="3">
+		<Cursor position="1246" topLine="14" />
+	</File>
+	<File name="..\include\IrrOdeCar\CMenu.h" open="0" top="0" tabpos="10">
+		<Cursor position="298" topLine="0" />
+	</File>
+	<File name="..\include\IrrOdeCar\CPlane.h" open="0" top="0" tabpos="3">
+		<Cursor position="363" topLine="2" />
+	</File>
+	<File name="..\include\IrrOdeCar\CProjectile.h" open="0" top="0" tabpos="2">
+		<Cursor position="1155" topLine="12" />
+	</File>
+	<File name="..\include\IrrOdeCar\CTank.h" open="0" top="0" tabpos="14">
+		<Cursor position="748" topLine="21" />
+	</File>
+	<File name="..\include\IrrOdeCar\irrCC.h" open="1" top="0" tabpos="2">
+		<Cursor position="1436" topLine="23" />
+	</File>
+	<File name="..\include\IrrOdeMarble\CSettings.h" open="0" top="0" tabpos="2">
+		<Cursor position="3244" topLine="52" />
+	</File>
+	<File name="..\source\IrrOdeCar\CCar.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="2777" topLine="59" />
+	</File>
+	<File name="..\source\IrrOdeCar\CConfigFileManager.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1416" topLine="0" />
+	</File>
+	<File name="..\source\IrrOdeCar\CController.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1346" topLine="7" />
+	</File>
+	<File name="..\source\IrrOdeCar\CHeli.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="4068" topLine="97" />
+	</File>
+	<File name="..\source\IrrOdeCar\CIrrOdeCarState.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="2088" topLine="41" />
+	</File>
+	<File name="..\source\IrrOdeCar\CMenu.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="1182" topLine="0" />
+	</File>
+	<File name="..\source\IrrOdeCar\CPlane.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="5358" topLine="115" />
+	</File>
+	<File name="..\source\IrrOdeCar\CProjectile.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1184" topLine="0" />
+	</File>
+	<File name="..\source\IrrOdeCar\CTank.cpp" open="0" top="0" tabpos="13">
+		<Cursor position="4755" topLine="102" />
+	</File>
+	<File name="..\source\IrrOdeCar\irrCC.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="21981" topLine="583" />
+	</File>
+	<File name="..\source\IrrOdeCar\irrodecar_main.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="5861" topLine="76" />
+	</File>
+	<File name="..\source\irrOdeMarble\CSettings.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="5690" topLine="113" />
+	</File>
+</CodeBlocks_layout_file>
