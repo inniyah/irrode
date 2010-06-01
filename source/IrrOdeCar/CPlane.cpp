@@ -104,7 +104,7 @@ u32 CPlane::update() {
   swprintf(dummy,0xFE,L"pos: (%.0f, %.0f, %.0f)\nvelocity: (%.0f, %.0f, %.0f) %.2f",pos.X,pos.Y,pos.Z,v.X,v.Y,v.Z,m_pAero->getForewardVel());
   swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)\n",dummy,rot.X,rot.Y,rot.Z);
 
-  swprintf(dummy,0xFE,L"%sThrust=%.0f%%\n",dummy,m_fThrust*100.0f);
+  swprintf(dummy,0xFE,L"%sThrust=%.0f%%",dummy,m_fThrust*100.0f);
 
   f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
   swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
@@ -133,6 +133,11 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       if (m_fThrust> 1.0f) m_fThrust=1.0f;
       if (m_fThrust<-0.1f) m_fThrust=-0.1f;
+
+      if (m_pController->get(m_pCtrls[ePlanePowerZero])!=0.0f) {
+        m_fThrust=0.0f;
+        m_pController->set(m_pCtrls[ePlanePowerUp],0.0f);
+      }
 
       //next up we calculate the loss of aerodynamic power in high altitudes. In fact the
       //loss starts at 300 and at 1500 there is no more aerodynamic power.

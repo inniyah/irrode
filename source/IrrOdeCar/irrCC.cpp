@@ -360,6 +360,10 @@ f32 CIrrCC::CIrrCCItem::getRaw() {
 
 void CIrrCC::CIrrCCItem::set(f32 f) {
   m_fValue=f;
+  if (m_eType==eCtrlFader && m_pBrother!=NULL) {
+    m_fFaderValue=f;
+    m_pBrother->m_fFaderValue=f;
+  }
 }
 
 void CIrrCC::CIrrCCItem::setWithDetected(f32 f) {
