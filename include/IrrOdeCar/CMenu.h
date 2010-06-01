@@ -1,0 +1,39 @@
+#ifndef _C_MENU
+  #define _C_MENU
+
+  #include <irrlicht.h>
+  #include <IrrOde.h>
+
+  #include "CIrrOdeCarState.h"
+
+using namespace irr;
+
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
+
+class CMenu : public CIrrOdeCarState, public IEventReceiver {
+  protected:
+    list<IGUIButton *> m_aButtons;  /*!< a list of buttons */
+    IGUIStaticText *m_pText,        /*!< the info text */
+                   *m_pHits;        /*!< some additional information about shots and hits */
+    u32 m_iMenuSelect;              /*!< this member is used to store state changes */
+
+  public:
+    /**
+     * constructor
+     * @param pDevice the Irrlicht device
+     */
+    CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    virtual ~CMenu();   /*!< the destructor */
+
+    virtual void activate();    /*!< state activation */
+    virtual void deactivate();  /*!< state deactivation */
+    virtual u32 update();       /*!< state update */
+
+    virtual bool OnEvent(const SEvent &event);  /*!< the Irrlicht event receiver */
+};
+
+#endif
