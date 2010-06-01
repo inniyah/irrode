@@ -1,0 +1,197 @@
+  #include "CPlane.h"
+  #include <math.h>
+  #include <CProjectile.h>
+  #include <irrCC.h>
+
+CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
+  //get the world node
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
+  //get the plane
+  m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("thePlane"));
+  //get the terrain
+  m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
+  //get the front wheel that is needed for steering the plane on ground
+  m_pSteer=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("plane_wheel_steer"));
+
+  //get the visual rudders
+  m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
+  m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
+  m_pPitch[0]=m_pSmgr->getSceneNodeFromName("pitch1");
+  m_pPitch[1]=m_pSmgr->getSceneNodeFromName("pitch2");
+  m_pYaw     =m_pSmgr->getSceneNodeFromName("yaw");
+
+  //get the motor, the rudders and the aerodynamic caluclator of the plane
+  m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("plane_motor"));
+  m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("plane_torque"));
+  m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("plane_aero"));
+
+  //intially we don't follow the bombs and look to the front
+  m_bFollowBombCam=false;
+  m_bBackView=false;
+
+  //we need the rear wheel bodies for the braking on ground
+  m_pRearWheels[0]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rl"));
+  m_pRearWheels[1]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rr"));
+
+  //let's add a camera
+  m_pCam=m_pSmgr->addCameraSceneNode();
+
+  //we are an IrrOde event listener
+  CIrrOdeManager::getSharedInstance()->addEventListener(this);
+
+  //initiate the engine
+  m_iThrustDir=0;
+  m_fThrust=0.0f;
+
+  //finally we need a static text to display some information
+  m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
+  m_pInfo->setDrawBackground(true);
+  m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+  m_pInfo->setVisible(false);
+  m_bActive=false;
+}
+
+CPlane::~CPlane() {
+}
+
+//on activation we do the usual stuff (activate camera, set Irrlicht event receiver, hide mouse cursor...)
+void CPlane::activate() {
+  m_pSmgr->setActiveCamera(m_pCam);
+  m_pDevice->setEventReceiver(this);
+  m_pDevice->getCursorControl()->setVisible(false);
+  m_pInfo->setVisible(true);
+  m_bSwitchToMenu=false;
+  m_bActive=true;
+}
+
+void CPlane::deactivate() {
+  m_pInfo->setVisible(false);
+  m_iThrustDir=0;
+  m_bActive=false;
+}
+
+u32 CPlane::update() {
+  //call the superclass's update method
+  u32 iRet=CIrrOdeCarState::update();
+
+  vector3df rot=m_pPlaneBody->getRotation();
+
+  //get the parameters for the camera
+  vector3df pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+            up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
+            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+
+  CProjectileManager *ppm=CProjectileManager::getSharedInstance();
+
+  //if we follow a bomb we focus the last dropped bomb ...
+  if (m_bFollowBombCam && ppm->getLast()!=NULL) {
+    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(vector3df(0,5,10));
+    m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
+    m_pCam->setUpVector(vector3df(0,1,0));
+    m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
+  }
+  else {  //... otherwise we focus the plane
+    m_pCam->setPosition(m_pPlaneBody->getPosition()+pos);
+    m_pCam->setUpVector(up);
+    m_pCam->setTarget(m_pPlaneBody->getPosition()+tgt);
+  }
+
+  //now show some interesting information
+  wchar_t dummy[0xFF];
+  pos=m_pPlaneBody->getAbsolutePosition();
+  rot=m_pPlaneBody->getRotation();
+  vector3df v=m_pPlaneBody->getLinearVelocity();
+  swprintf(dummy,0xFE,L"pos: (%.0f, %.0f, %.0f)\nvelocity: (%.0f, %.0f, %.0f) %.2f",pos.X,pos.Y,pos.Z,v.X,v.Y,v.Z,m_pAero->getForewardVel());
+  swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)\n",dummy,rot.X,rot.Y,rot.Z);
+
+  swprintf(dummy,0xFE,L"%sThrust=%.0f%%\n",dummy,m_fThrust*100.0f);
+
+  f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
+  swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
+
+  if (m_bFollowBombCam) swprintf(dummy,0xFE,L"%s\nFollow Bomb Cam",dummy);
+
+  m_pInfo->setText(dummy);
+
+  return iRet;
+}
+
+bool CPlane::OnEvent(const SEvent &event) {
+  bool bRet=m_pController->OnEvent(event);
+  bRet|=CIrrOdeCarState::OnEvent(event);
+  return bRet;
+}
+
+bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    if (m_bActive) {
+      //in order to regulate the increase and decrease of thrust we
+      //just calculate the new value when the irrOdeStep event was
+      //received. This way this calculation gets called exactly 60
+      //times per second.
+      m_fThrust=m_pController->get(m_pCtrls[ePlanePowerUp]);
+
+      if (m_fThrust> 1.0f) m_fThrust=1.0f;
+      if (m_fThrust<-0.1f) m_fThrust=-0.1f;
+
+      //next up we calculate the loss of aerodynamic power in high altitudes. In fact the
+      //loss starts at 300 and at 1500 there is no more aerodynamic power.
+      f32 fMinHeight=300,fMaxHeight=1500;
+
+      //Step 1: get the plane's position
+      vector3df vPos=m_pPlaneBody->getAbsolutePosition();
+
+      //Step 2: calculate the factor: full power (1.0f) if the height is below 300, no power (0.0f) if
+      //        it's above 1500, linear interpolation in between.
+      f32 fAltFact=vPos.Y<fMinHeight?1.0f:vPos.Y>fMaxHeight?0.0f:1-((vPos.Y-fMinHeight)/(fMaxHeight-fMinHeight));
+
+      //Step 3: apply the factor to all relevant motors ...
+      m_pMotor->setPower(fAltFact*m_fThrust); //... the engine ...
+      m_pAero->setPower (fAltFact);            //... the aerodynamics ...
+      m_pTorque->setPower(fAltFact);          //... and the rudders.
+
+      f32 fPitch=m_pController->get(m_pCtrls[ePlanePitchUp  ]),
+          fRoll =m_pController->get(m_pCtrls[ePlaneRollLeft ]),
+          fYaw  =m_pController->get(m_pCtrls[ePlaneYawRight ]);
+
+      m_pTorque->setPitch(fPitch);
+      m_pTorque->setRoll (fRoll );
+      m_pTorque->setYaw  (fYaw  );
+
+      u32 i;
+      for(i=0; i<2; i++) m_pRoll [i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
+      for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
+
+      m_pSteer->setServoPos(-10.0f*fYaw);
+      m_pYaw->setRotation(vector3df(-15.0f*fYaw,13,90));
+
+      if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f) {
+        m_pController->set(m_pCtrls[ePlaneFire],0.0f);
+        //We add a new bomb...
+        vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,-4.0f,-2.0f)),
+                  rot=m_pPlaneBody->getRotation(),vel=m_pPlaneBody->getLinearVelocity();
+
+        new CProjectile(m_pSmgr,pos,rot,vel,"../../data/bomb.3ds",600,vector3df(0.0f,0.0f,0.0f),m_pWorld,1.2f,true);
+      }
+
+      m_pRearWheels[0]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
+      m_pRearWheels[1]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
+
+      m_bBackView=m_pController->get(m_pCtrls[ePlaneBackview])!=0.0f;
+
+      if (m_pController->get(m_pCtrls[ePlaneToggleCam])!=0.0f) {
+        m_pController->set(m_pCtrls[ePlaneToggleCam],0.0f);
+        m_bFollowBombCam=!m_bFollowBombCam;
+      }
+    }
+  }
+
+  return false;
+}
+
+bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
+  //we are just interested in the step event.
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+}
+
+
