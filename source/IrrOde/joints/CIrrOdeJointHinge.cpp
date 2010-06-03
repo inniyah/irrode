@@ -45,7 +45,7 @@ void CIrrOdeJointHinge::render() {
 
 void CIrrOdeJointHinge::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   //create the joint
   m_iJointId=m_pOdeDevice->jointCreateHinge(m_pWorld->getWorldId());
@@ -73,6 +73,7 @@ void CIrrOdeJointHinge::initPhysics() {
       #endif
       setParameter(0,(eJointParameter)i,m_fParam[i][0]);
     }
+
 }
 
 s32 CIrrOdeJointHinge::getID() const {

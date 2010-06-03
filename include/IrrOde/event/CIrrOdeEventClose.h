@@ -15,10 +15,9 @@ class CIrrOdeEventClose : public IIrrOdeEvent {
   protected:
 
   public:
-    CIrrOdeEventClose(s32 ID=-1);
+    CIrrOdeEventClose();
     CIrrOdeEventClose(CSerializer *pData) : IIrrOdeEvent() { }
 
-    virtual s32 getID();
     virtual u16 getType();
 
     virtual CSerializer *serialize();

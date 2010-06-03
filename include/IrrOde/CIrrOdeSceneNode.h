@@ -62,7 +62,7 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
 
     virtual ~CIrrOdeSceneNode();
 
-    virtual void initPhysics()=0; /*!< init the dynamic object. Implemented by subclasses */
+    virtual void initPhysics(); /*!< init the dynamic object. Implemented by subclasses */
     virtual const aabbox3df &getBoundingBox() const;
 
     /**

@@ -23,12 +23,11 @@ class CIrrOdeEventRayHit : public IIrrOdeEvent {
     f32 m_fDistance;
 
   public:
-    CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance, s32 ID=-1);
-    CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr, s32 ID=-1);
+    CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance);
+    CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventRayHit(IIrrOdeEvent *pIn);
 
     virtual u16 getType();
-    virtual s32 getID();
 
     CIrrOdeBody *getBody();
     CIrrOdeGeom *getGeom();

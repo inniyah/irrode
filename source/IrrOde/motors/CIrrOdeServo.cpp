@@ -94,6 +94,7 @@ void CIrrOdeServo::OnRegisterSceneNode() {
 
 void CIrrOdeServo::initPhysics() {
   if (m_bPhysicsInitialized) return;
+  CIrrOdeSceneNode::initPhysics();
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeServo::initPhysics (%i .. %.2f)\n",m_iAxis,m_fServoPos);
   #endif
@@ -105,8 +106,6 @@ void CIrrOdeServo::initPhysics() {
   m_pJoint->setParameter(m_iAxis,CIrrOdeJoint::eLoStop,m_fServoPos);
   m_pJoint->setParameter(m_iAxis,CIrrOdeJoint::eHiStop,m_fServoPos);
   m_pJoint->setParameter(m_iAxis,CIrrOdeJoint::eLoStop,m_fServoPos);
-
-  m_bPhysicsInitialized=true;
 }
 
 s32 CIrrOdeServo::getID() const {

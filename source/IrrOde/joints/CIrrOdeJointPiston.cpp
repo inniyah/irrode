@@ -47,7 +47,7 @@ void CIrrOdeJointPiston::render() {
 
 void CIrrOdeJointPiston::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
   updateAbsolutePosition();
 
   m_iJointId=m_pOdeDevice->jointCreatePiston(m_pWorld->getWorldId());

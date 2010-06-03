@@ -92,7 +92,7 @@ void CIrrOdeBody::initPhysics() {
     printf("init body: %s\n",getName());
   #endif
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeSceneNode::initPhysics();
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeBody::initPhysics\n");
   #endif

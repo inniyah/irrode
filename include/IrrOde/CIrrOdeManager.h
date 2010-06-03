@@ -21,8 +21,11 @@ class IIrrOdeStepMotor;
  */
 class CIrrOdeManager {
   protected:
-    u32 m_iLastStep,                                      /**< the time in ms left over from the last step */
-        m_iFrameNo;                                       /**< counter of rendered frames */
+    u32 m_iLastStep,            /**< the time in ms left over from the last step */
+        m_iFrameNo,             /**< counter of rendered frames */
+        m_iNodesInitialized;    /**< the number of nodes that have already been initialized */
+
+    bool m_bPhysicsInitialized; /**< was the initPhysics call already done? */
 
     core::array<irr::ode::CIrrOdeWorld *> m_pWorlds;            /**< the worlds */
     core::list<irr::ode::IIrrOdeEventListener *> m_pListeners;  /**< the event listeners */
@@ -78,6 +81,8 @@ class CIrrOdeManager {
 		void addStepMotor(IIrrOdeStepMotor *pMotor);    /*!< add a step motor */
 		void removeStepMotor(IIrrOdeStepMotor *pMotor); /*!< remove a step motor */
 		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
+
+		void sceneNodeInitialized();
 };
 
 } //namespace ode

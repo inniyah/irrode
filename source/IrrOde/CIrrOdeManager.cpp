@@ -6,6 +6,7 @@
   #include <event/CIrrOdeEventBodyMoved.h>
   #include <event/CIrrOdeEventInit.h>
   #include <event/CIrrOdeEventClose.h>
+  #include <event/CIrrOdeEventProgress.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -25,6 +26,8 @@ CIrrOdeManager::CIrrOdeManager() {
   #ifndef _USE_ODE_NULL_DEVICE
     m_pOdeDevice=new CIrrOdeDevice();
   #endif
+  m_iNodesInitialized=0;
+  m_bPhysicsInitialized=false;
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
@@ -104,6 +107,9 @@ void CIrrOdeManager::closeODE() {
   m_lParamList.clear();
   m_lStepMotors.clear();
 
+  m_iNodesInitialized=0;
+  m_bPhysicsInitialized=false;
+
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
   postEvent(pEvent);
   delete pEvent;
@@ -115,6 +121,9 @@ void CIrrOdeManager::clearODE() {
   m_pSceneNodes.clear();
   m_pGeoms.clear();
   m_lParamList.clear();
+
+  m_iNodesInitialized=0;
+  m_bPhysicsInitialized=false;
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose ();
   postEvent(pEvent);
@@ -240,6 +249,9 @@ void CIrrOdeManager::setOdeDevice(IIrrOdeDevice *pDevice) {
  * Initialize physics
  */
 void CIrrOdeManager::initPhysics() {
+  m_iNodesInitialized=0;
+  m_bPhysicsInitialized=false;
+
   for (u32 i=0; i<m_pWorlds.size(); i++) {
     m_pWorlds[i]->initPhysics();
   }
@@ -247,7 +259,7 @@ void CIrrOdeManager::initPhysics() {
   core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
 
-  printf("\n\t\t%i irrodescenenodes\n\n",m_pSceneNodes.getSize());
+  m_bPhysicsInitialized=true;
 }
 
 /**
@@ -309,6 +321,14 @@ void CIrrOdeManager::removeStepMotor(IIrrOdeStepMotor *pMotor) {
 void CIrrOdeManager::stepStepMotors() {
   list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->step();
+}
+
+void CIrrOdeManager::sceneNodeInitialized() {
+  m_iNodesInitialized++;
+  if (!m_bPhysicsInitialized) {
+    CIrrOdeEventProgress cProg(m_iNodesInitialized,m_pSceneNodes.getSize());
+    postEvent(&cProg);
+  }
 }
 
 } //namespace ode

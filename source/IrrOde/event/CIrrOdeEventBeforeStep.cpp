@@ -3,16 +3,10 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventBeforeStep::CIrrOdeEventBeforeStep(s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventBeforeStep::CIrrOdeEventBeforeStep() : IIrrOdeEvent() {
 }
 
 CIrrOdeEventBeforeStep::CIrrOdeEventBeforeStep(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  this->ID=pIn->getID();
-}
-
-s32 CIrrOdeEventBeforeStep::getID() {
-  return ID;
 }
 
 u16 CIrrOdeEventBeforeStep::getType() {

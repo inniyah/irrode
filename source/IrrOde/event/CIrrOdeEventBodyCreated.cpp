@@ -5,13 +5,11 @@ namespace ode {
 
 class CIrrOdeBody;
 
-CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CIrrOdeBody *pBody, s32 ID) : IIrrOdeEvent() {
+CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CIrrOdeBody *pBody) : IIrrOdeEvent() {
   m_pBody=pBody;
-  this->ID=ID;
 }
 
-CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr, s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventBodyCreated) {
     u32 id=pData->getU32();
@@ -20,17 +18,12 @@ CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManag
 }
 
 CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  this->ID=pIn->getID();
   CIrrOdeEventBodyCreated *p=(CIrrOdeEventBodyCreated *)pIn;
   m_pBody=p->getBody();
 }
 
 u16 CIrrOdeEventBodyCreated::getType() {
   return eIrrOdeEventBodyCreated;
-}
-
-s32 CIrrOdeEventBodyCreated::getID() {
-  return ID;
 }
 
 CIrrOdeBody *CIrrOdeEventBodyCreated::getBody() {

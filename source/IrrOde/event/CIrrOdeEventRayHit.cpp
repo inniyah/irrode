@@ -3,18 +3,15 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventRayHit::CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance, s32 ID) : IIrrOdeEvent() {
+CIrrOdeEventRayHit::CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance) : IIrrOdeEvent() {
   m_pBody=pBody;
   m_pGeom=pGeom;
   m_pRay=pRay;
   m_cPos=pos;
   m_fDistance=fDistance;
-
-  this->ID=ID;
 }
 
-CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr, s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventRayHit) {
     u32 iRayId=pData->getU32(),iBodyId=pData->getU32(),iGeomId=pData->getU32();
@@ -28,17 +25,12 @@ CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr,
 }
 
 CIrrOdeEventRayHit::CIrrOdeEventRayHit(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  this->ID=ID;
   CIrrOdeEventRayHit *p=(CIrrOdeEventRayHit *)pIn;
   m_pBody=p->getBody();
   m_pGeom=p->getGeom();
   m_pRay=p->getRay();
   m_cPos=p->getPosition();
   m_fDistance=p->getDistance();
-}
-
-s32 CIrrOdeEventRayHit::getID() {
-  return ID;
 }
 
 u16 CIrrOdeEventRayHit::getType() {

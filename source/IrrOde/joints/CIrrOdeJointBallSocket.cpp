@@ -43,7 +43,7 @@ void CIrrOdeJointBallSocket::render() {
 
 void CIrrOdeJointBallSocket::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   updateAbsolutePosition();
   vector3df pos=getAbsolutePosition();

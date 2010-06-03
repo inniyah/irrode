@@ -48,7 +48,7 @@ void CIrrOdeJointSlider::render() {
 
 void CIrrOdeJointSlider::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
   updateAbsolutePosition();
 
   m_iJointId=m_pOdeDevice->jointCreateSlider(m_pWorld->getWorldId());

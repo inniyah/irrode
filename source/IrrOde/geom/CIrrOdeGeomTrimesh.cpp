@@ -136,7 +136,6 @@ void CIrrOdeGeomTrimesh::initPhysics() {
   }
 
   CIrrOdeGeom::initPhysics();
-  m_bPhysicsInitialized=true;
 }
 
 ESCENE_NODE_TYPE CIrrOdeGeomTrimesh::getType() const {

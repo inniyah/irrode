@@ -18,11 +18,10 @@ class CIrrOdeEventBodyCreated : public IIrrOdeEvent {
     CIrrOdeBody *m_pBody; /*!< the newly created body */
 
   public:
-    CIrrOdeEventBodyCreated(CIrrOdeBody *pBody, s32 ID=-1);
-    CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr, s32 ID=-1);
+    CIrrOdeEventBodyCreated(CIrrOdeBody *pBody);
+    CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventBodyCreated(IIrrOdeEvent *pIn);
 
-    virtual s32 getID();
     virtual u16 getType();
 
     CIrrOdeBody *getBody();

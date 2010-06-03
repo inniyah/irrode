@@ -19,11 +19,10 @@ class CIrrOdeEventActivationChanged : public IIrrOdeEvent {
     bool m_bActive;       /*!< the new state of the body */
 
   public:
-    CIrrOdeEventActivationChanged(CIrrOdeBody *pBody, bool bActive, s32 ID=-1);
-    CIrrOdeEventActivationChanged(CSerializer *pData, ISceneManager *pSmgr, s32 ID=-1);
+    CIrrOdeEventActivationChanged(CIrrOdeBody *pBody, bool bActive);
+    CIrrOdeEventActivationChanged(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventActivationChanged(IIrrOdeEvent *pIn);
 
-    virtual s32 getID();
     virtual u16 getType();
 
     CIrrOdeBody *getBody();

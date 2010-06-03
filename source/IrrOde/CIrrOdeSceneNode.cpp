@@ -232,5 +232,10 @@ void CIrrOdeSceneNode::removeTreeFromPhysics(ISceneNode *pNode) {
   }
 }
 
+void CIrrOdeSceneNode::initPhysics() {
+  m_bPhysicsInitialized=true;
+  CIrrOdeManager::getSharedInstance()->sceneNodeInitialized();
+}
+
 } //namespace ode
 } //namespace irr

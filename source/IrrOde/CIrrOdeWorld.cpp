@@ -58,6 +58,7 @@ CIrrOdeWorld::~CIrrOdeWorld() {
 
 void CIrrOdeWorld::initPhysics() {
   if (m_bPhysicsInitialized) return;
+  CIrrOdeSceneNode::initPhysics();
 
   m_iWorldId=m_pOdeDevice->worldCreate();
   m_iJointGroupId=m_pOdeDevice->jointGroupCreate(0);
@@ -142,7 +143,6 @@ void CIrrOdeWorld::initPhysics() {
       }
     }
   }
-  m_bPhysicsInitialized=true;
 }
 
 u32 CIrrOdeWorld::getWorldId() {

@@ -96,7 +96,6 @@ void CIrrOdeGeomCapsule::initPhysics() {
 
   m_pOdeDevice->geomSetData(m_iGeomId,this);
   CIrrOdeGeom::initPhysics();
-  m_bPhysicsInitialized=true;
 }
 
 s32 CIrrOdeGeomCapsule::getID() const {

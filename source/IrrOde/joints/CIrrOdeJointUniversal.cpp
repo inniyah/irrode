@@ -43,7 +43,7 @@ void CIrrOdeJointUniversal::render() {
 
 void CIrrOdeJointUniversal::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   vector3df pos=getAbsolutePosition();
 

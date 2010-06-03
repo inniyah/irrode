@@ -10,10 +10,10 @@
 		<Project filename="helloOdeWorld.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="irrOdeMarble.cbp" active="1">
+		<Project filename="irrOdeMarble.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeCar.cbp">
+		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="IrrOdeSurfaceEdit.cbp">

@@ -27,6 +27,7 @@ enum enumIrrOdeEvents {
   eIrrOdeEventBodyMoved,          /*!<"body moved" event */
   eIrrOdeEventActivationChanged,  /*!<"body activation changed" event */
   eIrrOdeEventRayHit,             /*!<"ray hit" event */
+  eIrrOdeEventProgress,           /*!<"progress" event */
 
   eIrrOdeEventUser=256            /*!<user defined event IDs start at 256 */
 };
@@ -39,7 +40,6 @@ class CSerializer;
  */
 class IIrrOdeEvent {
   protected:
-    s32 ID;
     CSerializer *m_pSerializer;
     c8 m_sString[1000];
 
@@ -47,7 +47,6 @@ class IIrrOdeEvent {
     IIrrOdeEvent() { m_pSerializer=NULL; }
     virtual ~IIrrOdeEvent() { if (m_pSerializer!=NULL) delete m_pSerializer; }
 
-    virtual s32 getID()=0;
     virtual u16 getType()=0;
 
     void resetSerializer() { if (m_pSerializer) { delete m_pSerializer; m_pSerializer=NULL; } }

@@ -15,10 +15,9 @@ class CIrrOdeEventInit : public IIrrOdeEvent {
   protected:
 
   public:
-    CIrrOdeEventInit(s32 ID=-1);
-    CIrrOdeEventInit(CSerializer *pData, s32 ID=-1);
+    CIrrOdeEventInit();
+    CIrrOdeEventInit(CSerializer *pData);
 
-    virtual s32 getID();
     virtual u16 getType();
 
     virtual CSerializer *serialize();

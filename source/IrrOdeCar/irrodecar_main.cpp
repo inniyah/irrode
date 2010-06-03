@@ -20,6 +20,66 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+class CProgress : public irr::ode::IIrrOdeEventListener {
+  protected:
+    IrrlichtDevice *m_pDevice;
+    IVideoDriver *m_pDriver;
+    IGUIEnvironment *m_pGuienv;
+
+    IGUIImage *m_pImg;
+    IGUIStaticText *m_pText;
+
+  public:
+    CProgress(IrrlichtDevice *pDevice) {
+      m_pDevice=pDevice;
+      m_pDriver=pDevice->getVideoDriver();
+      m_pGuienv=pDevice->getGUIEnvironment();
+
+      //let's add a "please stand by" image filling the complete window / screen
+      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+
+      m_pImg=m_pGuienv->addImage(rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
+      m_pImg->setScaleImage(true);
+      m_pImg->setImage(m_pDriver->getTexture("../../data/standby.png"));
+
+      m_pText=m_pGuienv->addStaticText(L"",rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),true);
+      m_pText->setBackgroundColor(SColor(192,192,192,192));
+      m_pText->setDrawBackground(true);
+      m_pText->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
+
+      irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    }
+
+    virtual ~CProgress() {
+      m_pImg->remove();
+      m_pText->remove();
+      irr::ode::CIrrOdeManager::getSharedInstance()->removeEventListener(this);
+    }
+
+    virtual bool onEvent(IIrrOdeEvent *pEvent) {
+      bool bRet=false;
+
+      if (pEvent->getType()==irr::ode::eIrrOdeEventProgress) {
+        irr::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<irr::ode::CIrrOdeEventProgress *>(pEvent);
+        printf("progress: %i / %i\n",pEvt->getCurrent(),pEvt->getCount());
+        wchar_t s[0xFF];
+        swprintf(s,0xFF,L"Physics Initialization: %i / %i",pEvt->getCurrent(),pEvt->getCount());
+        m_pText->setText(s);
+
+        m_pDriver->beginScene(true, true, SColor(0,200,200,200));
+        m_pGuienv->drawAll();
+        m_pDriver->endScene();
+      }
+
+      return bRet;
+    }
+
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent) {
+      return pEvent->getType()==irr::ode::eIrrOdeEventProgress;
+    }
+
+};
+
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
   CSettings *pSettings=new CSettings("../../data/irrOdeMarble_setup.xml","../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
@@ -34,6 +94,8 @@ int main(int argc, char** argv) {
   IrrlichtDevice *device=pSettings->createDeviceFromSettings();
   device->setWindowCaption(L"IrrODE car demo");
   delete pSettings;
+
+  CProgress *pProg=new CProgress(device);
 
   CIrrCC *pController=new CIrrCC(device);
   pController->setSetsCanConflict(false);
@@ -126,22 +188,6 @@ int main(int argc, char** argv) {
   ISceneManager *smgr = device->getSceneManager();
   IGUIEnvironment *guienv = device->getGUIEnvironment();
 
-  //let's add a "please stand by" image filling the complete window / screen ...
-  dimension2du cScreenSize=device->getVideoDriver()->getScreenSize();
-
-  IGUIImage *pImg=guienv->addImage(rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
-  pImg->setScaleImage(true);
-  pImg->setImage(driver->getTexture("../../data/standby.png"));
-
-  dimension2d<u32> cSize=driver->getScreenSize();
-
-  driver->beginScene(true, true, SColor(0,200,200,200));
-  guienv->drawAll();
-  driver->endScene();
-
-  //... and remove it again
-  pImg->remove();
-
   //register the IrrOde scene node factory
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
@@ -170,6 +216,8 @@ int main(int argc, char** argv) {
   int lastFPS=-1;
   while (pTimer->isStopped()) pTimer->start();
 
+  dimension2d<u32> cSize=driver->getScreenSize();
+
   IGUIStaticText *pFps=guienv->addStaticText(L"Hello World!",rect<s32>(position2di(cSize.Width-155,5),dimension2di(150,22)),true);
   pFps->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
   pFps->setDrawBackground(true);
@@ -196,6 +244,8 @@ int main(int argc, char** argv) {
 
   //phyiscs initialization
   CIrrOdeManager::getSharedInstance()->initPhysics();
+
+  delete pProg;
 
   //set the menu state to active
   pActive=theMenu;

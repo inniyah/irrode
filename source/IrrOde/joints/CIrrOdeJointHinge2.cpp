@@ -53,7 +53,7 @@ void CIrrOdeJointHinge2::render() {
 
 void CIrrOdeJointHinge2::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   //create the joint
   m_iJointId=m_pOdeDevice->jointCreateHinge2(m_pWorld->getWorldId());

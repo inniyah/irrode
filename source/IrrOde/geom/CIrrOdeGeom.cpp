@@ -188,6 +188,7 @@ void CIrrOdeGeom::initPhysics() {
   }
 
   for (u32 i=0; i<m_aParams.size(); i++) m_aParams[i]->initPhysics();
+  CIrrOdeSceneNode::initPhysics();
 }
 
 void CIrrOdeGeom::setSurfaceMaster(bool b) {

@@ -44,6 +44,9 @@ u32 CIrrOdeSpace::getSpaceId() {
 }
 
 void CIrrOdeSpace::initPhysics() {
+  if (m_bPhysicsInitialized) return;
+  CIrrOdeSceneNode::initPhysics();
+
   switch (m_iType) {
     case eIrrOdeSpaceSimple:
       m_iSpaceId=m_pOdeDevice->spaceCreateSimple(m_pParentSpace?m_pParentSpace->getSpaceId():0);

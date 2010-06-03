@@ -19,11 +19,10 @@ class CIrrOdeEventBodyRemoved : public IIrrOdeEvent {
     u32 m_iBodyId;        /*!< id of the removed body */
 
   public:
-    CIrrOdeEventBodyRemoved(CIrrOdeBody *pBody, s32 ID=-1);
-    CIrrOdeEventBodyRemoved(CSerializer *pData, ISceneManager *pSmgr, s32 ID=-1);
+    CIrrOdeEventBodyRemoved(CIrrOdeBody *pBody);
+    CIrrOdeEventBodyRemoved(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventBodyRemoved(IIrrOdeEvent *pIn);
 
-    virtual s32 getID();
     virtual u16 getType();
 
     CIrrOdeBody *getBody();

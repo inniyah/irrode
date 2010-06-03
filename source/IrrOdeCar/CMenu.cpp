@@ -24,6 +24,12 @@ CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
   m_pHits=m_pGuiEnv->addStaticText(L"",rect<s32>(135,55,325,80));
   m_pHits->setDrawBackground(true);
   m_pHits->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+
+  m_pText->setVisible(false);
+  m_pHits->setVisible(false);
+
+  list<IGUIButton *>::Iterator i;
+  for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
 }
 
 CMenu::~CMenu() {

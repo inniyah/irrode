@@ -67,8 +67,7 @@ void CIrrOdeGeomRay::initPhysics() {
 
   m_pOdeDevice->geomSetData(m_iGeomId,this);
   m_pOdeDevice->geomSetBackfaceCull(m_iGeomId,m_bBackfaceCull);
-  //CIrrOdeGeom::initPhysics();
-  m_bPhysicsInitialized=true;
+  CIrrOdeSceneNode::initPhysics();
 }
 
 s32 CIrrOdeGeomRay::getID() const {

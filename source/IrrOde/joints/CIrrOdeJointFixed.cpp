@@ -39,7 +39,7 @@ void CIrrOdeJointFixed::render() {
 
 void CIrrOdeJointFixed::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   updateAbsolutePosition();
   m_iJointId=m_pOdeDevice->jointCreateFixed(m_pWorld->getWorldId());

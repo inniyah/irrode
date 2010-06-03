@@ -3,12 +3,7 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventClose::CIrrOdeEventClose(s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
-}
-
-s32 CIrrOdeEventClose::getID() {
-  return ID;
+CIrrOdeEventClose::CIrrOdeEventClose() : IIrrOdeEvent() {
 }
 
 u16 CIrrOdeEventClose::getType() {

@@ -15,11 +15,10 @@ class CIrrOdeEventBeforeStep : public IIrrOdeEvent {
   protected:
 
   public:
-    CIrrOdeEventBeforeStep(s32 ID=-1);
+    CIrrOdeEventBeforeStep();
     CIrrOdeEventBeforeStep(IIrrOdeEvent *pIn);
     CIrrOdeEventBeforeStep(CSerializer *pData) : IIrrOdeEvent() { }
 
-    virtual s32 getID();
     virtual u16 getType();
 
     virtual CSerializer *serialize();

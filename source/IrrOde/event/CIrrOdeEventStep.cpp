@@ -3,24 +3,18 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventStep::CIrrOdeEventStep(u32 iStepNo, s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventStep::CIrrOdeEventStep(u32 iStepNo) : IIrrOdeEvent() {
   m_iStepNo=iStepNo;
   m_iFrameNo=0;
 }
 
-CIrrOdeEventStep::CIrrOdeEventStep(CSerializer *pData, s32 ID) {
-  this->ID=ID;
+CIrrOdeEventStep::CIrrOdeEventStep(CSerializer *pData) {
   pData->resetBufferPos();
   u16 iCode=pData->getU16();
   if (iCode==eIrrOdeEventStep) {
     m_iStepNo=pData->getU32();
   }
   m_iFrameNo=0;
-}
-
-s32 CIrrOdeEventStep::getID() {
-  return ID;
 }
 
 u16 CIrrOdeEventStep::getType() {

@@ -37,8 +37,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
               m_vColPoint;    /**< the collision point */
 
   public:
-    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel, s32 ID=-1);
-    CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr, s32 ID=-1);
+    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel);
+    CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn);
 
     vector3df &getNewPosition() { return m_vNewPos; }
@@ -58,7 +58,6 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
     u32 getBodyId() { return m_iBodyId; }
     u32 getTouchId() { return m_iTouchId; }
 
-    virtual s32 getID();
     virtual u16 getType();
 
     CIrrOdeBody *getBody();

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1270881060 source:d:\mystuff\projects\irrode\source\irrodeditexample\main.cpp
+1275406525 source:d:\mystuff\projects\irrode\source\irrodeditexample\main.cpp
 	<irrlicht.h>
 	<IrrOde.h>
 
@@ -946,7 +946,7 @@
 	"matrix4.h"
 	"IVideoDriver.h"
 
-1273170660 d:\mystuff\projects\irrode\include\irrode\irrode.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\irrode.h
 	<CIrrOdeSurfaceParameters.h>
 	<CIrrOdeSpace.h>
 	<CIrrOdeWorld.h>
@@ -989,91 +989,91 @@
 	<motors/CIrrOdeAeroDrag.h>
 	<motors/CIrrOdeTorqueMotor.h>
 
-1271684340 d:\mystuff\projects\irrode\include\irrode\cirrodesurfaceparameters.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodesurfaceparameters.h
 	<irrlicht.h>
 
-1271877300 d:\mystuff\projects\irrode\include\irrode\cirrodespace.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodespace.h
 	<CIrrOdeSceneNode.h>
 
-1274278560 d:\mystuff\projects\irrode\include\irrode\cirrodescenenode.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodescenenode.h
 	<irrlicht.h>
 
-1272736200 d:\mystuff\projects\irrode\include\irrode\cirrodeworld.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodeworld.h
 	<CIrrOdeDampable.h>
 	<IIrrOdeContactParameters.h>
 
-1261563480 d:\mystuff\projects\irrode\include\irrode\cirrodedampable.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodedampable.h
 	<CIrrOdeSceneNode.h>
 	<limits>
 
-1274514240 d:\mystuff\projects\irrode\include\irrode\cirrodebody.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodebody.h
 	<CIrrOdeDampable.h>
 
-1274462160 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeom.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeom.h
 	<CIrrOdeSceneNode.h>
 	<CIrrOdeSurfaceParameters.h>
 
-1261563360 d:\mystuff\projects\irrode\include\irrode\iirrodecontactparameters.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\iirrodecontactparameters.h
 	<CIrrOdeSurfaceParameters.h>
 
-1274552220 d:\mystuff\projects\irrode\include\irrode\iirrodedevice.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\iirrodedevice.h
 	<irrlicht.h>
 	<CIrrOdeWorld.h>
 	<IIrrOdeContactParameters.h>
 	<geom/CIrrOdeGeomRay.h>
 
-1272896820 d:\mystuff\projects\irrode\include\irrode\cirrodemanager.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodemanager.h
 	<irrlicht.h>
 
-1270486800 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventstep.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventstep.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 
-1270880940 d:\mystuff\projects\irrode\include\irrode\event\iirrodeevent.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\iirrodeevent.h
 	<irrlicht.h>
 	<CSerializer.h>
 
-1261563780 d:\mystuff\projects\irrode\include\irrode\event\iirrodeeventlistener.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\iirrodeeventlistener.h
 	<event/IIrrOdeEvent.h>
 
-1271876820 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodymoved.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodymoved.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeom.h>
 
-1261563420 d:\mystuff\projects\irrode\include\irrode\cirrodescenenodefactory.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cirrodescenenodefactory.h
 	<irrlicht.h>
 
-1266061260 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeombox.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeombox.h
 	<geom/CIrrOdeGeom.h>
 
-1272287700 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomray.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomray.h
 	<irrlicht.h>
 	<geom/CIrrOdeGeom.h>
 
-1261563900 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomplane.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomplane.h
 	<geom/CIrrOdeGeom.h>
 
-1270902180 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomsphere.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomsphere.h
 	<geom/CIrrOdeGeom.h>
 
-1274519160 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomtrimesh.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomtrimesh.h
 	<geom/CIrrOdeGeom.h>
 
-1261563840 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomcapsule.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomcapsule.h
 	<geom/CIrrOdeGeom.h>
 
-1261563840 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomcylinder.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomcylinder.h
 	<geom/CIrrOdeGeom.h>
 
-1269723420 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventrayhit.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventrayhit.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeomRay.h>
 
-1261563900 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomheightfield.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\geom\cirrodegeomheightfield.h
 	<geom/CIrrOdeGeom.h>
 
 1269071368 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventcollision.h
@@ -1082,65 +1082,65 @@
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeom.h>
 
-1269722820 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodycreated.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodycreated.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeom.h>
 
-1269722640 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventactivationchanged.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventactivationchanged.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeom.h>
 
-1272030060 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejoint.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejoint.h
 	<CIrrOdeSceneNode.h>
 	<CIrrOdeBody.h>
 
-1261563960 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointfixed.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointfixed.h
 	<joints/CIrrOdeJoint.h>
 
-1261564020 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointhinge.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointhinge.h
 	<joints/CIrrOdeJoint.h>
 
-1261563960 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointhinge2.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointhinge2.h
 	<joints/CIrrOdeJoint.h>
 
-1261564020 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointslider.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointslider.h
 	<joints/CIrrOdeJoint.h>
 
-1261564020 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointpiston.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointpiston.h
 	<joints/CIrrOdeJoint.h>
 
-1261563960 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointballsocket.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointballsocket.h
 	<joints/CIrrOdeJoint.h>
 
-1271877060 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointuniversal.h
+1275406533 d:\mystuff\projects\irrode\include\irrode\joints\cirrodejointuniversal.h
 	<irrlicht.h>
 	<joints/CIrrOdeJoint.h>
 
-1271877900 d:\mystuff\projects\irrode\include\irrode\motors\cirrodemotor.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\cirrodemotor.h
 	<CIrrOdeSceneNode.h>
 
-1272398700 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeservo.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeservo.h
 	<CIrrOdeSceneNode.h>
 
-1269722760 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbeforestep.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbeforestep.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 
-1269723360 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodyremoved.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventbodyremoved.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 	<CIrrOdeBody.h>
 	<geom/CIrrOdeGeom.h>
 
-1269723420 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventinit.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventinit.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 
-1269723360 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventclose.h
+1275406531 d:\mystuff\projects\irrode\include\irrode\event\cirrodeeventclose.h
 	<irrlicht.h>
 	<event/IIrrOdeEvent.h>
 
@@ -2106,20 +2106,20 @@
 	"matrix4.h"
 	"IVideoDriver.h"
 
-1270317840 d:\mystuff\projects\irrode\include\irrode\cserializer.h
+1275406534 d:\mystuff\projects\irrode\include\irrode\cserializer.h
 	<irrlicht.h>
 
-1273175280 d:\mystuff\projects\irrode\include\irrode\motors\iirrodestepmotor.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\iirrodestepmotor.h
 	<CIrrOdeSceneNode.h>
 	<CIrrOdeManager.h>
 	<CIrrOdeBody.h>
 
-1273172580 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeimpulsemotor.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeimpulsemotor.h
 	<motors/IIrrOdeStepMotor.h>
 
-1273592520 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeaerodrag.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\cirrodeaerodrag.h
 	<motors/IIrrOdeStepMotor.h>
 
-1273172520 d:\mystuff\projects\irrode\include\irrode\motors\cirrodetorquemotor.h
+1275406532 d:\mystuff\projects\irrode\include\irrode\motors\cirrodetorquemotor.h
 	<motors/IIrrOdeStepMotor.h>
 

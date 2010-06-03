@@ -5,7 +5,7 @@ namespace ode {
 
 class CIrrOdeBody;
 
-CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel, s32 ID) : IIrrOdeEvent(){
+CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel) : IIrrOdeEvent(){
   m_pBody=pBody;
   m_pTouch=pBody->getTouched();
 
@@ -36,12 +36,9 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos,
 
   m_iColMaterial=pBody->getCollisionMaterial();
   m_vColPoint=pBody->getCollisionPoint();
-
-  this->ID=ID;
 }
 
-CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr, s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   u16 iCode=pData->getU16();
   if (iCode==eIrrOdeEventBodyMoved) {
@@ -68,7 +65,6 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *
 }
 
 CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  this->ID=pIn->getID();
   CIrrOdeEventBodyMoved *p=(CIrrOdeEventBodyMoved *)pIn;
   m_iFlags=p->getFlags();
   m_pBody=p->getBody();
@@ -79,10 +75,6 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn) : IIrrOdeEvent()
   m_vNewAngVel=p->getNewAngularVelocity();
   m_iTouchId=p->getTouchId();
   m_pTouch=p->getTouched();
-}
-
-s32 CIrrOdeEventBodyMoved::getID() {
-  return ID;
 }
 
 u16 CIrrOdeEventBodyMoved::getType() {

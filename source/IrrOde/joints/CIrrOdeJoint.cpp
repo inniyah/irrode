@@ -177,5 +177,9 @@ void CIrrOdeJoint::activateBodies() {
   if (m_pBody2 && m_pBody2->isEnabled()==false) m_pBody2->setEnabled(true);
 }
 
+void CIrrOdeJoint::initPhysics() {
+  CIrrOdeSceneNode::initPhysics();
+}
+
 } //namespace ode
 } //namespace irr

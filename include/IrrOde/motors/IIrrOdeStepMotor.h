@@ -55,6 +55,9 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
     virtual void step()=0;
 
     virtual void initPhysics() {
+      if (m_bPhysicsInitialized) return;
+      CIrrOdeSceneNode::initPhysics();
+
       ISceneNode *pParent=getParent();
       if (pParent->getType()==IRR_ODE_BODY_ID) {
         m_pBody=reinterpret_cast<CIrrOdeBody *>(pParent);

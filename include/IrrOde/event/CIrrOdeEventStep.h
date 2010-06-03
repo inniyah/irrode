@@ -17,10 +17,9 @@ class CIrrOdeEventStep : public IIrrOdeEvent {
         m_iFrameNo;
 
   public:
-    CIrrOdeEventStep(u32 iStepNo, s32 ID=-1);
-    CIrrOdeEventStep(CSerializer *pData, s32 ID=-1);
+    CIrrOdeEventStep(u32 iStepNo);
+    CIrrOdeEventStep(CSerializer *pData);
 
-    virtual s32 getID();
     virtual u16 getType();
 
     void setFrameNo(u32 i) { m_iFrameNo=i; }

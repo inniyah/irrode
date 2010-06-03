@@ -113,6 +113,7 @@ void CIrrOdeMotor::OnRegisterSceneNode() {
 
 void CIrrOdeMotor::initPhysics() {
   if (m_bPhysicsInitialized) return;
+  CIrrOdeSceneNode::initPhysics();
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeMotor::initPhysics (%i .. %.2f .. %.2f .. %s\n",m_iAxis,m_fVelocity,m_fForce,m_bEnabled?"enabled":"disabled");
   #endif
@@ -125,7 +126,6 @@ void CIrrOdeMotor::initPhysics() {
     m_pJoint->setParameter(m_iAxis,CIrrOdeJoint::eVel,m_fVelocity);
     m_pJoint->setParameter(m_iAxis,CIrrOdeJoint::eMaxForce,m_fForce);
   }
-  m_bPhysicsInitialized=true;
 }
 
 s32 CIrrOdeMotor::getID() const {

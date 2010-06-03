@@ -69,6 +69,8 @@ class CIrrOdeJoint : public CIrrOdeSceneNode {
     virtual void removeFromPhysics();
 
     void activateBodies();
+
+    virtual void initPhysics();
 };
 
 } //namespace ode

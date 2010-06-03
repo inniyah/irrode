@@ -52,7 +52,7 @@ void CIrrOdeJointPR::render() {
 
 void CIrrOdeJointPR::initPhysics() {
   if (m_bPhysicsInitialized) return;
-  m_bPhysicsInitialized=true;
+  CIrrOdeJoint::initPhysics();
 
   //create the joint
   m_iJointId=m_pOdeDevice->jointCreatePR(m_pWorld->getWorldId());
@@ -81,6 +81,7 @@ void CIrrOdeJointPR::initPhysics() {
       #endif
       setParameter(0,(eJointParameter)i,m_fParam[i][0]);
     }
+
 }
 
 s32 CIrrOdeJointPR::getID() const {

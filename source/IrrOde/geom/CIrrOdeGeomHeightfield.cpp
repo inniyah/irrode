@@ -98,7 +98,6 @@ void CIrrOdeGeomHeightfield::initPhysics() {
   #endif
 
   CIrrOdeGeom::initPhysics();
-  m_bPhysicsInitialized=true;
 }
 
 s32 CIrrOdeGeomHeightfield::getID() const {

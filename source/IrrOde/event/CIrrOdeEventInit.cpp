@@ -3,16 +3,10 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventInit::CIrrOdeEventInit(s32 ID) : IIrrOdeEvent() {
-  this->ID=ID;
+CIrrOdeEventInit::CIrrOdeEventInit() : IIrrOdeEvent() {
 }
 
-CIrrOdeEventInit::CIrrOdeEventInit(CSerializer *pData, s32 ID) {
-  this->ID=ID;
-}
-
-s32 CIrrOdeEventInit::getID() {
-  return ID;
+CIrrOdeEventInit::CIrrOdeEventInit(CSerializer *pData) {
 }
 
 u16 CIrrOdeEventInit::getType() {
