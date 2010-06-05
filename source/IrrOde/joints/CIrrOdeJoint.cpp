@@ -178,6 +178,7 @@ void CIrrOdeJoint::activateBodies() {
 }
 
 void CIrrOdeJoint::initPhysics() {
+  if (m_bPhysicsInitialized) return;
   CIrrOdeSceneNode::initPhysics();
 }
 

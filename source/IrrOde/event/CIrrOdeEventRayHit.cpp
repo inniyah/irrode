@@ -25,12 +25,14 @@ CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr)
 }
 
 CIrrOdeEventRayHit::CIrrOdeEventRayHit(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  CIrrOdeEventRayHit *p=(CIrrOdeEventRayHit *)pIn;
-  m_pBody=p->getBody();
-  m_pGeom=p->getGeom();
-  m_pRay=p->getRay();
-  m_cPos=p->getPosition();
-  m_fDistance=p->getDistance();
+  if (pIn->getType()==eIrrOdeEventRayHit) {
+    CIrrOdeEventRayHit *p=(CIrrOdeEventRayHit *)pIn;
+    m_pBody=p->getBody();
+    m_pGeom=p->getGeom();
+    m_pRay=p->getRay();
+    m_cPos=p->getPosition();
+    m_fDistance=p->getDistance();
+  }
 }
 
 u16 CIrrOdeEventRayHit::getType() {

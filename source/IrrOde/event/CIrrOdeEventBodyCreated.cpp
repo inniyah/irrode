@@ -18,8 +18,10 @@ CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManag
 }
 
 CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  CIrrOdeEventBodyCreated *p=(CIrrOdeEventBodyCreated *)pIn;
-  m_pBody=p->getBody();
+  if (pIn->getType()==eIrrOdeEventBodyCreated) {
+    CIrrOdeEventBodyCreated *p=(CIrrOdeEventBodyCreated *)pIn;
+    m_pBody=p->getBody();
+  }
 }
 
 u16 CIrrOdeEventBodyCreated::getType() {

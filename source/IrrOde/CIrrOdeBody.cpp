@@ -174,8 +174,8 @@ void CIrrOdeBody::initPhysics() {
      setGravityMode(m_iGravityMode);
 
      if (m_pRay) m_pRay->initPhysics();
-     CIrrOdeEventBodyCreated cEvent(this);
-     CIrrOdeManager::getSharedInstance()->postEvent(&cEvent);
+     CIrrOdeEventBodyCreated *pEvent=new CIrrOdeEventBodyCreated(this);
+     CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
     }
   }
   list<IIrrOdeStepMotor *>::Iterator it;
@@ -517,8 +517,8 @@ void CIrrOdeBody::frameUpdate() {
   bool bEnabled=m_pOdeDevice->bodyIsEnabled(m_iBodyId);
   if (bEnabled!=m_bEnabled) {
     m_bEnabled=bEnabled;
-    CIrrOdeEventActivationChanged cEvent(this,m_bEnabled);
-    CIrrOdeManager::getSharedInstance()->postEvent(&cEvent);
+    CIrrOdeEventActivationChanged *pEvent=new CIrrOdeEventActivationChanged(this,m_bEnabled);
+    CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
   }
 }
 
@@ -743,8 +743,8 @@ void CIrrOdeBody::removeFromPhysics() {
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
 
-    CIrrOdeEventBodyRemoved cEvent(this);
-    CIrrOdeManager::getSharedInstance()->postEvent(&cEvent);
+    CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
+    CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
 
     if (m_pWorld) m_pWorld->removeBody(this);
     list<ISceneNode *> ch=getChildren();

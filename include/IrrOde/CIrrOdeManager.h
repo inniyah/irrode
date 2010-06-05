@@ -32,9 +32,11 @@ class CIrrOdeManager {
     core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
     core::list<irr::ode::CIrrOdeGeom *>m_pGeoms;                /**< the geoms */
     core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
+
+    core::list<irr::ode::IIrrOdeEvent *> m_lEventQueue;
     ITimer *m_pTimer;                                           /**< the Irrlicht timer */
 
-		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;
+		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
 
 		#ifndef _USE_ODE_NULL_DEVICE
 		  IIrrOdeDevice *m_pOdeDevice;
@@ -66,7 +68,23 @@ class CIrrOdeManager {
 
     void addEventListener(IIrrOdeEventListener *pListener);			/*!< add an event listener */
 		void removeEventListener(IIrrOdeEventListener *pListener);	/*!< remove an event listener */
-    void postEvent(IIrrOdeEvent *pEvent);												/*!< post an event to the listeners */
+
+    /**
+     * Post an event to the event queue. Will be distributed when the CIrrOdeManager::flushEvents method is called.
+     * Note that the events must be created on the heap (using the new operator) and will be deleted within the flush call
+     * @param pEvent the event to be added
+     * @see CIrrOdeManager::flushEvents
+     * @see m_lEventQueue
+     */
+    void postEvent(IIrrOdeEvent *pEvent);
+
+    /**
+     * This method sends out all events from the message queue to all registered event listeners
+     * @see CIrrOdeManager::postEvent
+     * @see m_lEventQueue
+     */
+		void flushEvents();
+
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
     void initPhysics();																					/*!< init all dynamic objects */

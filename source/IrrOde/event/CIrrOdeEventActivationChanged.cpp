@@ -21,6 +21,11 @@ CIrrOdeEventActivationChanged::CIrrOdeEventActivationChanged(CSerializer *pData,
 }
 
 CIrrOdeEventActivationChanged::CIrrOdeEventActivationChanged(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
+  if (pIn->getType()==eIrrOdeEventActivationChanged) {
+    CIrrOdeEventActivationChanged *pEvt=reinterpret_cast<CIrrOdeEventActivationChanged *>(pIn);
+    this->m_pBody=pEvt->getBody();
+    this->m_bActive=pEvt->isActive();
+  }
 }
 
 u16 CIrrOdeEventActivationChanged::getType() {

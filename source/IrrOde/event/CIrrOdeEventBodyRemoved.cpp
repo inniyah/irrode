@@ -25,9 +25,11 @@ CIrrOdeEventBodyRemoved::CIrrOdeEventBodyRemoved(CSerializer *pData, ISceneManag
 }
 
 CIrrOdeEventBodyRemoved::CIrrOdeEventBodyRemoved(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  CIrrOdeEventBodyRemoved *p=(CIrrOdeEventBodyRemoved *)pIn;
-  m_pBody=p->getBody();
-  m_iBodyId=p->getBodyId();
+  if (pIn->getType()==eIrrOdeEventBodyRemoved) {
+    CIrrOdeEventBodyRemoved *p=(CIrrOdeEventBodyRemoved *)pIn;
+    m_pBody=p->getBody();
+    m_iBodyId=p->getBodyId();
+  }
 }
 
 u16 CIrrOdeEventBodyRemoved::getType() {

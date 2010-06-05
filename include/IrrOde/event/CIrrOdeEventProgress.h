@@ -17,6 +17,11 @@ class CIrrOdeEventProgress : public IIrrOdeEvent {
         m_iCurrent; /*!< the current initialization step */
 
   public:
+    /**
+     * Creates this event.
+     * @param iCurrent the current progress number
+     * @param iCount the total progress number
+     */
     CIrrOdeEventProgress(u32 iCurrent, u32 iCount);
     CIrrOdeEventProgress(IIrrOdeEvent *pIn);
     CIrrOdeEventProgress(CSerializer *pData);

@@ -82,7 +82,6 @@ void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
 void CIrrOdeManager::initODE() {
   CIrrOdeEventInit *pEvent=new CIrrOdeEventInit();
   postEvent(pEvent);
-  delete pEvent;
 
   getOdeDevice()->initODE();
 }
@@ -112,7 +111,6 @@ void CIrrOdeManager::closeODE() {
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
   postEvent(pEvent);
-  delete pEvent;
 }
 
 void CIrrOdeManager::clearODE() {
@@ -127,7 +125,6 @@ void CIrrOdeManager::clearODE() {
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose ();
   postEvent(pEvent);
-  delete pEvent;
 }
 
 /**
@@ -186,21 +183,33 @@ void CIrrOdeManager::removeEventListener(IIrrOdeEventListener *pListener) {
 }
 
 /**
- * Post an event to all registered event listeners
+ * Post an event to the event queue. Will be distributed when the CIrrOdeManager::flushEvents method is called
+ * @param pEvent the event to be added
+ * @see CIrrOdeManager::flushEvents
  */
 void CIrrOdeManager::postEvent(IIrrOdeEvent *pEvent) {
-  //this is a special case: in order to apply movement, rotation and velocity
-  //changes to a body it will instantly be posted to it's world
-  if (pEvent->getType()==eIrrOdeEventBodyMoved) {
-    CIrrOdeEventBodyMoved *p=(CIrrOdeEventBodyMoved *)pEvent;
-    if (m_pWorlds.size()>0)
-      m_pWorlds[0]->bodyMoved(p);
-  }
+  m_lEventQueue.push_back(pEvent);
+}
 
-  list<IIrrOdeEventListener *>::Iterator i;
-  for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
-    if ((*i)->handlesEvent(pEvent))
-      (*i)->onEvent(pEvent);
+void CIrrOdeManager::flushEvents() {
+  while (m_lEventQueue.getSize()>0) {
+    list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEventQueue.begin();
+    IIrrOdeEvent *pEvent=*it;
+    m_lEventQueue.erase(it);
+
+    //this is a special case: in order to apply movement, rotation and velocity
+    //changes to a body it will instantly be posted to it's world
+    if (pEvent->getType()==eIrrOdeEventBodyMoved) {
+      if (m_pWorlds.size()>0)
+        m_pWorlds[0]->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
+    }
+
+    list<IIrrOdeEventListener *>::Iterator i;
+    for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
+      if ((*i)->handlesEvent(pEvent))
+        (*i)->onEvent(pEvent);
+    }
+    delete pEvent;
   }
 }
 
@@ -324,10 +333,11 @@ void CIrrOdeManager::stepStepMotors() {
 }
 
 void CIrrOdeManager::sceneNodeInitialized() {
-  m_iNodesInitialized++;
   if (!m_bPhysicsInitialized) {
-    CIrrOdeEventProgress cProg(m_iNodesInitialized,m_pSceneNodes.getSize());
-    postEvent(&cProg);
+    m_iNodesInitialized++;
+    CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
+    this->postEvent(pPrg);
+    flushEvents();
   }
 }
 

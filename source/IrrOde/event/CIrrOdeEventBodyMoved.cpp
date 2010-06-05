@@ -65,16 +65,18 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *
 }
 
 CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
-  CIrrOdeEventBodyMoved *p=(CIrrOdeEventBodyMoved *)pIn;
-  m_iFlags=p->getFlags();
-  m_pBody=p->getBody();
-  m_iBodyId=p->getBodyId();
-  m_vNewPos=p->getNewPosition();
-  m_vNewRot=p->getNewRotation();
-  m_vNewLinVel=p->getNewLinearVelocity();
-  m_vNewAngVel=p->getNewAngularVelocity();
-  m_iTouchId=p->getTouchId();
-  m_pTouch=p->getTouched();
+  if (pIn->getType()==eIrrOdeEventBodyMoved) {
+    CIrrOdeEventBodyMoved *p=(CIrrOdeEventBodyMoved *)pIn;
+    m_iFlags=p->getFlags();
+    m_pBody=p->getBody();
+    m_iBodyId=p->getBodyId();
+    m_vNewPos=p->getNewPosition();
+    m_vNewRot=p->getNewRotation();
+    m_vNewLinVel=p->getNewLinearVelocity();
+    m_vNewAngVel=p->getNewAngularVelocity();
+    m_iTouchId=p->getTouchId();
+    m_pTouch=p->getTouched();
+  }
 }
 
 u16 CIrrOdeEventBodyMoved::getType() {
