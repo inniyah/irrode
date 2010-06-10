@@ -596,11 +596,12 @@ int main(int argc, char** argv) {
       addNewJoint(smgr,driver,worldNode,cam->getPosition(),cam->getRotation(),(ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE2_ID     ,false                       ,theEventReceiver.ctrlDown());
 
     //pause the simulation
-    if (theEventReceiver.pause())
+    if (theEventReceiver.pause()) {
       if (pTimer->isStopped())
         while ( pTimer->isStopped()) pTimer->start();
       else
         while (!pTimer->isStopped()) pTimer->stop();
+    }
 
     //increase or decrease the simulation's speed
     if (theEventReceiver.incSpeed() && pTimer->getSpeed()<2.0f) pTimer->setSpeed(pTimer->getSpeed()+0.1f);
