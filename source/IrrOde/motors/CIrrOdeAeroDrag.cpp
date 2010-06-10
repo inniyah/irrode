@@ -41,34 +41,46 @@ void CIrrOdeAeroDrag::step() {
     f32 fForeward=vForeward.dotProduct(vNormVel.normalize());
 
     m_fForewardVel=fForeward*vVel.getLength();
+    if (m_fForewardVel<0.0f) return;
 
-    f32 fUp=fForeward;
-    if (m_fForewardVel>=m_fStallSpeed)
-      if (m_fForewardVel>=m_fMaxUpSpeed)
-        vUp*=m_fUpFactor*m_fMaxUpSpeed;
+    if (m_fUpFactor!=0.0f) {
+      f32 fUp=fForeward;
+      if (m_fForewardVel>=m_fStallSpeed)
+        if (m_fForewardVel>=m_fMaxUpSpeed)
+          vUp*=m_fUpFactor*m_fMaxUpSpeed;
+        else
+          vUp*=m_fUpFactor*(m_fForewardVel-m_fStallSpeed);
       else
-        vUp*=m_fUpFactor*(m_fForewardVel-m_fStallSpeed);
-    else
-      vUp=vector3df(0.0f,0.0f,0.0f);
+        vUp=vector3df(0.0f,0.0f,0.0f);
 
-    vUp=m_fPower*m_fMaxPower*fUp*vUp;
+      vUp=m_fPower*m_fMaxPower*fUp*vUp;
+    }
+    else vUp=vector3df(0.0f,0.0f,0.0f);
 
-    f32 fForewardDamp=m_fForewardVel*m_fForewardVel*m_fForewardDamp;
-    vector3df vForewardDamp=vForeward*fForewardDamp;
+    vector3df vForewardDamp=vector3df(0.0f,0.0f,0.0f);
 
-    vector3df vSideward=vRot.rotationToDirection(m_vSideward);
-    f32 fSideward=vSideward.dotProduct(vNormVel.normalize());
+    if (m_fForewardDamp!=0.0f) {
+      f32 fForewardDamp=m_fForewardVel*m_fForewardVel*m_fForewardDamp;
+      vForewardDamp=vForeward*fForewardDamp;
+    }
 
     vector3df vSideDamp=vector3df(0.0f,0.0f,0.0f);
 
-    if (fSideward>=0.01f || fSideward<=-0.01f) vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
+    if (m_fSidewardDamp!=0.0f) {
+      vector3df vSideward=vRot.rotationToDirection(m_vSideward);
+      f32 fSideward=vSideward.dotProduct(vNormVel.normalize());
 
-    vector3df vUpward=vRot.rotationToDirection(m_vUpward);
-    f32 fUpward=vUpward.dotProduct(vNormVel.normalize());
+      if (fSideward>=0.01f || fSideward<=-0.01f) vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
+    }
 
     vector3df vUpDamp=vector3df(0.0f,0.0f,0.0f);
 
-    if (fUpward>=0.1f || fUpward<=-0.1f) vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
+    if (m_fUpwardDamp!=0.0f) {
+      vector3df vUpward=vRot.rotationToDirection(m_vUpward);
+      f32 fUpward=vUpward.dotProduct(vNormVel.normalize());
+
+      if (fUpward>=0.1f || fUpward<=-0.1f) vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
+    }
 
     vector3df vForce=vUp-vForewardDamp-vSideDamp-vUpDamp;
 

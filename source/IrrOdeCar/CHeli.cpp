@@ -40,6 +40,14 @@ void CHeli::activate() {
   m_pInfo->setVisible(true);
   m_bSwitchToMenu=false;
   m_bActive=true;
+
+  vector3df pos=m_pHeliBody->getRotation().rotationToDirection(vector3df(15,5,0)),
+            up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
+            tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+
+  m_pCam->setPosition(m_pHeliBody->getPosition()+pos);
+  m_pCam->setUpVector(up);
+  m_pCam->setTarget(m_pHeliBody->getPosition()+tgt);
 }
 
 void CHeli::deactivate() {

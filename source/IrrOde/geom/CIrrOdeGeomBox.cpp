@@ -69,10 +69,10 @@ void CIrrOdeGeomBox::initPhysics() {
       m_fWidth =pMesh->getBoundingBox().getExtent().X*pParent->getScale().X,
       m_fHeight=pMesh->getBoundingBox().getExtent().Y*pParent->getScale().Y,
       m_fDepth =pMesh->getBoundingBox().getExtent().Z*pParent->getScale().Z;
-      //#ifdef _TRACE_INIT_PHYSICS
+      #ifdef _TRACE_INIT_PHYSICS
         printf("CIrrOdeGeomBox::initPhysics: getting size from parent node\n");
         printf("CIrrOdeGeomBox::initPhysics: size=(%.2f, %.2f, %.2f)\n",m_fWidth,m_fHeight,m_fDepth);
-      //#endif
+      #endif
     }
     else {
       IMesh *pMesh=NULL;

@@ -45,6 +45,16 @@ void CTank::activate() {
   m_pInfo->setVisible(true);
   m_bSwitchToMenu=false;
   m_bActive=true;
+
+  vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getRotation();
+
+  vector3df pos=rot.rotationToDirection(vector3df(7.5,2.5,0)),
+            up =m_pTankBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
+            tgt=m_pTankBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+
+  m_pCam->setPosition(m_pTankBody->getPosition()+pos);
+  m_pCam->setUpVector(up);
+  m_pCam->setTarget(m_pTankBody->getPosition()+tgt);
 }
 
 void CTank::deactivate() {

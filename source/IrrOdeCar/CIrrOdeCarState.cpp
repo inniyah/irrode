@@ -1,6 +1,6 @@
   #include "CIrrOdeCarState.h"
 
-CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, wchar_t *sVehicleName, c8 *sHelpFile, CIrrCC *pCtrl) {
+CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
   //initialize the members
   m_pDevice=pDevice;
   m_pSmgr=m_pDevice->getSceneManager();

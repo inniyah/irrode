@@ -24,7 +24,8 @@ enum eCarCtrl {
   eCarBrake,
   eCarBoost,
   eCarFlip,
-  eCarToggleAdaptiveSteer
+  eCarToggleAdaptiveSteer,
+  eCarBackview
 };
 
 class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
@@ -48,8 +49,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
     const u32 *m_pCtrls;
 
   public:
-    CCar(IrrlichtDevice *pDevice, c8* sNodeName, CIrrCC *pCtrl);  /*!< the car's constructor */
-    virtual ~CCar();                                              /*!< the car's destructor */
+    CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl);  /*!< the car's constructor */
+    virtual ~CCar();                                                    /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */
     virtual void deactivate();    /*!< the deactivation method */

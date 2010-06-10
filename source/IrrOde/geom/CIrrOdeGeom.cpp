@@ -171,7 +171,6 @@ void CIrrOdeGeom::initPhysics() {
       #endif
       m_pOdeDevice->geomSetOffsetPosition(m_iGeomId,m_cOffsetPos);
       m_pOdeDevice->massTranslate(m_iMass,m_cOffsetPos);
-      printf("geom offset: %.2f, %.2f, %.2f (%i)\n",m_cOffsetPos.X,m_cOffsetPos.Y,m_cOffsetPos.Z,getID());
     }
 
     m_cOffsetRot=getParent()->getRotation();

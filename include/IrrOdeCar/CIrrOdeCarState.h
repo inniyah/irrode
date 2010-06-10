@@ -39,7 +39,7 @@ class CIrrOdeCarState {
      * @param sVehicleName the name of the state (e.g. helicopter)
      * @param sHelpFile the help file. The content of this file is shown in the help screen
      */
-    CIrrOdeCarState(IrrlichtDevice *pDevice, wchar_t *sVehicleName, c8 *sHelpFile, CIrrCC *pCtrl);
+    CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl);
 
     virtual ~CIrrOdeCarState() { }   /*!< destructor */
 

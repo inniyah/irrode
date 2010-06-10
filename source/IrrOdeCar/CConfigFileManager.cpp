@@ -29,13 +29,13 @@ void CConfigFileManager::clearReadersWriters() {
   m_lWriters.clear();
 }
 
-void CConfigFileManager::loadConfig(IrrlichtDevice *pDevice, c8 *sFileName) {
+void CConfigFileManager::loadConfig(IrrlichtDevice *pDevice, const c8 *sFileName) {
   IXMLReaderUTF8 *pXml=pDevice->getFileSystem()->createXMLReaderUTF8(sFileName);
   bool bSettings=false;
 
   if (pXml) {
     while (pXml->read()) {
-      bSettings=bSettings || !strcmp(pXml->getNodeName(),"settings") && pXml->getNodeType()==EXN_ELEMENT;
+      bSettings=bSettings || (!strcmp(pXml->getNodeName(),"settings") && pXml->getNodeType()==EXN_ELEMENT);
       if (bSettings) {
         list<IConfigFileReader *>::Iterator it;
         for (it=m_lReaders.begin(); it!=m_lReaders.end(); it++) {
@@ -48,7 +48,7 @@ void CConfigFileManager::loadConfig(IrrlichtDevice *pDevice, c8 *sFileName) {
   }
 }
 
-void CConfigFileManager::writeConfig(IrrlichtDevice *pDevice, c8 *sFileName) {
+void CConfigFileManager::writeConfig(IrrlichtDevice *pDevice, const c8 *sFileName) {
   IXMLWriter *pXml=pDevice->getFileSystem()->createXMLWriter(sFileName);
 
   if (pXml) {

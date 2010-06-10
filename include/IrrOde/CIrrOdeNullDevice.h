@@ -35,8 +35,8 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void setStepSize(f32 f) { m_fStepSize=f; }
     virtual f32 getStepSize() { return m_fStepSize; }
 
-    virtual void step(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId) { }
-    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId) { }
+    virtual void step(f32 fTime, CIrrOdeWorld *pWorld) { }
+    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld) { }
 
     virtual void worldDestroy(u32 iIdx) { }
     virtual u32 worldCreate() { return 0; }
@@ -65,6 +65,10 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void worldSetQuickStepW(u32 iWorld, f32 f) { }
     virtual f32 worldGetQuickStepW(u32 iWorld) { return 0; }
     virtual void worldSetGravity(u32 iWorld, vector3df cGravity) { }
+    virtual void worldSetERP(u32 iWorld, f32 fErp) { }
+    virtual f32 worldGetERP(u32 iWorld) { return 0.0f; }
+    virtual void worldSetCFM(u32 iWorld, f32 fCfm) { }
+    virtual f32 worldGetCFM(u32 iWorld) { return 0.0f; }
 
     virtual u32 jointCreateBallSocket(u32 iWorld) { return 0; }
     virtual u32 jointCreateFixed(u32 iWorld) { return 0; }

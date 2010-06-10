@@ -125,8 +125,6 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
-    void resetBodyTouch();
-
     void bodyMoved(CIrrOdeEventBodyMoved *pEvent);
 
     #ifdef _IRREDIT_PLUGIN
@@ -134,12 +132,17 @@ class CIrrOdeWorld : public CIrrOdeDampable {
       void removeOdeChildNode(CIrrOdeSceneNode *pNode);
     #endif
 
-	/**
-	 * load a surface parameter XML file created with IrrOdeSurfaceEdit
-	 * @param sName the file to load
-	 * @return number of surface parameters loaded
-	 */
-	u32 setSurfaceXml(const wchar_t *sName);
+    /**
+     * load a surface parameter XML file created with IrrOdeSurfaceEdit
+     * @param sName the file to load
+     * @return number of surface parameters loaded
+     */
+    u32 setSurfaceXml(const wchar_t *sName);
+
+    /**
+     * This method resets the body collision attributes. It's called by the device before each step
+     */
+    void resetCollisionAttributes();
 };
 
 } //namespace ode

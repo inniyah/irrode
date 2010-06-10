@@ -7,7 +7,7 @@
  * @param title of the window
  * @param background color of the window
  */
-CSettings::CSettings(c8 *sScene, c8 *sSettingsFile, wchar_t *sTitle, SColor cBackground) {
+CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground) {
   //Create a software device
   m_pDevice=createDevice(EDT_SOFTWARE, dimension2d<u32>(230,200), 16, false, false, false, 0);
   m_pDevice->setWindowCaption(sTitle);

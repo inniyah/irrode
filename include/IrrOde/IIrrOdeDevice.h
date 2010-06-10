@@ -44,8 +44,8 @@ class IIrrOdeDevice {
     /**
      * The step functions
      */
-    virtual void step(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId)=0;
-    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId)=0;
+    virtual void step(f32 fTime, CIrrOdeWorld *pWorld)=0;
+    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld)=0;
 
     /**
      * The first block of functions are for the ODE world
@@ -77,6 +77,10 @@ class IIrrOdeDevice {
     virtual void worldSetQuickStepW(u32 iWorld, f32 f)=0;
     virtual f32 worldGetQuickStepW(u32 iWorld)=0;
     virtual void worldSetGravity(u32 iWorld, vector3df cGravity)=0;
+    virtual void worldSetERP(u32 iWorld, f32 fErp)=0;
+    virtual f32 worldGetERP(u32 iWorld)=0;
+    virtual void worldSetCFM(u32 iWorld, f32 fCfm)=0;
+    virtual f32 worldGetCFM(u32 iWorld)=0;
 
     /**
      * General joint related functions

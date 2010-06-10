@@ -64,7 +64,7 @@ class CSettings : public IEventReceiver {
     array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
 
   public:
-    CSettings(c8 *sScene, c8 *sSettingsFile, wchar_t *sTitle, SColor cBackground);
+    CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground);
     ~CSettings();
 
     /**

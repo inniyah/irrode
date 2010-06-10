@@ -50,49 +50,49 @@ class CConfigFileManager {
 		 * @return the shared instance of the manager
 		 */
     static CConfigFileManager *getSharedInstance();
-		
+
 		/**
 		 * add a config file reader
 		 * @param the reader to be added
 		 */
     void addReader(IConfigFileReader *pReader);
-		
+
 		/**
 		 * add a config file writer
 		 * @param the writer to be added
 		 */
     void addWriter(IConfigFileWriter *pWriter);
-		
+
 		/**
 		 * remove a config file reader
 		 * @param the reader to be removed
 		 */
     void removeReader(IConfigFileReader *pReader);
-		
+
 		/**
 		 * remove a config file writer
 		 * @param the writer to be removed
 		 */
     void removeWriter(IConfigFileWriter *pWriter);
-		
+
 		/**
 		 * clear the list of all readers and writers
 		 */
     void clearReadersWriters();
-		
+
 		/**
 		 * load a configuration file
 		 * @param pDevice the Irrlicht device to use
 		 * @param sFileName the name of the config file to load
 		 */
-    void loadConfig(IrrlichtDevice *pDevice, c8 *sFileName);
-		
+    void loadConfig(IrrlichtDevice *pDevice, const c8 *sFileName);
+
 		/**
 		 * write a configuration file
 		 * @param pDevice the Irrlicht device to use
 		 * @param sFileName the name of the config file to write
 		 */
-    void writeConfig(IrrlichtDevice *pDevice, c8 *sFileName);
+    void writeConfig(IrrlichtDevice *pDevice, const c8 *sFileName);
 };
 
 #endif

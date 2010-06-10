@@ -68,8 +68,6 @@ void CIrrOdeJointSlider::initPhysics() {
   vector3df rot=getAbsoluteTransformation().getRotationDegrees(),
             axis=rot.rotationToDirection(m_pAxis);
 
-  printf("\n\t\taxis: %.2f, %.2f, %.2f\n\n",axis.X,axis.Y,axis.Z);
-
   m_pOdeDevice->jointSetSliderAxis(m_iJointId,axis);
   m_pOdeDevice->jointSetData(m_iJointId,this);
 
@@ -82,7 +80,6 @@ void CIrrOdeJointSlider::initPhysics() {
     }
 
   if (m_bParamChanged[CIrrOdeJoint::eHiStop][0] && m_bParamChanged[CIrrOdeJoint::eLoStop][0]) {
-    printf("\nhistop and lostop changed -- %.2f, %.2f\n",m_fParam[CIrrOdeJoint::eHiStop][0],m_fParam[CIrrOdeJoint::eLoStop][0]);
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eLoStop][0]);
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);

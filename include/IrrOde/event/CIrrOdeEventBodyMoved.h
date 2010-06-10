@@ -37,7 +37,7 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
               m_vColPoint;    /**< the collision point */
 
   public:
-    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel);
+    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos, vector3df &vRot, vector3df &vLinVel, vector3df &vAngVel);
     CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr);
     CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn);
 

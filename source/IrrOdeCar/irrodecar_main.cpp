@@ -61,7 +61,6 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 
       if (pEvent->getType()==irr::ode::eIrrOdeEventProgress) {
         irr::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<irr::ode::CIrrOdeEventProgress *>(pEvent);
-        printf("progress: %i / %i\n",pEvt->getCurrent(),pEvt->getCount());
         wchar_t s[0xFF];
         swprintf(s,0xFF,L"Physics Initialization: %i / %i",pEvt->getCurrent(),pEvt->getCount());
         m_pText->setText(s);
@@ -115,6 +114,7 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarBoost              ]=pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarFlip               ]=pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+  iCtrls[0][eCarBackview           ]=pController->addItem(0,stringw(L"Backview"             ),KEY_KEY_R ,CIrrCC::eCtrlButton);
 
   //we need two axes for the car: acceleration and steering
   pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);
@@ -221,6 +221,7 @@ int main(int argc, char** argv) {
   IGUIStaticText *pFps=guienv->addStaticText(L"Hello World!",rect<s32>(position2di(cSize.Width-155,5),dimension2di(150,22)),true);
   pFps->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
   pFps->setDrawBackground(true);
+  pFps->setVisible(false);
 
   //create the necessary state objects
   CIrrOdeCarState *pActive=NULL;
@@ -252,6 +253,7 @@ int main(int argc, char** argv) {
   pActive->activate();
 
   CConfigFileManager::getSharedInstance()->loadConfig(device,"../../data/irrOdeCarControls.xml");
+  pFps->setVisible(true);
 
   //let's run the loop
   while(device->run()) {

@@ -474,14 +474,15 @@ f32 CIrrOdeDevice::getStepSize() {
   return m_fStepSize;
 }
 
-void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId) {
+void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld) {
   m_fStepTime+=fTime;
   while (m_fStepTime>0.0f) {
+    pWorld->resetCollisionAttributes();
     CIrrOdeEventBeforeStep *pBeforeStepEvent=new CIrrOdeEventBeforeStep();
     CIrrOdeManager::getSharedInstance()->postEvent(pBeforeStepEvent);
     dSpaceCollide(GETSPACE(pWorld->getSpace()->getSpaceId()),pWorld,&CIrrOdeDevice::nearCollisionCallback);
     dWorldStep(GETWORLD(pWorld->getWorldId()),m_fStepSize);
-    dJointGroupEmpty(GETJGROUP(iJointGroupId));
+    dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
     handleFastCollisions();
     m_fStepTime-=m_fStepSize;
     CIrrOdeManager::getSharedInstance()->stepStepMotors();
@@ -495,14 +496,15 @@ void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId) {
   }
 }
 
-void CIrrOdeDevice::quickStep(f32 fTime, CIrrOdeWorld *pWorld, u32 iJointGroupId) {
+void CIrrOdeDevice::quickStep(f32 fTime, CIrrOdeWorld *pWorld) {
   m_fStepSize+=fTime;
   while (m_fStepTime>0.0f) {
+    pWorld->resetCollisionAttributes();
     CIrrOdeEventBeforeStep *pBeforeStepEvent=new CIrrOdeEventBeforeStep();
     CIrrOdeManager::getSharedInstance()->postEvent(pBeforeStepEvent);
     dSpaceCollide(GETSPACE(pWorld->getSpace()->getSpaceId()),pWorld,&CIrrOdeDevice::nearCollisionCallback);
     dWorldQuickStep(GETWORLD(pWorld->getWorldId()),m_fStepSize);
-    dJointGroupEmpty(GETJGROUP(iJointGroupId));
+    dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
     m_fStepTime-=m_fStepSize;
     CIrrOdeManager::getSharedInstance()->stepStepMotors();
 
@@ -636,6 +638,22 @@ f32 CIrrOdeDevice::worldGetQuickStepW(u32 iWorld) {
 
 void CIrrOdeDevice::worldSetGravity(u32 iWorld, vector3df cGravity) {
   dWorldSetGravity(GETWORLD(iWorld),cGravity.X,cGravity.Y,cGravity.Z);
+}
+
+void CIrrOdeDevice::worldSetERP(u32 iWorld, f32 fErp) {
+  dWorldSetERP(GETWORLD(iWorld),fErp);
+}
+
+f32 CIrrOdeDevice::worldGetERP(u32 iWorld) {
+  return dWorldGetERP(GETWORLD(iWorld));
+}
+
+void CIrrOdeDevice::worldSetCFM(u32 iWorld, f32 fCfm) {
+  dWorldSetCFM(GETWORLD(iWorld),fCfm);
+}
+
+f32 CIrrOdeDevice::worldGetCFM(u32 iWorld) {
+  return dWorldGetCFM(GETWORLD(iWorld));
 }
 
 u32 CIrrOdeDevice::jointCreateBallSocket(u32 iWorld) {

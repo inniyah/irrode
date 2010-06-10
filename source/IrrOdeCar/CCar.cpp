@@ -15,7 +15,7 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, c8* sNodeName, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
   m_pCarBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sNodeName));
 
@@ -23,7 +23,6 @@ CCar::CCar(IrrlichtDevice *pDevice, c8* sNodeName, CIrrCC *pCtrl) : CIrrOdeCarSt
 
   //get the two motors that are attached to the rear wheels
   findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
-  printf("%i motor nodes found\n",aNodes.size());
 
   if (aNodes.size()>=2) {
     m_pMotor[0]=dynamic_cast<CIrrOdeMotor *>(aNodes[0]);
@@ -33,7 +32,6 @@ CCar::CCar(IrrlichtDevice *pDevice, c8* sNodeName, CIrrCC *pCtrl) : CIrrOdeCarSt
   aNodes.clear();
   //get the two servos that are attached to the front wheels
   findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_SERVO_ID,aNodes);
-  printf("%i motor servo found\n",aNodes.size());
 
   if (aNodes.size()>=2) {
     m_pServo[0]=dynamic_cast<CIrrOdeServo *>(aNodes[0]);
@@ -74,6 +72,16 @@ void CCar::activate() {
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
+
+  //get the parameters for the camera ...
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(vector3df(8,4  ,0)),
+            up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
+            tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
+
+  //... and apply them to the active camera
+  m_pCam->setPosition(m_pCarBody->getPosition()+pos);
+  m_pCam->setUpVector(up);
+  m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
 }
 
 void CCar::deactivate() {
@@ -109,8 +117,9 @@ u32 CCar::update() {
         //and 45 we calculate the actual steering angle
         m_fActSteer=45.0f-(20.0f)*(v-10.0f)/35.0f;
 
+  bool b=m_pController->get(m_pCtrls[eCarBackview])!=0.0f;
   //get the parameters for the camera ...
-  vector3df pos=m_pCarBody->getRotation().rotationToDirection(vector3df(8,4  ,0)),
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(b?vector3df(-8,4,0):vector3df(8,4  ,0)),
             up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
             tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
 
@@ -118,12 +127,6 @@ u32 CCar::update() {
   m_pCam->setPosition(m_pCarBody->getPosition()+pos);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
-
-  //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
-  if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
-    vector3df t=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(2000,0,0));
-    m_pCarBody->setTorque(t);
-  }
 
   //now we fill the info text with useful information
   wchar_t dummy[0xFF];
@@ -139,24 +142,9 @@ u32 CCar::update() {
 
 //here we have the Irrlicht event receiver
 bool CCar::OnEvent(const SEvent &event) {
-  m_pController->OnEvent(event);
-  if (CIrrOdeCarState::OnEvent(event)) return true;
-
-  if (event.EventType==EET_KEY_INPUT_EVENT) {
-    if (event.KeyInput.PressedDown) {
-      switch (event.KeyInput.Key) {
-        case KEY_KEY_R: {
-          ISceneNode *pRamp=m_pSmgr->getSceneNodeFromName("ramp2");
-          if (pRamp) {
-            CIrrOdeSceneNode::removeTreeFromPhysics(pRamp);
-            pRamp->remove();
-          }
-        }
-        default: break;
-      }
-    }
-  }
-  return false;
+  bool bRet=m_pController->OnEvent(event);
+  bRet|=CIrrOdeCarState::OnEvent(event);
+  return bRet;
 }
 
 bool CCar::onEvent(IIrrOdeEvent *pEvent) {
@@ -195,6 +183,13 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
     if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
       m_bAdaptSteer=!m_bAdaptSteer;
       m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
+    }
+
+    //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
+    if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
+      vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,1.0f,0));
+      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,78,0));
+      //m_pCarBody->setTorque(t);
     }
   }
   return false;

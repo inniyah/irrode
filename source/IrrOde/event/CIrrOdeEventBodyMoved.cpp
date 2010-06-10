@@ -5,7 +5,7 @@ namespace ode {
 
 class CIrrOdeBody;
 
-CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df vPos, vector3df vRot, vector3df vLinVel, vector3df vAngVel) : IIrrOdeEvent(){
+CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos, vector3df &vRot, vector3df &vLinVel, vector3df &vAngVel) : IIrrOdeEvent(){
   m_pBody=pBody;
   m_pTouch=pBody->getTouched();
 

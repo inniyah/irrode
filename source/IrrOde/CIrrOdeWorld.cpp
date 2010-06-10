@@ -312,6 +312,14 @@ void CIrrOdeWorld::frameUpdate() {
 }
 
 void CIrrOdeWorld::step(f32 fTime) {
+  m_pOdeDevice->step(fTime,this);
+}
+
+void CIrrOdeWorld::quickStep(f32 fTime) {
+  m_pOdeDevice->quickStep(fTime,this);
+}
+
+void CIrrOdeWorld::resetCollisionAttributes() {
   list<CIrrOdeBody *>::Iterator it;
   for (it=m_pBodies.begin(); it!=m_pBodies.end(); it++) {
     (*it)->setCollision(false);
@@ -319,16 +327,6 @@ void CIrrOdeWorld::step(f32 fTime) {
     (*it)->setCollisionPoint(vector3df(0.0f,0.0f,0.0f));
     (*it)->setCollisionMaterial(0);
   }
-  m_pOdeDevice->step(fTime,this,m_iJointGroupId);
-}
-
-void CIrrOdeWorld::quickStep(f32 fTime) {
-  list<CIrrOdeBody *>::Iterator it;
-  for (it=m_pBodies.begin(); it!=m_pBodies.end(); it++) {
-    (*it)->setCollision(false);
-    (*it)->setIsTouching(NULL);
-  }
-  m_pOdeDevice->quickStep(fTime,this,m_iJointGroupId);
 }
 
 void CIrrOdeWorld::render() {
@@ -452,12 +450,6 @@ void CIrrOdeWorld::removeFromPhysics() {
   }
 }
 
-void CIrrOdeWorld::resetBodyTouch() {
-  list<CIrrOdeBody *>::Iterator it;
-
-  for (it=m_pBodies.begin(); it!=m_pBodies.end(); it++) (*it)->setIsTouching(NULL);
-}
-
 void CIrrOdeWorld::bodyMoved(CIrrOdeEventBodyMoved *pEvent) {
   CIrrOdeBody *pBody=pEvent->getBody();
   if (pBody==NULL) {
@@ -574,6 +566,20 @@ u32 CIrrOdeWorld::setSurfaceXml(const wchar_t *sName) {
       }
   }
 #endif
+
+void CIrrOdeWorld::setCFM(f32 fCfm) {
+}
+
+void CIrrOdeWorld::setERP(f32 fErp) {
+}
+
+f32 CIrrOdeWorld::getCFM() {
+  return 0.0f;
+}
+
+f32 CIrrOdeWorld::getERP() {
+  return 0.0f;
+}
 
 } //namespace ode
 } //namespace irr
