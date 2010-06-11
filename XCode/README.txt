@@ -34,6 +34,8 @@ b) The irrODE uses getch() in "conio.h" which is not defined in MacOSX. You can
 change the statement "c=getch();" to "std::cin >> c;" and replace "conio.h" by "<iostream>".
 Or you can simply set c to the desired value, f.i. "c='y';".
 
+Remark (Brainsaw): I replaced getch() by std::cin for compatability. Was only present in the IrrOdePlayground demo.
+
 c) you must copy the data folder into the MacOSX folder in order to have the examples 
 find the resource files. Or you can make a symbolic link by terminal:
 go to the MacOSX directory and type "ln -s ../data/ data" to achieve that.

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <conio.h>
+#include <iostream>
 #include <time.h>
 #include <irrlicht.h>
 #include <IrrODE.h>
@@ -279,10 +279,10 @@ int main(int argc, char** argv) {
   printf(  "\t********************************\n\n");
   printf("Use shadows (y/n)? ");
   char c=' ';
-  do { c=getch(); printf("%c",c); } while (c!='y' && c!='n');
+  do { std::cin >> c; printf("%c",c); } while (c!='y' && c!='n');
   bShadows=c=='y';
   printf("\nUse trimesh for terrain (y/n)? ");
-  do { c=getch(); printf("%c",c); } while (c!='y' && c!='n');
+  do { std::cin >> c; printf("%c",c); } while (c!='y' && c!='n');
   bTerrainTrimesh=c=='y';
   printf("\nshadows: %s\nterrain trimesh: %s\n\n",bShadows?"YES":"NO",bTerrainTrimesh?"YES":"NO");
 
