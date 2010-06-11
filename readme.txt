@@ -22,6 +22,7 @@ Thanks for contributions:
 buhatkj (from Irrlicht forum) for helping me with the CIrrOdeGeomHeightfield class
 tecan (from Irrlicht forum) for the Linux adaption of the Code::Blocks projects
 Zurzaza (from Irrlicht forum) for the VC2005 version of the lib
+bluecat (from Irrlicht forum) for the XCode project
 
 Remark: from my development I have found out that the current ODE version 0.11.1 release doesn't work properly
 with the gcc compiler. If you use the debug version everything works fine. I suggest using the statically linked
