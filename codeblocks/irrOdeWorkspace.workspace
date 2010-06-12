@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="IrrODE">
-		<Project filename="irrOde.cbp">
+		<Project filename="irrOde.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="IrrOdEditExample.cbp">
@@ -13,7 +13,7 @@
 		<Project filename="irrOdeMarble.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeCar.cbp" active="1">
+		<Project filename="IrrOdeCar.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="IrrOdeSurfaceEdit.cbp">
