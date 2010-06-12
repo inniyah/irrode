@@ -32,7 +32,7 @@ class CProjectile;
 class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
   protected:
     f32 m_fYaw,m_fPitch,m_fRoll,m_iThrust,m_fThrust;
-    bool m_bLeft,m_bMissileCam,m_bActive;
+    bool m_bLeft,m_bMissileCam;
 
     IGUIStaticText *m_pInfo;
 

@@ -362,6 +362,8 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
 
     virtual void writeConfig(IXMLWriter *pXml);
     virtual void readConfig(IXMLReaderUTF8 *pXml);
+
+    const wchar_t *getSettingsText(u32 iSet);
 };
 
 #endif

@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
   CIrrCC *pController=new CIrrCC(device);
   pController->setSetsCanConflict(false);
   pController->setAllowFKeys(false);
-  pController->setAllowMouse(true);
+  pController->setAllowMouse(false);
   CConfigFileManager::getSharedInstance()->addReader(pController);
   CConfigFileManager::getSharedInstance()->addWriter(pController);
 
@@ -236,12 +236,14 @@ int main(int argc, char** argv) {
   CPlane      *thePlane  =new CPlane     (device             ,pController); aStates.push_back(thePlane);
   CController *theCtrl   =new CController(device             ,pController); aStates.push_back(theCtrl );
 
-  theCar  ->setCtrl((const u32 *)iCtrls[0]);
-  theCar2 ->setCtrl((const u32 *)iCtrls[0]);
-  theCar3 ->setCtrl((const u32 *)iCtrls[0]);
-  theTank ->setCtrl((const u32 *)iCtrls[1]);
-  theHeli ->setCtrl((const u32 *)iCtrls[2]);
-  thePlane->setCtrl((const u32 *)iCtrls[3]);
+  theCar  ->setCtrl((const u32 *)iCtrls[0]); theCar  ->setFpsInfo(pFps);
+  theCar2 ->setCtrl((const u32 *)iCtrls[0]); theCar2 ->setFpsInfo(pFps);
+  theCar3 ->setCtrl((const u32 *)iCtrls[0]); theCar3 ->setFpsInfo(pFps);
+  theTank ->setCtrl((const u32 *)iCtrls[1]); theTank ->setFpsInfo(pFps);
+  theHeli ->setCtrl((const u32 *)iCtrls[2]); theHeli ->setFpsInfo(pFps);
+  thePlane->setCtrl((const u32 *)iCtrls[3]); thePlane->setFpsInfo(pFps);
+
+  theCtrl->setFpsInfo(pFps);
 
   //phyiscs initialization
   CIrrOdeManager::getSharedInstance()->initPhysics();

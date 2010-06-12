@@ -1,7 +1,7 @@
   #include <CController.h>
   #include <irrCC.h>
 
-CController::CController(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Controller Setup","../../data/irrOdeCarHelp.txt",pCtrl) {
+CController::CController(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Controller Setup","../../data/irrOdeCarControllerHelp.txt",pCtrl) {
   m_pTabCtrl=pDevice->getGUIEnvironment()->addTabControl(rect<s32>(5,5,635,475),NULL,true,true,-1);
   IGUITab *pTab[4];
 
@@ -22,6 +22,7 @@ CController::~CController() {
 }
 
 void CController::activate() {
+  m_bActive=true;
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
@@ -30,6 +31,7 @@ void CController::activate() {
 }
 
 void CController::deactivate() {
+  m_bActive=false;
   m_pTabCtrl->setVisible(false);
   m_pDevice->getCursorControl()->setVisible(false);
 }

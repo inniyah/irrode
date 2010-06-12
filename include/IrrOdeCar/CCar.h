@@ -33,8 +33,7 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
     bool m_bBrake,      /*!< is the handbrake active? */
          m_bBoost,      /*!< is the boos button pushed? */
          m_bAdaptSteer, /*!< is the adaptive steer mode active? */
-         m_bHelp,       /*!< is the help screen visible? */
-         m_bActive;
+         m_bHelp;       /*!< is the help screen visible? */
     f32 m_fActSteer;    /*!< the actual steering (-45.0, 0, +45.0) */
     s32 m_iThrottle;    /*!< position of the throttle */
 

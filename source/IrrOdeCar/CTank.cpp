@@ -20,7 +20,6 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
   m_bFire=false;
   m_bFollowTurret=false;
   m_bFollowBullet=false;
-  m_bActive=false;
   m_bFastCollision=true;
 
   m_pCannon=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("cannon"));
@@ -55,6 +54,11 @@ void CTank::activate() {
   m_pCam->setPosition(m_pTankBody->getPosition()+pos);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pTankBody->getPosition()+tgt);
+
+  loadHelpFile();
+  wchar_t s[1024];
+  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(1));
+  m_pHelp->setText(s);
 }
 
 void CTank::deactivate() {

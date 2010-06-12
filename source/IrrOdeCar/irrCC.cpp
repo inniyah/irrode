@@ -838,3 +838,22 @@ void CIrrCC::createFader(u32 idx1, u32 idx2, u32 iStep, f32 fInc) {
   item1->m_fFaderValue=0.0f;
   item2->m_fFaderValue=0.0f;
 }
+
+const wchar_t *CIrrCC::getSettingsText(u32 iSet) {
+  static wchar_t sSettingsText[1024];
+  sSettingsText[0]=L'\0';
+  u32 iLen=0;
+  for (u32 i=0; i<m_aItems.size(); i++) {
+    CIrrCCItem *p=m_aItems[i];
+    if (p->m_iSet==iSet && p->m_sName.size()>iLen) iLen=p->m_sName.size();
+  }
+
+  for (u32 i=0; i<m_aItems.size(); i++) {
+    CIrrCCItem *p=m_aItems[i];
+    if (p->m_iSet==iSet) {
+      IGUIStaticText *t=p->getCtrlText();
+      swprintf(sSettingsText,1023,L"%s%s:\t%s\n",sSettingsText,p->m_sName.c_str(),t->getText());
+    }
+  }
+  return sSettingsText;
+}

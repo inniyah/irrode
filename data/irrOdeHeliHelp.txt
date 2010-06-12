@@ -4,15 +4,9 @@
 
 Welcome to the helicopter scene of IrrODECar, a little demo application using Irrlicht, ODE and the IrrODE wrapper. You can control the helicopter with the following keys:
  
- F1: toggle help screen
- Cursor Left/Right: Roll
- Cursor Up/Down: Pitch
- A/D: Yaw
- W: increase engine power
- S: decrease engine power
- SPACE: fire missile
- C: toggle follow missile camera
- 
+toggle help screen: KEY_F1
+%sreturn to vehicle selection menu: KEY_Tab
+
 Some notes
 
 I know, I know ... this is fun but not really realistic ... but realism was not the main goal when I decided to integrate a helicopter.

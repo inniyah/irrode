@@ -39,8 +39,7 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
          m_bFollowTurret,
          m_bFastCollision,
          m_bFire,
-         m_bFollowBullet,
-         m_bActive;
+         m_bFollowBullet;
     ITexture *m_pTextures[2];
 
     IGUIStaticText *m_pInfo;

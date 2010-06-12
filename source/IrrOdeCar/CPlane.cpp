@@ -48,7 +48,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
   m_pInfo->setDrawBackground(true);
   m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
   m_pInfo->setVisible(false);
-  m_bActive=false;
 }
 
 CPlane::~CPlane() {
@@ -71,6 +70,11 @@ void CPlane::activate() {
   m_pCam->setPosition(m_pPlaneBody->getPosition()+pos);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pPlaneBody->getPosition()+tgt);
+
+  loadHelpFile();
+  wchar_t s[1024];
+  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(1));
+  m_pHelp->setText(s);
 }
 
 void CPlane::deactivate() {

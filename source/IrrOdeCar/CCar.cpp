@@ -42,7 +42,6 @@ CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOd
   m_bHelp=false;
   m_bBrake=false;
   m_bBoost=false;
-  m_bActive=false;
   m_bAdaptSteer=true;
   m_iThrottle=0;
 
@@ -82,6 +81,11 @@ void CCar::activate() {
   m_pCam->setPosition(m_pCarBody->getPosition()+pos);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
+
+  loadHelpFile();
+  wchar_t s[1024];
+  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(0));
+  m_pHelp->setText(s);
 }
 
 void CCar::deactivate() {

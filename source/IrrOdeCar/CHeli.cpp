@@ -26,8 +26,6 @@ CHeli::CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
   m_fPitch=0;
   m_fRoll=0;
   m_fYaw=0;
-
-  m_bActive=false;
 }
 
 CHeli::~CHeli() {
@@ -48,6 +46,11 @@ void CHeli::activate() {
   m_pCam->setPosition(m_pHeliBody->getPosition()+pos);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pHeliBody->getPosition()+tgt);
+
+  loadHelpFile();
+  wchar_t s[1024];
+  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
+  m_pHelp->setText(s);
 }
 
 void CHeli::deactivate() {

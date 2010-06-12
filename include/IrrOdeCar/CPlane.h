@@ -37,8 +37,7 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     s32 m_iThrustDir;
     f32 m_fThrust;
     bool m_bFollowBombCam,
-         m_bBackView,
-         m_bActive;
+         m_bBackView;
 
     IGUIStaticText *m_pInfo;
 
