@@ -181,12 +181,12 @@ class myReceiver : public IEventReceiver {
       m_pStVMaxLin   ->setVisible(m_pCbDamps  ->isChecked() && bParam);
       m_pStVMaxAng   ->setVisible(m_pCbDamps  ->isChecked() && bParam);
 
-      bool b=m_pEdVMaxLin->getText()!=L"" && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f && bParam;
+      bool b=wcscmp(m_pEdVMaxLin->getText(),L"") && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f && bParam;
 
       m_pStAddDampLin->setVisible(m_pCbDamps->isChecked() && b);
       m_pEdAddDampLin->setVisible(m_pCbDamps->isChecked() && b);
 
-      b=m_pEdVMaxAng->getText()!=L"" && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f && bParam;
+      b=wcscmp(m_pEdVMaxAng->getText(),L"") && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f && bParam;
 
       m_pStAddDampAng->setVisible(m_pCbDamps->isChecked() && b);
       m_pEdAddDampAng->setVisible(m_pCbDamps->isChecked() && b);
@@ -468,12 +468,12 @@ class myReceiver : public IEventReceiver {
             m_pStVMaxLin   ->setVisible(b);
             m_pStVMaxAng   ->setVisible(b);
 
-            bool b2=m_pEdVMaxLin->getText()!=L"" && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f;
+            bool b2=wcscmp(m_pEdVMaxLin->getText(),L"") && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f;
 
             m_pStAddDampLin->setVisible(m_pCbDamps->isChecked() && b);
             m_pEdAddDampLin->setVisible(m_pCbDamps->isChecked() && b);
 
-            b2=m_pEdVMaxAng->getText()!=L"" && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f;
+            b2=wcscmp(m_pEdVMaxAng->getText(),L"") && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f;
 
             m_pStAddDampAng->setVisible(m_pCbDamps->isChecked() && b);
             m_pEdAddDampAng->setVisible(m_pCbDamps->isChecked() && b);
@@ -510,7 +510,7 @@ class myReceiver : public IEventReceiver {
             case eEdLinDamp  : m_pActive->setLinearDamping (f); break;
             case eEdAngDamp  : m_pActive->setAngularDamping(f); break;
             case eVMaxLin:
-              b=m_pEdVMaxLin->getText()!=L"" && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f;
+              b=wcscmp(m_pEdVMaxLin->getText(),L"") && atof(stringc(m_pEdVMaxLin->getText()).c_str())!=0.0f;
               m_pStAddDampLin->setVisible(b);
               m_pEdAddDampLin->setVisible(b);
               f2=atof(stringc(stringw(m_pEdAddDampLin->getText())).c_str());
@@ -518,7 +518,7 @@ class myReceiver : public IEventReceiver {
               break;
 
             case eVMaxAng:
-              b=m_pEdVMaxAng->getText()!=L"" && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f;
+              b=wcscmp(m_pEdVMaxAng->getText(),L"") && atof(stringc(m_pEdVMaxAng->getText()).c_str())!=0.0f;
               m_pStAddDampAng->setVisible(b);
               m_pEdAddDampAng->setVisible(b);
               f2=atof(stringc(stringw(m_pEdAddDampAng->getText())).c_str());
