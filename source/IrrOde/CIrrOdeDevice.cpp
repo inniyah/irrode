@@ -372,6 +372,10 @@ dGeomID CIrrOdeDevice::getGeomId(u32 iGeom) {
   return GETGEOM(iGeom);
 }
 
+dBodyID CIrrOdeDevice::getBodyId(u32 iBody) {
+  return GETBODY(iBody);
+}
+
 dJointGroupID CIrrOdeDevice::getJGroupId(u32 iJGroup) {
   return GETJGROUP(iJGroup);
 }
@@ -388,26 +392,14 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
   if (iMovedBody) {
     CIrrOdeBody *theBody=(CIrrOdeBody *)dBodyGetData(iMovedBody);
 
+    const dReal *pOdeRot=dBodyGetQuaternion(pOdeDevice->getBodyId(theBody->getBodyId())),
+                *pOdePos=dBodyGetPosition(pOdeDevice->getBodyId(theBody->getBodyId()));
+
     irr::core::vector3df pos;
     irr::core::vector3df rot;
 
-    CIrrOdeGeom *theGeom=theBody->getFirstGeom();
-
-    while (theGeom) {
-      if(theGeom!=0){
-        // get the new position of the ODE geom
-        dReal* ode_pos=(dReal*)dGeomGetPosition(pOdeDevice->getGeomId(theGeom->getGeomId()));
-        // set the position of the scenenode
-        pos.set((irr::f32)ode_pos[0],(irr::f32)ode_pos[1],(irr::f32)ode_pos[2]);
-
-        // get the rotation quaternion
-        dQuaternion result;
-        dGeomGetQuaternion(pOdeDevice->getGeomId(theGeom->getGeomId()), result);
-        // convert it to eulerangles
-        quaternionToEuler(result,rot);
-      }
-      theGeom=theBody->getNextGeom(theGeom);
-    }
+    quaternionToEuler(pOdeRot,rot);
+    VEC2IRR(pOdePos,pos);
 
     theBody->updateAbsolutePosition();
     theBody->bodyMoved(pos);
@@ -1094,6 +1086,42 @@ void CIrrOdeDevice::bodySetPosition(u32 iBody, vector3df pos) {
   if (iBody) dBodySetPosition(GETBODY(iBody),pos.X,pos.Y,pos.Z);
 }
 
+vector3df CIrrOdeDevice::bodyGetPosition(u32 iBody) {
+  static vector3df s_vPos=vector3df(0,0,0);
+  if (iBody) {
+    const dReal *pos=dBodyGetPosition(GETBODY(iBody));
+    VEC2IRR(pos,s_vPos);
+  }
+  return s_vPos;
+}
+
+vector3df CIrrOdeDevice::bodyGetRotation(u32 iBody) {
+  static vector3df s_vRot=vector3df(0,0,0);
+  if (iBody) {
+    //const dReal *quat;
+    //quat=dBodyGetQuaternion(GETBODY(iBody));
+    //quaternionToEuler(quat,s_vRot);
+    const dReal *bMat=dBodyGetRotation(GETBODY(iBody));
+    irr::core::CMatrix4<f32> cResult;
+
+    cResult[0] = bMat[0];
+    cResult[1] = bMat[4];
+    cResult[2] = bMat[8];
+    cResult[3] = 0;
+    cResult[4] = bMat[1];
+    cResult[5] = bMat[5];
+    cResult[6] = bMat[9];
+    cResult[7] = 0;
+    cResult[8] = bMat[2];
+    cResult[9] = bMat[6];
+    cResult[10] = bMat[10];
+    cResult[11] = 0;
+
+    s_vRot=cResult.getRotationDegrees();
+  }
+  return s_vRot;
+}
+
 void CIrrOdeDevice::bodySetQuaternion(u32 iBody, vector3df rot) {
   if (iBody) {
     dQuaternion q;
@@ -1315,7 +1343,7 @@ vector3df CIrrOdeDevice::bodyGetPointVel(u32 iBody, vector3df vPos) {
   if (iBody) {
     dVector3 v,p;
     IRR2VEC(vPos,p);
-    dBodyGetRelPointPos(GETBODY(iBody),p[0],p[1],p[2],v);
+    dBodyGetRelPointVel(GETBODY(iBody),p[0],p[1],p[2],v);
     VEC2IRR(v,vRelPointPos);
   }
   return vRelPointPos;
@@ -1335,10 +1363,30 @@ vector3df CIrrOdeDevice::bodyGetRelPointPos(u32 iBody, vector3df vPos) {
   static vector3df vPointVel=vector3df(0,0,0);
   if (iBody) {
     dVector3 v;
-    dBodyGetPointVel(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
+    dBodyGetRelPointPos(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
     VEC2IRR(v,vPointVel);
   }
   return vPointVel;
+}
+
+vector3df CIrrOdeDevice::bodyGetPosRelPoint(u32 iBody, vector3df vPos) {
+  static vector3df vRelPos=vector3df(0,0,0);
+  if (iBody) {
+    dVector3 v;
+    dBodyGetPosRelPoint(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
+    VEC2IRR(v,vRelPos);
+  }
+  return vRelPos;
+}
+
+vector3df CIrrOdeDevice::bodyVectorFromWorld(u32 iBody, vector3df vPos) {
+  static vector3df vWorldPos=vector3df(0,0,0);
+  if (iBody) {
+    dVector3 v;
+    dBodyVectorFromWorld(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
+    VEC2IRR(v,vWorldPos);
+  }
+  return vWorldPos;
 }
 
 void CIrrOdeDevice::bodySetMass(u32 iBody, u32 iMass) {

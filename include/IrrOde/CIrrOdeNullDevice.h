@@ -157,6 +157,8 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual u32 bodyCreate(u32 iWorld) { return 0; }
     virtual void bodyDestroy(u32 iBody) { }
     virtual void bodySetPosition(u32 iBody, vector3df pos) { }
+    virtual vector3df bodyGetPosition(u32 iBody) { _VEC; }
+    virtual vector3df bodyGetRotation(u32 iBody) { _VEC; }
     virtual void bodySetQuaternion(u32 iBody, vector3df rot) { }
     virtual void bodySetData(u32 iBody, void *pData) { }
     virtual void bodySetLinearDamping(u32 iBody, f32 f) { }
@@ -201,6 +203,8 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual vector3df bodyGetPointVel(u32 iBody, vector3df vPos) { _VEC; }
     virtual vector3df bodyGetRelPointVel(u32 iBody, vector3df vPos) { _VEC; }
     virtual vector3df bodyGetRelPointPos(u32 iBody, vector3df vPos) { _VEC; }
+    virtual vector3df bodyGetPosRelPoint(u32 iBody, vector3df vPos) { _VEC; }
+    virtual vector3df bodyVectorFromWorld(u32 iBody, vector3df vPos) { _VEC; }
 
     virtual void bodySetMass(u32 iBody, u32 iMass) { }
 

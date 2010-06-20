@@ -34,7 +34,6 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
     vector3df m_cCenterOfGravity; /**< the geom's center of gravity    */
     vector3df m_cInertia1;
     vector3df m_cInertia2;
-    bool m_bSurfaceMaster;
     vector3df m_cOffsetPos;
     vector3df m_cOffsetRot;
 
@@ -137,8 +136,6 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 
     virtual void initPhysics();
 
-    void setSurfaceMaster(bool b);
-    bool isSurfaceMaster();
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 

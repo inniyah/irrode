@@ -66,6 +66,7 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     u32 m_iStep;
 
     dGeomID getGeomId(u32 iGeom);
+    dBodyID getBodyId(u32 iBody);
     dJointGroupID getJGroupId(u32 iJGroup);
 
     static void convertToSurfaceParameters(dSurfaceParameters *pOde, CIrrOdeSurfaceParameters *pIrr);
@@ -221,6 +222,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual u32 bodyCreate(u32 iWorld);
     virtual void bodyDestroy(u32 iBody);
     virtual void bodySetPosition(u32 iBody, vector3df pos);
+    virtual vector3df bodyGetPosition(u32 iBody);
+    virtual vector3df bodyGetRotation(u32 iBody);
     virtual void bodySetQuaternion(u32 iBody, vector3df rot);
     virtual void bodySetData(u32 iBody, void *pData);
     virtual void bodySetLinearDamping(u32 iBody, f32 f);
@@ -265,6 +268,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual vector3df bodyGetPointVel(u32 iBody, vector3df vPos);
     virtual vector3df bodyGetRelPointVel(u32 iBody, vector3df vPos);
     virtual vector3df bodyGetRelPointPos(u32 iBody, vector3df vPos);
+    virtual vector3df bodyGetPosRelPoint(u32 iBody, vector3df vPos);
+    virtual vector3df bodyVectorFromWorld(u32 iBody, vector3df vPos);
 
     virtual void bodySetMass(u32 iBody, u32 iMass);
 

@@ -214,6 +214,11 @@ class CIrrOdeBody : public CIrrOdeDampable {
     void removeStepMotor(IIrrOdeStepMotor *p);
 
     void setOdeRotation(vector3df vRot);
+
+    vector3df getPosRelPoint(vector3df vPos);
+    vector3df getVectorFromWorld(vector3df vPos);
+
+    void getOdeRotation(vector3df &cRot);
 };
 
 } //namespace ode

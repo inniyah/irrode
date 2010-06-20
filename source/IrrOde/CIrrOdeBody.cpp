@@ -617,7 +617,10 @@ void CIrrOdeBody::setPosition(const vector3df &newPos) {
 void CIrrOdeBody::setRotation(const vector3df &newRot) {
   ISceneNode::setRotation(newRot);
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
-  if (!m_bPhysicsInitialized) updateAbsolutePosition();
+  if (!m_bPhysicsInitialized)
+    updateAbsolutePosition();
+  else
+    m_pOdeDevice->bodySetQuaternion(m_iBodyId,newRot);
 }
 
 /**
@@ -896,6 +899,22 @@ void CIrrOdeBody::addStepMotor(IIrrOdeStepMotor *pMotor) {
 void CIrrOdeBody::removeStepMotor(IIrrOdeStepMotor *pMotor) {
   list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
+}
+
+vector3df CIrrOdeBody::getPosRelPoint(vector3df vPos) {
+  static vector3df v=vector3df(0,0,0);
+  v=m_pOdeDevice->bodyGetPosRelPoint(m_iBodyId,vPos);
+  return v;
+}
+
+vector3df CIrrOdeBody::getVectorFromWorld(vector3df vPos) {
+  static vector3df v=vector3df(0,0,0);
+  v=m_pOdeDevice->bodyVectorFromWorld(m_iBodyId,vPos);
+  return v;
+}
+
+void CIrrOdeBody::getOdeRotation(vector3df &cRot) {
+  cRot=m_pOdeDevice->bodyGetRotation(m_iBodyId);
 }
 
 } //namespace ode

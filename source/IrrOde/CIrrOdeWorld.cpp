@@ -102,22 +102,6 @@ void CIrrOdeWorld::initPhysics() {
     #endif
     CIrrOdeGeom *pGeom=(*i);
     pGeom->initPhysics();
-
-    if (pGeom->isSurfaceMaster()) {
-      #ifdef _TRACE_INIT_PHYSICS
-        printf("CIrrOdeWorld::initPhysics: \"%s\" surface master of ODE geom class \"%s\"\n",pGeom->getName(),pGeom->getOdeClassname().c_str());
-      #endif
-      for (i2=m_pGeoms.begin(); i2!=m_pGeoms.end(); i2++)
-        if (*i!=*i2) {
-          CIrrOdeGeom *g2=(*i2);
-          if (pGeom->getOdeClassname()==g2->getOdeClassname()) {
-            #ifdef _TRACE_INIT_PHYSICS
-              printf("CIrrOdeWorld::initPhysics: setting surface parameters of \"%s\"\n",g2->getName());
-            #endif
-            pGeom->copyParams(g2,true);
-          }
-        }
-    }
   }
 
   list<CIrrOdeBody *>::Iterator b,ib2;
@@ -568,17 +552,19 @@ u32 CIrrOdeWorld::setSurfaceXml(const wchar_t *sName) {
 #endif
 
 void CIrrOdeWorld::setCFM(f32 fCfm) {
+  m_pOdeDevice->worldSetCFM(m_iWorldId,fCfm);
 }
 
 void CIrrOdeWorld::setERP(f32 fErp) {
+  m_pOdeDevice->worldSetERP(m_iWorldId,fErp);
 }
 
 f32 CIrrOdeWorld::getCFM() {
-  return 0.0f;
+  return m_pOdeDevice->worldGetCFM(m_iWorldId);
 }
 
 f32 CIrrOdeWorld::getERP() {
-  return 0.0f;
+  return m_pOdeDevice->worldGetERP(m_iWorldId);
 }
 
 } //namespace ode

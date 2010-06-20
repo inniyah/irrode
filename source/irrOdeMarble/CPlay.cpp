@@ -132,14 +132,11 @@ int CPlay::update() {
   u32 iTime=m_pTimer->getTime()-m_iStartTime;
   position2di pos;
 
-  s32 ix=0,iy=0;
+  irr::ode::CIrrOdeJointSlider *pSlider=reinterpret_cast<CIrrOdeJointSlider *>(m_pSceneManager->getSceneNodeFromName("slider"));
+
   switch (m_iGameState) {
     //game in progress?
     case _STATE_PLAYING:
-      //first we get the movemeent of the mouse
-      pos=m_pDevice->getCursorControl()->getPosition();
-      ix=pos.X-320,iy=pos.Y-200;
-      m_pDevice->getCursorControl()->setPosition(position2di(320,200));
       //now we update the text field that shows the time that has passed since game start
       if (m_iCheckPoint>=0 && (u32)m_iCheckPoint<m_aCheckText.size()) {
         IGUIStaticText *t=m_aCheckText[m_iCheckPoint];
@@ -158,42 +155,6 @@ int CPlay::update() {
 
       //step the simulation
       CIrrOdeManager::getSharedInstance()->step();
-
-      //if the right mouse button is pressed we focus the camera on the next checkpoint
-      if (m_bMouseRght) {
-        if (m_pThisCheckpoint!=m_lCheckpoints.end()) {
-          CIrrOdeGeom *ncp=*m_pThisCheckpoint;
-          vector3df pCamTarget=ncp->getAbsolutePosition();
-
-          m_pCam->setPosition(m_pMarble->getPosition()-8*(pCamTarget-m_pMarble->getPosition()).normalize()+vector3df(0,4,0));
-          m_pCam->setTarget(pCamTarget);
-        }
-      }
-      else {
-        if (m_bMouseLeft) {
-          //If the left mouse button is pressed the user wants to control the camera with mouse movement
-          m_fCamRot-=ix;
-          m_fCamHi-=iy;
-
-          if (m_fCamHi> _MAX_CAM_HI) m_fCamHi= _MAX_CAM_HI;
-          if (m_fCamHi<-_MAX_CAM_HI) m_fCamHi=-_MAX_CAM_HI;
-        }
-        else {
-          //if no mouse button is pressed the mouse movement is converted into an impulse that is added to the marble
-          f32 fMoveX=15*(f32)ix,fMoveY=15*(f32)iy;
-          vector3df t=vector3df(fMoveX*sin(m_fCamRot*GRAD_PI2)+fMoveY*cos(m_fCamRot*GRAD_PI2),0,
-                                fMoveX*cos(m_fCamRot*GRAD_PI2)-fMoveY*sin(m_fCamRot*GRAD_PI2));
-          m_pMarble->addTorque(t);
-        }
-
-        //now we calculate the camera's position and update the camera
-        f32 fCamX=(f32)(m_fCamDist*sin(m_fCamRot*GRAD_PI2)*cos(m_fCamHi*GRAD_PI2)),
-            fCamY=(f32)(m_fCamDist*sin(m_fCamHi*GRAD_PI2)),
-            fCamZ=(f32)(m_fCamDist*cos(m_fCamRot*GRAD_PI2)*cos(m_fCamHi*GRAD_PI2));
-
-        m_pCam->setPosition(m_pMarble->getPosition()+vector3df(fCamX,fCamY,fCamZ));
-        m_pCam->setTarget(m_pMarble->getPosition());
-      }
       break;
 
     //if the game is over we show the "game over" image and wait for 2 seconds until we proceed to the highscore
@@ -290,6 +251,51 @@ bool CPlay::onEvent(IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    //if the right mouse button is pressed we focus the camera on the next checkpoint
+    if (m_bMouseRght) {
+      if (m_pThisCheckpoint!=m_lCheckpoints.end()) {
+        CIrrOdeGeom *ncp=*m_pThisCheckpoint;
+        vector3df pCamTarget=ncp->getAbsolutePosition();
+
+        m_pCam->setPosition(m_pMarble->getPosition()-8*(pCamTarget-m_pMarble->getPosition()).normalize()+vector3df(0,4,0));
+        m_pCam->setTarget(pCamTarget);
+      }
+    }
+    else {
+      s32 ix=0,iy=0;
+
+      //first we get the movemeent of the mouse
+      vector2di pos=m_pDevice->getCursorControl()->getPosition();
+      ix=pos.X-320,iy=pos.Y-200;
+      m_pDevice->getCursorControl()->setPosition(position2di(320,200));
+
+      if (m_bMouseLeft) {
+        //If the left mouse button is pressed the user wants to control the camera with mouse movement
+        m_fCamRot-=ix;
+        m_fCamHi-=iy;
+
+        if (m_fCamHi> _MAX_CAM_HI) m_fCamHi= _MAX_CAM_HI;
+        if (m_fCamHi<-_MAX_CAM_HI) m_fCamHi=-_MAX_CAM_HI;
+      }
+      else {
+        //if no mouse button is pressed the mouse movement is converted into an impulse that is added to the marble
+        f32 fMoveX=(f32)ix,fMoveY=(f32)iy;
+        vector3df t=vector3df(10.0f*(fMoveX*sin(m_fCamRot*GRAD_PI2)+fMoveY*cos(m_fCamRot*GRAD_PI2)),0,
+                              10.0f*(fMoveX*cos(m_fCamRot*GRAD_PI2)-fMoveY*sin(m_fCamRot*GRAD_PI2)));
+        m_pMarble->addTorque(t);
+      }
+
+      //now we calculate the camera's position and update the camera
+      f32 fCamX=(f32)(m_fCamDist*sin(m_fCamRot*GRAD_PI2)*cos(m_fCamHi*GRAD_PI2)),
+          fCamY=(f32)(m_fCamDist*sin(m_fCamHi*GRAD_PI2)),
+          fCamZ=(f32)(m_fCamDist*cos(m_fCamRot*GRAD_PI2)*cos(m_fCamHi*GRAD_PI2));
+
+      m_pCam->setPosition(m_pMarble->getPosition()+vector3df(fCamX,fCamY,fCamZ));
+      m_pCam->setTarget(m_pMarble->getPosition());
+    }
+  }
+
   return false;
 }
 
@@ -298,5 +304,5 @@ bool CPlay::onEvent(IIrrOdeEvent *pEvent) {
  * collision events
  */
 bool CPlay::handlesEvent(IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved;
+  return pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved || pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }

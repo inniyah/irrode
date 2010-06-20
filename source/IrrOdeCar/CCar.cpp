@@ -191,7 +191,7 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
 
     //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
     if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
-      vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,1.0f,0));
+      vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
       m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,78,0));
       //m_pCarBody->setTorque(t);
     }

@@ -35,7 +35,6 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
   pParams->setStatic(m_pBody==NULL);
   m_aParams.push_back(pParams);
 
-  m_bSurfaceMaster=false;
   m_bCollide=true;
 
   #ifndef _IRREDIT_PLUGIN
@@ -126,7 +125,6 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
   out->addVector3d("Inertia_2"      ,m_cInertia2       );
   out->addVector3d("MassTranslation",m_cMassTranslate  );
 
-  out->addBool("SurfaceMaster",m_bSurfaceMaster);
   out->addBool("collides",m_bCollide);
 }
 
@@ -137,8 +135,6 @@ void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
   }
 
   m_fMass=in->getAttributeAsFloat("Mass");
-
-  m_bSurfaceMaster=in->existsAttribute("SurfaceMaster")?in->getAttributeAsBool("SurfaceMaster"):false;
 
   m_cCenterOfGravity=in->getAttributeAsVector3d("CenterOfGravity");
   m_cInertia1       =in->getAttributeAsVector3d("Inertia_1"      );
@@ -188,14 +184,6 @@ void CIrrOdeGeom::initPhysics() {
 
   for (u32 i=0; i<m_aParams.size(); i++) m_aParams[i]->initPhysics();
   CIrrOdeSceneNode::initPhysics();
-}
-
-void CIrrOdeGeom::setSurfaceMaster(bool b) {
-  m_bSurfaceMaster=b;
-}
-
-bool CIrrOdeGeom::isSurfaceMaster() {
-  return m_bSurfaceMaster;
 }
 
 void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {

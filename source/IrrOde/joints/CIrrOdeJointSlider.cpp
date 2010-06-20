@@ -81,7 +81,7 @@ void CIrrOdeJointSlider::initPhysics() {
 
   if (m_bParamChanged[CIrrOdeJoint::eHiStop][0] && m_bParamChanged[CIrrOdeJoint::eLoStop][0]) {
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);
-    setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eLoStop][0]);
+    setParameter(0,CIrrOdeJoint::eLoStop,m_fParam[CIrrOdeJoint::eLoStop][0]);
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);
   }
 }

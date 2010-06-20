@@ -202,6 +202,8 @@ class IIrrOdeDevice {
     virtual u32 bodyCreate(u32 iWorld)=0;
     virtual void bodyDestroy(u32 iBody)=0;
     virtual void bodySetPosition(u32 iBody, vector3df pos)=0;
+    virtual vector3df bodyGetPosition(u32 iBody)=0;
+    virtual vector3df bodyGetRotation(u32 iBody)=0;
     virtual void bodySetQuaternion(u32 iBody, vector3df rot)=0;
     virtual void bodySetData(u32 iBody, void *pData)=0;
     virtual void bodySetLinearDamping(u32 iBody, f32 f)=0;
@@ -246,6 +248,8 @@ class IIrrOdeDevice {
     virtual vector3df bodyGetPointVel(u32 iBody, vector3df vPos)=0;
     virtual vector3df bodyGetRelPointVel(u32 iBody, vector3df vPos)=0;
     virtual vector3df bodyGetRelPointPos(u32 iBody, vector3df vPos)=0;
+    virtual vector3df bodyGetPosRelPoint(u32 iBody, vector3df vPos)=0;
+    virtual vector3df bodyVectorFromWorld(u32 iBody, vector3df vPos)=0;
 
     virtual void bodySetMass(u32 iBody, u32 iMass)=0;
 
