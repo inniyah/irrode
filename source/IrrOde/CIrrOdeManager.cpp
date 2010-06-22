@@ -341,5 +341,22 @@ void CIrrOdeManager::sceneNodeInitialized() {
   }
 }
 
+CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) {
+	for (u32 i=0; i<m_pWorlds.size(); i++) { 
+		CIrrOdeWorld *p=m_pWorlds[i];
+		if (!wcscmp(sName,p->getParamName())) return p; 
+	}
+
+	list<CIrrOdeSceneNode *>::Iterator it;
+	for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++) {
+		if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
+			CIrrOdeBody *p=reinterpret_cast<CIrrOdeBody *>(*it);
+      if (!wcscmp(sName,p->getParamName()) && !p->doesUseDefined()) return p;
+		}
+	}
+
+	return NULL;
+}
+
 } //namespace ode
 } //namespace irr

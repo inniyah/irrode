@@ -36,7 +36,7 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_bParamMaster=false;
   m_pTouching=NULL;
   m_bDampingChanged=false;
-
+	
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
 	  c8 sFileName[1024];
@@ -666,8 +666,9 @@ list<CIrrOdeJoint *> CIrrOdeBody::getJoints() {
 }
 
 void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
-  CIrrOdeDampable::serializeAttributes(out,options);
-  out->addBool("Enabled",m_bEnabled);
+	CIrrOdeDampable::serializeAttributes(out,options);
+
+	out->addBool("Enabled",m_bEnabled);
   out->addBool("ParamMaster",m_bParamMaster);
 
   out->addInt ("FiniteRotationMode",m_iFiniteRotationMode);
@@ -676,8 +677,9 @@ void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
 }
 
 void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
-  CIrrOdeDampable::deserializeAttributes(in,options);
-  m_bEnabled=in->getAttributeAsBool("Enabled");
+	CIrrOdeDampable::deserializeAttributes(in,options);
+
+	m_bEnabled=in->getAttributeAsBool("Enabled");
   m_bParamMaster=in->getAttributeAsBool("ParamMaster");
 
   m_iFiniteRotationMode=in->getAttributeAsInt ("FiniteRotationMode");

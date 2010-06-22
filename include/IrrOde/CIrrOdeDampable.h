@@ -34,6 +34,8 @@ class CIrrOdeDampable : public CIrrOdeSceneNode {
         m_fAutoDisableLinearThreshold,m_fAutoDisableAngularThreshold,m_fAutoDisableTime,
         m_fMaxAngularSpeed;
     s32 m_iAutoDisableSteps,m_iAutoDisableFlag;
+		stringw m_sParamName;
+		bool m_bUseDefined;
 
   public:
     CIrrOdeDampable(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
@@ -69,6 +71,9 @@ class CIrrOdeDampable : public CIrrOdeSceneNode {
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
+
+		const wchar_t *getParamName() { return m_sParamName.c_str(); }
+		const bool doesUseDefined() { return m_bUseDefined; }
 };
 
 } //namespace ode

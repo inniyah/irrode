@@ -132,8 +132,6 @@ int CPlay::update() {
   u32 iTime=m_pTimer->getTime()-m_iStartTime;
   position2di pos;
 
-  irr::ode::CIrrOdeJointSlider *pSlider=reinterpret_cast<CIrrOdeJointSlider *>(m_pSceneManager->getSceneNodeFromName("slider"));
-
   switch (m_iGameState) {
     //game in progress?
     case _STATE_PLAYING:

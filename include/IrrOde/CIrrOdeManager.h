@@ -7,6 +7,7 @@ namespace irr {
 namespace ode {
 
 class CIrrOdeSurfaceParameters;
+class CIrrOdeDampable;
 class CIrrOdeGeom;
 class CIrrOdeWorld;
 class IIrrOdeEventListener;
@@ -101,6 +102,8 @@ class CIrrOdeManager {
 		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
 
 		void sceneNodeInitialized();
+
+		CIrrOdeDampable *getDampableWithParamName(const wchar_t *sName);
 };
 
 } //namespace ode

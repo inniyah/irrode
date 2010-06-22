@@ -1,4 +1,5 @@
   #include <CIrrOdeDampable.h>
+	#include <CIrrOdeManager.h>
 
 namespace irr {
 namespace ode {
@@ -21,6 +22,9 @@ CIrrOdeDampable::CIrrOdeDampable(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_iAutoDisableSteps           =_DEFAULT_AUTO_DISABLE_STEPS            ;
   m_iAutoDisableFlag            =_DEFAULT_AUTO_DISABLE_FLAG             ;
   m_fMaxAngularSpeed            =_DEFAULT_MAX_ANGULAR_SPEED             ;
+
+	m_sParamName=L"";
+	m_bUseDefined=false;
 }
 
 CIrrOdeDampable::~CIrrOdeDampable() {
@@ -32,33 +36,62 @@ CIrrOdeDampable::~CIrrOdeDampable() {
 void CIrrOdeDampable::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
-  out->addInt("AutoDisableSteps",m_iAutoDisableSteps);
-  out->addInt("AutoDisableFlag" ,m_iAutoDisableFlag );
+	out->addString("paramName",stringc(m_sParamName).c_str());
+	out->addBool("useDefined",m_bUseDefined);
 
-  out->addFloat("LinearDamping"              ,m_fDampingLinear              );
-  out->addFloat("AngularDamping"             ,m_fDampingAngular             );
-  out->addFloat("LinearDampingThreshold"     ,m_fDampingLinearThreshold     );
-  out->addFloat("AngularDampingThreshold"    ,m_fDampingAngularThreshold    );
-  out->addFloat("AutoDisableLinearThreshold" ,m_fAutoDisableLinearThreshold );
-  out->addFloat("AutoDisableAngularThreshold",m_fAutoDisableAngularThreshold);
-  out->addFloat("AutoDisableTime"            ,m_fAutoDisableTime            );
-  out->addFloat("MaxAngularSpeed"            ,m_fMaxAngularSpeed            );
+	CIrrOdeDampable *p=NULL;
+	if (m_bUseDefined) p=CIrrOdeManager::getSharedInstance()->getDampableWithParamName(m_sParamName.c_str());
+
+	if (p==NULL || p==this) {
+		out->addInt("AutoDisableSteps",m_iAutoDisableSteps);
+		out->addInt("AutoDisableFlag" ,m_iAutoDisableFlag );
+
+		out->addFloat("LinearDamping"              ,m_fDampingLinear              );
+		out->addFloat("AngularDamping"             ,m_fDampingAngular             );
+		out->addFloat("LinearDampingThreshold"     ,m_fDampingLinearThreshold     );
+		out->addFloat("AngularDampingThreshold"    ,m_fDampingAngularThreshold    );
+		out->addFloat("AutoDisableLinearThreshold" ,m_fAutoDisableLinearThreshold );
+		out->addFloat("AutoDisableAngularThreshold",m_fAutoDisableAngularThreshold);
+		out->addFloat("AutoDisableTime"            ,m_fAutoDisableTime            );
+		out->addFloat("MaxAngularSpeed"            ,m_fMaxAngularSpeed            );
+	}
 }
 
 void CIrrOdeDampable::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
-  m_iAutoDisableSteps=in->getAttributeAsInt("AutoDisableSteps");
-  m_iAutoDisableFlag =in->getAttributeAsInt("AutoDisableFlag" );
+	m_sParamName=in->getAttributeAsString("paramName");
+	m_bUseDefined=in->getAttributeAsBool("useDefined");
 
-  m_fDampingLinear              =in->getAttributeAsFloat("LinearDamping"              );
-  m_fDampingAngular             =in->getAttributeAsFloat("AngularDamping"             );
-  m_fDampingLinearThreshold     =in->getAttributeAsFloat("LinearDampingThreshold"     );
-  m_fDampingAngularThreshold    =in->getAttributeAsFloat("AngularDampingThreshold"    );
-  m_fAutoDisableLinearThreshold =in->getAttributeAsFloat("AutoDisableLinearThreshold" );
-  m_fAutoDisableAngularThreshold=in->getAttributeAsFloat("AutoDisableAngularThreshold");
-  m_fAutoDisableTime            =in->getAttributeAsFloat("AutoDisableTime"            );
-  m_fMaxAngularSpeed            =in->getAttributeAsFloat("MaxAngularSpeed"            );
+	CIrrOdeDampable *p=NULL;
+	if (m_bUseDefined) p=CIrrOdeManager::getSharedInstance()->getDampableWithParamName(m_sParamName.c_str());
+
+	if (p!=NULL && p!=this) {
+		m_iAutoDisableSteps=p->getAutoDisableSteps();
+		m_iAutoDisableFlag =p->getAutoDisableFlag();
+
+		m_fDampingLinear              =p->getLinearDamping();
+		m_fDampingAngular             =p->getAngularDamping();
+		m_fDampingLinearThreshold     =p->getLinearDampingThreshold();
+		m_fDampingAngularThreshold    =p->getAngularDampingThreshold();
+		m_fAutoDisableLinearThreshold =p->getAutoDisableLinearThreshold();
+		m_fAutoDisableAngularThreshold=p->getAutoDisableAngularThreshold();
+		m_fAutoDisableTime            =p->getAutoDisableTime();
+		m_fMaxAngularSpeed            =p->getMaxAngularSpeed();
+	}
+	else {
+		m_iAutoDisableSteps=in->getAttributeAsInt("AutoDisableSteps");
+		m_iAutoDisableFlag =in->getAttributeAsInt("AutoDisableFlag" );
+
+		m_fDampingLinear              =in->getAttributeAsFloat("LinearDamping"              );
+		m_fDampingAngular             =in->getAttributeAsFloat("AngularDamping"             );
+		m_fDampingLinearThreshold     =in->getAttributeAsFloat("LinearDampingThreshold"     );
+		m_fDampingAngularThreshold    =in->getAttributeAsFloat("AngularDampingThreshold"    );
+		m_fAutoDisableLinearThreshold =in->getAttributeAsFloat("AutoDisableLinearThreshold" );
+		m_fAutoDisableAngularThreshold=in->getAttributeAsFloat("AutoDisableAngularThreshold");
+		m_fAutoDisableTime            =in->getAttributeAsFloat("AutoDisableTime"            );
+		m_fMaxAngularSpeed            =in->getAttributeAsFloat("MaxAngularSpeed"            );
+	}
 }
 
 void CIrrOdeDampable::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
