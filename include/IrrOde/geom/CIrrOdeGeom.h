@@ -24,9 +24,11 @@ class CIrrOdeSpace;
 class CIrrOdeGeom : public CIrrOdeSceneNode {
   protected:
     u32 m_iGeomId;                /**< the ODE geom id */
-    u32 m_iMass;                  /**< the ODE mass    */
+    u32 m_iMass,                  /**< the ODE mass    */
+			  m_iCollisionGroup;				/**< the collision group. Two geoms with the same group!=0 won't collide */
     f32 m_fMass;                  /**< the mass */
-    bool m_bCollide;              /**< does this geom collide with other geoms? */
+    bool m_bCollide,              /**< does this geom collide with other geoms? */
+         m_bSurfaceMaster;
     CIrrOdeBody *m_pBody;         /**< the IrrODE body the geom is attached to */
     CIrrOdeWorld *m_pWorld;       /**< the IrrOde world the geom is in */
     CIrrOdeSpace *m_pSpace;       /**< the IrrOde space the geom is in */
@@ -136,6 +138,7 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 
     virtual void initPhysics();
 
+    void setSurfaceMaster(bool b);
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
@@ -153,6 +156,11 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
      * @return true if this geom collides with other geoms
      */
     bool doesCollide();
+
+    bool isSurfaceMaster();
+
+		void setCollisionGroup(u32 i) { m_iCollisionGroup=i; }
+		u32 getCollisionGroup() { return m_iCollisionGroup; }
 };
 
 } //namespace ode

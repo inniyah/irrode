@@ -132,6 +132,9 @@ int CPlay::update() {
   u32 iTime=m_pTimer->getTime()-m_iStartTime;
   position2di pos;
 
+  irr::ode::CIrrOdeJointSlider *pSlider=reinterpret_cast<CIrrOdeJointSlider *>(m_pSceneManager->getSceneNodeFromName("slider"));
+  if (pSlider) printf("--> %.2f\n",pSlider->getSliderPosition());
+
   switch (m_iGameState) {
     //game in progress?
     case _STATE_PLAYING:
@@ -278,9 +281,9 @@ bool CPlay::onEvent(IIrrOdeEvent *pEvent) {
       }
       else {
         //if no mouse button is pressed the mouse movement is converted into an impulse that is added to the marble
-        f32 fMoveX=(f32)ix,fMoveY=(f32)iy;
-        vector3df t=vector3df(10.0f*(fMoveX*sin(m_fCamRot*GRAD_PI2)+fMoveY*cos(m_fCamRot*GRAD_PI2)),0,
-                              10.0f*(fMoveX*cos(m_fCamRot*GRAD_PI2)-fMoveY*sin(m_fCamRot*GRAD_PI2)));
+        f32 fMoveX=15.0f*(f32)ix,fMoveY=15.0f*(f32)iy;
+        vector3df t=vector3df(fMoveX*sin(m_fCamRot*GRAD_PI2)+fMoveY*cos(m_fCamRot*GRAD_PI2),0,
+                              fMoveX*cos(m_fCamRot*GRAD_PI2)-fMoveY*sin(m_fCamRot*GRAD_PI2));
         m_pMarble->addTorque(t);
       }
 

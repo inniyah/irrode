@@ -18,6 +18,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pSpace=NULL;
 
   m_iGeomId=0;
+	m_iCollisionGroup=0;
 
   m_cCenterOfGravity=vector3df(0.0f,0.0f,0.0f);
   m_cInertia1=vector3df(0.0f,0.0f,0.0f);
@@ -126,6 +127,7 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
   out->addVector3d("MassTranslation",m_cMassTranslate  );
 
   out->addBool("collides",m_bCollide);
+	out->addInt("collisionGroup",m_iCollisionGroup);
 }
 
 void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
@@ -142,6 +144,8 @@ void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
   m_cMassTranslate  =in->getAttributeAsVector3d("MassTranslation");
 
   m_bCollide=!in->existsAttribute("collides") || in->getAttributeAsBool("collides");
+
+	m_iCollisionGroup=in->getAttributeAsInt("collisionGroup");
 }
 
 void CIrrOdeGeom::setMassTranslation(vector3df pos) {

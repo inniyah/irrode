@@ -36,7 +36,8 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_bParamMaster=false;
   m_pTouching=NULL;
   m_bDampingChanged=false;
-	
+	m_bUpdateGraphics=true;
+
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
 	  c8 sFileName[1024];
@@ -101,7 +102,7 @@ void CIrrOdeBody::initPhysics() {
     m_iBodyId=m_pOdeDevice->bodyCreate(m_pWorld->getWorldId());
 
     if (m_iBodyId) {
-      if (m_pParentBody) {
+      if (m_pParentBody && m_bUpdateGraphics) {
         u32 iBody=m_iBodyId;
         setParent(m_pWorld);
         m_pParentBody->updateAbsolutePosition();
@@ -674,6 +675,7 @@ void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
   out->addInt ("FiniteRotationMode",m_iFiniteRotationMode);
   out->addInt ("GravityMode"       ,m_iGravityMode       );
   out->addBool("FastMoving"        ,m_bFastMoving        );
+	out->addBool("updateGraphics"    ,m_bUpdateGraphics    );
 }
 
 void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
@@ -685,6 +687,7 @@ void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
   m_iFiniteRotationMode=in->getAttributeAsInt ("FiniteRotationMode");
   m_iGravityMode       =in->getAttributeAsInt ("GravityMode"       );
   m_bFastMoving        =in->getAttributeAsBool("FastMoving"        );
+	m_bUpdateGraphics    =!in->existsAttribute("updateGraphics") || in->getAttributeAsBool("updateGraphics");
 }
 
 ISceneNode *CIrrOdeBody::clone(ISceneNode* newParent, ISceneManager* newManager) {

@@ -236,7 +236,6 @@ IrrlichtDevice *CSettings::createDeviceFromSettings() {
   m_pDevice->run();
   m_pDevice->drop();
   _VRES *res=m_aVModes[m_iResolution];
-  printf("==> %i\n",m_iResolution);
   m_pDevice=createDevice(m_iDriver,dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,m_bShadows,false,0);
   return m_pDevice;
 }

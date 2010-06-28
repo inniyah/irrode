@@ -181,7 +181,8 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
   CIrrOdeGeom *pGeom1=(CIrrOdeGeom *)dGeomGetData(iGeom1),
               *pGeom2=(CIrrOdeGeom *)dGeomGetData(iGeom2);
 
-  if (!pGeom1->doesCollide() || !pGeom2->doesCollide()) return;
+  if (!pGeom1 || !pGeom2 || !pGeom1->doesCollide() || !pGeom2->doesCollide() ||
+      (pGeom1->getCollisionGroup()!=0 && pGeom2->getCollisionGroup()!=0 && pGeom1->getCollisionGroup()==pGeom2->getCollisionGroup())) return;
 
   if (dGeomIsSpace(iGeom1) || dGeomIsSpace(iGeom2)) {
     dSpaceCollide2(iGeom1,iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
@@ -391,6 +392,8 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
 
   if (iMovedBody) {
     CIrrOdeBody *theBody=(CIrrOdeBody *)dBodyGetData(iMovedBody);
+
+    if (!theBody->updateGraphics()) return;
 
     const dReal *pOdeRot=dBodyGetQuaternion(pOdeDevice->getBodyId(theBody->getBodyId())),
                 *pOdePos=dBodyGetPosition(pOdeDevice->getBodyId(theBody->getBodyId()));

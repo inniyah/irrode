@@ -22,24 +22,25 @@ class IIrrOdeStepMotor; /**< foreware declaration of IIrrOdeStepMotor */
  */
 class CIrrOdeBody : public CIrrOdeDampable {
   protected:
-    u32 m_iBodyId;                         /**< this body's ODE dBodyID */
-    u32 m_iMass;                           /**< this body's ODE dMass */
-    CIrrOdeWorld *m_pWorld;                /**< this body's world */
-    CIrrOdeBody *m_pParentBody;            /**< this body's parent body */
-    list<CIrrOdeGeom *> m_pGeoms;          /**< this body's geoms */
-    list<CIrrOdeJoint *> m_pJoints;        /**< this body's joints */
-    list<CIrrOdeBody *> m_pChildBodies;    /**< this body's child bodies connected by joints */
-    list<IIrrOdeStepMotor *>m_lStepMotors; /**< list of all step motors attached to the body */
-    bool m_bEnabled,                       /**< is this body active or not? */
-         m_bParamMaster,
-         m_bCollision,
-         m_bDampingChanged,
-         m_bFastMoving;
-    s32 m_iFiniteRotationMode,           /**< the finite rotation mode */
-        m_iGravityMode,                  /**< the gravity mode */
-        m_iCollisionMaterial;            /**< index of the material if the body collided */
-    CIrrOdeGeom *m_pTouching;            /**< the geom the body is touching */
-    CIrrOdeGeomRay *m_pRay;              /**< the ray for a fast moving object */
+    u32 m_iBodyId;                          /**< this body's ODE dBodyID */
+    u32 m_iMass;                            /**< this body's ODE dMass */
+    CIrrOdeWorld *m_pWorld;                 /**< this body's world */
+    CIrrOdeBody *m_pParentBody;             /**< this body's parent body */
+    list<CIrrOdeGeom *> m_pGeoms;           /**< this body's geoms */
+    list<CIrrOdeJoint *> m_pJoints;         /**< this body's joints */
+    list<CIrrOdeBody *> m_pChildBodies;     /**< this body's child bodies connected by joints */
+    list<IIrrOdeStepMotor *>m_lStepMotors;  /**< list of all step motors attached to the body */
+    bool m_bEnabled,                        /**< is this body active or not? */
+         m_bParamMaster,                    /**< is this body the parameter master, i.e. does it set the body parameters of other bodies with the same ODE classname? */
+         m_bCollision,                      /**< did this body collide in the last simulation step? */
+         m_bDampingChanged,                 /**< was one of the damping parameters changed since the last simulation step? */
+         m_bFastMoving,                     /**< is this a fast moving body? */
+				 m_bUpdateGraphics;                 /**< is the graphical representation of this ODE body updated? */
+    s32 m_iFiniteRotationMode,              /**< the finite rotation mode */
+        m_iGravityMode,                     /**< the gravity mode */
+        m_iCollisionMaterial;               /**< index of the material if the body collided */
+    CIrrOdeGeom *m_pTouching;               /**< the geom the body is touching */
+    CIrrOdeGeomRay *m_pRay;                 /**< the ray for a fast moving object */
 
     vector3df m_vLinear,              /**< linear velocity of the body. Is updated when calling "getLinearVelocity" */
               m_vAngular,             /**< angular velocity of the body. Is updated when calling "getAngularVelocity" */
@@ -219,6 +220,19 @@ class CIrrOdeBody : public CIrrOdeDampable {
     vector3df getVectorFromWorld(vector3df vPos);
 
     void getOdeRotation(vector3df &cRot);
+
+    /**
+     * Is the graphical representation of this body updated when the physics body moves? Can be false
+     * for "dummy" bodies that are used if more than joint joints connect two bodies (e.g. hinge and slider
+     * joints to attach a wheel to a car
+     */
+		bool updateGraphics() { return m_bUpdateGraphics; }
+
+		/**
+		 * Set this value to "false" if you don't want to update the graphical representation of an ODE body.
+		 * Parameter can't be changed after "initPhysics" was called.
+		 */
+		void setUpdateGraphics(bool b) { if (!m_bPhysicsInitialized) m_bUpdateGraphics=b; }
 };
 
 } //namespace ode
