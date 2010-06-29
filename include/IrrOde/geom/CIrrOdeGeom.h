@@ -138,7 +138,6 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 
     virtual void initPhysics();
 
-    void setSurfaceMaster(bool b);
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
@@ -157,9 +156,17 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
      */
     bool doesCollide();
 
-    bool isSurfaceMaster();
-
+    /**
+     * Set the m_iCollisionGroup attribute. A value of zero means the geom will collide with any other geoms,
+     * if the value is not equal zero it won't collide with other geoms of the same group id
+     * @see m_iCollisionGroup
+     */
 		void setCollisionGroup(u32 i) { m_iCollisionGroup=i; }
+
+		/**
+		 * Get the m_iCollisionGroup attribute
+		 * @see m_iCollisionGroup
+		 */
 		u32 getCollisionGroup() { return m_iCollisionGroup; }
 };
 
