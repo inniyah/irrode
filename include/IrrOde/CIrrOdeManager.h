@@ -86,6 +86,14 @@ class CIrrOdeManager {
      */
 		void flushEvents();
 
+		/**
+		 * This method posts an IrrOde event at once (without adding it to the event queue). Use this
+		 * method if you want to use the IrrOde event queue for non-IrrOde events, e.g. for game control
+		 * or distribution of network messages
+		 * @param pEvent the event to be posted
+		 */
+		void postEventWithoutCache(IIrrOdeEvent *pEvent);
+
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
     void initPhysics();																					/*!< init all dynamic objects */

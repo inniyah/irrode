@@ -213,6 +213,24 @@ void CIrrOdeManager::flushEvents() {
   }
 }
 
+void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent) {
+  //this is a special case: in order to apply movement, rotation and velocity
+  //changes to a body it will instantly be posted to it's world. In this case
+  //this handling is necessary for networking. If a message is received over
+  //network it will be distributed at once, and the bodies still need to be moved
+  if (pEvent->getType()==eIrrOdeEventBodyMoved) {
+    if (m_pWorlds.size()>0)
+      m_pWorlds[0]->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
+  }
+
+  list<IIrrOdeEventListener *>::Iterator i;
+  for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
+    if ((*i)->handlesEvent(pEvent))
+      (*i)->onEvent(pEvent);
+  }
+  delete pEvent;
+}
+
 /**
  * Add a new ODE scene node
  */
@@ -342,9 +360,9 @@ void CIrrOdeManager::sceneNodeInitialized() {
 }
 
 CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) {
-	for (u32 i=0; i<m_pWorlds.size(); i++) { 
+	for (u32 i=0; i<m_pWorlds.size(); i++) {
 		CIrrOdeWorld *p=m_pWorlds[i];
-		if (!wcscmp(sName,p->getParamName())) return p; 
+		if (!wcscmp(sName,p->getParamName())) return p;
 	}
 
 	list<CIrrOdeSceneNode *>::Iterator it;
