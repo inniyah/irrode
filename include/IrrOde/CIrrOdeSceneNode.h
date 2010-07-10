@@ -89,7 +89,7 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
     virtual void 	addChild (ISceneNode *child);
 
     virtual void render();
-    virtual void removeFromPhysics()=0;  /**< remove the node from physics */
+    virtual void removeFromPhysics();  /**< remove the node from physics */
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true); /**< copy the parameter to another ODE scene node */
 
     void cloneChildren(ISceneNode* newParent, ISceneManager* newManager);

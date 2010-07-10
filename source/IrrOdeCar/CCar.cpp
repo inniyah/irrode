@@ -19,45 +19,45 @@ CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOd
   //get the car body
   m_pCarBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sNodeName));
 
-  array<ISceneNode *> aNodes;
+  if (m_pCarBody) {
+    array<ISceneNode *> aNodes;
 
-  //get the two motors that are attached to the rear wheels
-  findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
+    //get the two motors that are attached to the rear wheels
+    findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
 
-  if (aNodes.size()>=2) {
-    m_pMotor[0]=dynamic_cast<CIrrOdeMotor *>(aNodes[0]);
-    m_pMotor[1]=dynamic_cast<CIrrOdeMotor *>(aNodes[1]);
+    if (aNodes.size()>=2) {
+      m_pMotor[0]=dynamic_cast<CIrrOdeMotor *>(aNodes[0]);
+      m_pMotor[1]=dynamic_cast<CIrrOdeMotor *>(aNodes[1]);
+    }
+
+    aNodes.clear();
+    //get the two servos that are attached to the front wheels
+    findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_SERVO_ID,aNodes);
+
+    if (aNodes.size()>=2) {
+      m_pServo[0]=dynamic_cast<CIrrOdeServo *>(aNodes[0]);
+      m_pServo[1]=dynamic_cast<CIrrOdeServo *>(aNodes[1]);
+    }
+
+    //initialize the members
+    m_bHelp=false;
+    m_bBrake=false;
+    m_bBoost=false;
+    m_bAdaptSteer=true;
+    m_iThrottle=0;
+
+    //add a camera
+    m_pCam=m_pSmgr->addCameraSceneNode();
+
+    //add a static text element that will show useful information
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true);
+    m_pInfo->setDrawBackground(true);
+    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+    m_pInfo->setVisible(false);
+    m_pCtrls=NULL;
+
+    m_bInitialized=true;
   }
-
-  aNodes.clear();
-  //get the two servos that are attached to the front wheels
-  findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_SERVO_ID,aNodes);
-
-  if (aNodes.size()>=2) {
-    m_pServo[0]=dynamic_cast<CIrrOdeServo *>(aNodes[0]);
-    m_pServo[1]=dynamic_cast<CIrrOdeServo *>(aNodes[1]);
-  }
-
-  //initialize the members
-  m_bHelp=false;
-  m_bBrake=false;
-  m_bBoost=false;
-  m_bAdaptSteer=true;
-  m_iThrottle=0;
-
-  irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
-  irr::ode::CIrrOdeGeom *pRamp=reinterpret_cast<CIrrOdeGeom *>(m_pSmgr->getSceneNodeFromName("carGeom2"));
-  pRamp->setCollide(false);
-
-  //add a camera
-  m_pCam=m_pSmgr->addCameraSceneNode();
-
-  //add a static text element that will show useful information
-  m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true);
-  m_pInfo->setDrawBackground(true);
-  m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-  m_pInfo->setVisible(false);
-  m_pCtrls=NULL;
 }
 
 CCar::~CCar() {

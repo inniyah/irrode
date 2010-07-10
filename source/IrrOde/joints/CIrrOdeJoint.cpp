@@ -166,6 +166,7 @@ void CIrrOdeJoint::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
 }
 
 void CIrrOdeJoint::removeFromPhysics() {
+  CIrrOdeSceneNode::removeFromPhysics();
   if (m_iJointId) {
     m_pOdeDevice->jointDestroy(m_iJointId);
     m_iJointId=0;

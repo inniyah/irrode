@@ -142,13 +142,27 @@ void CIrrOdeWorld::addGeom(CIrrOdeGeom *pGeom) {
 }
 
 void CIrrOdeWorld::removeBody(CIrrOdeBody *pBody) {
-  /*s32 idx=m_pBodies.binary_search(pBody);
-  if (idx!=-1) m_pBodies.erase(idx);*/
+  list<CIrrOdeBody *>::Iterator i;
+  for (i=m_pBodies.begin(); i!=m_pBodies.end(); i++)
+    if ((*i)==pBody) {
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("CIrrOdeWorld::removeBody: removing body from world\n");
+      #endif
+      m_pBodies.erase(i);
+      return;
+    }
 }
 
 void CIrrOdeWorld::removeGeom(CIrrOdeGeom *pGeom) {
-  /*s32 idx=m_pGeoms.binary_search(pGeom);
-  if (idx!=-1) m_pGeoms.erase(idx);*/
+  list<CIrrOdeGeom *>::Iterator i;
+  for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++)
+    if ((*i)==pGeom) {
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("CIrrOdeWorld::removeGeom: removing geom from world\n");
+      #endif
+      m_pGeoms.erase(i);
+      return;
+    }
 }
 
 u32 CIrrOdeWorld::getBodyCount() {
@@ -428,6 +442,7 @@ void CIrrOdeWorld::removeSpace(CIrrOdeSpace *pSpace) {
 }
 
 void CIrrOdeWorld::removeFromPhysics() {
+  CIrrOdeSceneNode::removeFromPhysics();
   if (m_iWorldId) {
     m_pOdeDevice->worldDestroy(m_iWorldId);
     m_iWorldId=0;

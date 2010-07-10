@@ -5,33 +5,37 @@
 CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("theTank"));
-  m_pTurret=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("turret"));
 
-  m_pMotor[0]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRR"));
-  m_pMotor[1]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFR"));
-  m_pMotor[2]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRL"));
-  m_pMotor[3]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFL"));
+  if (m_pTankBody!=NULL) {
+    m_pTurret=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("turret"));
 
-  m_pTurretServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("turretServo"));
-  m_pCannonServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("cannonServo"));
+    m_pMotor[0]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRR"));
+    m_pMotor[1]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFR"));
+    m_pMotor[2]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRL"));
+    m_pMotor[3]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFL"));
 
-  m_pCam=m_pSmgr->addCameraSceneNode();
+    m_pTurretServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("turretServo"));
+    m_pCannonServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("cannonServo"));
 
-  m_bFire=false;
-  m_bFollowTurret=false;
-  m_bFollowBullet=false;
-  m_bFastCollision=true;
+    m_pCam=m_pSmgr->addCameraSceneNode();
 
-  m_pCannon=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("cannon"));
+    m_bFire=false;
+    m_bFollowTurret=false;
+    m_bFollowBullet=false;
+    m_bFastCollision=true;
 
-  m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
-  m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
+    m_pCannon=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("cannon"));
 
-  m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
-  m_pInfo->setDrawBackground(true);
-  m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-  m_pInfo->setVisible(false);
-  irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
+    m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
+
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
+    m_pInfo->setDrawBackground(true);
+    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+    m_pInfo->setVisible(false);
+    irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    m_bInitialized=true;
+  }
 }
 
 CTank::~CTank() {

@@ -205,6 +205,7 @@ void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
 }
 
 void CIrrOdeGeom::removeFromPhysics() {
+  CIrrOdeSceneNode::removeFromPhysics();
   if (m_iGeomId) {
     m_pOdeDevice->geomDestroy(m_iGeomId);
     m_iGeomId=0;
@@ -214,6 +215,10 @@ void CIrrOdeGeom::removeFromPhysics() {
       if (m_pWorld)
         m_pWorld->removeGeom(this);
   }
+  else
+    if (!m_bPhysicsInitialized) {
+      if (m_pBody) m_pBody->removeGeom(this); else m_pWorld->removeGeom(this);
+    }
 }
 
 void CIrrOdeGeom::setOffsetPosition(vector3df pPos) {

@@ -242,7 +242,6 @@ void CIrrOdeManager::addOdeSceneNode(CIrrOdeSceneNode *pNode) {
  * Remove an ODE scene node
  */
 void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
-  pNode->removeFromPhysics();
   list<CIrrOdeSceneNode *>::Iterator it;
   for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
     if ((*it)==pNode) {

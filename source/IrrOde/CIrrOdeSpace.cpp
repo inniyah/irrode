@@ -163,6 +163,7 @@ void CIrrOdeSpace::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
 }
 
 void CIrrOdeSpace::removeFromPhysics() {
+  CIrrOdeSceneNode::removeFromPhysics();
   if (m_iSpaceId) {
     m_pOdeDevice->spaceDestroy(m_iSpaceId);
     m_iSpaceId=0;

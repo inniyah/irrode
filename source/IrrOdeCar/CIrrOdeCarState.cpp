@@ -22,6 +22,8 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   m_bHelp=false;
   m_bSwitchToMenu=false;
   m_pFps=NULL;
+
+  m_bInitialized=false;
 }
 
 bool CIrrOdeCarState::OnEvent(const SEvent &event) {

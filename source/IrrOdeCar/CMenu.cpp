@@ -116,3 +116,12 @@ bool CMenu::OnEvent(const SEvent &event) {
   return false;
 }
 
+void CMenu::setBtnEnabled(u32 iNum, bool b) {
+  if (iNum>=m_aButtons.getSize()) return;
+  list<IGUIButton *>::Iterator it;
+  for (it=m_aButtons.begin(); it!=m_aButtons.end(); it++)
+    if (iNum--==0) {
+      (*it)->setEnabled(b);
+      return;
+    }
+}

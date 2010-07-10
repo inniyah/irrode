@@ -79,6 +79,14 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 
 };
 
+void removeFromScene(const c8 *sName, ISceneManager *smgr) {
+  ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
+  if (pNode!=NULL) {
+    CIrrOdeSceneNode::removeTreeFromPhysics(pNode);
+    pNode->remove();
+  }
+}
+
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
   CSettings *pSettings=new CSettings("../../data/irrOdeMarble_setup.xml","../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
@@ -202,6 +210,18 @@ int main(int argc, char** argv) {
   //load the scene
   smgr->loadScene("../../data/IrrOdeCar.xml");
 
+  //removeFromScene("targets"   ,smgr);
+  //removeFromScene("bumps"     ,smgr);
+  //removeFromScene("signs"     ,smgr);
+  //removeFromScene("buildings" ,smgr);
+  //removeFromScene("pillars"   ,smgr);
+  //removeFromScene("theCar"    ,smgr);
+  //removeFromScene("simpleCar" ,smgr);
+  //removeFromScene("complexCar",smgr);
+  //removeFromScene("theTank"   ,smgr);
+  //removeFromScene("theHeli"   ,smgr);
+  //removeFromScene("thePlane"  ,smgr);
+
   //Initialize the camera
   vector3df camPos=vector3df(1750,99,2500);
   ICameraSceneNode *cam=smgr->addCameraSceneNode();
@@ -242,6 +262,13 @@ int main(int argc, char** argv) {
   theTank ->setCtrl((const u32 *)iCtrls[1]); theTank ->setFpsInfo(pFps);
   theHeli ->setCtrl((const u32 *)iCtrls[2]); theHeli ->setFpsInfo(pFps);
   thePlane->setCtrl((const u32 *)iCtrls[3]); thePlane->setFpsInfo(pFps);
+
+  if (!theCar  ->isInitialized()) theMenu->setBtnEnabled(0,false);
+  if (!theCar2 ->isInitialized()) theMenu->setBtnEnabled(1,false);
+  if (!theCar3 ->isInitialized()) theMenu->setBtnEnabled(2,false);
+  if (!theTank ->isInitialized()) theMenu->setBtnEnabled(3,false);
+  if (!theHeli ->isInitialized()) theMenu->setBtnEnabled(4,false);
+  if (!thePlane->isInitialized()) theMenu->setBtnEnabled(5,false);
 
   theCtrl->setFpsInfo(pFps);
 

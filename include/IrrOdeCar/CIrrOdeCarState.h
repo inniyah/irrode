@@ -23,7 +23,8 @@ class CIrrOdeCarState {
   protected:
     bool m_bSwitchToMenu,   /*!< return to menu state */
          m_bHelp,           /*!< display the help screen */
-         m_bActive;
+         m_bActive,
+         m_bInitialized;
 
     IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
@@ -56,6 +57,8 @@ class CIrrOdeCarState {
     void loadHelpFile();
 
     void setFpsInfo(gui::IGUIStaticText *pFps);
+
+    bool isInitialized() { return m_bInitialized; }
 };
 
 #endif

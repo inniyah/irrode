@@ -8,46 +8,49 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("thePlane"));
-  //get the terrain
-  m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
-  //get the front wheel that is needed for steering the plane on ground
-  m_pSteer=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("plane_wheel_steer"));
+  if (m_pPlaneBody!=NULL) {
+    //get the terrain
+    m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
+    //get the front wheel that is needed for steering the plane on ground
+    m_pSteer=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("plane_wheel_steer"));
 
-  //get the visual rudders
-  m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
-  m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
-  m_pPitch[0]=m_pSmgr->getSceneNodeFromName("pitch1");
-  m_pPitch[1]=m_pSmgr->getSceneNodeFromName("pitch2");
-  m_pYaw     =m_pSmgr->getSceneNodeFromName("yaw");
+    //get the visual rudders
+    m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
+    m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
+    m_pPitch[0]=m_pSmgr->getSceneNodeFromName("pitch1");
+    m_pPitch[1]=m_pSmgr->getSceneNodeFromName("pitch2");
+    m_pYaw     =m_pSmgr->getSceneNodeFromName("yaw");
 
-  //get the motor, the rudders and the aerodynamic caluclator of the plane
-  m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("plane_motor"));
-  m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("plane_torque"));
-  m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("plane_aero"));
+    //get the motor, the rudders and the aerodynamic caluclator of the plane
+    m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("plane_motor"));
+    m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("plane_torque"));
+    m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("plane_aero"));
 
-  //intially we don't follow the bombs and look to the front
-  m_bFollowBombCam=false;
-  m_bBackView=false;
+    //intially we don't follow the bombs and look to the front
+    m_bFollowBombCam=false;
+    m_bBackView=false;
 
-  //we need the rear wheel bodies for the braking on ground
-  m_pRearWheels[0]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rl"));
-  m_pRearWheels[1]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rr"));
+    //we need the rear wheel bodies for the braking on ground
+    m_pRearWheels[0]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rl"));
+    m_pRearWheels[1]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rr"));
 
-  //let's add a camera
-  m_pCam=m_pSmgr->addCameraSceneNode();
+    //let's add a camera
+    m_pCam=m_pSmgr->addCameraSceneNode();
 
-  //we are an IrrOde event listener
-  CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    //we are an IrrOde event listener
+    CIrrOdeManager::getSharedInstance()->addEventListener(this);
 
-  //initiate the engine
-  m_iThrustDir=0;
-  m_fThrust=0.0f;
+    //initiate the engine
+    m_iThrustDir=0;
+    m_fThrust=0.0f;
 
-  //finally we need a static text to display some information
-  m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
-  m_pInfo->setDrawBackground(true);
-  m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-  m_pInfo->setVisible(false);
+    //finally we need a static text to display some information
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
+    m_pInfo->setDrawBackground(true);
+    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+    m_pInfo->setVisible(false);
+    m_bInitialized=true;
+  }
 }
 
 CPlane::~CPlane() {

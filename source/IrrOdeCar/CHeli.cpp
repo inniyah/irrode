@@ -5,27 +5,30 @@
 CHeli::CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pHeliBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("theHeli"));
-  m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
+  if (m_pHeliBody!=NULL) {
+    m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
-  m_pCam=m_pSmgr->addCameraSceneNode();
-  m_bLeft=true;
-  m_bMissileCam=false;
+    m_pCam=m_pSmgr->addCameraSceneNode();
+    m_bLeft=true;
+    m_bMissileCam=false;
 
-  CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    CIrrOdeManager::getSharedInstance()->addEventListener(this);
 
-  m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
-  m_pInfo->setDrawBackground(true);
-  m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-  m_pInfo->setVisible(false);
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
+    m_pInfo->setDrawBackground(true);
+    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+    m_pInfo->setVisible(false);
 
-  m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("heli_motor"));
-  m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("heli_torque"));
-  m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("heli_aero"));
+    m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("heli_motor"));
+    m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("heli_torque"));
+    m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("heli_aero"));
 
-  m_fThrust=0;
-  m_fPitch=0;
-  m_fRoll=0;
-  m_fYaw=0;
+    m_fThrust=0;
+    m_fPitch=0;
+    m_fRoll=0;
+    m_fYaw=0;
+    m_bInitialized=true;
+  }
 }
 
 CHeli::~CHeli() {

@@ -207,11 +207,15 @@ void CIrrOdeGeomTrimesh::removeFromPhysics() {
   if (m_iGeomId)
     CIrrOdeGeom::removeFromPhysics();
   else {
-    for (u32 i=0; i<m_aGeomIds.size(); i++)
-      m_pOdeDevice->geomDestroy(m_aGeomIds[i]);
+    CIrrOdeSceneNode::removeFromPhysics();
+    if (m_bPhysicsInitialized) {
+      for (u32 i=0; i<m_aGeomIds.size(); i++)
+        m_pOdeDevice->geomDestroy(m_aGeomIds[i]);
 
-    m_aGeomIds.clear();
-    m_bPhysicsInitialized=false;
+      m_aGeomIds.clear();
+      m_bPhysicsInitialized=false;
+    }
+    else if (m_pBody) m_pBody->removeGeom(this); else m_pWorld->removeGeom(this);
   }
 }
 

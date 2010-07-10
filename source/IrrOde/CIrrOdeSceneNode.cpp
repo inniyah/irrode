@@ -237,5 +237,9 @@ void CIrrOdeSceneNode::initPhysics() {
   CIrrOdeManager::getSharedInstance()->sceneNodeInitialized();
 }
 
+void CIrrOdeSceneNode::removeFromPhysics() {
+  m_pOdeManager->removeOdeSceneNode(this);
+}
+
 } //namespace ode
 } //namespace irr
