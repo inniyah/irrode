@@ -69,7 +69,6 @@
 			<Add directory="D:\myStuff\projects\libs\irrlicht-1.7.1\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
-			<Add directory="..\include\IrrOdeMarble" />
 		</Compiler>
 		<Linker>
 			<Add library="opengl32" />
@@ -85,9 +84,9 @@
 		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
 		<Unit filename="..\include\IrrOdeCar\CPlane.h" />
 		<Unit filename="..\include\IrrOdeCar\CProjectile.h" />
+		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
-		<Unit filename="..\include\IrrOdeMarble\CSettings.h" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
@@ -96,10 +95,10 @@
 		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CPlane.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CProjectile.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrodecar_main.cpp" />
-		<Unit filename="..\source\irrOdeMarble\CSettings.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

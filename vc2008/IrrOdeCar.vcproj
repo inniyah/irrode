@@ -209,7 +209,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\irrOdeMarble\CSettings.cpp"
+				RelativePath="..\source\IrrOdeCar\CSettings.cpp"
 				>
 			</File>
 			<File
@@ -263,7 +263,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IrrOdeMarble\CSettings.h"
+				RelativePath="..\include\IrrOdeCar\CSettings.h"
 				>
 			</File>
 			<File

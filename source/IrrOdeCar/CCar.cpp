@@ -56,6 +56,9 @@ CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOd
     m_pInfo->setVisible(false);
     m_pCtrls=NULL;
 
+    //we are an IrrOde event listener
+    CIrrOdeManager::getSharedInstance()->addEventListener(this);
+
     m_bInitialized=true;
   }
 }
@@ -193,7 +196,6 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
     if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
       vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
       m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,78,0));
-      //m_pCarBody->setTorque(t);
     }
   }
   return false;

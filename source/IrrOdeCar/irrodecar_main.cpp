@@ -89,7 +89,7 @@ void removeFromScene(const c8 *sName, ISceneManager *smgr) {
 
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
-  CSettings *pSettings=new CSettings("../../data/irrOdeMarble_setup.xml","../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
+  CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
 
   u32 iRet=pSettings->run();
   if (iRet==2) {
@@ -100,7 +100,6 @@ int main(int argc, char** argv) {
   //now create the Irrlicht device from the chosen options
   IrrlichtDevice *device=pSettings->createDeviceFromSettings();
   device->setWindowCaption(L"IrrODE car demo");
-  delete pSettings;
 
   CProgress *pProg=new CProgress(device);
 
@@ -210,17 +209,21 @@ int main(int argc, char** argv) {
   //load the scene
   smgr->loadScene("../../data/IrrOdeCar.xml");
 
-  //removeFromScene("targets"   ,smgr);
-  //removeFromScene("bumps"     ,smgr);
-  //removeFromScene("signs"     ,smgr);
-  //removeFromScene("buildings" ,smgr);
-  //removeFromScene("pillars"   ,smgr);
-  //removeFromScene("theCar"    ,smgr);
-  //removeFromScene("simpleCar" ,smgr);
-  //removeFromScene("complexCar",smgr);
-  //removeFromScene("theTank"   ,smgr);
-  //removeFromScene("theHeli"   ,smgr);
-  //removeFromScene("thePlane"  ,smgr);
+  if (!pSettings->isActive( 0)) removeFromScene("theCar"      ,smgr);
+  if (!pSettings->isActive( 1)) removeFromScene("simpleCar"   ,smgr);
+  if (!pSettings->isActive( 2)) removeFromScene("complexCar"  ,smgr);
+  if (!pSettings->isActive( 3)) removeFromScene("theTank"     ,smgr);
+  if (!pSettings->isActive( 4)) removeFromScene("thePlane"    ,smgr);
+  if (!pSettings->isActive( 5)) removeFromScene("theHeli"     ,smgr);
+  if (!pSettings->isActive( 6)) removeFromScene("bumps"       ,smgr);
+  if (!pSettings->isActive( 7)) removeFromScene("targets"     ,smgr);
+  if (!pSettings->isActive( 8)) removeFromScene("signs"       ,smgr);
+  if (!pSettings->isActive( 9)) removeFromScene("buildings"   ,smgr);
+  if (!pSettings->isActive(10)) removeFromScene("plane_course",smgr);
+  if (!pSettings->isActive(12)) removeFromScene("pillars"     ,smgr);
+  if (!pSettings->isActive(11)) removeFromScene("car_ramps"   ,smgr);
+
+  delete pSettings;
 
   //Initialize the camera
   vector3df camPos=vector3df(1750,99,2500);
