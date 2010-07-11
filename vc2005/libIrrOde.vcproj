@@ -228,6 +228,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventProgress.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventRayHit.cpp"
 					>
 				</File>
@@ -304,6 +308,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\joints\CIrrOdeJointPR.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\joints\CIrrOdeJointSlider.cpp"
 					>
 				</File>
@@ -316,11 +324,23 @@
 				Name="motors"
 				>
 				<File
+					RelativePath="..\source\IrrOde\motors\CIrrOdeAeroDrag.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\motors\CIrrOdeImpulseMotor.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\motors\CIrrOdeMotor.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\source\IrrOde\motors\CIrrOdeServo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\motors\CIrrOdeTorqueMotor.cpp"
 					>
 				</File>
 			</Filter>
@@ -375,6 +395,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\IrrOde\CSerializer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\IrrOde\IIrrOdeContactParameters.h"
 				>
 			</File>
@@ -415,6 +439,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventInit.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventProgress.h"
 					>
 				</File>
 				<File
@@ -502,6 +530,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\IrrOde\joints\CIrrOdeJointPR.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\joints\CIrrOdeJointSlider.h"
 					>
 				</File>
@@ -514,11 +546,27 @@
 				Name="motors"
 				>
 				<File
+					RelativePath="..\include\IrrOde\motors\CIrrOdeAeroDrag.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\motors\CIrrOdeImpulseMotor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\motors\CIrrOdeMotor.h"
 					>
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\motors\CIrrOdeServo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\motors\IIrrOdeStepMotor.h"
 					>
 				</File>
 			</Filter>
