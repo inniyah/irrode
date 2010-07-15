@@ -213,7 +213,7 @@ void CIrrOdeManager::flushEvents() {
   }
 }
 
-void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent) {
+void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEvent) {
   //this is a special case: in order to apply movement, rotation and velocity
   //changes to a body it will instantly be posted to it's world. In this case
   //this handling is necessary for networking. If a message is received over
@@ -228,7 +228,7 @@ void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent) {
     if ((*i)->handlesEvent(pEvent))
       (*i)->onEvent(pEvent);
   }
-  delete pEvent;
+  if (bDestroyEvent) delete pEvent;
 }
 
 /**

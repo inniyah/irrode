@@ -91,8 +91,9 @@ class CIrrOdeManager {
 		 * method if you want to use the IrrOde event queue for non-IrrOde events, e.g. for game control
 		 * or distribution of network messages
 		 * @param pEvent the event to be posted
+		 * @param bDestroyEvent tells whether or not the event should be destroyed after posting (default: "true")
 		 */
-		void postEventWithoutCache(IIrrOdeEvent *pEvent);
+		void postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEvent=true);
 
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
