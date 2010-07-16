@@ -86,7 +86,7 @@ class CSettings : public IEventReceiver {
      */
     IrrlichtDevice *createDeviceFromSettings();
 
-    bool isActive(u32 iIdx) { return iIdx<10?m_aAct[iIdx]:false; }
+    bool isActive(u32 iIdx) { return iIdx<13?m_aAct[iIdx]:false; }
 };
 
 #endif

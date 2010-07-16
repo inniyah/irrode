@@ -220,8 +220,8 @@ int main(int argc, char** argv) {
   if (!pSettings->isActive( 8)) removeFromScene("signs"       ,smgr);
   if (!pSettings->isActive( 9)) removeFromScene("buildings"   ,smgr);
   if (!pSettings->isActive(10)) removeFromScene("plane_course",smgr);
-  if (!pSettings->isActive(12)) removeFromScene("pillars"     ,smgr);
-  if (!pSettings->isActive(11)) removeFromScene("car_ramps"   ,smgr);
+  if (!pSettings->isActive(11)) removeFromScene("pillars"     ,smgr);
+  if (!pSettings->isActive(12)) removeFromScene("car_ramps"   ,smgr);
 
   delete pSettings;
 

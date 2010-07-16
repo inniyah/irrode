@@ -73,19 +73,19 @@ CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBac
   dimension2di dim=dimension2di(14,14),dim2=dimension2di(150,14);
 
   IGUICheckBox *p=NULL;
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the car"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"simple car"    ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"complex car"   ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the tank"      ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the airplane"  ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the helicopter",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"         ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[6]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[7]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"signs"         ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[8]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"buildings"     ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[9]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"  ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[9]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"pillars"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[9]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"car ramps"     ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[9]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the car"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 0]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"simple car"    ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 1]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"complex car"   ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 2]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the tank"      ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 3]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the airplane"  ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 4]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"the helicopter",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 5]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"         ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 6]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 7]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"signs"         ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 8]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"buildings"     ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[ 9]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"  ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[10]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"pillars"       ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[11]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"car ramps"     ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[12]);
 
 
   //add the "OK" and "Cancel" buttons
