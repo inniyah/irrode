@@ -4,6 +4,7 @@
   #include <CIrrOdeSpace.h>
   #include <CIrrOdeBody.h>
   #include <IIrrOdeDevice.h>
+  #include <CIrrOdeManager.h>
 
 namespace irr {
 namespace ode {
@@ -19,6 +20,7 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32
   if (parent) {
     while (m_aParams.size()<parent->getMaterialCount()) {
       CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
+      CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
       pParams->setStatic(m_pBody==NULL);
       m_aParams.push_back(pParams);
     }
@@ -190,6 +192,7 @@ void CIrrOdeGeomTrimesh::setParent(ISceneNode *pParent) {
     if (!pBody) {
       while (m_aParams.size()<pParent->getMaterialCount()) {
         CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
+        CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
         pParams->setStatic(pBody==NULL);
         m_aParams.push_back(pParams);
       }

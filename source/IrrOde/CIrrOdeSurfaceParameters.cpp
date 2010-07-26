@@ -32,10 +32,6 @@ CIrrOdeSurfaceParameters::CIrrOdeSurfaceParameters() {
 
   m_bDamps =false;
   m_bStatic=false;
-
-  #ifndef _IRR_ODE_SURFACE_EDIT
-    CIrrOdeManager::getSharedInstance()->addSurfaceParameter(this);
-  #endif
 }
 
 CIrrOdeSurfaceParameters::~CIrrOdeSurfaceParameters() { }

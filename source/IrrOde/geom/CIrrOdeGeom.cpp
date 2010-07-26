@@ -33,6 +33,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
 	m_pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
 
   CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
+  CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
   pParams->setStatic(m_pBody==NULL);
   m_aParams.push_back(pParams);
 

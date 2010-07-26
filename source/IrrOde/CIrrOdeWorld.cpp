@@ -492,6 +492,7 @@ void CIrrOdeWorld::loadParameter(IXMLReader *pReader) {
           io::IAttributes *pAttr=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createEmptyAttributes(NULL);
           pAttr->read(pReader);
           CIrrOdeSurfaceParameters *p=new CIrrOdeSurfaceParameters();
+          CIrrOdeManager::getSharedInstance()->addSurfaceParameter(p);
           p->setStatic(true);
           p->deserializeAttributes(pAttr,NULL,0);
         }
