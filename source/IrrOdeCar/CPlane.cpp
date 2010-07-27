@@ -192,7 +192,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,-4.0f,-2.0f)),
                   rot=m_pPlaneBody->getRotation(),vel=m_pPlaneBody->getLinearVelocity();
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"../../data/bomb.3ds",600,vector3df(0.0f,0.0f,0.0f),m_pWorld,1.2f,true);
+        new CProjectile(m_pSmgr,pos,rot,vel,"bomb",600,m_pWorld,true);
       }
 
       m_pRearWheels[0]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);

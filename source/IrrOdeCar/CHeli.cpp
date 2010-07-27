@@ -148,7 +148,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         vector3df pos=m_pHeliBody->getAbsolutePosition()+m_pHeliBody->getRotation().rotationToDirection(vector3df(-2.0f,-0.6f,m_bLeft?-3.0f:3.0f)),
                   rot=m_pHeliBody->getRotation(),vel=m_pHeliBody->getLinearVelocity();
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"../../data/missile.3ds",600,vector3df(-500.0f,0.0f,0.0f),m_pWorld,1.2f,true);
+        new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
         m_bLeft=!m_bLeft;
       }
 

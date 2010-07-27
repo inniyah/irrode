@@ -29,7 +29,7 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
 }
 
 void CIrrOdeAeroDrag::step() {
-  if (m_pBody && m_bIsActive) {
+  if (m_pBody && m_pBody->physicsInitialized() && m_bIsActive) {
     vector3df vRot=m_pBody->getRotation(),
               vVel=m_pBody->getLinearVelocity(),
               vNormVel=vVel,
@@ -119,6 +119,27 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
   m_fSidewardDamp=in->getAttributeAsFloat("sideward_damp");
   m_fUpwardDamp  =in->getAttributeAsFloat("upward_damp"  );
   m_fUpFactor    =in->getAttributeAsFloat("up_factor"    );
+}
+
+ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
+  CIrrOdeAeroDrag *pRet=new CIrrOdeAeroDrag(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
+  pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
+
+  pRet->setForeward(m_vForeward);
+  pRet->setSideward(m_vSideward);
+  pRet->setUpward(m_vUpward);
+
+  pRet->setStallSpeed(m_fStallSpeed);
+  pRet->setMaxUpSpeed(m_fMaxUpSpeed);
+  pRet->setUpFactor(m_fUpFactor);
+  pRet->setForewardDamp(m_fForewardDamp);
+  pRet->setUpwardDamp(m_fUpwardDamp);
+  pRet->setSidewardDamp(m_fSidewardDamp);
+
+  pRet->setPower(m_fPower);
+  pRet->setMaxPower(m_fMaxPower);
+  pRet->setIsActive(m_bIsActive);
+  return pRet;
 }
 
   } //namespace ode

@@ -115,6 +115,8 @@ class CIrrOdeManager {
 		CIrrOdeDampable *getDampableWithParamName(const wchar_t *sName);
 
 		bool physicsInitialized() { return m_bPhysicsInitialized; }
+
+    irr::scene::ISceneNode *cloneTree(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr);
 };
 
 } //namespace ode

@@ -8,7 +8,6 @@ class CProjectile {
   protected:
     irr::ode::CIrrOdeBody *m_pBody;
     irr::s32 m_iTtl;
-    irr::core::vector3df m_vAcc;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::scene::ISceneManager *m_pSmgr;
 
@@ -19,14 +18,14 @@ class CProjectile {
      * @param vPos the initial position
      * @param vRot the initial rotation
      * @param vVel the initial velocity
-     * @param sMesh name of the mesh to use
+     * @param sSource name of the scene node to copy
      * @param iTtl the time to live (in ODE steps)
      * @param vAcc acceleration vector for missiles
      * @param pWorld the ODE world
      * @param fScale the scale of the meshscenenode
      * @param bFastCollision true for fast moving projectiles
      */
-    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sMesh, irr::s32 iTtl, irr::core::vector3df vAcc, irr::scene::ISceneNode *pWorld, irr::f32 fScale, bool bFastCollision);
+    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision);
 
     irr::ode::CIrrOdeBody *getBody();
     irr::s32 getTtl();

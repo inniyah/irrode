@@ -95,8 +95,6 @@ void CIrrOdeJointBallSocket::deserializeAttributes(IAttributes* in, SAttributeRe
 ISceneNode *CIrrOdeJointBallSocket::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeJointBallSocket *pRet=new CIrrOdeJointBallSocket(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
-  CIrrOdeSceneNode::cloneChildren(pRet,newManager?newManager:m_pSceneManager);
-
   copyParams(pRet);
   return pRet;
 }

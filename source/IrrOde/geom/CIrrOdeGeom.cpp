@@ -201,7 +201,11 @@ void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
     for (u32 i=getSurfaceParametersCount(); i<pDst->getSurfaceParametersCount(); i++)
       m_aParams[0]->copy(pDst->getSurfaceParameters(i));
 
-  pDst->setMassParameters(m_fMass,m_cCenterOfGravity,m_cInertia1,m_cInertia2);
+  if (m_cInertia1.getLength()>0.0f)
+    pDst->setMassParameters(m_fMass,m_cCenterOfGravity,m_cInertia1,m_cInertia2);
+  else
+    pDst->setMassTotal(m_fMass);
+
   pDst->setMassTranslation(m_cMassTranslate);
 }
 

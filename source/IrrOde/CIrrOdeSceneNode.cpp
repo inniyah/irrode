@@ -168,15 +168,6 @@ void CIrrOdeSceneNode::addChild (ISceneNode *child) {
   m_cBoundingBox.addInternalPoint(pos);
 }
 
-void CIrrOdeSceneNode::cloneChildren(ISceneNode* newParent, ISceneManager* newManager) {
-  list<ISceneNode *>::Iterator i;
-  list<ISceneNode *> children=getChildren();
-
-  for (i=children.begin(); i!=children.end(); i++) {
-    (*i)->clone(newParent,newManager);
-  }
-}
-
 void CIrrOdeSceneNode::remove() {
   ISceneNode::remove();
   if (this->getReferenceCount()==1) removeFromPhysics();

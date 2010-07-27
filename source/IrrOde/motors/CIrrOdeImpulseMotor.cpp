@@ -20,7 +20,7 @@ CIrrOdeImpulseMotor::CIrrOdeImpulseMotor(ISceneNode *parent,ISceneManager *mgr,s
 }
 
 void CIrrOdeImpulseMotor::step() {
-  if (m_pBody!=NULL && m_bIsActive) {
+  if (m_pBody!=NULL && m_pBody->physicsInitialized() && m_bIsActive) {
     m_pBody->addForce(m_pBody->getRotation().rotationToDirection(m_fMaxPower*m_fPower*m_vForeward));
   }
 }
@@ -37,6 +37,16 @@ void CIrrOdeImpulseMotor::serializeAttributes(IAttributes* out, SAttributeReadWr
 void CIrrOdeImpulseMotor::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
   IIrrOdeStepMotor::deserializeAttributes(in,options);
   m_vForeward=in->getAttributeAsVector3d("foreward");
+}
+
+ISceneNode *CIrrOdeImpulseMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
+  CIrrOdeImpulseMotor *pRet=new CIrrOdeImpulseMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
+  pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
+  pRet->setForeward(m_vForeward);
+  pRet->setPower(m_fPower);
+  pRet->setMaxPower(m_fMaxPower);
+  pRet->setIsActive(m_bIsActive);
+  return pRet;
 }
 
   } //namespace ode

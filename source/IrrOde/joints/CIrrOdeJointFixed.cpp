@@ -76,8 +76,6 @@ void CIrrOdeJointFixed::deserializeAttributes(IAttributes* in, SAttributeReadWri
 ISceneNode *CIrrOdeJointFixed::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeJointFixed *pRet=new CIrrOdeJointFixed(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
-  CIrrOdeSceneNode::cloneChildren(pRet,newManager?newManager:m_pSceneManager);
-
   copyParams(pRet);
   return pRet;
 }

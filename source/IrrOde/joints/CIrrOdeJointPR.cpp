@@ -158,8 +158,6 @@ void CIrrOdeJointPR::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
 ISceneNode *CIrrOdeJointPR::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeJointPR *pRet=new CIrrOdeJointPR(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
-  CIrrOdeSceneNode::cloneChildren(pRet,newManager?newManager:m_pSceneManager);
-
   copyParams(pRet);
   return pRet;
 }

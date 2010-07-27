@@ -175,6 +175,10 @@ void CIrrOdeBody::initPhysics() {
      setGravityMode(m_iGravityMode);
 
      if (m_pRay) m_pRay->initPhysics();
+
+     setLinearVelocity(m_vLinear);
+     setAngularVelocity(m_vAngular);
+
      CIrrOdeEventBodyCreated *pEvent=new CIrrOdeEventBodyCreated(this);
      CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
     }
@@ -692,8 +696,6 @@ void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
 
 ISceneNode *CIrrOdeBody::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeBody *pRet=new CIrrOdeBody(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
-
-  CIrrOdeSceneNode::cloneChildren(pRet,newManager?newManager:m_pSceneManager);
 
   copyParams(pRet,true);
   return pRet;

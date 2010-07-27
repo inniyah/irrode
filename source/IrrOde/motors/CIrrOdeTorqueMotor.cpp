@@ -29,7 +29,7 @@ CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32
 }
 
 void CIrrOdeTorqueMotor::step() {
-  if (m_pBody!=NULL && m_bIsActive) {
+  if (m_pBody!=NULL && m_pBody->physicsInitialized() && m_bIsActive) {
     vector3df vRot=m_pBody->getRotation(),
               vVel=m_pBody->getLinearVelocity(),
               vNormVel=vVel;
@@ -90,6 +90,27 @@ void CIrrOdeTorqueMotor::deserializeAttributes(io::IAttributes* in, io::SAttribu
 
   m_fMinVel=in->getAttributeAsFloat("min_vel");
   m_fMaxVel=in->getAttributeAsFloat("max_vel");
+}
+
+ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
+  CIrrOdeTorqueMotor *pRet=new CIrrOdeTorqueMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
+  pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
+  pRet->setRollAxis(m_vRollAxis);
+  pRet->setYawAxis(m_vYawAxis);
+  pRet->setPitchAxis(m_vPitchAxis);
+
+  pRet->setRoll(m_fRoll);
+  pRet->setYaw(m_fYaw);
+  pRet->setPitch(m_fPitch);
+
+  pRet->setAeroRudder(m_bAeroRudder);
+  pRet->setMinVel(m_fMinVel);
+  pRet->setMaxVel(m_fMaxVel);
+
+  pRet->setPower(m_fPower);
+  pRet->setMaxPower(m_fMaxPower);
+  pRet->setIsActive(m_bIsActive);
+  return pRet;
 }
 
 }

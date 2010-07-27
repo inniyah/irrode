@@ -375,5 +375,19 @@ CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) 
 	return NULL;
 }
 
+ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr) {
+  ISceneNode *pRet=pSource->clone(newParent,newSmgr);
+
+  list<ISceneNode *> ch=pSource->getChildren();
+  list<ISceneNode *>::Iterator it;
+
+  for (it=ch.begin(); it!=ch.end(); it++) {
+    ISceneNode *p=*it;
+    if (p) cloneTree(p,pRet,newSmgr);
+  }
+  return pRet;
+}
+
+
 } //namespace ode
 } //namespace irr

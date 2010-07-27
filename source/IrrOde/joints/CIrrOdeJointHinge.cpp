@@ -145,8 +145,6 @@ void CIrrOdeJointHinge::deserializeAttributes(IAttributes* in, SAttributeReadWri
 ISceneNode *CIrrOdeJointHinge::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeJointHinge *pRet=new CIrrOdeJointHinge(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
-  CIrrOdeSceneNode::cloneChildren(pRet,newManager?newManager:m_pSceneManager);
-
   copyParams(pRet);
   return pRet;
 }

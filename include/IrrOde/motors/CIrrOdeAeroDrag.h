@@ -62,6 +62,7 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
 };
 
   } //namespace ode
