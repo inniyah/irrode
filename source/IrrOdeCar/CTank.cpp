@@ -175,10 +175,7 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
     }
 
     if (m_pController->get(m_pCtrls[eTankFlip])!=0.0f) {
-      m_pController->set(m_pCtrls[eTankFlip],0.0f);
-      vector3df t=m_pTankBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(3000,0,0));
-      m_pTankBody->setTorque(t);
-      m_bFlip=false;
+      m_pTankBody->addForceAtPosition(m_pTankBody->getPosition()+vector3df(0.0f,0.2f,0.0f),vector3df(0.0f,80.0f,0.0f));
     }
 
     if (m_pController->get(m_pCtrls[eTankCamBullet])) {

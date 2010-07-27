@@ -204,6 +204,9 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[ePlaneToggleCam],0.0f);
         m_bFollowBombCam=!m_bFollowBombCam;
       }
+
+      if (m_pController->get(m_pCtrls[ePlaneFlip])!=0.0f)
+        m_pPlaneBody->addForceAtPosition(m_pPlaneBody->getPosition()+vector3df(0.0f,0.5f,0.0f),vector3df(0.0f,12.0f,0.0f));
     }
   }
 

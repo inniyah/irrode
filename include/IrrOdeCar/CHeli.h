@@ -24,7 +24,8 @@ enum eHeliControls {
   eHeliPowerUp,
   eHeliPowerDown,
   eHeliFire,
-  eHeliToggleCam
+  eHeliToggleCam,
+  eHeliFlip
 };
 
 class CProjectile;

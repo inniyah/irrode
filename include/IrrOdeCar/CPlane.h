@@ -27,7 +27,8 @@ enum ePlaneControls {
   ePlaneFire,
   ePlaneToggleCam,
   ePlaneBackview,
-  ePlaneBrake
+  ePlaneBrake,
+  ePlaneFlip
 };
 
 class CProjectile;

@@ -35,7 +35,6 @@ class CProjectile;
 class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
     bool m_bBrake,
-         m_bFlip,
          m_bFollowTurret,
          m_bFastCollision,
          m_bFire,

@@ -156,6 +156,10 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[eHeliToggleCam],0.0f);
         m_bMissileCam=!m_bMissileCam;
       }
+
+      if (m_pController->get(m_pCtrls[eHeliFlip])) {
+        m_pHeliBody->addForceAtPosition(m_pHeliBody->getPosition()+vector3df(0.0f,1.5f,0.0f),vector3df(0.0f,15.0f,0.0f));
+      }
     }
   }
 
