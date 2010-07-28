@@ -107,14 +107,6 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
     #endif
 
     virtual void setParent(ISceneNode *newParent);
-
-    /**
-     * This method removes all IrrOde objects of a (sub)tree from physics. Note that pNode will not be
-     * removed, this method is called from CIrrOdeBody::removeFromPhysics
-     * @param pNode the root node of the tree to be removed
-     * @see CIrrOdeBody::removeFromPhysics
-     */
-    static void removeTreeFromPhysics(ISceneNode *pNode);
 };
 
 } //namespace ode

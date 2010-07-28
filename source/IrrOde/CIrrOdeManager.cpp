@@ -7,6 +7,7 @@
   #include <event/CIrrOdeEventInit.h>
   #include <event/CIrrOdeEventClose.h>
   #include <event/CIrrOdeEventProgress.h>
+  #include <event/CIrrOdeEventNodeCloned.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -28,6 +29,7 @@ CIrrOdeManager::CIrrOdeManager() {
   #endif
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
+  m_iNextOdeNodeId=20000;
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
@@ -235,6 +237,7 @@ void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEv
  * Add a new ODE scene node
  */
 void CIrrOdeManager::addOdeSceneNode(CIrrOdeSceneNode *pNode) {
+  if (pNode->getID()>m_iNextOdeNodeId) m_iNextOdeNodeId=pNode->getID();
   m_pSceneNodes.push_back(pNode);
 }
 
@@ -377,6 +380,10 @@ CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) 
 
 ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr) {
   ISceneNode *pRet=pSource->clone(newParent,newSmgr);
+  pRet->setID(getNextId());
+
+  CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
+  postEvent(pEvent);
 
   list<ISceneNode *> ch=pSource->getChildren();
   list<ISceneNode *>::Iterator it;
@@ -388,6 +395,17 @@ ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent
   return pRet;
 }
 
+
+void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
+  list<ISceneNode *> ch=pNode->getChildren();
+  list<ISceneNode *>::Iterator it;
+
+  for (it=ch.begin(); it!=ch.end(); it++) {
+    CIrrOdeSceneNode *p=dynamic_cast<CIrrOdeSceneNode *>(*it);
+    if (p) p->removeFromPhysics();
+    removeTreeFromPhysics(*it);
+  }
+}
 
 } //namespace ode
 } //namespace irr

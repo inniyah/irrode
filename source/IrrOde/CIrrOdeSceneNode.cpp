@@ -34,8 +34,7 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
 	  sprintf(sFileName,"%sIrrOde.3ds",m_sResources);
     m_pMesh=mgr->getMesh(sFileName);
 
-    static s32 s_iOdeId=20000;
-    this->setID(s_iOdeId++);
+    this->setID(m_pOdeManager->getNextId());
 
 		CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
     if (pWorld!=NULL) {
@@ -96,6 +95,7 @@ void CIrrOdeSceneNode::deserializeAttributes(IAttributes* in, SAttributeReadWrit
   ISceneNode::deserializeAttributes(in,options);
   m_sOdeClassName=in->getAttributeAsString("OdeClassName");
   m_iIdent=in->getAttributeAsInt("Ident");
+  m_pOdeManager->updateNextId(getID());
 }
 
 /**
@@ -209,18 +209,6 @@ void CIrrOdeSceneNode::setParent(ISceneNode *newParent) {
       pWorld->addOdeChildNode(this);
     }
   #endif
-}
-
-void CIrrOdeSceneNode::removeTreeFromPhysics(ISceneNode *pNode) {
-  list<ISceneNode *> ch=pNode->getChildren();
-  list<ISceneNode *>::Iterator it;
-
-  for (it=ch.begin(); it!=ch.end(); it++) {
-    CIrrOdeSceneNode *p=dynamic_cast<CIrrOdeSceneNode *>(*it);
-    if (p)
-      p->removeFromPhysics();
-    removeTreeFromPhysics(*it);
-  }
 }
 
 void CIrrOdeSceneNode::initPhysics() {

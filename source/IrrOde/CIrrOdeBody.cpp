@@ -750,18 +750,19 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
  */
 void CIrrOdeBody::removeFromPhysics() {
   CIrrOdeSceneNode::removeFromPhysics();
+
+  CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
+  CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
+
   if (m_iBodyId) {
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
-
-    CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
-    CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
 
     if (m_pWorld) m_pWorld->removeBody(this);
     list<ISceneNode *> ch=getChildren();
     list<ISceneNode *>::Iterator it;
 
-    removeTreeFromPhysics(this);
+    m_pOdeManager->removeTreeFromPhysics(this);
   }
   else if (!m_bPhysicsInitialized) m_pWorld->removeBody(this);
 }

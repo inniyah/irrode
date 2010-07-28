@@ -82,7 +82,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
   if (pNode!=NULL) {
-    CIrrOdeSceneNode::removeTreeFromPhysics(pNode);
+    CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
     pNode->remove();
   }
 }

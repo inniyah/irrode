@@ -28,6 +28,7 @@
 #include <event/CIrrOdeEventProgress.h>
 #include <event/CIrrOdeEventBodyMoved.h>
 #include <event/CIrrOdeEventBeforeStep.h>
+#include <event/CIrrOdeEventNodeCloned.h>
 #include <event/CIrrOdeEventBodyCreated.h>
 #include <event/CIrrOdeEventBodyRemoved.h>
 #include <event/CIrrOdeEventActivationChanged.h>

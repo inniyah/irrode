@@ -25,6 +25,7 @@ class CIrrOdeManager {
     u32 m_iLastStep,            /**< the time in ms left over from the last step */
         m_iFrameNo,             /**< counter of rendered frames */
         m_iNodesInitialized;    /**< the number of nodes that have already been initialized */
+    s32 m_iNextOdeNodeId;       /**< the next id for ODE scene nodes */
 
     bool m_bPhysicsInitialized; /**< was the initPhysics call already done? */
 
@@ -117,6 +118,17 @@ class CIrrOdeManager {
 		bool physicsInitialized() { return m_bPhysicsInitialized; }
 
     irr::scene::ISceneNode *cloneTree(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr);
+
+    s32 getNextId() { return ++m_iNextOdeNodeId; }
+    void updateNextId(s32 iId) { if (iId>m_iNextOdeNodeId) m_iNextOdeNodeId=iId; }
+
+    /**
+     * This method removes all IrrOde objects of a (sub)tree from physics. Note that pNode will not be
+     * removed, this method is called from CIrrOdeBody::removeFromPhysics
+     * @param pNode the root node of the tree to be removed
+     * @see CIrrOdeBody::removeFromPhysics
+     */
+    void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
 };
 
 } //namespace ode

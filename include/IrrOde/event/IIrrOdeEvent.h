@@ -28,8 +28,10 @@ enum enumIrrOdeEvents {
   eIrrOdeEventActivationChanged,  /*!<"body activation changed" event */
   eIrrOdeEventRayHit,             /*!<"ray hit" event */
   eIrrOdeEventProgress,           /*!<"progress" event */
+  eIrrOdeEventNodeCloned,         /*!<"node cloned" event */
 
-  eIrrOdeEventUser=256            /*!<user defined event IDs start at 256 */
+  eIrrOdeEventUser=256,           /*!< user defined event IDs start at 256 */
+  eIrrOdeEvent16Bit=0xFFFF        /*!< force the enum to be 16 bits */
 };
 
 class CSerializer;
