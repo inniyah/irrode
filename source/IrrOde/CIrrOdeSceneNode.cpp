@@ -22,7 +22,10 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pSelector=NULL;
   m_pOdeManager=CIrrOdeManager::getSharedInstance();
   m_pOdeDevice=m_pOdeManager->getOdeDevice();
-  m_pOdeManager->addOdeSceneNode(this);
+
+  CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  if (pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
+
   m_iIdent=-1;
   m_pUserData=NULL;
   #ifdef _IRREDIT_PLUGIN
@@ -36,7 +39,6 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
     this->setID(m_pOdeManager->getNextId());
 
-		CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
     if (pWorld!=NULL) {
       pWorld->addOdeChildNode(this);
     }
@@ -171,6 +173,7 @@ void CIrrOdeSceneNode::addChild (ISceneNode *child) {
 void CIrrOdeSceneNode::remove() {
   ISceneNode::remove();
   if (this->getReferenceCount()==1) removeFromPhysics();
+  m_pOdeManager->removeOdeSceneNode(this);
 }
 
 ISceneManager *CIrrOdeSceneNode::getSceneManager() {
@@ -194,17 +197,21 @@ void *CIrrOdeSceneNode::getUserData() {
 #endif
 
 void CIrrOdeSceneNode::setParent(ISceneNode *newParent) {
+  CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
   #ifdef _IRREDIT_PLUGIN
-    CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
     if (pWorld!=NULL) {
       pWorld->removeOdeChildNode(this);
     }
   #endif
 
+  m_pOdeManager->removeOdeSceneNode(this);
+
   ISceneNode::setParent(newParent);
 
+  pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  if (pWorld!=NULL || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
+
   #ifdef _IRREDIT_PLUGIN
-    pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
     if (pWorld!=NULL) {
       pWorld->addOdeChildNode(this);
     }
@@ -213,7 +220,7 @@ void CIrrOdeSceneNode::setParent(ISceneNode *newParent) {
 
 void CIrrOdeSceneNode::initPhysics() {
   m_bPhysicsInitialized=true;
-  CIrrOdeManager::getSharedInstance()->sceneNodeInitialized();
+  CIrrOdeManager::getSharedInstance()->sceneNodeInitialized(this);
 }
 
 void CIrrOdeSceneNode::removeFromPhysics() {

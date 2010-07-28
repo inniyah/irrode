@@ -4,6 +4,7 @@
   #include <CIrrOdeSceneNode.h>
   #include <CIrrOdeManager.h>
   #include <CIrrOdeBody.h>
+  #include <CIrrOdeWorld.h>
 
 namespace irr {
   namespace ode {
@@ -26,7 +27,8 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
 		                 const vector3df &rotation = core::vector3df(0,0,0),
 		                 const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f)) : CIrrOdeSceneNode(parent,mgr,id,position,rotation,scale) {
       m_pBody=NULL;
-      CIrrOdeManager::getSharedInstance()->addStepMotor(this);
+      CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+      if (pWorld!=NULL) CIrrOdeManager::getSharedInstance()->addStepMotor(this);
       m_fMaxPower=0.0f;
       m_fPower=0.0f;
       m_bIsActive=false;
@@ -81,6 +83,7 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
     virtual void removeFromPhysics() {
       m_pBody=NULL;
       CIrrOdeManager::getSharedInstance()->removeStepMotor(this);
+      CIrrOdeSceneNode::removeFromPhysics();
     }
 };
 

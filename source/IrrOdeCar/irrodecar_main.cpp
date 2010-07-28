@@ -290,6 +290,14 @@ int main(int argc, char** argv) {
   CConfigFileManager::getSharedInstance()->loadConfig(device,"../../data/irrOdeCarControls.xml");
   pFps->setVisible(true);
 
+  list<CIrrOdeSceneNode *> lNodes=irr::ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
+  list<CIrrOdeSceneNode *>::Iterator nit;
+
+  for (nit=lNodes.begin(); nit!=lNodes.end(); nit++) {
+    irr::ode::CIrrOdeSceneNode *p=*nit;
+    if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
+  }
+
   //let's run the loop
   while(device->run()) {
     //step the simulation

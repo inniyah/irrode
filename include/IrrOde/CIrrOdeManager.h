@@ -111,7 +111,7 @@ class CIrrOdeManager {
 		void removeStepMotor(IIrrOdeStepMotor *pMotor); /*!< remove a step motor */
 		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
 
-		void sceneNodeInitialized();
+		void sceneNodeInitialized(CIrrOdeSceneNode *pNode);
 
 		CIrrOdeDampable *getDampableWithParamName(const wchar_t *sName);
 

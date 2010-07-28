@@ -60,7 +60,7 @@ class CIrrOdeServo : public CIrrOdeSceneNode {
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
-    virtual void removeFromPhysics() { }
+    virtual void removeFromPhysics() { CIrrOdeSceneNode::removeFromPhysics(); }
 };
 
 } //namespace ode

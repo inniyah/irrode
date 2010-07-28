@@ -352,12 +352,19 @@ void CIrrOdeManager::stepStepMotors() {
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->step();
 }
 
-void CIrrOdeManager::sceneNodeInitialized() {
+void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
   if (!m_bPhysicsInitialized) {
-    m_iNodesInitialized++;
-    CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
-    this->postEvent(pPrg);
-    flushEvents();
+    list<CIrrOdeSceneNode *>::Iterator it;
+    bool b=false;
+    for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end() && !b; it++)
+      if (*it==pNode) b=true;
+
+    if (b) {
+      m_iNodesInitialized++;
+      CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
+      this->postEvent(pPrg);
+      flushEvents();
+    }
   }
 }
 
