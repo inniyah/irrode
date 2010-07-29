@@ -68,6 +68,11 @@ CIrrOdeGeom::~CIrrOdeGeom() {
     m_pOdeDevice->geomSetBody(m_iGeomId,NULL);
   }
 
+  for (u32 i=0; i<m_aParams.size(); i++) {
+    m_pOdeManager->removeSurfaceParameter(m_aParams[i]);
+    delete m_aParams[i];
+  }
+
   if (m_iGeomId) m_pOdeDevice->geomDestroy(m_iGeomId);
 }
 

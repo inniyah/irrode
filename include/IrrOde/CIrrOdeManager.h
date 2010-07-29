@@ -103,6 +103,7 @@ class CIrrOdeManager {
     core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();									/*!< get a list of all registered IrrOde scene nodes */
 
 		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
+		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
 		CIrrOdeSurfaceParameters *getSurfaceParameter(core::stringw sName);
 
 		u32 getFrameNo() { return m_iFrameNo; }

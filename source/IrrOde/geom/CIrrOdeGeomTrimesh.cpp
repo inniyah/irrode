@@ -26,6 +26,7 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32
     }
 
     while (m_aParams.size()>parent->getMaterialCount()) {
+      m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
       delete m_aParams[m_aParams.size()-1];
       m_aParams.erase(m_aParams.size()-1);
     }
@@ -45,7 +46,6 @@ CIrrOdeGeomTrimesh::~CIrrOdeGeomTrimesh() {
     printf("CIrrOdeGeomTrimesh destructor\n");
   #endif
 
-  for (u32 i=0; i<m_aParams.size(); i++) delete m_aParams[i];
   for (u32 i=0; i<m_aGeomIds.size(); i++)
     if (m_aGeomIds[i] && m_pWorld->getWorldId()) m_pOdeDevice->geomDestroy(m_aGeomIds[i]);
 }
@@ -200,9 +200,18 @@ void CIrrOdeGeomTrimesh::setParent(ISceneNode *pParent) {
         pParams->setStatic(pBody==NULL);
         m_aParams.push_back(pParams);
       }
-      while (m_aParams.size()>pParent->getMaterialCount()) m_aParams.erase(m_aParams.size()-1);
+      while (m_aParams.size()>pParent->getMaterialCount()) {
+        m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
+        delete m_aParams[m_aParams.size()-1];
+        m_aParams.erase(m_aParams.size()-1);
+      }
     }
-    else while (m_aParams.size()>1) m_aParams.erase(m_aParams.size()-1);
+    else
+      while (m_aParams.size()>1) {
+        m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
+        delete m_aParams[m_aParams.size()-1];
+        m_aParams.erase(m_aParams.size()-1);
+      }
   }
 }
 

@@ -308,6 +308,15 @@ void CIrrOdeManager::addSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
   m_lParamList.push_back(pParam);
 }
 
+void CIrrOdeManager::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
+  list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
+    if ((*it)==pParam) {
+      m_lParamList.erase(it);
+      return;
+    }
+}
+
 CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
 	list<CIrrOdeSurfaceParameters *>::Iterator it;
 
