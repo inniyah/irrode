@@ -33,6 +33,9 @@ CIrrOdeManager::CIrrOdeManager() {
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
+  this->getIrrOdeNodes().clear();
+  if(this->physicsInitialized()==true) this->closeODE();
+  delete m_pOdeDevice;
 }
 
 /**
