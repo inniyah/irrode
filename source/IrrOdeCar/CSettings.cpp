@@ -39,7 +39,6 @@ CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBac
 
       if (!strcmp(pXml->getNodeName(),"active")) {
         int iIdx=atoi(pXml->getAttributeValue("num"));
-        printf("--> %s (%i) - %s\n",pXml->getNodeName(),iIdx,pXml->getAttributeValue("active"));
         m_aAct[iIdx]=atoi(pXml->getAttributeValue("active"))!=0;
       }
     }
