@@ -25,7 +25,10 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32
       m_aParams.push_back(pParams);
     }
 
-    while (m_aParams.size()>parent->getMaterialCount()) m_aParams.erase(m_aParams.size()-1);
+    while (m_aParams.size()>parent->getMaterialCount()) {
+      delete m_aParams[m_aParams.size()-1];
+      m_aParams.erase(m_aParams.size()-1);
+    }
   }
 
   #ifdef _IRREDIT_PLUGIN
@@ -42,6 +45,7 @@ CIrrOdeGeomTrimesh::~CIrrOdeGeomTrimesh() {
     printf("CIrrOdeGeomTrimesh destructor\n");
   #endif
 
+  for (u32 i=0; i<m_aParams.size(); i++) delete m_aParams[i];
   for (u32 i=0; i<m_aGeomIds.size(); i++)
     if (m_aGeomIds[i] && m_pWorld->getWorldId()) m_pOdeDevice->geomDestroy(m_aGeomIds[i]);
 }
