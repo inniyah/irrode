@@ -94,7 +94,7 @@ void CIrrOdeWorld::initPhysics() {
     pSpace->initPhysics();
   }
 
-  list<CIrrOdeGeom *>::Iterator i,i2;
+  list<CIrrOdeGeom *>::Iterator i;
 
   for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++) {
     #ifdef _TRACE_INIT_PHYSICS
