@@ -48,40 +48,6 @@ CIrrOdeManager *CIrrOdeManager::getSharedInstance() {
 }
 
 /**
- * Add a world to the manager
- * @param pWorld the world to be added
- */
-void CIrrOdeManager::addWorld(CIrrOdeWorld *pWorld) {
-  m_pWorlds.push_back(pWorld);
-}
-
-/**
- * Get the number of worlds the manager manages
- * @return the number of worlds the manager manages
- */
-u32 CIrrOdeManager::getWorldCount() {
-  return m_pWorlds.size();
-}
-
-/**
- * Get the world at a specific index
- * @param iPos the index of the world
- * @return the world at the given index
- */
-CIrrOdeWorld *CIrrOdeManager::getWorld(u32 iPos) {
-  return iPos<m_pWorlds.size()?m_pWorlds[iPos]:NULL;
-}
-
-/**
- * Remove a world from the manager
- * @param pWorld the world to remove
- */
-void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
-  s32 idx=m_pWorlds.binary_search(pWorld);
-  if (idx!=-1) m_pWorlds.erase(idx);
-}
-
-/**
  * Initialize ODE. This call needs to be done once
  */
 void CIrrOdeManager::initODE() {
@@ -91,23 +57,36 @@ void CIrrOdeManager::initODE() {
   getOdeDevice()->initODE();
 }
 
+void CIrrOdeManager::addWorld(CIrrOdeWorld *pWorld) {
+  list<CIrrOdeWorld *>::Iterator it;
+  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
+    if ((*it)==pWorld)
+      return;
+
+  m_lWorlds.push_back(pWorld);
+}
+
+void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
+  list<CIrrOdeWorld *>::Iterator it;
+  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
+    if ((*it)==pWorld) {
+      m_lWorlds.erase(it);
+      return;
+    }
+}
+
 /**
  * Shutdown ODE
  */
 void CIrrOdeManager::closeODE() {
   getOdeDevice()->closeODE();
 
-  for (u32 i=0; i<m_pWorlds.size(); i++) m_pWorlds[i]->setPhysicsInitialized(false);
   list<CIrrOdeSceneNode *>::Iterator nit;
   for (nit=m_pSceneNodes.begin(); nit!=m_pSceneNodes.end(); nit++) (*nit)->setPhysicsInitialized(false);
-  list<CIrrOdeGeom *>::Iterator git;
-  for (git=m_pGeoms.begin(); git!=m_pGeoms.end(); git++) (*git)->setPhysicsInitialized(false);
   list<IIrrOdeStepMotor *>::Iterator mit;
   for (mit=m_lStepMotors.begin(); mit!=m_lStepMotors.end(); mit++) (*mit)->setPhysicsInitialized(false);
 
-  m_pWorlds.clear();
   m_pSceneNodes.clear();
-  m_pGeoms.clear();
   m_lParamList.clear();
   m_lStepMotors.clear();
 
@@ -120,9 +99,7 @@ void CIrrOdeManager::closeODE() {
 
 void CIrrOdeManager::clearODE() {
   getOdeDevice()->clearODE();
-  m_pWorlds.clear();
   m_pSceneNodes.clear();
-  m_pGeoms.clear();
   m_lParamList.clear();
 
   m_iNodesInitialized=0;
@@ -148,9 +125,8 @@ void CIrrOdeManager::step() {
   f32 fStep=((f32)(thisStep-m_iLastStep))/1000;
   m_iFrameNo++;
 
-  for (u16 i=0; i<m_pWorlds.size(); i++)
-    if (m_pWorlds[i]->physicsInitialized())
-      m_pWorlds[i]->step(fStep);
+  list<CIrrOdeWorld *>::Iterator it;
+  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->step(fStep);
 
   m_iLastStep=thisStep;
 }
@@ -164,9 +140,8 @@ void CIrrOdeManager::quickStep() {
   f32 fStep=((f32)(thisStep-m_iLastStep))/1000;
   m_iFrameNo++;
 
-  for (u16 i=0; i<m_pWorlds.size(); i++)
-    if (m_pWorlds[i]->physicsInitialized())
-      m_pWorlds[i]->quickStep(fStep);
+    list<CIrrOdeWorld *>::Iterator it;
+  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->quickStep(fStep);
 
   m_iLastStep=thisStep;
 }
@@ -204,9 +179,9 @@ void CIrrOdeManager::flushEvents() {
 
     //this is a special case: in order to apply movement, rotation and velocity
     //changes to a body it will instantly be posted to it's world
-    if (pEvent->getType()==eIrrOdeEventBodyMoved) {
-      if (m_pWorlds.size()>0)
-        m_pWorlds[0]->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
+    if (pEvent->getType()==eIrrOdeEventBodyMoved && m_lWorlds.getSize()>0) {
+      list<CIrrOdeWorld *>::Iterator it=m_lWorlds.begin();
+      (*it)->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
     }
 
     list<IIrrOdeEventListener *>::Iterator i;
@@ -223,9 +198,9 @@ void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEv
   //changes to a body it will instantly be posted to it's world. In this case
   //this handling is necessary for networking. If a message is received over
   //network it will be distributed at once, and the bodies still need to be moved
-  if (pEvent->getType()==eIrrOdeEventBodyMoved) {
-    if (m_pWorlds.size()>0)
-      m_pWorlds[0]->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
+  if (pEvent->getType()==eIrrOdeEventBodyMoved && m_lWorlds.getSize()>0) {
+    list<CIrrOdeWorld *>::Iterator it=m_lWorlds.begin();
+    (*it)->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
   }
 
   list<IIrrOdeEventListener *>::Iterator i;
@@ -284,23 +259,14 @@ void CIrrOdeManager::initPhysics() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
 
-  for (u32 i=0; i<m_pWorlds.size(); i++) {
-    m_pWorlds[i]->initPhysics();
-  }
+  list<CIrrOdeWorld *>::Iterator itw;
+  for (itw=m_lWorlds.begin(); itw!=m_lWorlds.end(); itw++)
+    (*itw)->initPhysics();
 
   core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
 
   m_bPhysicsInitialized=true;
-}
-
-/**
- * add a geom to the manager
- * @param pGeom the new geom
- */
-
-void CIrrOdeManager::addGeom(CIrrOdeGeom *pGeom) {
-  m_pGeoms.push_back(pGeom);
 }
 
 list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
@@ -381,8 +347,9 @@ void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
 }
 
 CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) {
-	for (u32 i=0; i<m_pWorlds.size(); i++) {
-		CIrrOdeWorld *p=m_pWorlds[i];
+  list<CIrrOdeWorld *>::Iterator wit;
+  for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) {
+		CIrrOdeWorld *p=*wit;
 		if (!wcscmp(sName,p->getParamName())) return p;
 	}
 

@@ -26,9 +26,8 @@ CIrrOdeWorld::CIrrOdeWorld(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   m_pWorldSpace=NULL;
 
-  m_pOdeManager->addWorld(this);
 	m_cGravity=vector3df(0.0f,-10.0f,0.0f);
-
+	m_pOdeManager->addWorld(this);
 	m_bDrawEditorMesh=true;
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -44,7 +43,6 @@ CIrrOdeWorld::~CIrrOdeWorld() {
     printf("CIrrOdeWorld destructor\n");
   #endif
 
-  m_pOdeManager->removeWorld(this);
   if (m_iJointGroupId) {
     m_pOdeDevice->jointGroupDestroy(m_iJointGroupId);
     m_iJointGroupId=0;
@@ -54,6 +52,8 @@ CIrrOdeWorld::~CIrrOdeWorld() {
     m_pOdeDevice->worldDestroy(m_iWorldId);
     m_iWorldId=0;
   }
+
+  m_pOdeManager->removeWorld(this);
 }
 
 void CIrrOdeWorld::initPhysics() {

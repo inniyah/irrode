@@ -48,7 +48,6 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
       m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
       if (m_pWorld) m_pWorld->addGeom(this);
     }
-    m_pOdeManager->addGeom(this);
     #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
       printf("CIrrOdeGeom: body=%i\n",m_pBody?m_pBody->getID():-2);
     #endif
