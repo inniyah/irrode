@@ -10,6 +10,7 @@
   #include "CController.h"
   #include "CIrrOdeCarState.h"
   #include "CConfigFileManager.h"
+  #include "CProgressBar.h"
   #include "irrCC.h"
 
 using namespace irr;
@@ -28,6 +29,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 
     IGUIImage *m_pImg;
     IGUIStaticText *m_pText;
+    CProgressBar *m_pBar;
 
   public:
     CProgress(IrrlichtDevice *pDevice) {
@@ -42,6 +44,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pImg->setScaleImage(true);
       m_pImg->setImage(m_pDriver->getTexture("../../data/standby.png"));
 
+      m_pBar=new CProgressBar(m_pGuienv,rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),-1,NULL);
       m_pText=m_pGuienv->addStaticText(L"",rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),true);
       m_pText->setBackgroundColor(SColor(192,192,192,192));
       m_pText->setDrawBackground(true);
@@ -53,6 +56,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
     virtual ~CProgress() {
       m_pImg->remove();
       m_pText->remove();
+      m_pBar->remove();
       irr::ode::CIrrOdeManager::getSharedInstance()->removeEventListener(this);
     }
 
@@ -64,6 +68,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
         wchar_t s[0xFF];
         swprintf(s,0xFF,L"Physics Initialization: %i / %i",pEvt->getCurrent(),pEvt->getCount());
         m_pText->setText(s);
+        m_pBar->setProgress(100*pEvt->getCurrent()/pEvt->getCount());
 
         m_pDriver->beginScene(true, true, SColor(0,200,200,200));
         m_pGuienv->drawAll();
