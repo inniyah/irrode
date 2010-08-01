@@ -95,6 +95,7 @@ class CIrrOdeManager {
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
     void initPhysics();																					/*!< init all dynamic objects */
     core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a list of all registered IrrOde scene nodes */
+    core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a list of all registered IrrOde worlds */
 
 		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
 		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);

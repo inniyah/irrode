@@ -273,6 +273,10 @@ list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
   return m_pSceneNodes;
 }
 
+core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
+  return m_lWorlds;
+}
+
 void CIrrOdeManager::addSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
   m_lParamList.push_back(pParam);
 }
