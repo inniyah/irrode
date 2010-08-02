@@ -83,6 +83,7 @@
 		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarState.h" />
 		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
 		<Unit filename="..\include\IrrOdeCar\CPlane.h" />
+		<Unit filename="..\include\IrrOdeCar\CProgressBar.h" />
 		<Unit filename="..\include\IrrOdeCar\CProjectile.h" />
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
@@ -94,6 +95,7 @@
 		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarState.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CPlane.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CProgressBar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CProjectile.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
