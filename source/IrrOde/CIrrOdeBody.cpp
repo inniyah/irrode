@@ -106,6 +106,7 @@ void CIrrOdeBody::initPhysics() {
         u32 iBody=m_iBodyId;
         setParent(m_pWorld);
         m_pParentBody->updateAbsolutePosition();
+        setScale(m_pParentBody->getScale());
         vector3df rot=getAbsoluteTransformation().getRotationDegrees();
         rot+=m_pParentBody->getAbsoluteTransformation().getRotationDegrees();
         setRotation(m_pParentBody->getAbsoluteTransformation().getRotationDegrees());

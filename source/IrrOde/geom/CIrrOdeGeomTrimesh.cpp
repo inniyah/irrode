@@ -72,7 +72,10 @@ void CIrrOdeGeomTrimesh::initPhysics() {
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   IMeshSceneNode *pNode=reinterpret_cast<IMeshSceneNode *>(getParent());
-  if (getChildren().getSize()) pNode=reinterpret_cast<IMeshSceneNode *>(*(getChildren().begin()));
+  if (getChildren().getSize()) {
+    pNode=reinterpret_cast<IMeshSceneNode *>(*(getChildren().begin()));
+    pNode->setVisible(false);
+  }
 
   if (!pNode) return;
 

@@ -126,7 +126,7 @@ u32 CCar::update() {
 
   bool b=m_pController->get(m_pCtrls[eCarBackview])!=0.0f;
   //get the parameters for the camera ...
-  vector3df pos=m_pCarBody->getRotation().rotationToDirection(b?vector3df(-8,4,0):vector3df(8,4  ,0)),
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(b?vector3df(-8,2,0):vector3df(8,4,0)),
             up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
             tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
 
@@ -163,8 +163,8 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
     if (fForeward!=0.0f) {
       f32 fForce=fForeward<0.0f?-fForeward:fForeward;
       for (u32 i=0; i<2; i++) {
-        m_pMotor[i]->setVelocity(-150.0*fForeward);
-        m_pMotor[i]->setForce(bBoost?20*fForce:10*fForce);
+        m_pMotor[i]->setVelocity(-250.0*fForeward);
+        m_pMotor[i]->setForce(bBoost?40*fForce:15*fForce);
         m_iThrottle=-1;
       }
     }
