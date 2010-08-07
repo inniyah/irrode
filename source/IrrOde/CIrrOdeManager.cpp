@@ -8,6 +8,7 @@
   #include <event/CIrrOdeEventClose.h>
   #include <event/CIrrOdeEventProgress.h>
   #include <event/CIrrOdeEventNodeCloned.h>
+  #include <event/CIrrOdeEventLoadScene.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -395,6 +396,15 @@ void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
     if (p) p->removeFromPhysics();
     removeTreeFromPhysics(*it);
   }
+}
+
+bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr) {
+  bool bRet=pSmgr->loadScene(sScene);
+  if (bRet) {
+    CIrrOdeEventLoadScene *pEvt=new CIrrOdeEventLoadScene(sScene);
+    postEventWithoutCache(pEvt);
+  }
+  return bRet;
 }
 
 } //namespace ode

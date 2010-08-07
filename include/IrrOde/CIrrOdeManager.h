@@ -125,6 +125,16 @@ class CIrrOdeManager {
      * @see CIrrOdeBody::removeFromPhysics
      */
     void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
+
+    /**
+     * This method encapsulates the "loadScene" method of the Irrlicht scene manager. It loads the
+     * scene and posts an event of type "CIrrOdeEventSceneLoaded" to the IrrOde event queue
+     * @param sScene the scene to load
+     * @param pSmgr the scene manager
+     * @return "true" if the scene was loaded, "false" otherwise
+     * @see irr::ode::CIrrOdeEventLoadScene
+     */
+     bool loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr);
 };
 
 } //namespace ode

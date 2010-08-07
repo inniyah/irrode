@@ -69,6 +69,7 @@
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventBodyRemoved.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventClose.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventInit.h" />
+		<Unit filename="..\include\IrrOde\event\CIrrOdeEventLoadScene.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventProgress.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventRayHit.h" />
@@ -116,6 +117,7 @@
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventBodyRemoved.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventClose.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventInit.cpp" />
+		<Unit filename="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventProgress.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventRayHit.cpp" />

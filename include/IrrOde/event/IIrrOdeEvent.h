@@ -29,6 +29,7 @@ enum enumIrrOdeEvents {
   eIrrOdeEventRayHit,             /*!<"ray hit" event */
   eIrrOdeEventProgress,           /*!<"progress" event */
   eIrrOdeEventNodeCloned,         /*!<"node cloned" event */
+  eIrrOdeEventLoadScene,          /*!<"load scene" event */
 
   eIrrOdeEventUser=256,           /*!< user defined event IDs start at 256 */
   eIrrOdeEvent16Bit=0xFFFF        /*!< force the enum to be 16 bits */

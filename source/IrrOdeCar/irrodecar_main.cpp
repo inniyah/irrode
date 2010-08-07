@@ -215,7 +215,7 @@ int main(int argc, char** argv) {
   CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
 
   //load the scene
-  smgr->loadScene("../../data/IrrOdeCar.xml");
+  CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
 
   if (!pSettings->isActive( 0)) removeFromScene("theCar"      ,smgr);
   if (!pSettings->isActive( 1)) removeFromScene("simpleCar"   ,smgr);
