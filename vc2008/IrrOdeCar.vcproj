@@ -44,8 +44,10 @@
 				AdditionalIncludeDirectories="&quot;D:\myStuff\projects\libs\ode-0.11-vc\include&quot;;D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;;..\include\IrrOdeCar;D:\myStuff\projects\irrOde\include\IrrOdeMarble"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_USE_MATH_DEFINES"
 				MinimalRebuild="true"
+				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -205,6 +207,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\IrrOdeCar\CProgressBar.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\IrrOdeCar\CProjectile.cpp"
 				>
 			</File>
@@ -256,6 +262,10 @@
 			</File>
 			<File
 				RelativePath="..\include\IrrOdeCar\CPlane.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\IrrOdeCar\CProgressBar.h"
 				>
 			</File>
 			<File
