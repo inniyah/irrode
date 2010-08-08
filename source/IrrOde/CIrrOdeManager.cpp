@@ -82,6 +82,8 @@ void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
 void CIrrOdeManager::closeODE() {
   getOdeDevice()->closeODE();
 
+  list<CIrrOdeWorld *>::Iterator wit;
+  for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) (*wit)->setPhysicsInitialized(false);
   list<CIrrOdeSceneNode *>::Iterator nit;
   for (nit=m_pSceneNodes.begin(); nit!=m_pSceneNodes.end(); nit++) (*nit)->setPhysicsInitialized(false);
   list<IIrrOdeStepMotor *>::Iterator mit;
@@ -90,6 +92,7 @@ void CIrrOdeManager::closeODE() {
   m_pSceneNodes.clear();
   m_lParamList.clear();
   m_lStepMotors.clear();
+  m_lWorlds.clear();
 
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
