@@ -84,6 +84,8 @@ class CIrrOdeManager {
      */
 		void flushEvents();
 
+		void clearEventQueue();
+
 		/**
 		 * This method posts an IrrOde event at once (without adding it to the event queue). Use this
 		 * method if you want to use the IrrOde event queue for non-IrrOde events, e.g. for game control

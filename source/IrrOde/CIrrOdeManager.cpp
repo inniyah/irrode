@@ -95,7 +95,7 @@ void CIrrOdeManager::closeODE() {
   m_bPhysicsInitialized=false;
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
-  postEvent(pEvent);
+  postEventWithoutCache(pEvent);
 }
 
 void CIrrOdeManager::clearODE() {
@@ -172,6 +172,15 @@ void CIrrOdeManager::postEvent(IIrrOdeEvent *pEvent) {
   m_lEventQueue.push_back(pEvent);
 }
 
+void CIrrOdeManager::clearEventQueue() {
+  while (m_lEventQueue.getSize()>0) {
+    list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEventQueue.begin();
+    IIrrOdeEvent *pEvent=*it;
+    m_lEventQueue.erase(it);
+    delete pEvent;
+  }
+}
+
 void CIrrOdeManager::flushEvents() {
   while (m_lEventQueue.getSize()>0) {
     list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEventQueue.begin();
@@ -209,6 +218,8 @@ void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEv
     if ((*i)->handlesEvent(pEvent))
       (*i)->onEvent(pEvent);
   }
+
+  if (pEvent->getType()==irr::ode::eIrrOdeEventClose) clearEventQueue();
   if (bDestroyEvent) delete pEvent;
 }
 

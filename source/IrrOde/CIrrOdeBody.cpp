@@ -753,17 +753,15 @@ void CIrrOdeBody::removeFromPhysics() {
   CIrrOdeSceneNode::removeFromPhysics();
 
   CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
-  CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
+  CIrrOdeManager::getSharedInstance()->postEventWithoutCache(pEvent);
 
   if (m_iBodyId) {
+    if (m_pWorld) m_pWorld->removeBody(this);
+    m_pOdeManager->removeTreeFromPhysics(this);
+    m_pOdeManager->removeOdeSceneNode(this);
+
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
-
-    if (m_pWorld) m_pWorld->removeBody(this);
-    list<ISceneNode *> ch=getChildren();
-    list<ISceneNode *>::Iterator it;
-
-    m_pOdeManager->removeTreeFromPhysics(this);
   }
   else if (!m_bPhysicsInitialized) m_pWorld->removeBody(this);
 }
