@@ -231,6 +231,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp"
 					>
 				</File>
@@ -442,6 +446,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventInit.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventLoadScene.h"
 					>
 				</File>
 				<File

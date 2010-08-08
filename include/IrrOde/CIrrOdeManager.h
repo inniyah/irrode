@@ -45,6 +45,8 @@ class CIrrOdeManager {
     CIrrOdeManager();  /**< protected contructor for singleton */
     ~CIrrOdeManager();
 
+    bool isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode);
+
   public:
     static CIrrOdeManager *getSharedInstance();   /*!< get a pointer to the singleton instance of this class */
 

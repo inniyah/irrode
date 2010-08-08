@@ -392,8 +392,10 @@ void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
   list<ISceneNode *>::Iterator it;
 
   for (it=ch.begin(); it!=ch.end(); it++) {
-    CIrrOdeSceneNode *p=dynamic_cast<CIrrOdeSceneNode *>(*it);
-    if (p) p->removeFromPhysics();
+    if (isRegisteredOdeSceneNode(*it)) {
+      CIrrOdeSceneNode *p=(CIrrOdeSceneNode *)(*it);
+      p->removeFromPhysics();
+    }
     removeTreeFromPhysics(*it);
   }
 }
@@ -405,6 +407,16 @@ bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmg
     postEventWithoutCache(pEvt);
   }
   return bRet;
+}
+
+bool CIrrOdeManager::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
+  core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
+
+  for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
+    if ((*it)==pNode)
+      return true;
+
+  return false;
 }
 
 } //namespace ode
