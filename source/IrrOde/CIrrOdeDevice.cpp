@@ -1072,6 +1072,7 @@ u32 CIrrOdeDevice::bodyCreate(u32 iWorld) {
 }
 
 void CIrrOdeDevice::bodyDestroy(u32 iBody) {
+  if (GETBODY(iBody)==0) return;
   list<CFastCollision *>::Iterator it;
   for (it=s_lCollisionQueue.begin(); it!=s_lCollisionQueue.end(); it++) {
     CFastCollision *p=*it;
