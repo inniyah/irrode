@@ -384,18 +384,24 @@ CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) 
 }
 
 ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr) {
-  ISceneNode *pRet=pSource->clone(newParent,newSmgr);
-  pRet->setID(getNextId());
+  ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
 
   CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
   postEvent(pEvent);
+
+  return pRet;
+}
+
+ISceneNode *CIrrOdeManager::cloneOdeNode(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr) {
+  ISceneNode *pRet=pSource->clone(newParent,newSmgr);
+  pRet->setID(getNextId());
 
   list<ISceneNode *> ch=pSource->getChildren();
   list<ISceneNode *>::Iterator it;
 
   for (it=ch.begin(); it!=ch.end(); it++) {
     ISceneNode *p=*it;
-    if (p) cloneTree(p,pRet,newSmgr);
+    if (p) cloneOdeNode(p,pRet,newSmgr);
   }
   return pRet;
 }
