@@ -104,6 +104,8 @@ int main(int argc, char** argv) {
 	  Next we init ODE using the singleton instance of the <i>CIrrOdeMananger</i> and set a timer. This timer will do all the 
 	  timing things for us, but we need to set it because the program would crash without a timer.
 	  <pre>
+  //set the scene manager
+  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
 

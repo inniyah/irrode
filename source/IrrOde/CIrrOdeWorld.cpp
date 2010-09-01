@@ -449,35 +449,6 @@ void CIrrOdeWorld::removeFromPhysics() {
   }
 }
 
-void CIrrOdeWorld::bodyMoved(CIrrOdeEventBodyMoved *pEvent) {
-  CIrrOdeBody *pBody=pEvent->getBody();
-  if (pBody==NULL) {
-    pBody=reinterpret_cast<CIrrOdeBody *>(m_pSceneManager->getSceneNodeFromId(pEvent->getBodyId()));
-  }
-
-  if (pBody!=NULL) {
-    if (pEvent->positionChanged  ()) pBody->setNodePosition(pEvent->getNewPosition());
-    if (pEvent->rotationChanged  ()) pBody->setNodeRotation(pEvent->getNewRotation());
-    if (pEvent->linearVelChanged ()) pBody->setNodeLinearVelocity(pEvent->getNewLinearVelocity());
-    if (pEvent->angularVelChanged()) pBody->setNodeAngularVelocity(pEvent->getNewAngularVelocity());
-    if (pEvent->dampingChanged   ()) {
-      pBody->setNodeAngularDamping(pEvent->getAngularDamping());
-      pBody->setNodeLinearDamping (pEvent->getLinearDamping ());
-    }
-
-    if (pEvent->getTouchId()) {
-      if (pEvent->getTouched())
-        pBody->setIsTouching(pEvent->getTouched());
-      else {
-        ISceneNode *pNode=m_pSceneManager->getSceneNodeFromId(pEvent->getTouchId());
-        CIrrOdeGeom *pGeom=reinterpret_cast<CIrrOdeGeom *>(pNode);
-        pBody->setIsTouching(pGeom);
-      }
-    }
-    else pBody->setIsTouching(NULL);
-  }
-}
-
 void CIrrOdeWorld::loadParameter(IXMLReader *pReader) {
   while (pReader->read()) {
     switch (pReader->getNodeType()) {

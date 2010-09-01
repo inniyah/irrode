@@ -31,6 +31,7 @@ CIrrOdeManager::CIrrOdeManager() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
   m_iNextOdeNodeId=20000;
+  m_pSmgr=NULL;
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
@@ -109,7 +110,7 @@ void CIrrOdeManager::clearODE() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
 
-  CIrrOdeEventClose *pEvent=new CIrrOdeEventClose ();
+  CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
   postEvent(pEvent);
 }
 
@@ -190,13 +191,6 @@ void CIrrOdeManager::flushEvents() {
     IIrrOdeEvent *pEvent=*it;
     m_lEventQueue.erase(it);
 
-    //this is a special case: in order to apply movement, rotation and velocity
-    //changes to a body it will instantly be posted to it's world
-    if (pEvent->getType()==eIrrOdeEventBodyMoved && m_lWorlds.getSize()>0) {
-      list<CIrrOdeWorld *>::Iterator it=m_lWorlds.begin();
-      (*it)->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
-    }
-
     list<IIrrOdeEventListener *>::Iterator i;
     for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
       if ((*i)->handlesEvent(pEvent))
@@ -207,15 +201,6 @@ void CIrrOdeManager::flushEvents() {
 }
 
 void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEvent) {
-  //this is a special case: in order to apply movement, rotation and velocity
-  //changes to a body it will instantly be posted to it's world. In this case
-  //this handling is necessary for networking. If a message is received over
-  //network it will be distributed at once, and the bodies still need to be moved
-  if (pEvent->getType()==eIrrOdeEventBodyMoved && m_lWorlds.getSize()>0) {
-    list<CIrrOdeWorld *>::Iterator it=m_lWorlds.begin();
-    (*it)->bodyMoved((CIrrOdeEventBodyMoved *)pEvent);
-  }
-
   list<IIrrOdeEventListener *>::Iterator i;
   for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
     if ((*i)->handlesEvent(pEvent))
@@ -437,6 +422,49 @@ bool CIrrOdeManager::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
       return true;
 
   return false;
+}
+
+bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
+  if (pEvt->getType()==eIrrOdeEventBodyMoved) {
+    CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
+    CIrrOdeBody *pBody=pEvent->getBody();
+    if (pBody==NULL) {
+      pBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(pEvent->getBodyId()));
+    }
+
+    if (pBody!=NULL) {
+      if (pEvent->positionChanged  ()) pBody->setNodePosition(pEvent->getNewPosition());
+      if (pEvent->rotationChanged  ()) pBody->setNodeRotation(pEvent->getNewRotation());
+      if (pEvent->linearVelChanged ()) pBody->setNodeLinearVelocity(pEvent->getNewLinearVelocity());
+      if (pEvent->angularVelChanged()) pBody->setNodeAngularVelocity(pEvent->getNewAngularVelocity());
+      if (pEvent->dampingChanged   ()) {
+        pBody->setNodeAngularDamping(pEvent->getAngularDamping());
+        pBody->setNodeLinearDamping (pEvent->getLinearDamping ());
+      }
+
+      if (pEvent->getTouchId()) {
+        if (pEvent->getTouched())
+          pBody->setIsTouching(pEvent->getTouched());
+        else {
+          ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pEvent->getTouchId());
+          CIrrOdeGeom *pGeom=reinterpret_cast<CIrrOdeGeom *>(pNode);
+          pBody->setIsTouching(pGeom);
+        }
+      }
+      else pBody->setIsTouching(NULL);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==eIrrOdeEventBodyMoved;
+}
+
+void CIrrOdeManager::setSceneManager(scene::ISceneManager *pSmgr) {
+  m_pSmgr=pSmgr;
+  if (m_pSmgr!=NULL) addEventListener(this); else removeEventListener(this);
 }
 
 } //namespace ode

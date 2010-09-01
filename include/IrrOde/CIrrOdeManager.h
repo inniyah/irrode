@@ -2,13 +2,13 @@
   #define _IRR_ODE_MANAGER
 
   #include <irrlicht.h>
+  #include <event/IIrrOdeEventListener.h>
 
 namespace irr {
 namespace ode {
 
 class CIrrOdeSurfaceParameters;
 class CIrrOdeDampable;
-class IIrrOdeEventListener;
 class CIrrOdeSceneNode;
 class IIrrOdeDevice;
 class IIrrOdeEvent;
@@ -19,7 +19,7 @@ class IIrrOdeStepMotor;
  * @class CIrrOdeManager
  * This class is the central manager of IrrODE.
  */
-class CIrrOdeManager {
+class CIrrOdeManager : public IIrrOdeEventListener {
   protected:
     u32 m_iLastStep,            /**< the time in ms left over from the last step */
         m_iFrameNo,             /**< counter of rendered frames */
@@ -35,6 +35,8 @@ class CIrrOdeManager {
 
     core::list<irr::ode::IIrrOdeEvent *> m_lEventQueue;
     ITimer *m_pTimer;                                           /**< the Irrlicht timer */
+
+    scene::ISceneManager *m_pSmgr;
 
 		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
 
@@ -54,6 +56,8 @@ class CIrrOdeManager {
 
     void addOdeSceneNode(CIrrOdeSceneNode *pNode);    /*!< add an ode scenenode to the manager */
     void removeOdeSceneNode(CIrrOdeSceneNode *pNode); /*!< remove an ode scenenode from the manager */
+
+    void setSceneManager(scene::ISceneManager *pSmgr);
 
     void initODE();   /*!< init ODE */
     void closeODE();  /*!< close ODE */
@@ -155,6 +159,9 @@ class CIrrOdeManager {
      * @see irr::ode::CIrrOdeEventLoadScene
      */
      bool loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr);
+
+    virtual bool onEvent(IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 };
 
 } //namespace ode

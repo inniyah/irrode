@@ -14,6 +14,8 @@ CPlay::CPlay(IrrlichtDevice *pDevice) : IState(pDevice) {
   m_pFont=m_pGuiEnv->getFont("../../data/fontcourier.bmp");
   m_pGuiEnv->getSkin()->setFont(m_pFont);
   m_pOdeManager=CIrrOdeManager::getSharedInstance();
+  //set the scene manager
+  m_pOdeManager->setSceneManager(pDevice->getSceneManager());
 }
 
 /**

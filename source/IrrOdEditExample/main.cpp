@@ -25,6 +25,9 @@ int main(int argc, char** argv) {
 
   smgr->loadScene("../../data/IrrOdEdit_example.xml");
 
+  //set the scene manager
+  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
   CIrrOdeManager::getSharedInstance()->initPhysics();

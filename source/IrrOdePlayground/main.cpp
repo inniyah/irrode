@@ -315,6 +315,9 @@ int main(int argc, char** argv) {
   s32 px=(cSize.Width/2)-8,py=(cSize.Height/2)-8;
   guienv->addImage(driver->getTexture("../../data/crosshair.png"),position2d<s32>(px,py));
 
+  //set the scene manager
+  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
 

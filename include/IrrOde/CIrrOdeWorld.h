@@ -125,8 +125,6 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
-    void bodyMoved(CIrrOdeEventBodyMoved *pEvent);
-
     #ifdef _IRREDIT_PLUGIN
       void addOdeChildNode(CIrrOdeSceneNode *pNode);
       void removeOdeChildNode(CIrrOdeSceneNode *pNode);

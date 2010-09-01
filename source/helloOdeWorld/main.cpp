@@ -31,6 +31,9 @@ int main(int argc, char** argv) {
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
+  //set the scene manager
+  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
 
