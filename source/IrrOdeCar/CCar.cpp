@@ -57,7 +57,7 @@ CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOd
     m_pCtrls=NULL;
 
     //we are an IrrOde event listener
-    CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
     m_bInitialized=true;
   }

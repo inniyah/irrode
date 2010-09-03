@@ -62,7 +62,7 @@ CProjectileManager::CProjectileManager() {
   m_iHits=0;
   m_pLast=NULL;
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 }
 
 CProjectileManager *CProjectileManager::getSharedInstance() {

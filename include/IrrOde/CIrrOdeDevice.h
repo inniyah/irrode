@@ -49,6 +49,7 @@ class CFastCollision {
 };
 
 class CIrrOdeWorld;
+class IIrrOdeEventQueue;
 class IIrrOdeContactParameters;
 
 /**
@@ -72,6 +73,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     static void convertToSurfaceParameters(dSurfaceParameters *pOde, CIrrOdeSurfaceParameters *pIrr);
 
     int convertToOdeJointParam(u16 iGroup, s32 &iParam);
+
+    static IIrrOdeEventQueue *m_pQueue;
 
     void handleFastCollisions();
 

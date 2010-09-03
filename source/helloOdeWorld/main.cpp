@@ -32,14 +32,10 @@ int main(int argc, char** argv) {
   smgr->registerSceneNodeFactory(&cFactory);
 
   //set the scene manager
-  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+  CIrrOdeManager::getSharedInstance()->install(device);
 
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
-
-  //set IrrODE's timer
-  ITimer *pTimer=device->getTimer();
-  CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
 
   ISceneNode *pNode=smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_WORLD_NAME),smgr->getRootSceneNode());
   CIrrOdeWorld *worldNode=reinterpret_cast<CIrrOdeWorld *>(pNode);
@@ -117,8 +113,6 @@ int main(int argc, char** argv) {
   ICameraSceneNode *cam=smgr->addCameraSceneNode();
   cam->setPosition(vector3df(-20.0f, 15.0f, -20.0f));
   cam->setTarget(vector3df(0.0f,0.0f,0.0f));
-
-  while (pTimer->isStopped()) pTimer->start();
 
   while(device->run()) {
     CIrrOdeManager::getSharedInstance()->step();

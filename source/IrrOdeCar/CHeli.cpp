@@ -12,7 +12,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
     m_bLeft=true;
     m_bMissileCam=false;
 
-    CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
     m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
     m_pInfo->setDrawBackground(true);

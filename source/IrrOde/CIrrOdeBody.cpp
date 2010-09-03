@@ -4,6 +4,7 @@
   #include <IIrrOdeDevice.h>
   #include <joints/CIrrOdeJoint.h>
   #include <geom/CIrrOdeGeomRay.h>
+  #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyCreated.h>
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventActivationChanged.h>
@@ -50,6 +51,8 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pOdeDevice->massSetZero(m_iMass);
   m_bFastMoving=false;
   m_pRay=NULL;
+
+  m_pQueue=CIrrOdeManager::getSharedInstance()->getQueue();
 
   updateAbsolutePosition();
 }
@@ -181,7 +184,7 @@ void CIrrOdeBody::initPhysics() {
      setAngularVelocity(m_vAngular);
 
      CIrrOdeEventBodyCreated *pEvent=new CIrrOdeEventBodyCreated(this);
-     CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
+     m_pQueue->postEvent(pEvent);
     }
   }
   list<IIrrOdeStepMotor *>::Iterator it;
@@ -524,7 +527,7 @@ void CIrrOdeBody::frameUpdate() {
   if (bEnabled!=m_bEnabled) {
     m_bEnabled=bEnabled;
     CIrrOdeEventActivationChanged *pEvent=new CIrrOdeEventActivationChanged(this,m_bEnabled);
-    CIrrOdeManager::getSharedInstance()->postEvent(pEvent);
+    m_pQueue->postEvent(pEvent);
   }
 }
 
@@ -753,7 +756,7 @@ void CIrrOdeBody::removeFromPhysics() {
   CIrrOdeSceneNode::removeFromPhysics();
 
   CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
-  CIrrOdeManager::getSharedInstance()->postEventWithoutCache(pEvent);
+  m_pQueue->postEvent(pEvent);
 
   if (m_iBodyId) {
     if (m_pWorld) m_pWorld->removeBody(this);

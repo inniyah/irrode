@@ -133,15 +133,12 @@ int main(int argc, char** argv) {
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
-  //set the scene manager
-  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+  //install the ODE
+  CIrrOdeManager::getSharedInstance()->install(device);
 
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
 
-  //set IrrODE's timer
-  ITimer *pTimer=device->getTimer();
-  CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
 			</pre><br /><br />
 			In the next code part we load our scene, add a camera scene node, modify some textures, make sure the timer is running and
 			finally initialize the physics world<br /><br />
@@ -165,7 +162,6 @@ int main(int argc, char** argv) {
     pNode->getMaterial(0).getTextureMatrix(0).setTextureScale(50.0f,50.0f);
 
   int lastFPS=-1;
-  while (pTimer->isStopped()) pTimer->start();
 
   //phyiscs initialization
   CIrrOdeManager::getSharedInstance()->initPhysics();

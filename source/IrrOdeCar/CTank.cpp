@@ -33,7 +33,7 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
-    irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     m_bInitialized=true;
   }
 }

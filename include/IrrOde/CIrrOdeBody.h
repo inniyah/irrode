@@ -9,12 +9,13 @@ namespace ode {
 const int IRR_ODE_BODY_ID=MAKE_IRR_ID('i','o','b','d'); /**< create an Irrlicht ID for this class */
 const wchar_t IRR_ODE_BODY_NAME[0xFF]=L"CIrrOdeBody";   /**< store a name for this class */
 
-class CIrrOdeWorld;     /**< foreward declaration of CIrrOdeWorld     */
-class CIrrOdeJoint;     /**< foreward declaration of CIrrOdeJoint     */
-class CIrrOdeSpace;     /**< foreward declaration of CIrrOdeSpace     */
-class CIrrOdeGeom;      /**< foreward declaration of CIrrOdeGeom      */
-class CIrrOdeGeomRay;   /**< foreward declaration of CIrrOdeGeomRay   */
-class IIrrOdeStepMotor; /**< foreware declaration of IIrrOdeStepMotor */
+class CIrrOdeWorld;       /**< foreward declaration of CIrrOdeWorld      */
+class CIrrOdeJoint;       /**< foreward declaration of CIrrOdeJoint      */
+class CIrrOdeSpace;       /**< foreward declaration of CIrrOdeSpace      */
+class CIrrOdeGeom;        /**< foreward declaration of CIrrOdeGeom       */
+class CIrrOdeGeomRay;     /**< foreward declaration of CIrrOdeGeomRay    */
+class IIrrOdeStepMotor;   /**< foreware declaration of IIrrOdeStepMotor  */
+class IIrrOdeEventQueue;  /**< foreward declaration of IIrrOdeEventQueue */
 
 /**
  * @class CIrrOdeBody
@@ -41,6 +42,8 @@ class CIrrOdeBody : public CIrrOdeDampable {
         m_iCollisionMaterial;               /**< index of the material if the body collided */
     CIrrOdeGeom *m_pTouching;               /**< the geom the body is touching */
     CIrrOdeGeomRay *m_pRay;                 /**< the ray for a fast moving object */
+
+    IIrrOdeEventQueue *m_pQueue;            /**< the event queue used to post all kinds of events */
 
     vector3df m_vLinear,              /**< linear velocity of the body. Is updated when calling "getLinearVelocity" */
               m_vAngular,             /**< angular velocity of the body. Is updated when calling "getAngularVelocity" */

@@ -346,19 +346,24 @@ void CGUIFileSelector::fillListBox()
    {
       s = FileList->getFileName(i);
       // We just want a list of directories and those matching the file filter
-      if (FileList->isDirectory(i))
+      if (FileList->isDirectory(i)) {
           if (DirectoryIconIdx != -1) FileBox->addItem(s.c_str(), DirectoryIconIdx);
           else                        FileBox->addItem(s.c_str());
-      else if (matchesFileFilter(s))
-        if (FilterComboBox->getSelected() >= (s32)FileFilters.size())
+      }
+      else
+        if (matchesFileFilter(s)) {
+          if (FilterComboBox->getSelected() >= (s32)FileFilters.size()) {
             if (FileIconIdx != -1) {
               s32 iconIdx = FileIconIdx;
               for (u32 i = 0 ; i < FileFilters.size() ; i++)
                 if (matchesFileFilter(s, FileFilters[i].FileExtension))
                   iconIdx = FileFilters[i].FileIconIdx;
               FileBox->addItem(s.c_str(), iconIdx);
-            } else  FileBox->addItem(s.c_str());
-        else FileBox->addItem(s.c_str(), FileFilters[FilterComboBox->getSelected()].FileIconIdx);
+            }
+            else  FileBox->addItem(s.c_str());
+          }
+          else FileBox->addItem(s.c_str(), FileFilters[FilterComboBox->getSelected()].FileIconIdx);
+        }
 
    }
 

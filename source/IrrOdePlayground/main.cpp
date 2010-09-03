@@ -315,15 +315,13 @@ int main(int argc, char** argv) {
   s32 px=(cSize.Width/2)-8,py=(cSize.Height/2)-8;
   guienv->addImage(driver->getTexture("../../data/crosshair.png"),position2d<s32>(px,py));
 
-  //set the scene manager
-  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
+  CIrrOdeManager::getSharedInstance()->install(device);
 
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
 
   //set IrrODE's timer
-  ITimer *pTimer=device->getTimer();
-  CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
+  ITimer *pTimer=CIrrOdeManager::getSharedInstance()->getTimer();
 
   //create an event receiver and init it
   myEventReceiver theEventReceiver;
@@ -413,11 +411,11 @@ int main(int argc, char** argv) {
 
   //let's create an IrrODE event listener for collision events and add it to the IrrODEManager
   myBodyEventListener *pColEvtListener=new myBodyEventListener(driver,pActiveBodies,fMinX,fMinZ,fMaxX,fMaxZ);
-  CIrrOdeManager::getSharedInstance()->addEventListener(pColEvtListener);
+  CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(pColEvtListener);
 
   //let's create an IrrODE event listener for ray events and add it to the IrrODEManager
   myRayListener *rayListener=new myRayListener(&theEventReceiver,cam,pBodyInfo,pJoints);
-  CIrrOdeManager::getSharedInstance()->addEventListener(rayListener);
+  CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(rayListener);
 
   //add a ray to the world. Will be updated each frame
   pNode=smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_GEOM_RAY_NAME),worldNode);
@@ -452,7 +450,6 @@ int main(int argc, char** argv) {
   int lastFPS=-1;
 
   srand(time(NULL));
-  while (pTimer->isStopped()) pTimer->start();
 
   driver->setAmbientLight(SColor(0x80,0xFF,0xFF,0xFF));
 

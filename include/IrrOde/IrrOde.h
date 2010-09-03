@@ -23,6 +23,8 @@
 
 #include <event/CIrrOdeEventStep.h>
 #include <event/CIrrOdeEventInit.h>
+#include <event/IIrrOdeEventQueue.h>
+#include <event/CIrrOdeEventQueue.h>
 #include <event/CIrrOdeEventClose.h>
 #include <event/CIrrOdeEventRayHit.h>
 #include <event/CIrrOdeEventProgress.h>

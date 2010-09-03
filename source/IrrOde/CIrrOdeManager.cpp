@@ -9,6 +9,7 @@
   #include <event/CIrrOdeEventProgress.h>
   #include <event/CIrrOdeEventNodeCloned.h>
   #include <event/CIrrOdeEventLoadScene.h>
+  #include <event/CIrrOdeEventQueue.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -31,7 +32,11 @@ CIrrOdeManager::CIrrOdeManager() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
   m_iNextOdeNodeId=20000;
+
+  m_pQueue=new CIrrOdeEventQueue();
+  m_pDevice=NULL;
   m_pSmgr=NULL;
+  m_pTimer=NULL;
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
@@ -54,7 +59,7 @@ CIrrOdeManager *CIrrOdeManager::getSharedInstance() {
  */
 void CIrrOdeManager::initODE() {
   CIrrOdeEventInit *pEvent=new CIrrOdeEventInit();
-  postEvent(pEvent);
+  m_pQueue->postEvent(pEvent);
 
   getOdeDevice()->initODE();
 }
@@ -99,7 +104,7 @@ void CIrrOdeManager::closeODE() {
   m_bPhysicsInitialized=false;
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
-  postEventWithoutCache(pEvent);
+  m_pQueue->postEvent(pEvent);
 }
 
 void CIrrOdeManager::clearODE() {
@@ -111,16 +116,17 @@ void CIrrOdeManager::clearODE() {
   m_bPhysicsInitialized=false;
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
-  postEvent(pEvent);
+  m_pQueue->postEvent(pEvent);
 }
 
-/**
- * Set a timer for the manager
- */
-void CIrrOdeManager::setTimer(ITimer *pTimer) {
-  m_pTimer=pTimer;
-}
+void CIrrOdeManager::install(IrrlichtDevice *pDevice) {
+  m_pDevice=pDevice;
+  m_pSmgr=m_pDevice->getSceneManager();
+  m_pTimer=m_pDevice->getTimer();
+  while (m_pTimer->isStopped()) m_pTimer->start();
 
+  m_pQueue->addEventListener(this);
+}
 /**
  * Step the worlds
  */
@@ -149,66 +155,6 @@ void CIrrOdeManager::quickStep() {
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->quickStep(fStep);
 
   m_iLastStep=thisStep;
-}
-
-/**
- * Add an event listener
- */
-void CIrrOdeManager::addEventListener(IIrrOdeEventListener *pListener) {
-  m_pListeners.push_back(pListener);
-}
-
-void CIrrOdeManager::removeEventListener(IIrrOdeEventListener *pListener) {
-	list<IIrrOdeEventListener *>::Iterator it;
-	for (it=m_pListeners.begin(); it!=m_pListeners.end(); it++)
-	  if (*it==pListener) {
-			m_pListeners.erase(it);
-			return;
-	  }
-}
-
-/**
- * Post an event to the event queue. Will be distributed when the CIrrOdeManager::flushEvents method is called
- * @param pEvent the event to be added
- * @see CIrrOdeManager::flushEvents
- */
-void CIrrOdeManager::postEvent(IIrrOdeEvent *pEvent) {
-  m_lEventQueue.push_back(pEvent);
-}
-
-void CIrrOdeManager::clearEventQueue() {
-  while (m_lEventQueue.getSize()>0) {
-    list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEventQueue.begin();
-    IIrrOdeEvent *pEvent=*it;
-    m_lEventQueue.erase(it);
-    delete pEvent;
-  }
-}
-
-void CIrrOdeManager::flushEvents() {
-  while (m_lEventQueue.getSize()>0) {
-    list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEventQueue.begin();
-    IIrrOdeEvent *pEvent=*it;
-    m_lEventQueue.erase(it);
-
-    list<IIrrOdeEventListener *>::Iterator i;
-    for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
-      if ((*i)->handlesEvent(pEvent))
-        (*i)->onEvent(pEvent);
-    }
-    delete pEvent;
-  }
-}
-
-void CIrrOdeManager::postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEvent) {
-  list<IIrrOdeEventListener *>::Iterator i;
-  for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
-    if ((*i)->handlesEvent(pEvent))
-      (*i)->onEvent(pEvent);
-  }
-
-  if (pEvent->getType()==irr::ode::eIrrOdeEventClose) clearEventQueue();
-  if (bDestroyEvent) delete pEvent;
 }
 
 /**
@@ -344,8 +290,7 @@ void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
     if (b) {
       m_iNodesInitialized++;
       CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
-      this->postEvent(pPrg);
-      flushEvents();
+      m_pQueue->postEvent(pPrg);
     }
   }
 }
@@ -372,7 +317,7 @@ ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent
   ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
 
   CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
-  postEvent(pEvent);
+  m_pQueue->postEvent(pEvent);
 
   return pRet;
 }
@@ -409,7 +354,7 @@ bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmg
   bool bRet=pSmgr->loadScene(sScene);
   if (bRet) {
     CIrrOdeEventLoadScene *pEvt=new CIrrOdeEventLoadScene(sScene);
-    postEventWithoutCache(pEvt);
+    m_pQueue->postEvent(pEvt);
   }
   return bRet;
 }
@@ -460,11 +405,6 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
 
 bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
   return pEvent->getType()==eIrrOdeEventBodyMoved;
-}
-
-void CIrrOdeManager::setSceneManager(scene::ISceneManager *pSmgr) {
-  m_pSmgr=pSmgr;
-  if (m_pSmgr!=NULL) addEventListener(this); else removeEventListener(this);
 }
 
 } //namespace ode

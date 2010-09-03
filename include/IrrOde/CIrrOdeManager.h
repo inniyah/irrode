@@ -14,6 +14,7 @@ class IIrrOdeDevice;
 class IIrrOdeEvent;
 class CIrrOdeWorld;
 class IIrrOdeStepMotor;
+class IIrrOdeEventQueue;
 
 /**
  * @class CIrrOdeManager
@@ -28,15 +29,16 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     bool m_bPhysicsInitialized; /**< was the initPhysics call already done? */
 
-    core::list<irr::ode::IIrrOdeEventListener *> m_pListeners;  /**< the event listeners */
     core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
     core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
     core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
 
-    core::list<irr::ode::IIrrOdeEvent *> m_lEventQueue;
+    IIrrOdeEventQueue *m_pQueue;
+
     ITimer *m_pTimer;                                           /**< the Irrlicht timer */
 
     scene::ISceneManager *m_pSmgr;
+    IrrlichtDevice *m_pDevice;
 
 		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
 
@@ -52,12 +54,14 @@ class CIrrOdeManager : public IIrrOdeEventListener {
   public:
     static CIrrOdeManager *getSharedInstance();   /*!< get a pointer to the singleton instance of this class */
 
-    void setTimer(ITimer *pTimer);            /*!< set the timer used for stepping the world */
+    /**
+     * This method must be called before any other IrrOde methods are called.
+     * @param pDevice the Irrlicht device
+     */
+    void install(IrrlichtDevice *pDevice);
 
     void addOdeSceneNode(CIrrOdeSceneNode *pNode);    /*!< add an ode scenenode to the manager */
     void removeOdeSceneNode(CIrrOdeSceneNode *pNode); /*!< remove an ode scenenode from the manager */
-
-    void setSceneManager(scene::ISceneManager *pSmgr);
 
     void initODE();   /*!< init ODE */
     void closeODE();  /*!< close ODE */
@@ -68,36 +72,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     void addWorld(CIrrOdeWorld *pWorld);     /*!< add a world */
     void removeWorld(CIrrOdeWorld *pWorld);  /*!< remove a world */
-
-    void addEventListener(IIrrOdeEventListener *pListener);			/*!< add an event listener */
-		void removeEventListener(IIrrOdeEventListener *pListener);	/*!< remove an event listener */
-
-    /**
-     * Post an event to the event queue. Will be distributed when the CIrrOdeManager::flushEvents method is called.
-     * Note that the events must be created on the heap (using the new operator) and will be deleted within the flush call
-     * @param pEvent the event to be added
-     * @see CIrrOdeManager::flushEvents
-     * @see m_lEventQueue
-     */
-    void postEvent(IIrrOdeEvent *pEvent);
-
-    /**
-     * This method sends out all events from the message queue to all registered event listeners
-     * @see CIrrOdeManager::postEvent
-     * @see m_lEventQueue
-     */
-		void flushEvents();
-
-		void clearEventQueue();
-
-		/**
-		 * This method posts an IrrOde event at once (without adding it to the event queue). Use this
-		 * method if you want to use the IrrOde event queue for non-IrrOde events, e.g. for game control
-		 * or distribution of network messages
-		 * @param pEvent the event to be posted
-		 * @param bDestroyEvent tells whether or not the event should be destroyed after posting (default: "true")
-		 */
-		void postEventWithoutCache(IIrrOdeEvent *pEvent, bool bDestroyEvent=true);
 
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
@@ -162,6 +136,10 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     virtual bool onEvent(IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
+
+    IIrrOdeEventQueue *getQueue() { return m_pQueue; }
+
+    ITimer *getTimer() { return m_pTimer; }
 };
 
 } //namespace ode

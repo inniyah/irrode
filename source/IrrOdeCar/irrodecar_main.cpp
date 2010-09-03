@@ -50,14 +50,14 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pText->setDrawBackground(true);
       m_pText->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
 
-      irr::ode::CIrrOdeManager::getSharedInstance()->addEventListener(this);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     }
 
     virtual ~CProgress() {
       m_pImg->remove();
       m_pText->remove();
       m_pBar->remove();
-      irr::ode::CIrrOdeManager::getSharedInstance()->removeEventListener(this);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
     }
 
     virtual bool onEvent(IIrrOdeEvent *pEvent) {
@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
   IrrlichtDevice *device=pSettings->createDeviceFromSettings();
   device->setWindowCaption(L"IrrODE car demo");
 
+  CIrrOdeManager::getSharedInstance()->install(device);
   CProgress *pProg=new CProgress(device);
 
   CIrrCC *pController=new CIrrCC(device);
@@ -207,15 +208,8 @@ int main(int argc, char** argv) {
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
-  //set the scene manager
-  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
-
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
-
-  //set IrrODE's timer
-  ITimer *pTimer=device->getTimer();
-  CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
 
   //load the scene
   CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
@@ -248,7 +242,6 @@ int main(int argc, char** argv) {
   if (pNode) pNode->getMaterial(0).getTextureMatrix(0).setTextureScale(50.0f,50.0f);
 
   int lastFPS=-1;
-  while (pTimer->isStopped()) pTimer->start();
 
   dimension2d<u32> cSize=driver->getScreenSize();
 

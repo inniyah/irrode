@@ -20,26 +20,19 @@ int main(int argc, char** argv) {
   ICursorControl *pCursor=device->getCursorControl();
   pCursor->setVisible(false);
 
+  CIrrOdeManager::getSharedInstance()->install(device);
+
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
   smgr->loadScene("../../data/IrrOdEdit_example.xml");
 
-  //set the scene manager
-  CIrrOdeManager::getSharedInstance()->setSceneManager(smgr);
-
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
   CIrrOdeManager::getSharedInstance()->initPhysics();
 
-  //set IrrODE's timer
-  ITimer *pTimer=device->getTimer();
-  CIrrOdeManager::getSharedInstance()->setTimer(pTimer);
-
   ICameraSceneNode *cam=reinterpret_cast<ICameraSceneNode *>(smgr->getSceneNodeFromName("theCamera"));
   cam->setTarget(vector3df(0,0,0));
-
-  while (pTimer->isStopped()) pTimer->start();
 
   //let's run the loop
   while(device->run()) {

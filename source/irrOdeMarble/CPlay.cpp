@@ -9,13 +9,11 @@
  * We do some very basic initialization here. Most initialization is done in the "activate" method
  */
 CPlay::CPlay(IrrlichtDevice *pDevice) : IState(pDevice) {
-  CIrrOdeManager::getSharedInstance()->addEventListener(this);
-  CIrrOdeManager::getSharedInstance()->setTimer(m_pTimer);
+  CIrrOdeManager::getSharedInstance()->install(pDevice);
+  CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
   m_pFont=m_pGuiEnv->getFont("../../data/fontcourier.bmp");
   m_pGuiEnv->getSkin()->setFont(m_pFont);
   m_pOdeManager=CIrrOdeManager::getSharedInstance();
-  //set the scene manager
-  m_pOdeManager->setSceneManager(pDevice->getSceneManager());
 }
 
 /**

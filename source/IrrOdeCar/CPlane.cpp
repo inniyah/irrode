@@ -38,7 +38,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
     m_pCam=m_pSmgr->addCameraSceneNode();
 
     //we are an IrrOde event listener
-    CIrrOdeManager::getSharedInstance()->addEventListener(this);
+    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
     //initiate the engine
     m_iThrustDir=0;
