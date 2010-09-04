@@ -34,6 +34,8 @@ class CIrrOdeEventProgress : public IIrrOdeEvent {
 
     u32 getCurrent() { return m_iCurrent; }
     u32 getCount() { return m_iCount; }
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventProgress(this); }
 };
 
 } //namespace ode

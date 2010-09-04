@@ -22,6 +22,8 @@ class CIrrOdeEventClose : public IIrrOdeEvent {
 
     virtual CSerializer *serialize();
     virtual const c8 *toString();
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventClose(); }
 };
 
 } //namespace ode

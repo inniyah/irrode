@@ -85,6 +85,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
 
     void setLinearDamping(f32 f);
     void setAngularDamping(f32 f);
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventBodyMoved(this); }
 };
 
 } //namespace ode

@@ -30,6 +30,8 @@ class CIrrOdeEventBodyRemoved : public IIrrOdeEvent {
 
     virtual CSerializer *serialize();
     virtual const c8 *toString();
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventBodyRemoved(this); }
 };
 
 } //namespace ode

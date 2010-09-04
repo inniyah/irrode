@@ -17,6 +17,13 @@ CIrrOdeEventNodeCloned::CIrrOdeEventNodeCloned(CSerializer *pData) {
   }
 }
 
+CIrrOdeEventNodeCloned::CIrrOdeEventNodeCloned(IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==eIrrOdeEventNodeCloned) {
+    m_iSourceId=((CIrrOdeEventNodeCloned *)pEvent)->getSourceId();
+    m_iNewId=((CIrrOdeEventNodeCloned *)pEvent)->getNewId();
+  }
+}
+
 u16 CIrrOdeEventNodeCloned::getType() {
   return eIrrOdeEventNodeCloned;
 }

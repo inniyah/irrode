@@ -243,6 +243,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventQueue.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventRayHit.cpp"
 					>
 				</File>
@@ -461,6 +465,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventQueue.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventRayHit.h"
 					>
 				</File>
@@ -474,6 +482,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\IIrrOdeEventListener.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\IIrrOdeEventQueue.h"
 					>
 				</File>
 			</Filter>

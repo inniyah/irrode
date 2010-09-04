@@ -17,6 +17,11 @@ CIrrOdeEventStep::CIrrOdeEventStep(CSerializer *pData) {
   m_iFrameNo=0;
 }
 
+CIrrOdeEventStep::CIrrOdeEventStep(IIrrOdeEvent *pEvt) {
+  m_iStepNo=((CIrrOdeEventStep *)pEvt)->getStepNo();
+  m_iFrameNo=((CIrrOdeEventStep *)pEvt)->getFrameNo();
+}
+
 u16 CIrrOdeEventStep::getType() {
   return eIrrOdeEventStep;
 }

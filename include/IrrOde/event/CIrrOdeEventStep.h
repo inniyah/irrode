@@ -19,6 +19,7 @@ class CIrrOdeEventStep : public IIrrOdeEvent {
   public:
     CIrrOdeEventStep(u32 iStepNo);
     CIrrOdeEventStep(CSerializer *pData);
+    CIrrOdeEventStep(IIrrOdeEvent *pEvt);
 
     virtual u16 getType();
 
@@ -29,6 +30,8 @@ class CIrrOdeEventStep : public IIrrOdeEvent {
 
     virtual CSerializer *serialize();
     virtual const c8 *toString();
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventStep(this); }
 };
 
 } //namespace ode

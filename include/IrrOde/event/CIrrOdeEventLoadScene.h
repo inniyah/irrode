@@ -27,6 +27,8 @@ class CIrrOdeEventLoadScene : public IIrrOdeEvent {
     virtual const c8 *toString();
 
     const c8 *getScene();
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventLoadScene(this); }
 };
 
 } //namespace ode

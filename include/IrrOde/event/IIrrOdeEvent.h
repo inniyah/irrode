@@ -56,6 +56,8 @@ class IIrrOdeEvent {
     virtual CSerializer *serialize()=0;
 
     virtual const c8 *toString()=0;
+
+    virtual IIrrOdeEvent *clone()=0;
 };
 
 } //namespace ode

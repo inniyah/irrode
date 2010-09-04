@@ -19,6 +19,7 @@ class CIrrOdeEventNodeCloned : public IIrrOdeEvent {
   public:
     CIrrOdeEventNodeCloned(s32 iSourceId, s32 iNewId);
     CIrrOdeEventNodeCloned(CSerializer *pData);
+    CIrrOdeEventNodeCloned(IIrrOdeEvent *pEvent);
 
     virtual u16 getType();
 
@@ -30,6 +31,8 @@ class CIrrOdeEventNodeCloned : public IIrrOdeEvent {
 
     virtual CSerializer *serialize();
     virtual const c8 *toString();
+
+    virtual IIrrOdeEvent *clone() { return new CIrrOdeEventNodeCloned(this); }
 };
 
 } //namespace ode
