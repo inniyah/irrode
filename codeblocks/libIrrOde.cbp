@@ -102,6 +102,7 @@
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeServo.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\IIrrOdeStepMotor.h" />
+		<Unit filename="..\include\IrrOde\observer\CIrrOdeWorldObserver.h" />
 		<Unit filename="..\source\IrrOde\CIrrOdeBody.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeContactParameters.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeDampable.cpp" />
@@ -148,6 +149,7 @@
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeMotor.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeServo.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeTorqueMotor.cpp" />
+		<Unit filename="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
