@@ -44,9 +44,7 @@ void CProjectile::step() {
 
   //if the lifetime has reached 0 ...
   if (m_iTtl<=0) {
-    //... we remove the body from physics ...
-    m_pBody->removeFromPhysics();
-    //... and from the Irrlicht scenegraph
+    //... we remove the body
     m_pBody->remove();
   }
 }

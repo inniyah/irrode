@@ -29,6 +29,8 @@ class CIrrOdeEventLoadScene : public IIrrOdeEvent {
     const c8 *getScene();
 
     virtual IIrrOdeEvent *clone() { return new CIrrOdeEventLoadScene(this); }
+
+    virtual bool isObservable() { return true; }
 };
 
 } //namespace ode

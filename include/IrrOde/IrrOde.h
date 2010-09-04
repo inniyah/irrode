@@ -54,4 +54,6 @@
 #include <motors/CIrrOdeAeroDrag.h>
 #include <motors/CIrrOdeTorqueMotor.h>
 
+#include <observer/CIrrOdeWorldObserver.h>
+
 #endif

@@ -107,6 +107,8 @@ int main(int argc, char** argv) {
   device->setWindowCaption(L"IrrODE car demo");
 
   CIrrOdeManager::getSharedInstance()->install(device);
+  irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
+
   CProgress *pProg=new CProgress(device);
 
   CIrrCC *pController=new CIrrCC(device);
@@ -341,6 +343,7 @@ int main(int argc, char** argv) {
   }
 
   CConfigFileManager::getSharedInstance()->writeConfig(device,"../../data/irrOdeCarControls.xml");
+  irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
   //drop the world so it is destroyed
   device->drop();

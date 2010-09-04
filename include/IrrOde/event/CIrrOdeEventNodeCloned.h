@@ -33,6 +33,8 @@ class CIrrOdeEventNodeCloned : public IIrrOdeEvent {
     virtual const c8 *toString();
 
     virtual IIrrOdeEvent *clone() { return new CIrrOdeEventNodeCloned(this); }
+
+    virtual bool isObservable() { return true; }
 };
 
 } //namespace ode

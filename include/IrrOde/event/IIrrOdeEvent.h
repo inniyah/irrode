@@ -58,6 +58,8 @@ class IIrrOdeEvent {
     virtual const c8 *toString()=0;
 
     virtual IIrrOdeEvent *clone()=0;
+
+    virtual bool isObservable() { return false; }
 };
 
 } //namespace ode

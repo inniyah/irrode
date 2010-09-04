@@ -24,9 +24,9 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
   protected:
     CIrrOdeBody *m_pBody;     /**< the body */
     CIrrOdeGeom *m_pTouch;    /**< the geom the body is touching */
-    u32 m_iBodyId,            /**< the ID of the body */
-        m_iTouchId;           /**< the ID of the geom the body is touching */
-    s32 m_iColMaterial;       /**< the material of the collision point */
+    s32 m_iBodyId,            /**< the ID of the body */
+        m_iTouchId,           /**< the ID of the geom the body is touching */
+        m_iColMaterial;       /**< the material of the collision point */
     u16 m_iAngularDamping,
         m_iLinearDamping;
     u8 m_iFlags;              /**< flags */
@@ -55,8 +55,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
 
     u8 getFlags() { return m_iFlags; }
 
-    u32 getBodyId() { return m_iBodyId; }
-    u32 getTouchId() { return m_iTouchId; }
+    s32 getBodyId() { return m_iBodyId; }
+    s32 getTouchId() { return m_iTouchId; }
 
     virtual u16 getType();
 
@@ -87,6 +87,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
     void setAngularDamping(f32 f);
 
     virtual IIrrOdeEvent *clone() { return new CIrrOdeEventBodyMoved(this); }
+
+    virtual bool isObservable() { return true; }
 };
 
 } //namespace ode
