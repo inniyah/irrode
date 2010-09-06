@@ -42,9 +42,7 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
 		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
 
-		#ifndef _USE_ODE_NULL_DEVICE
-		  IIrrOdeDevice *m_pOdeDevice;
-		#endif
+	  IIrrOdeDevice *m_pOdeDevice;
 
     CIrrOdeManager();  /**< protected contructor for singleton */
     ~CIrrOdeManager();

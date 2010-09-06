@@ -7,7 +7,7 @@
 		<Project filename="IrrOdEditExample.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="helloOdeWorld.cbp" active="1">
+		<Project filename="helloOdeWorld.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="irrOdeMarble.cbp">
@@ -16,7 +16,7 @@
 		<Project filename="IrrOdeSurfaceEdit.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeCar.cbp">
+		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="libIrrOde.cbp" />

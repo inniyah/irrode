@@ -323,7 +323,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventProgress.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventQueue.cpp"
 					>
 				</File>
 				<File
@@ -531,7 +543,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventLoadScene.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventProgress.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventQueue.h"
 					>
 				</File>
 				<File
@@ -540,6 +564,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventStep.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\IIrrOdeEventQueue.h"
 					>
 				</File>
 			</Filter>
