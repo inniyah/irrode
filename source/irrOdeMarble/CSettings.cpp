@@ -8,11 +8,18 @@
  * @param background color of the window
  */
 CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground) {
+  wcscpy(m_sTitle,sTitle);
+  if (sScene) strcpy(m_sScene,sScene); else m_sScene[0]='\0';
+  strcpy(m_sSettingsFile,sSettingsFile);
+  m_cBackground=cBackground;
+}
+
+void CSettings::createGUI() {
   //Create a software device
   m_pDevice=createDevice(EDT_SOFTWARE, dimension2d<u32>(230,200), 16, false, false, false, 0);
-  m_pDevice->setWindowCaption(sTitle);
+  m_pDevice->setWindowCaption(m_sTitle);
 
-  strcpy(m_sSettingsFile,sSettingsFile);
+  strcpy(m_sSettingsFile,m_sSettingsFile);
 
   //read the settings from the settings file
   IXMLReaderUTF8 *pXml=m_pDevice->getFileSystem()->createXMLReaderUTF8(m_sSettingsFile);
@@ -22,10 +29,12 @@ CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *s
   m_bFullscreen=true;
   m_bShadows   =false;
 
+  bool bLoadModeInformation=m_aDrvs.size()==0;
+
   if (pXml!=NULL) {
     while (pXml->read()) {
       //This is special: the video drivers to choose from need to be in the XML file
-      if (!strcmp(pXml->getNodeName(),"videodriver")) {
+      if (!strcmp(pXml->getNodeName(),"videodriver") && bLoadModeInformation) {
         _DRV *drv=new _DRV();
         wcscpy(drv->sName,stringw(pXml->getAttributeValue("name")).c_str());
         drv->iDriver=(E_DRIVER_TYPE)atoi(pXml->getAttributeValue("id"  ));
@@ -45,13 +54,12 @@ CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *s
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_pSceneManager=m_pDevice->getSceneManager();
   m_pDriver=m_pDevice->getVideoDriver();
-  m_cBackground=cBackground;
 
   m_bSettingsChanged=false;
   m_iClose=0;
 
   //add the static textfields
-  m_pGuiEnv->addStaticText(sTitle,rect<s32>(5,5,125,18),true,true,0,-1,true);
+  m_pGuiEnv->addStaticText(m_sTitle,rect<s32>(5,5,125,18),true,true,0,-1,true);
   m_pGuiEnv->addStaticText(L"graphics driver",rect<s32>(5, 80,75, 92),false,true,0,-1,true);
   m_pGuiEnv->addStaticText(L"resolution"     ,rect<s32>(5,105,75,117),false,true,0,-1,true);
   m_pGuiEnv->addStaticText(L"fullscreen"     ,rect<s32>(5,130,75,142),false,true,0,-1,true);
@@ -103,8 +111,8 @@ CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *s
   }
 
   //we load the scene if a scene is wanted
-  if (sScene) {
-    m_pSceneManager->loadScene(sScene);
+  if (m_sScene[0]!='\0') {
+    m_pSceneManager->loadScene(m_sScene);
     m_pSceneManager->addCameraSceneNode(NULL,vector3df(0.0f,0.0f,-20.0f),vector3df(0.0f,0.0f,0.0f));
   }
 
@@ -236,6 +244,14 @@ IrrlichtDevice *CSettings::createDeviceFromSettings() {
   m_pDevice->run();
   m_pDevice->drop();
   _VRES *res=m_aVModes[m_iResolution];
+  printf("\n\tcreating device with settings:\n\ndriver: %i\nresolution: (%i, %i)\n%i bits per pixel\nfullscreen: %s\nshadows: %s\n",m_iDriver,res->iWidth,res->iHeight,res->iBpp,m_bFullscreen?"YES":"NO",m_bShadows?"YES":"NO");
   m_pDevice=createDevice(m_iDriver,dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,m_bShadows,false,0);
   return m_pDevice;
+}
+
+void CSettings::addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver) {
+  _DRV *drv=new _DRV();
+  wcscpy(drv->sName,sName);
+  drv->iDriver=iDriver;
+  m_aDrvs.push_back(drv);
 }

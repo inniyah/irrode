@@ -63,9 +63,15 @@ class CSettings : public IEventReceiver {
     array<_VRES *> m_aVModes;     /**< list of the video modes that are available in the combobox */
     array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
 
+    c8 m_sScene[0xFF];
+
+    wchar_t m_sTitle[0xFF];
+
   public:
     CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground);
     ~CSettings();
+
+    void createGUI();
 
     /**
      * run the dialog
@@ -85,6 +91,8 @@ class CSettings : public IEventReceiver {
      * @return the newly created IrrlichtDevice instance
      */
     IrrlichtDevice *createDeviceFromSettings();
+
+		void addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver);
 };
 
 #endif
