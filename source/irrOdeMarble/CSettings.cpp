@@ -12,6 +12,7 @@ CSettings::CSettings(const c8 *sScene, const c8 *sSettingsFile, const wchar_t *s
   if (sScene) strcpy(m_sScene,sScene); else m_sScene[0]='\0';
   strcpy(m_sSettingsFile,sSettingsFile);
   m_cBackground=cBackground;
+  m_iMinResolution=dimension2di(320,200);
 }
 
 void CSettings::createGUI() {
@@ -95,11 +96,14 @@ void CSettings::createGUI() {
   for (s32 i=0; i<m_pVModes->getVideoModeCount(); i++)
     if (m_pVModes->getVideoModeDepth(i)>=16) {
       dimension2du res=m_pVModes->getVideoModeResolution(i);
-      _VRES *vRes=new _VRES();
-      vRes->iWidth =res.Width ;
-      vRes->iHeight=res.Height;
-      vRes->iBpp   =m_pVModes->getVideoModeDepth(i);
-      m_aVModes.push_back(vRes);
+
+      if (res.Width>=m_iMinResolution.Width && res.Height>=m_iMinResolution.Height) {
+        _VRES *vRes=new _VRES();
+        vRes->iWidth =res.Width ;
+        vRes->iHeight=res.Height;
+        vRes->iBpp   =m_pVModes->getVideoModeDepth(i);
+        m_aVModes.push_back(vRes);
+      }
     }
 
   //now we fill the "resolution" combobox with the drivers we added to the array

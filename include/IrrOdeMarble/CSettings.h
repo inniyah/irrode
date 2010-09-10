@@ -54,6 +54,8 @@ class CSettings : public IEventReceiver {
          m_bShadows,          /**< are shadows wanted? */
          m_bSettingsChanged;  /**< have the settings changed and need to be saved? */
 
+    dimension2du m_iMinResolution;
+
     IrrlichtDevice  *m_pDevice;       /**< the irrlicht device to be used */
     IGUIEnvironment *m_pGuiEnv;       /**< the GUI environment */
     IVideoDriver    *m_pDriver;       /**< the driver */
@@ -93,6 +95,8 @@ class CSettings : public IEventReceiver {
     IrrlichtDevice *createDeviceFromSettings();
 
 		void addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver);
+
+		void setMinResolution(dimension2du iMin) { m_iMinResolution=iMin; }
 };
 
 #endif

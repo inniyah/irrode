@@ -27,6 +27,7 @@ bool bQuit=false;
 
   pSettings->addValidDriver(L"Direct3D9",EDT_DIRECT3D9);
   pSettings->addValidDriver(L"OpenGL",EDT_OPENGL);
+  pSettings->setMinResolution(dimension2du(640,480));
 
   pSettings->createGUI();
   iRet=pSettings->run();
