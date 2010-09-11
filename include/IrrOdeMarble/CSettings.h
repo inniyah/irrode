@@ -48,8 +48,8 @@ class CSettings : public IEventReceiver {
 
     c8 m_sSettingsFile[1024]; /**< the settings file */
     u32 m_iClose,             /**< is the "OK" or the "Cancel" button (or "ENTER" or "ESCAPE") pressed? */
-        m_iResolution;        /**< the selected sceen mode */
-    E_DRIVER_TYPE m_iDriver;  /**< the selected driver */
+        m_iResolution,        /**< the selected sceen mode */
+        m_iDriver;            /**< the selected driver */
     bool m_bFullscreen,       /**< is fullscreen wanted? */
          m_bShadows,          /**< are shadows wanted? */
          m_bSettingsChanged;  /**< have the settings changed and need to be saved? */

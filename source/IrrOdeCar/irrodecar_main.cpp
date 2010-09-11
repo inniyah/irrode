@@ -96,6 +96,10 @@ int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
   CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
 
+  pSettings->addValidDriver(L"Direct3D9",EDT_DIRECT3D9);
+  pSettings->addValidDriver(L"OpenGL",EDT_OPENGL);
+  pSettings->setMinResolution(dimension2du(640,480));
+
   u32 iRet=pSettings->run();
   if (iRet==2) {
     delete pSettings;

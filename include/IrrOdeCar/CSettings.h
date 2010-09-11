@@ -49,10 +49,12 @@ class CSettings : public IEventReceiver {
 
     c8 m_sSettingsFile[1024]; /**< the settings file */
     u32 m_iClose,             /**< is the "OK" or the "Cancel" button (or "ENTER" or "ESCAPE") pressed? */
-        m_iResolution;        /**< the selected sceen mode */
-    E_DRIVER_TYPE m_iDriver;  /**< the selected driver */
+        m_iResolution,        /**< the selected sceen mode */
+        m_iDriver;            /**< the selected driver */
     bool m_bFullscreen,       /**< is fullscreen wanted? */
          m_bSettingsChanged;  /**< have the settings changed and need to be saved? */
+
+    dimension2du m_iMinResolution;
 
     IrrlichtDevice  *m_pDevice;       /**< the irrlicht device to be used */
     IGUIEnvironment *m_pGuiEnv;       /**< the GUI environment */
@@ -63,9 +65,15 @@ class CSettings : public IEventReceiver {
     array<_VRES *> m_aVModes;     /**< list of the video modes that are available in the combobox */
     array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
 
+    c8 m_sScene[0xFF];
+
+    wchar_t m_sTitle[0xFF];
+
   public:
     CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground);
     ~CSettings();
+
+    void createGUI();
 
     /**
      * run the dialog
@@ -86,7 +94,11 @@ class CSettings : public IEventReceiver {
      */
     IrrlichtDevice *createDeviceFromSettings();
 
-    bool isActive(u32 iIdx) { return iIdx<13?m_aAct[iIdx]:false; }
+		void addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver);
+
+		void setMinResolution(dimension2du iMin) { m_iMinResolution=iMin; }
+
+		bool isActive(u32 i) { return m_aAct[i]; }
 };
 
 #endif

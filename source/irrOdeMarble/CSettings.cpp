@@ -26,7 +26,7 @@ void CSettings::createGUI() {
   IXMLReaderUTF8 *pXml=m_pDevice->getFileSystem()->createXMLReaderUTF8(m_sSettingsFile);
 
   m_iResolution=0;
-  m_iDriver    =EDT_NULL;
+  m_iDriver    =0;
   m_bFullscreen=true;
   m_bShadows   =false;
 
@@ -45,7 +45,7 @@ void CSettings::createGUI() {
       if (!strcmp(pXml->getNodeName(),"resolution")) m_iResolution=atoi(pXml->getAttributeValue("value"));
       if (!strcmp(pXml->getNodeName(),"fullscreen")) m_bFullscreen=atoi(pXml->getAttributeValue("value"));
       if (!strcmp(pXml->getNodeName(),"shadows"   )) m_bShadows   =atoi(pXml->getAttributeValue("value"));
-      if (!strcmp(pXml->getNodeName(),"driver"    )) m_iDriver    =(E_DRIVER_TYPE)atoi(pXml->getAttributeValue("value"));
+      if (!strcmp(pXml->getNodeName(),"driver"    )) m_iDriver    =atoi(pXml->getAttributeValue("value"));
     }
 
     pXml->drop();
@@ -122,9 +122,6 @@ void CSettings::createGUI() {
 
   //Now add an event receiver
   m_pDevice->setEventReceiver(this);
-
-  //we init the GUI items with the values read from the settings XML file
-  for (u32 i=0; i<m_aDrvs.size(); i++) if (m_aDrvs[i]->iDriver==m_iDriver) m_pDrivers->setSelected(i);
 
   m_pResolution->setSelected(m_iResolution);
 
@@ -249,7 +246,7 @@ IrrlichtDevice *CSettings::createDeviceFromSettings() {
   m_pDevice->drop();
   _VRES *res=m_aVModes[m_iResolution];
   printf("\n\tcreating device with settings:\n\ndriver: %i\nresolution: (%i, %i)\n%i bits per pixel\nfullscreen: %s\nshadows: %s\n",m_iDriver,res->iWidth,res->iHeight,res->iBpp,m_bFullscreen?"YES":"NO",m_bShadows?"YES":"NO");
-  m_pDevice=createDevice(m_iDriver,dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,m_bShadows,false,0);
+  m_pDevice=createDevice(m_aDrvs[m_iDriver]->iDriver,dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,m_bShadows,false,0);
   return m_pDevice;
 }
 
