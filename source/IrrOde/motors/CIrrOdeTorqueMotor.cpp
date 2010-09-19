@@ -43,14 +43,18 @@ void CIrrOdeTorqueMotor::step() {
     if (m_bAeroRudder) {
       vector3df vTorque=vector3df(0.0f,0.0f,0.0f);
 
-      if (m_fForewardVel>=m_fMinVel) {
+      if (m_fForewardVel>=m_fMinVel || m_fForewardVel<=-m_fMinVel) {
         vector3df vRudder=m_vPitchAxis*m_fPitch+m_vYawAxis*m_fYaw+m_vRollAxis*m_fRoll;
         vTorque=vRot.rotationToDirection(vRudder);
-        if (m_fForewardVel>=m_fMaxVel)
+        if (m_fForewardVel>=m_fMaxVel || m_fForewardVel<=-m_fMaxVel)
           vTorque*=(m_fMaxVel-m_fMinVel)*m_fMaxPower;
         else
           vTorque*=(m_fForewardVel-m_fMinVel)*m_fMaxPower;
+
+        if (m_fForewardVel<=-m_fMinVel) vTorque*=-1;
       }
+
+
       m_pBody->addTorque(m_fPower*vTorque);
     }
     else {
