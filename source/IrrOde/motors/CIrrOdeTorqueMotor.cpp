@@ -50,8 +50,6 @@ void CIrrOdeTorqueMotor::step() {
           vTorque*=(m_fMaxVel-m_fMinVel)*m_fMaxPower;
         else
           vTorque*=(m_fForewardVel-m_fMinVel)*m_fMaxPower;
-
-        if (m_fForewardVel<=-m_fMinVel) vTorque*=-1;
       }
 
 
