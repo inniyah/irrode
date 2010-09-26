@@ -43,20 +43,29 @@ void CIrrOdeAeroDrag::step() {
     m_fForewardVel=fForeward*vVel.getLength();
     if (m_fForewardVel<0.0f) return;
 
+    //OK, if this aero drag provides a lifting force...
     if (m_fUpFactor!=0.0f) {
+      //...it is created by the foreward velocity (e.g. as with the wings of a plane)...
       f32 fUp=fForeward;
+      //...but only if it's higher than the stall speed...
       if (m_fForewardVel>=m_fStallSpeed)
+        //with a limit of max up speed (in this case ... not realistic, but OK)...
         if (m_fForewardVel>=m_fMaxUpSpeed)
           vUp*=m_fUpFactor*m_fMaxUpSpeed;
         else
           vUp*=m_fUpFactor*(m_fForewardVel-m_fStallSpeed);
       else
+        //...but if the stall speed isn't exceeded we don't create a lifting force.
         vUp=vector3df(0.0f,0.0f,0.0f);
 
+      //now calculate the upwards force vector...
       vUp=m_fPower*m_fMaxPower*fUp*vUp;
     }
-    else vUp=vector3df(0.0f,0.0f,0.0f);
+    else vUp=vector3df(0.0f,0.0f,0.0f);  //...or set it to a "null" vector if no up force is done
 
+    //the calculation of the lifting force is one point of this method, now we calculate forces that damp velocities
+    //into any direction. First comes the foreward damping. This is the simplest form: we just multiply the
+    //square of the foreward part of the velocity vector with the given value and scale a vector with the result.
     vector3df vForewardDamp=vector3df(0.0f,0.0f,0.0f);
 
     if (m_fForewardDamp!=0.0f) {
@@ -64,6 +73,9 @@ void CIrrOdeAeroDrag::step() {
       vForewardDamp=vForeward*fForewardDamp;
     }
 
+    //Sidewards and upwards damping are a bit different. They both add a static limit at which the effect begins.
+    //They use the part of the vector that points into their direction (cross product) and calculate the
+    //damping vectors using these values.
     vector3df vSideDamp=vector3df(0.0f,0.0f,0.0f);
 
     if (m_fSidewardDamp!=0.0f) {
@@ -82,8 +94,16 @@ void CIrrOdeAeroDrag::step() {
       if (fUpward>=0.1f || fUpward<=-0.1f) vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
     }
 
+    //ok ... in the previous section we have calculated four vectors:
+    //vUp: the lifting force
+    //vForewardDamp: the damping of the foreward velocity
+    //fSideDamp: the damping of the sideward slide
+    //fUpdamp: the damping of the upward slide
+    //
+    //now we combine these vectors to a single one that is then...
     vector3df vForce=vUp-vForewardDamp-vSideDamp-vUpDamp;
 
+    //...applied to the body
     m_pBody->addForce(vForce);
   }
 }

@@ -7,9 +7,9 @@ CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32
                     const vector3df &position, const vector3df &rotation, const vector3df &scale)
                     :IIrrOdeStepMotor(parent,mgr,id,position,rotation,scale) {
 
-  m_vRollAxis =vector3df(1.0f,0.0f,0.0f);
-  m_vPitchAxis=vector3df(0.0f,0.0f,1.0f);
-  m_vYawAxis  =vector3df(0.0f,1.0f,0.0f);
+  m_vRollAxis =vector3df(1.0f,0.0f,0.0f);  //default roll axis
+  m_vPitchAxis=vector3df(0.0f,0.0f,1.0f);  //default pitch axis
+  m_vYawAxis  =vector3df(0.0f,1.0f,0.0f);  //default yaw axis
 
   m_bAeroRudder=false;
 
@@ -40,11 +40,16 @@ void CIrrOdeTorqueMotor::step() {
 
     m_fForewardVel=fForeward*vVel.getLength();
 
+    //1st case: we are an aero rudder, e.g. of an airplane
     if (m_bAeroRudder) {
+      //initialize the force vector
       vector3df vTorque=vector3df(0.0f,0.0f,0.0f);
 
+      //OK, if the linear velocity is bigger than the minimum velocity (or smaller than the negative of minimum velocity)...
       if (m_fForewardVel>=m_fMinVel || m_fForewardVel<=-m_fMinVel) {
+        //...we create a vector with the rudder settings and...
         vector3df vRudder=m_vPitchAxis*m_fPitch+m_vYawAxis*m_fYaw+m_vRollAxis*m_fRoll;
+        //...rotate this vector by the bodie's rotation
         vTorque=vRot.rotationToDirection(vRudder);
         if (m_fForewardVel>=m_fMaxVel || m_fForewardVel<=-m_fMaxVel)
           vTorque*=(m_fMaxVel-m_fMinVel)*m_fMaxPower;
@@ -56,6 +61,7 @@ void CIrrOdeTorqueMotor::step() {
       m_pBody->addTorque(m_fPower*vTorque);
     }
     else {
+      //2nd case: no aero rudder (e.g. helicopters): just apply the rotational force given by the values and axes
       vector3df vRudder=m_vPitchAxis*m_fPitch+m_vYawAxis*m_fYaw+m_vRollAxis*m_fRoll,
                 vTorque=vRot.rotationToDirection(vRudder)*m_fMaxPower;
 
