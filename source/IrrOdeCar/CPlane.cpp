@@ -66,9 +66,9 @@ void CPlane::activate() {
   m_bActive=true;
 
   //get the parameters for the camera
-  vector3df pos=m_pPlaneBody->getRotation().rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+  vector3df pos=m_pPlaneBody->getRotation().rotationToDirection(m_bBackView?vector3df(0,0,-10):vector3df(0,0,10)),
             up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0  ,0));
 
   m_pCam->setPosition(m_pPlaneBody->getPosition()+pos);
   m_pCam->setUpVector(up);
@@ -95,7 +95,7 @@ u32 CPlane::update() {
   //get the parameters for the camera
   vector3df pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
             up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
