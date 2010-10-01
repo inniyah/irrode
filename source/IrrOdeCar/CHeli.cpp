@@ -42,7 +42,7 @@ void CHeli::activate() {
   m_bSwitchToMenu=false;
   m_bActive=true;
 
-  vector3df pos=m_pHeliBody->getRotation().rotationToDirection(vector3df(15,5,0)),
+  vector3df pos=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5,15)),
             up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
             tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
 
@@ -75,14 +75,14 @@ u32 CHeli::update() {
 
   vector3df rot=m_pHeliBody->getRotation();
 
-  vector3df pos=rot.rotationToDirection(vector3df(15,5,0)),
+  vector3df pos=rot.rotationToDirection(vector3df(0,5,15)),
             up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
             tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
   if (m_bMissileCam && ppm->getLast()!=NULL) {
-    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(vector3df(10,2,0));
+    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(vector3df(0,2,10));
     m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
     m_pCam->setUpVector(vector3df(0,1,0));
     m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
@@ -145,7 +145,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eHeliFire])!=0.0f) {
         m_pController->set(m_pCtrls[eHeliFire],0.0f);
         //We add a new missile...
-        vector3df pos=m_pHeliBody->getAbsolutePosition()+m_pHeliBody->getRotation().rotationToDirection(vector3df(-2.0f,-0.6f,m_bLeft?-3.0f:3.0f)),
+        vector3df pos=m_pHeliBody->getAbsolutePosition()+m_pHeliBody->getRotation().rotationToDirection(vector3df(m_bLeft?-3.0f:3.0f,-0.6f,-2.0f)),
                   rot=m_pHeliBody->getRotation(),vel=m_pHeliBody->getLinearVelocity();
 
         new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
