@@ -1125,11 +1125,25 @@ vector3df CIrrOdeDevice::bodyGetRotation(u32 iBody) {
   return s_vRot;
 }
 
-void CIrrOdeDevice::bodySetQuaternion(u32 iBody, vector3df rot) {
+void CIrrOdeDevice::bodySetQuaternion(u32 iBody, core::quaternion rot) {
   if (iBody) {
     dQuaternion q;
-    eulerToQuaternion(rot,q);
+    //eulerToQuaternion(rot,q);
+    q[0]=rot.W*GRAD_PI2;
+    q[1]=rot.X*GRAD_PI2;
+    q[2]=rot.Y*GRAD_PI2;
+    q[3]=rot.Z*GRAD_PI2;
+
     dBodySetQuaternion(GETBODY(iBody),q);
+  }
+}
+
+void CIrrOdeDevice::bodySetRotation(u32 iBody, vector3df rot) {
+  if (iBody) {
+    dMatrix3 rotMat;
+    dRSetIdentity(rotMat);
+    dRFromEulerAngles(rotMat,rot.X*GRAD_PI2,-rot.Y*GRAD_PI2,rot.Z*GRAD_PI2);
+    dBodySetRotation(GETBODY(iBody),rotMat);
   }
 }
 

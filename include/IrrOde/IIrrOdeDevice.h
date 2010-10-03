@@ -204,7 +204,8 @@ class IIrrOdeDevice {
     virtual void bodySetPosition(u32 iBody, vector3df pos)=0;
     virtual vector3df bodyGetPosition(u32 iBody)=0;
     virtual vector3df bodyGetRotation(u32 iBody)=0;
-    virtual void bodySetQuaternion(u32 iBody, vector3df rot)=0;
+    virtual void bodySetQuaternion(u32 iBody, core::quaternion rot)=0;
+    virtual void bodySetRotation(u32 iBody, vector3df rot)=0;
     virtual void bodySetData(u32 iBody, void *pData)=0;
     virtual void bodySetLinearDamping(u32 iBody, f32 f)=0;
     virtual f32 bodyGetLinearDamping(u32 iBody)=0;

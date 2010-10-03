@@ -227,7 +227,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual void bodySetPosition(u32 iBody, vector3df pos);
     virtual vector3df bodyGetPosition(u32 iBody);
     virtual vector3df bodyGetRotation(u32 iBody);
-    virtual void bodySetQuaternion(u32 iBody, vector3df rot);
+    virtual void bodySetQuaternion(u32 iBody, core::quaternion rot);
+    virtual void bodySetRotation(u32 iBody, vector3df rot);
     virtual void bodySetData(u32 iBody, void *pData);
     virtual void bodySetLinearDamping(u32 iBody, f32 f);
     virtual f32 bodyGetLinearDamping(u32 iBody);

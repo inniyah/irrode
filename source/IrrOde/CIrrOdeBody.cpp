@@ -117,7 +117,7 @@ void CIrrOdeBody::initPhysics() {
       }
 
       m_pOdeDevice->bodySetPosition(m_iBodyId,getAbsolutePosition());
-      m_pOdeDevice->bodySetQuaternion(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
+      m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
       m_pOdeDevice->bodySetData(m_iBodyId,this);
 
       setLinearDamping          (m_fDampingLinear          );
@@ -629,7 +629,7 @@ void CIrrOdeBody::setRotation(const vector3df &newRot) {
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
   else
-    m_pOdeDevice->bodySetQuaternion(m_iBodyId,newRot);
+    m_pOdeDevice->bodySetRotation(m_iBodyId,newRot);
 }
 
 /**
