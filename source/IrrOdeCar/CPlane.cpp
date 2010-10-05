@@ -49,6 +49,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
+    m_bLeftMissile=true;
     m_bInitialized=true;
   }
 }
@@ -189,10 +190,13 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f) {
         m_pController->set(m_pCtrls[ePlaneFire],0.0f);
         //We add a new bomb...
-        vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,-4.0f,-2.0f)),
+        vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
                   rot=m_pPlaneBody->getRotation(),vel=m_pPlaneBody->getLinearVelocity();
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"bomb",600,m_pWorld,true);
+        m_bLeftMissile=!m_bLeftMissile;
+
+        //new CProjectile(m_pSmgr,pos,rot,vel,"bomb",600,m_pWorld,true);
+        new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
       }
 
       m_pRearWheels[0]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);

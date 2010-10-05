@@ -18,9 +18,6 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
-				<Linker>
-					<Add library="..\..\libs\ode-0.11-gcc\lib\DebugSingleDLL\libode_singled.a" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="..\bin\gcc-win32\libIrrOde" prefix_auto="1" extension_auto="1" />
@@ -35,17 +32,17 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="..\..\libs\ode-0.11-gcc\lib\ReleaseSingleDLL\libode_single.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\..\libs\irrlicht-1.7.1\include" />
-			<Add directory="..\..\libs\ode-0.11-gcc\include" />
+			<Add directory="..\..\libs\ode-0.11.1-gcc\include" />
 		</Compiler>
 		<Linker>
 			<Add library="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc\libIrrlicht.a" />
+			<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 		</Linker>
 		<Unit filename="..\include\IrrOde\CIrrOdeBody.h" />
 		<Unit filename="..\include\IrrOde\CIrrOdeContactParameters.h" />

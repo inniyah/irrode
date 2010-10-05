@@ -117,7 +117,11 @@ void CIrrOdeBody::initPhysics() {
       }
 
       m_pOdeDevice->bodySetPosition(m_iBodyId,getAbsolutePosition());
-      m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
+      //m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
+      core::matrix4 rotMat=getAbsoluteTransformation();
+      core::quaternion rotQuat(rotMat);
+      m_pOdeDevice->bodySetQuaternion(m_iBodyId,rotQuat);
+
       m_pOdeDevice->bodySetData(m_iBodyId,this);
 
       setLinearDamping          (m_fDampingLinear          );
@@ -628,8 +632,11 @@ void CIrrOdeBody::setRotation(const vector3df &newRot) {
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
-  else
-    m_pOdeDevice->bodySetRotation(m_iBodyId,newRot);
+  else {
+    core::matrix4 rotMat=getAbsoluteTransformation();
+    core::quaternion rotQuat(rotMat);
+    m_pOdeDevice->bodySetQuaternion(m_iBodyId,rotQuat);
+  }
 }
 
 /**
