@@ -54,7 +54,7 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
 
-    ISceneNode *m_pRoll[2],*m_pPitch[2],*m_pYaw;
+    ISceneNode *m_pRoll[2],*m_pPitch[2],*m_pYaw[2];
     const u32 *m_pCtrls;
 
   public:

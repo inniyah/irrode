@@ -405,6 +405,13 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
     quaternionToEuler(pOdeRot,rot);
     VEC2IRR(pOdePos,pos);
 
+    if (!(rot.X==rot.X && rot.Y==rot.Y && rot.Z==rot.Z)) {
+      rot=theBody->getAbsoluteTransformation().getRotationDegrees();
+      pos=theBody->getAbsolutePosition();
+      static int s_iFailed=0;
+      printf("FAILED %i\n",s_iFailed++);
+    }
+
     theBody->updateAbsolutePosition();
     theBody->bodyMoved(pos);
 

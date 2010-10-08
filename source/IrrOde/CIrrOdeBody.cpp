@@ -117,7 +117,7 @@ void CIrrOdeBody::initPhysics() {
       }
 
       m_pOdeDevice->bodySetPosition(m_iBodyId,getAbsolutePosition());
-      //m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
+      m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
       core::matrix4 rotMat=getAbsoluteTransformation();
       core::quaternion rotQuat(rotMat);
       m_pOdeDevice->bodySetQuaternion(m_iBodyId,rotQuat);

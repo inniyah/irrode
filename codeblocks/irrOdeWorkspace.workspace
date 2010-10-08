@@ -18,11 +18,7 @@
 		</Project>
 		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
-			<Depends filename="../../libs/ode-0.11.1-gcc/build/codeblocks/ode.cbp" />
 		</Project>
-		<Project filename="libIrrOde.cbp">
-			<Depends filename="../../libs/ode-0.11.1-gcc/build/codeblocks/ode.cbp" />
-		</Project>
-		<Project filename="../../libs/ode-0.11.1-gcc/build/codeblocks/ode.cbp" />
+		<Project filename="libIrrOde.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -19,7 +19,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
     m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
     m_pPitch[0]=m_pSmgr->getSceneNodeFromName("pitch1");
     m_pPitch[1]=m_pSmgr->getSceneNodeFromName("pitch2");
-    m_pYaw     =m_pSmgr->getSceneNodeFromName("yaw");
+    m_pYaw  [0]=m_pSmgr->getSceneNodeFromName("yaw");
+    m_pYaw  [1]=m_pSmgr->getSceneNodeFromName("yaw2");
 
     //get the motor, the rudders and the aerodynamic caluclator of the plane
     m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("plane_motor"));
@@ -185,7 +186,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
 
       m_pSteer->setServoPos(-10.0f*fYaw);
-      m_pYaw->setRotation(vector3df(-15.0f*fYaw,13,90));
+      m_pYaw[0]->setRotation(vector3df(-15.0f*fYaw,13,90));
+      m_pYaw[1]->setRotation(vector3df(0, 10.0f*fYaw, 0));
 
       if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f) {
         m_pController->set(m_pCtrls[ePlaneFire],0.0f);
