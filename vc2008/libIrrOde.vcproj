@@ -359,6 +359,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="observer"
+				>
+				<File
+					RelativePath="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -594,6 +602,14 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\motors\IIrrOdeStepMotor.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="observer"
+				>
+				<File
+					RelativePath="..\include\IrrOde\observer\CIrrOdeWorldObserver.h"
 					>
 				</File>
 			</Filter>

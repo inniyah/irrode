@@ -106,22 +106,16 @@ void CIrrOdeBody::initPhysics() {
 
     if (m_iBodyId) {
       if (m_pParentBody && m_bUpdateGraphics) {
-        u32 iBody=m_iBodyId;
         setParent(m_pWorld);
         m_pParentBody->updateAbsolutePosition();
         setScale(m_pParentBody->getScale());
         vector3df rot=getAbsoluteTransformation().getRotationDegrees();
         rot+=m_pParentBody->getAbsoluteTransformation().getRotationDegrees();
         setRotation(m_pParentBody->getAbsoluteTransformation().getRotationDegrees());
-        m_iBodyId=iBody;
       }
 
       m_pOdeDevice->bodySetPosition(m_iBodyId,getAbsolutePosition());
       m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
-      core::matrix4 rotMat=getAbsoluteTransformation();
-      core::quaternion rotQuat(rotMat);
-      m_pOdeDevice->bodySetQuaternion(m_iBodyId,rotQuat);
-
       m_pOdeDevice->bodySetData(m_iBodyId,this);
 
       setLinearDamping          (m_fDampingLinear          );
@@ -632,11 +626,8 @@ void CIrrOdeBody::setRotation(const vector3df &newRot) {
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
-  else {
-    core::matrix4 rotMat=getAbsoluteTransformation();
-    core::quaternion rotQuat(rotMat);
-    m_pOdeDevice->bodySetQuaternion(m_iBodyId,rotQuat);
-  }
+  else
+    m_pOdeDevice->bodySetRotation(m_iBodyId,newRot);
 }
 
 /**

@@ -146,7 +146,8 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[eHeliFire],0.0f);
         //We add a new missile...
         vector3df pos=m_pHeliBody->getAbsolutePosition()+m_pHeliBody->getRotation().rotationToDirection(vector3df(m_bLeft?-3.0f:3.0f,-0.6f,-2.0f)),
-                  rot=m_pHeliBody->getRotation(),vel=m_pHeliBody->getLinearVelocity();
+                  rot=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees(),
+                  vel=m_pHeliBody->getLinearVelocity();
 
         new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
         m_bLeft=!m_bLeft;

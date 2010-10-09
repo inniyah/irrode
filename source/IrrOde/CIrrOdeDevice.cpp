@@ -407,9 +407,18 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
 
     if (!(rot.X==rot.X && rot.Y==rot.Y && rot.Z==rot.Z)) {
       rot=theBody->getAbsoluteTransformation().getRotationDegrees();
+      #ifdef _TRACE_FAILED_CONVERT
+        static int s_iRotFailed=0;
+        printf("converting ODE rotation to Irrlicht rotation failed (%i).\n",s_iRotFailed++);
+      #endif
+    }
+
+    if (!(pos.X==pos.X && pos.Y==pos.Y && pos.Z==pos.Z)) {
       pos=theBody->getAbsolutePosition();
-      static int s_iFailed=0;
-      printf("FAILED %i\n",s_iFailed++);
+      #ifdef _TRACE_FAILED_CONVERT
+        static int s_iPosFailed=0;
+        printf("converting ODE position to Irrlicht position failed (%i).\n",s_iPosFailed++);
+      #endif
     }
 
     theBody->updateAbsolutePosition();
@@ -1147,10 +1156,9 @@ void CIrrOdeDevice::bodySetQuaternion(u32 iBody, core::quaternion rot) {
 
 void CIrrOdeDevice::bodySetRotation(u32 iBody, vector3df rot) {
   if (iBody) {
-    dMatrix3 rotMat;
-    dRSetIdentity(rotMat);
-    dRFromEulerAngles(rotMat,rot.X*GRAD_PI2,-rot.Y*GRAD_PI2,rot.Z*GRAD_PI2);
-    dBodySetRotation(GETBODY(iBody),rotMat);
+    dQuaternion q;
+    eulerToQuaternion(rot,q);
+    dBodySetQuaternion(GETBODY(iBody),q);
   }
 }
 
