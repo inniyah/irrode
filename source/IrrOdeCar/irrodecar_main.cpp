@@ -233,6 +233,14 @@ int main(int argc, char** argv) {
   if (!pSettings->isActive(10)) removeFromScene("plane_course",smgr);
   if (!pSettings->isActive(11)) removeFromScene("pillars"     ,smgr);
   if (!pSettings->isActive(12)) removeFromScene("car_ramps"   ,smgr);
+  if (!pSettings->isActive(13)) {
+    printf("removing terrain trimesh...\n");
+    removeFromScene("terrain_trimesh",smgr);
+  }
+  else {
+    printf("removing terrain heightfield...\n");
+    removeFromScene("terrain_heightfield",smgr);
+  }
 
   delete pSettings;
 

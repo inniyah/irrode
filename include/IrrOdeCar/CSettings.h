@@ -42,7 +42,7 @@ class CSettings : public IEventReceiver {
                  *m_pResolution;  /**< combobox to pick the screen mode */
     IGUICheckBox *m_pFullscreen;  /**< checkbox to choose whether or not fullscreen is wanted */
     array<IGUICheckBox *> m_aActiveBodies;
-    bool m_aAct[13];
+    bool m_aAct[14];
     IGUIButton *m_pOk,            /**< the "OK" button */
                *m_pCancel;        /**< the "Cancel" button */
     SColor m_cBackground;         /**< the background color */
