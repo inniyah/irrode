@@ -313,6 +313,8 @@ int main(int argc, char** argv) {
     if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
   }
 
+  u32 iFrames=0,iTotalFps=0;
+
   //let's run the loop
   while(device->run()) {
     //step the simulation
@@ -340,10 +342,16 @@ int main(int argc, char** argv) {
     int fps = driver->getFPS();
 
     if (lastFPS != fps) {
+      iFrames++;
+      iTotalFps+=fps;
+
       core::stringw str = L"Irrlicht Engine - IrrODE Car Demo [";
       str += driver->getName();
       str += "] FPS:";
       str += fps;
+      str += " (avg: ";
+      str += (iTotalFps/iFrames);
+      str += ")";
 
       device->setWindowCaption(str.c_str());
       lastFPS = fps;
