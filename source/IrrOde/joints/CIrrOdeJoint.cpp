@@ -137,7 +137,7 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
       stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
-      sprintf(sName,"use_%s_groun_%i",sParamName.c_str(),x);
+      sprintf(sName,"use_%s_group_%i",sParamName.c_str(),x);
       out->addBool(sName,m_bParamUsed[y][x]);
       if (m_bParamUsed[y][x]) {
         sprintf(sName,"%s_group_%i",sParamName.c_str(),x);
@@ -153,7 +153,7 @@ void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
       stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
-      sprintf(sName,"use_%s_groun_%i",sParamName.c_str(),x);
+      sprintf(sName,"use_%s_group_%i",sParamName.c_str(),x);
       m_bParamUsed[y][x]=in->getAttributeAsBool(sName);
       sprintf(sName,"%s_group_%i",sParamName.c_str(),x);
       m_fParam[y][x]=in->getAttributeAsFloat(sName);
