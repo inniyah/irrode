@@ -37,8 +37,8 @@ class CIrrOdeJoint : public CIrrOdeSceneNode {
 
     CIrrOdeWorld *m_pWorld;  /**< the IrrOde world the joint is in */
 
-    bool m_bParamChanged[eParamEnd][3];
     f32 m_fParam[eParamEnd][3];
+    bool m_bParamUsed[eParamEnd][3];
 
   public:
     CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,

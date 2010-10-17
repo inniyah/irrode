@@ -31,7 +31,7 @@ CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   for (u16 i=0; i<CIrrOdeJoint::eParamEnd; i++)
     for (u16 j=0; j<3; j++) {
-      m_bParamChanged[i][j]=false;
+      m_bParamUsed[i][j]=false;
       m_fParam[i][j]=0.0f;
     }
 }
@@ -116,7 +116,7 @@ void CIrrOdeJoint::setParameter(u16 iGroup, eJointParameter iParam, f32 fValue) 
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeJoint::setParameter\n");
   #endif
-  m_bParamChanged[iParam][iGroup]=true;
+  m_bParamUsed[iParam][iGroup]=true;
   m_fParam[iParam][iGroup]=fValue;
 }
 
@@ -137,8 +137,12 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
       stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
-      sprintf(sName,"%s_group_%i",sParamName.c_str(),x);
-      out->addFloat(sName,m_fParam[y][x]);
+      sprintf(sName,"use_%s_groun_%i",sParamName.c_str(),x);
+      out->addBool(sName,m_bParamUsed[y][x]);
+      if (m_bParamUsed[y][x]) {
+        sprintf(sName,"%s_group_%i",sParamName.c_str(),x);
+        out->addFloat(sName,m_fParam[y][x]);
+      }
     }
 }
 
@@ -149,9 +153,10 @@ void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
       stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
+      sprintf(sName,"use_%s_groun_%i",sParamName.c_str(),x);
+      m_bParamUsed[y][x]=in->getAttributeAsBool(sName);
       sprintf(sName,"%s_group_%i",sParamName.c_str(),x);
       m_fParam[y][x]=in->getAttributeAsFloat(sName);
-      if (m_fParam[y][x]!=0.0f) m_bParamChanged[y][x]=true;
     }
 }
 

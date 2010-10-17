@@ -73,7 +73,7 @@ void CIrrOdeJointPiston::initPhysics() {
   m_pOdeDevice->jointSetData(m_iJointId,this);
 
   for (s32 i=0; i<eParamEnd; i++)
-    if (m_bParamChanged[i][0]) {
+    if (m_bParamUsed[i][0]) {
       #ifdef _TRACE_INIT_PHYSICS
         printf("CIrrOdeJointSlider::initPhysics: parameter %i set: %.2f\n",i,m_fParam[i][0]);
       #endif

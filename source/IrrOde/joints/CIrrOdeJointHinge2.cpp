@@ -74,7 +74,7 @@ void CIrrOdeJointHinge2::initPhysics() {
 
   for (s32 j=0; j<2; j++)
     for (s32 i=0; i<eParamEnd; i++)
-      if (m_bParamChanged[i][0]) {
+      if (m_bParamUsed[i][0]) {
         #ifdef _TRACE_INIT_PHYSICS
           printf("CIrrOdeJointHinge::initPhysics: parameter %i (set %i) set: %.2f\n",i,j,m_fParam[i][0]);
         #endif

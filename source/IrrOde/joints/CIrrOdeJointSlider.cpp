@@ -72,14 +72,14 @@ void CIrrOdeJointSlider::initPhysics() {
   m_pOdeDevice->jointSetData(m_iJointId,this);
 
   for (s32 i=0; i<eParamEnd; i++)
-    if (m_bParamChanged[i][0]) {
+    if (m_bParamUsed[i][0]) {
       #ifdef _TRACE_INIT_PHYSICS
         printf("CIrrOdeJointSlider::initPhysics: parameter %i set: %.2f\n",i,m_fParam[i][0]);
       #endif
       setParameter(0,(eJointParameter)i,m_fParam[i][0]);
     }
 
-  if (m_bParamChanged[CIrrOdeJoint::eHiStop][0] && m_bParamChanged[CIrrOdeJoint::eLoStop][0]) {
+  if (m_bParamUsed[CIrrOdeJoint::eHiStop][0] && m_bParamUsed[CIrrOdeJoint::eLoStop][0]) {
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);
     setParameter(0,CIrrOdeJoint::eLoStop,m_fParam[CIrrOdeJoint::eLoStop][0]);
     setParameter(0,CIrrOdeJoint::eHiStop,m_fParam[CIrrOdeJoint::eHiStop][0]);
