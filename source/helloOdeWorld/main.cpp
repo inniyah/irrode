@@ -66,16 +66,6 @@ int main(int argc, char** argv) {
         pTri->drop();
       }
     }
-
-    /*pBody=reinterpret_cast<CIrrOdeBody *>(smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_BODY_NAME),worldNode));
-    mesh=smgr->getMesh("../../data/sphere.3ds");
-    if (mesh) {
-      IAnimatedMeshSceneNode *pSydney=smgr->addAnimatedMeshSceneNode(mesh,pBody);
-      pBody->setPosition(vector3df(0.0f,15.0f,0.0f));
-      pSydney->setScale(vector3df(0.5f,0.5f,0.5f));
-      smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_GEOM_BOX_NAME),pSydney);
-    }
-    else printf("Oops!\n");*/
   }
   else {
     IAnimatedMesh *Mesh=smgr->getMesh("../../data/box.3ds");
