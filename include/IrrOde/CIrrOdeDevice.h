@@ -250,8 +250,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual s32 bodyGetAutoDisableSteps(u32 iBody);
     virtual void bodySetAutoDisableTime(u32 iBody, f32 f);
     virtual f32 bodyGetAutoDisableTime(u32 iBody);
-    virtual void bodySetFiniteRotationMode(u32 iBody, s32 i);
-    virtual s32 bodyGetFiniteRotationMode(u32 iBody);
+    virtual void bodySetFiniteRotationMode(u32 iBody, bool b);
+    virtual bool bodyGetFiniteRotationMode(u32 iBody);
     virtual void bodySetFiniteRotationAxis(u32 iBody, vector3df v);
     virtual const vector3df bodyGetFiniteRotationAxis(u32 iBody);
     virtual void bodySetGravityMode(u32 iBody, s32 i);

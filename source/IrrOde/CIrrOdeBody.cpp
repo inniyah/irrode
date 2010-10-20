@@ -30,9 +30,9 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_bEnabled=false;
   m_vLinear=vector3df(0.0f,0.0f,0.0f);
   m_vAngular=vector3df(0.0f,0.0f,0.0f);
-  m_vFiniteRotationAxis=vector3df(0.0f,1.0f,0.0f);
+  m_vFiniteRotationAxis=vector3df(0.0f,0.0f,0.0f);
   m_pParentBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
-  m_iFiniteRotationMode=0;
+  m_bFiniteRotationMode=false;
   m_iGravityMode=1;
   m_bParamMaster=false;
   m_pTouching=NULL;
@@ -173,7 +173,8 @@ void CIrrOdeBody::initPhysics() {
      m_pOdeDevice->bodySetMass(m_iBodyId,m_iMass);
 
      m_bEnabled=false;
-     setFiniteRotationMode(m_iFiniteRotationMode);
+     setFiniteRotationMode(m_bFiniteRotationMode);
+     setFiniteRotationAxis(m_vFiniteRotationAxis);
      setGravityMode(m_iGravityMode);
 
      if (m_pRay) m_pRay->initPhysics();
@@ -365,17 +366,17 @@ f32 CIrrOdeBody::getAutoDisableTime() {
  * Set the finite rotation mode
  * @param iMode the new value
  */
-void CIrrOdeBody::setFiniteRotationMode(int iMode) {
-  m_iFiniteRotationMode=iMode;
-  if (m_iBodyId) m_pOdeDevice->bodySetFiniteRotationMode(m_iBodyId,iMode);
+void CIrrOdeBody::setFiniteRotationMode(bool bFlag) {
+  m_bFiniteRotationMode=bFlag;
+  if (m_iBodyId) m_pOdeDevice->bodySetFiniteRotationMode(m_iBodyId,bFlag);
 }
 
 /**
  * Get the finite rotation mode
  * @return the current value
  */
-int CIrrOdeBody::getFiniteRotationMode() {
-  return m_iBodyId?m_pOdeDevice->bodyGetFiniteRotationMode(m_iBodyId):m_iFiniteRotationMode;
+bool CIrrOdeBody::getFiniteRotationMode() {
+  return m_iBodyId?m_pOdeDevice->bodyGetFiniteRotationMode(m_iBodyId):m_bFiniteRotationMode;
 }
 
 /**
@@ -392,7 +393,7 @@ void CIrrOdeBody::setFiniteRotationAxis(vector3df &pAxis) {
  * @return the finite rotation axis
  */
 vector3df &CIrrOdeBody::getFiniteRotationAxis() {
-  static vector3df v=m_pOdeDevice->bodyGetFiniteRotationAxis(m_iBodyId);
+  static vector3df v=m_iBodyId && m_bPhysicsInitialized?m_pOdeDevice->bodyGetFiniteRotationAxis(m_iBodyId):m_vFiniteRotationAxis;
   return v;
 }
 
@@ -678,10 +679,12 @@ void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
 	out->addBool("Enabled",m_bEnabled);
   out->addBool("ParamMaster",m_bParamMaster);
 
-  out->addInt ("FiniteRotationMode",m_iFiniteRotationMode);
   out->addInt ("GravityMode"       ,m_iGravityMode       );
   out->addBool("FastMoving"        ,m_bFastMoving        );
 	out->addBool("updateGraphics"    ,m_bUpdateGraphics    );
+  out->addBool("FiniteRotationMode",m_bFiniteRotationMode);
+
+  if (m_bFiniteRotationMode) out->addVector3d("FiniteRotationAxis",m_vFiniteRotationAxis);
 }
 
 void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
@@ -690,10 +693,12 @@ void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
 	m_bEnabled=in->getAttributeAsBool("Enabled");
   m_bParamMaster=in->getAttributeAsBool("ParamMaster");
 
-  m_iFiniteRotationMode=in->getAttributeAsInt ("FiniteRotationMode");
   m_iGravityMode       =in->getAttributeAsInt ("GravityMode"       );
   m_bFastMoving        =in->getAttributeAsBool("FastMoving"        );
 	m_bUpdateGraphics    =!in->existsAttribute("updateGraphics") || in->getAttributeAsBool("updateGraphics");
+  m_bFiniteRotationMode=in->getAttributeAsBool("FiniteRotationMode");
+
+  if (m_bFiniteRotationMode) m_vFiniteRotationAxis=in->getAttributeAsVector3d("FiniteRotationAxis");
 }
 
 ISceneNode *CIrrOdeBody::clone(ISceneNode* newParent, ISceneManager* newManager) {
@@ -734,7 +739,7 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   CIrrOdeBody *pDst=(CIrrOdeBody *)pDest;
 
   pDst->setFiniteRotationAxis(m_vFiniteRotationAxis);
-  pDst->setFiniteRotationMode(m_iFiniteRotationMode);
+  pDst->setFiniteRotationMode(m_bFiniteRotationMode);
   pDst->setGravityMode(m_iGravityMode);
   m_bParamMaster=false;
 
@@ -897,6 +902,12 @@ void CIrrOdeBody::bodyMoved(vector3df newPos) {
     vector3df dir=newPos-getAbsolutePosition();
     f32 fVel=dir.getLength();
     m_pRay->set(getAbsolutePosition(),dir.normalize(),fVel);
+  }
+
+  if (m_bFiniteRotationMode && m_vFiniteRotationAxis.getLength()!=0) {
+    vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
+    m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,axis);
+    printf("%.2f, %.2f, %.2f\n",axis.X,axis.Y,axis.Z);
   }
 }
 

@@ -227,8 +227,8 @@ class IIrrOdeDevice {
     virtual s32 bodyGetAutoDisableSteps(u32 iBody)=0;
     virtual void bodySetAutoDisableTime(u32 iBody, f32 f)=0;
     virtual f32 bodyGetAutoDisableTime(u32 iBody)=0;
-    virtual void bodySetFiniteRotationMode(u32 iBody, s32 i)=0;
-    virtual s32 bodyGetFiniteRotationMode(u32 iBody)=0;
+    virtual void bodySetFiniteRotationMode(u32 iBody, bool b)=0;
+    virtual bool bodyGetFiniteRotationMode(u32 iBody)=0;
     virtual void bodySetFiniteRotationAxis(u32 iBody, vector3df v)=0;
     virtual const vector3df bodyGetFiniteRotationAxis(u32 iBody)=0;
     virtual void bodySetGravityMode(u32 iBody, s32 i)=0;

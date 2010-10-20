@@ -36,9 +36,9 @@ class CIrrOdeBody : public CIrrOdeDampable {
          m_bCollision,                      /**< did this body collide in the last simulation step? */
          m_bDampingChanged,                 /**< was one of the damping parameters changed since the last simulation step? */
          m_bFastMoving,                     /**< is this a fast moving body? */
-				 m_bUpdateGraphics;                 /**< is the graphical representation of this ODE body updated? */
-    s32 m_iFiniteRotationMode,              /**< the finite rotation mode */
-        m_iGravityMode,                     /**< the gravity mode */
+				 m_bUpdateGraphics,                 /**< is the graphical representation of this ODE body updated? */
+         m_bFiniteRotationMode;             /**< the finite rotation mode flag */
+    s32 m_iGravityMode,                     /**< the gravity mode */
         m_iCollisionMaterial;               /**< index of the material if the body collided */
     CIrrOdeGeom *m_pTouching;               /**< the geom the body is touching */
     CIrrOdeGeomRay *m_pRay;                 /**< the ray for a fast moving object */
@@ -47,7 +47,7 @@ class CIrrOdeBody : public CIrrOdeDampable {
 
     vector3df m_vLinear,              /**< linear velocity of the body. Is updated when calling "getLinearVelocity" */
               m_vAngular,             /**< angular velocity of the body. Is updated when calling "getAngularVelocity" */
-              m_vFiniteRotationAxis,
+              m_vFiniteRotationAxis,  /**< the finite rotation mode axis */
               m_vCollisionPoint;      /**< point of the collision if the body collided */
 
   public:
@@ -90,8 +90,8 @@ class CIrrOdeBody : public CIrrOdeDampable {
 
     virtual void initPhysics();  /**< init the body's physics */
 
-    void setFiniteRotationMode(int iMode);         /**< set finite rotation mode */
-    int getFiniteRotationMode();                   /**< get finite rotation mode */
+    void setFiniteRotationMode(bool bFlag);        /**< set finite rotation mode */
+    bool getFiniteRotationMode();                  /**< get finite rotation mode */
     void setFiniteRotationAxis(vector3df &pAxis);  /**< set finite rotation axis */
     vector3df &getFiniteRotationAxis();            /**< get finite rotation axis */
     CIrrOdeWorld *getWorld();                      /**< get the assiciated CIrrOdeWorld object */

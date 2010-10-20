@@ -1246,12 +1246,12 @@ f32 CIrrOdeDevice::bodyGetAutoDisableTime(u32 iBody) {
   return iBody && m_bOdeInitialized ?dBodyGetAutoDisableTime(GETBODY(iBody)):0.0f;
 }
 
-void CIrrOdeDevice::bodySetFiniteRotationMode(u32 iBody, s32 i) {
-  if (iBody) dBodySetFiniteRotationMode(GETBODY(iBody),i);
+void CIrrOdeDevice::bodySetFiniteRotationMode(u32 iBody, bool b) {
+  if (iBody) dBodySetFiniteRotationMode(GETBODY(iBody),b?1:0);
 }
 
-s32 CIrrOdeDevice::bodyGetFiniteRotationMode(u32 iBody) {
-  return iBody && m_bOdeInitialized ?dBodyGetFiniteRotationMode(GETBODY(iBody)):0;
+bool CIrrOdeDevice::bodyGetFiniteRotationMode(u32 iBody) {
+  return iBody && m_bOdeInitialized?dBodyGetFiniteRotationMode(GETBODY(iBody))!=0:false;
 }
 
 void CIrrOdeDevice::bodySetFiniteRotationAxis(u32 iBody, vector3df v) {
