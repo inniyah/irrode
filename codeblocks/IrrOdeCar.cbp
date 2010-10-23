@@ -18,7 +18,7 @@
 				</Compiler>
 				<Linker>
 					<Add library="..\bin\gcc-win32\libIrrOde.a" />
-					<Add library="libode_singled" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 					<Add library="Irrlicht" />
 					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
 				</Linker>
@@ -36,7 +36,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="..\bin\gcc-win32\libIrrOde.a" />
-					<Add library="libode_singled" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugDoubleLib\libode_doubled.a" />
 					<Add library="Irrlicht" />
 					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
 				</Linker>
