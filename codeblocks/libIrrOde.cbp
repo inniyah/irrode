@@ -61,6 +61,7 @@
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventBodyMoved.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventBodyRemoved.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventClose.h" />
+		<Unit filename="..\include\IrrOde\event\CIrrOdeEventIdentify.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventInit.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventLoadScene.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h" />
@@ -95,6 +96,7 @@
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeServo.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\IIrrOdeStepMotor.h" />
+		<Unit filename="..\include\IrrOde\observer\CIrrOdeRecorder.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeWorldObserver.h" />
 		<Unit filename="..\source\IrrOde\CIrrOdeBody.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeContactParameters.cpp" />
@@ -112,6 +114,7 @@
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventBodyMoved.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventBodyRemoved.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventClose.cpp" />
+		<Unit filename="..\source\IrrOde\event\CIrrOdeEventIdentify.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventInit.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp" />
@@ -142,6 +145,7 @@
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeMotor.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeServo.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeTorqueMotor.cpp" />
+		<Unit filename="..\source\IrrOde\observer\CIrrOdeRecorder.cpp" />
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp" />
 		<Extensions>
 			<code_completion />

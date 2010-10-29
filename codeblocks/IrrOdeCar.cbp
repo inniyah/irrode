@@ -88,7 +88,6 @@
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
-		<Unit filename="..\include\IrrOde\event\CIrrOdeEventQueue.h" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
