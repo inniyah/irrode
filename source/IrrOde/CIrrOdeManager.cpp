@@ -28,6 +28,8 @@ CIrrOdeManager::CIrrOdeManager() {
   m_iFrameNo=0;
   #ifndef _USE_ODE_NULL_DEVICE
     m_pOdeDevice=new CIrrOdeDevice();
+  #else
+    m_pOdeDevice=new CIrrOdeNullDevice();
   #endif
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
@@ -181,12 +183,7 @@ void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
  * Retrieve the used ODE device
  */
 IIrrOdeDevice *CIrrOdeManager::getOdeDevice() {
-  #ifndef _USE_ODE_NULL_DEVICE
-    return m_pOdeDevice;
-  #else
-    static CIrrOdeNullDevice cTheDevice;
-    return &cTheDevice;
-  #endif
+  return m_pOdeDevice;
 }
 
 /**
@@ -194,7 +191,7 @@ IIrrOdeDevice *CIrrOdeManager::getOdeDevice() {
  */
 void CIrrOdeManager::setOdeDevice(IIrrOdeDevice *pDevice) {
   #ifndef _USE_ODE_NULL_DEVICE
-	m_pOdeDevice=pDevice;
+    m_pOdeDevice=pDevice;
   #endif
 }
 

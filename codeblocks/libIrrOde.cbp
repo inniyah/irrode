@@ -34,6 +34,36 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="nullDeviceDebug">
+				<Option output="..\bin\gcc-win32\libIrrOdeNull" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\null_debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option host_application="marbles2.exe" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-D_USE_ODE_NULL_DEVICE" />
+				</Compiler>
+			</Target>
+			<Target title="nullDeviceRelease">
+				<Option output="..\bin\gcc-win32\libIrrOdeNull" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\null_release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-D_USE_ODE_NULL_DEVICE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add directory="..\include\IrrOde" />

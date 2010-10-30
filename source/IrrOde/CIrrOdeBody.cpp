@@ -907,7 +907,6 @@ void CIrrOdeBody::bodyMoved(vector3df newPos) {
   if (m_bFiniteRotationMode && m_vFiniteRotationAxis.getLength()!=0) {
     vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
     m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,axis);
-    printf("%.2f, %.2f, %.2f\n",axis.X,axis.Y,axis.Z);
   }
 }
 
