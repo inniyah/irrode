@@ -16,9 +16,9 @@
 		<Project filename="IrrOdeSurfaceEdit.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeCar.cbp">
+		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="libIrrOde.cbp" active="1" />
+		<Project filename="libIrrOde.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
