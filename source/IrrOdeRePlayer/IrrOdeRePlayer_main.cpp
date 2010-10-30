@@ -1,6 +1,6 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
-  #include <CIrrOdeReplayLoader.h>
+  #include <CIrrOdeRePlayer.h>
 
 using namespace irr;
 
@@ -14,7 +14,8 @@ using namespace gui;
 //the unresolved external of the IdentityMaterial
 
 int main(int argc, char** argv) {
-  IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(1024,768),24,false,false,false,0);
+  IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(800,600),24,false,false,false,0);
+  irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
   device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
 
@@ -26,12 +27,23 @@ int main(int argc, char** argv) {
   irr::ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
-  CIrrOdeReplayLoader *pLoader=new CIrrOdeReplayLoader(device,"../../data/recordings/car.rec");
+  CIrrOdeRePlayer *pPlayer=new CIrrOdeRePlayer(device,"../../data/replay/car.rec");
 
-  smgr->addCameraSceneNode(0, vector3df(0,30,-40), vector3df(0,5,0));
+  ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
+  vector3df v=pCam->getAbsolutePosition();
+  smgr->setActiveCamera(pCam);
+  printf("--> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
 
   while(device->run()) {
+    pPlayer->update();
+    pCam->setParent(smgr->getRootSceneNode());
+    vector3df v=pCam->getAbsolutePosition();
+    printf("==> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
+    v=pCam->getPosition();
+    printf("--> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
+
     driver->beginScene(true, true, SColor(0,200,200,200));
+
 
     smgr->drawAll();
     guienv->drawAll();

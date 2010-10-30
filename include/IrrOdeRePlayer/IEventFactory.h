@@ -12,9 +12,9 @@ using namespace io;
 using namespace gui;
 using namespace ode;
 
-class CIrrOdeMessageFactory;
+class CIrrOdeEventFactory;
 
-class IMessageFactory {
+class IEventFactory {
   protected:
 
   public:

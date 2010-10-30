@@ -1,7 +1,7 @@
 #ifndef _C_IRR_ODE_MESSAGE_FACTORY
   #define _C_IRR_ODE_MESSAGE_FACTORY
 
-  #include <IMessageFactory.h>
+  #include <IEventFactory.h>
 
 using namespace irr;
 
@@ -12,26 +12,26 @@ using namespace io;
 using namespace gui;
 using namespace ode;
 
-class CIrrOdeDefaultMessageFactory : public IMessageFactory {
+class CIrrOdeDefaultEventFactory : public IEventFactory {
   protected:
 
   public:
-    CIrrOdeDefaultMessageFactory();
+    CIrrOdeDefaultEventFactory();
     virtual IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr);
 };
 
-class CIrrOdeMessageFactory {
+class CIrrOdeEventFactory {
   protected:
     ISceneManager *m_pSmgr;
-    CIrrOdeDefaultMessageFactory *m_pDefaultFact;
-    list<IMessageFactory *> m_lFactories;
-    CIrrOdeMessageFactory();
-    ~CIrrOdeMessageFactory();
+    CIrrOdeDefaultEventFactory *m_pDefaultFact;
+    list<IEventFactory *> m_lFactories;
+    CIrrOdeEventFactory();
+    ~CIrrOdeEventFactory();
 
   public:
-    static CIrrOdeMessageFactory *getSharedMessageFactory();
+    static CIrrOdeEventFactory *getSharedEventFactory();
     IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr);
-    void registerMessageFactory(IMessageFactory *p);
+    void registerEventFactory(IEventFactory *p);
     void setSceneManager(ISceneManager *pSmgr);
     ISceneManager *getSceneManager() { return m_pSmgr; }
 };

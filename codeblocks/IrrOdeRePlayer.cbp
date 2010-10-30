@@ -30,6 +30,19 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Debug">
+				<Option output="..\bin\gcc-win32-debug\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -45,11 +58,11 @@
 			<Add library="gdi32" />
 			<Add directory="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc" />
 		</Linker>
-		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeMessageFactory.h" />
-		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeReplayLoader.h" />
-		<Unit filename="..\include\IrrOdeRePlayer\IMessageFactory.h" />
-		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeMessageFactory.cpp" />
-		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeReplayLoader.cpp" />
+		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeEventFactory.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeRePlayer.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\IEventFactory.h" />
+		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeEventFactory.cpp" />
+		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeRePlayer.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayer\IrrOdeRePlayer_main.cpp" />
 		<Extensions>
 			<code_completion />

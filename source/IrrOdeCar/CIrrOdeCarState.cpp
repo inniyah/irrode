@@ -46,7 +46,7 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
           else {
             printf("stopping recording...\n");
             m_pRecorder->stopRecording();
-            m_pRecorder->saveRecording("../../data/recordings/car.rec");
+            m_pRecorder->saveRecording("../../data/replay/car.rec");
             delete m_pRecorder;
             m_pRecorder=NULL;
           }
