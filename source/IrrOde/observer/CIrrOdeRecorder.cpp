@@ -5,35 +5,57 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeRecorder::CIrrOdeRecorder(IrrlichtDevice *pDevice) {
+CIrrOdeRecorder::CIrrOdeRecorder(IrrlichtDevice *pDevice, const c8 *sAppName) {
   m_bRecording=false;
   m_pDevice=pDevice;
-  m_sAppName="";
+  m_sAppName=sAppName;
 }
 
 CIrrOdeRecorder::~CIrrOdeRecorder() {
-}
-
-void CIrrOdeRecorder::install(const c8 *sAppName) {
-  m_sAppName=sAppName;
-  CIrrOdeWorldObserver::getSharedInstance()->addEventListener(this);
-}
-
-void CIrrOdeRecorder::destall() {
-  CIrrOdeWorldObserver::getSharedInstance()->removeEventListener(this);
+  clearRecording();
 }
 
 void CIrrOdeRecorder::startRecording() {
   CIrrOdeEventIdentify *p=new CIrrOdeEventIdentify(m_sAppName.c_str());
   m_lEvents.push_back(p);
   m_bRecording=true;
+  CIrrOdeWorldObserver::getSharedInstance()->addEventListener(this);
 }
 
 void CIrrOdeRecorder::stopRecording() {
+  CIrrOdeWorldObserver::getSharedInstance()->removeEventListener(this);
   m_bRecording=false;
 }
 
 void CIrrOdeRecorder::saveRecording(const c8 *sFileName) {
+  printf("saving replay to file \"%s\" (%i events) ",sFileName,m_lEvents.getSize());
+  IWriteFile *f=m_pDevice->getFileSystem()->createAndWriteFile(sFileName);
+
+  if (!f) { printf("error while saving\n"); return; }
+
+  list<IIrrOdeEvent *>::Iterator it;
+  for (it=m_lEvents.begin(); it!=m_lEvents.end(); it++) {
+    IIrrOdeEvent *p=*it;
+    CSerializer *pSerialize=p->serialize();
+    if (pSerialize!=NULL) {
+      u32 iSize=pSerialize->getBufferSize();
+      f->write(&iSize,sizeof(u32));
+      f->write(pSerialize->getBuffer(),iSize);
+    }
+  }
+
+  f->drop();
+  clearRecording();
+  printf("... Ready.\n");
+}
+
+void CIrrOdeRecorder::clearRecording() {
+  while (m_lEvents.getSize()>0) {
+    list<IIrrOdeEvent *>::Iterator it=m_lEvents.begin();
+    IIrrOdeEvent *p=*it;
+    m_lEvents.erase(it);
+    delete p;
+  }
 }
 
 bool CIrrOdeRecorder::onEvent(IIrrOdeEvent *pEvent) {

@@ -22,6 +22,7 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   m_bHelp=false;
   m_bSwitchToMenu=false;
   m_pFps=NULL;
+  m_pRecorder=NULL;
 
   m_bInitialized=false;
 }
@@ -34,6 +35,21 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
         case KEY_F1:
           m_bHelp=!m_bHelp;
           return true;
+          break;
+
+        case KEY_F2:
+          if (m_pRecorder==NULL) {
+            printf("starting recording...\n");
+            m_pRecorder=new CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
+            m_pRecorder->startRecording();
+          }
+          else {
+            printf("stopping recording...\n");
+            m_pRecorder->stopRecording();
+            m_pRecorder->saveRecording("../../data/recordings/car.rec");
+            delete m_pRecorder;
+            m_pRecorder=NULL;
+          }
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu

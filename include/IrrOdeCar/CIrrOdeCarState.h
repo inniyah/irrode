@@ -37,6 +37,8 @@ class CIrrOdeCarState {
 
     CIrrCC *m_pController;
 
+    CIrrOdeRecorder *m_pRecorder;
+
   public:
     /**
      * The constructor

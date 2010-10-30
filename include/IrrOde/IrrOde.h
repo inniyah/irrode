@@ -55,5 +55,6 @@
 #include <motors/CIrrOdeTorqueMotor.h>
 
 #include <observer/CIrrOdeWorldObserver.h>
+#include <observer/CIrrOdeRecorder.h>
 
 #endif

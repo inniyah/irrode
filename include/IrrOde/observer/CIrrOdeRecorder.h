@@ -17,14 +17,12 @@ class CIrrOdeRecorder : public IIrrOdeEventListener {
     stringc m_sAppName;
 
   public:
-    CIrrOdeRecorder(IrrlichtDevice *pDevice);
+    CIrrOdeRecorder(IrrlichtDevice *pDevice, const c8 *sAppName);
     ~CIrrOdeRecorder();
-
-    void install(const c8 *sAppName);
-    void destall();
 
     void startRecording();
     void stopRecording();
+    void clearRecording();
 
     void saveRecording(const c8 *sFileName);
 
