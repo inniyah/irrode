@@ -148,6 +148,7 @@ class CIrrOdeBody : public CIrrOdeDampable {
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true); /**< copy the parameters to another IrrOdeSceneNode */
     virtual void removeFromPhysics(); /**< remove the body from physics */
+    void doRemoveFromPhysics();
 
     void addMass(u32 iMassId);        /**< add a geom's mass to the body */
     void setEnabled(bool bEnabled);   /**< enable or disable the body */

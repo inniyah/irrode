@@ -756,10 +756,12 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
  * Remove the body from the physics. Note that only the body, not it's geoms or joints will be removed (change this?)
  */
 void CIrrOdeBody::removeFromPhysics() {
-  CIrrOdeSceneNode::removeFromPhysics();
-
-  CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved (this);
+  CIrrOdeEventBodyRemoved *pEvent=new CIrrOdeEventBodyRemoved(this);
   m_pQueue->postEvent(pEvent);
+}
+
+void CIrrOdeBody::doRemoveFromPhysics() {
+  CIrrOdeSceneNode::removeFromPhysics();
 
   if (m_iBodyId) {
     if (m_pWorld) m_pWorld->removeBody(this);

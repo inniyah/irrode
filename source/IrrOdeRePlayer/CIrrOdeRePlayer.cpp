@@ -5,6 +5,7 @@
   #include <event/CIrrOdeEventIdentify.h>
   #include <event/CIrrOdeEventLoadScene.h>
   #include <event/IIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventBodyRemoved.h>
   #include <CIrrOdeManager.h>
 
 CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay) {
@@ -45,13 +46,6 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
           m_bValidReplay=!strcmp(p->getIdentify(),_IRR_ODE_IDENTIFY_STRING);
         }
       }
-
-      if (evt->getType()==irr::ode::eIrrOdeEventLoadScene) {
-        irr::ode::CIrrOdeEventLoadScene *p=(irr::ode::CIrrOdeEventLoadScene *)evt;
-        m_sSceneFile=stringc(p->getScene());
-        m_pSmgr->loadScene(m_sSceneFile.c_str());
-        printf("\n\t\tscene file=\"%s\"\n\n",m_sSceneFile.c_str());
-      }
     }
   }
 
@@ -65,7 +59,6 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
   }
 
   irr::ode::CIrrOdeManager::getSharedInstance()->initODE();
-  irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
 
   while (m_pTimer->isStopped()) m_pTimer->start();
 }
@@ -83,16 +76,28 @@ void CIrrOdeRePlayer::update() {
     while (m_iTimeBuffer>16 && m_iIt!=m_lEvents.end()) {
       bool bStep=false;
       do {
-        irr::ode::IIrrOdeEvent *p=(irr::ode::IIrrOdeEvent *)*m_iIt,p2=p->clone();
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
+        irr::ode::IIrrOdeEvent *p=(irr::ode::IIrrOdeEvent *)*m_iIt,*p2=p->clone();
+        if (p->getType()==irr::ode::eIrrOdeEventBodyRemoved) {
+          irr::ode::CIrrOdeEventBodyRemoved *r=(irr::ode::CIrrOdeEventBodyRemoved *)p;
+          irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(r->getBodyId());
+          if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
+        }
+
+        if (p->getType()==irr::ode::eIrrOdeEventLoadScene) {
+          irr::ode::CIrrOdeEventLoadScene *pEvt=(irr::ode::CIrrOdeEventLoadScene *)p;
+          m_sSceneFile=stringc(pEvt->getScene());
+          m_pSmgr->loadScene(m_sSceneFile.c_str());
+          irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
+          printf("scene file: \"%s\"\n",m_sSceneFile.c_str());
+        }
+
         if (p->getType()==irr::ode::eIrrOdeEventStep) bStep=true;
+        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
         m_iIt++;
-        printf("*");
       }
       while (!bStep && m_iIt!=m_lEvents.end());
       m_iTimeBuffer-=16;
     }
-    printf("\n");
   }
 
   m_iLastStep=iThisTime;

@@ -64,7 +64,7 @@ void CIrrOdeWorld::initPhysics() {
   m_iJointGroupId=m_pOdeDevice->jointGroupCreate(0);
 
   if (!m_pWorldSpace) m_pWorldSpace=new CIrrOdeSpace(this,m_pSceneManager);
-  m_pWorldSpace->initPhysics();
+  if (m_pWorldSpace!=NULL) m_pWorldSpace->initPhysics();
 
   setLinearDamping          (m_fDampingLinear          );
   setAngularDamping         (m_fDampingAngular         );

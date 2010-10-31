@@ -70,7 +70,7 @@ bool CIrrOdeWorldObserver::onEvent(IIrrOdeEvent *pEvent) {
         if (pEvt->getType()==eIrrOdeEventBodyMoved) {
           CIrrOdeEventBodyMoved *pEvtMoved=(CIrrOdeEventBodyMoved *)pEvt;
           if (p->getBodyId()==pEvtMoved->getBodyId()) {
-            p->merge(pEvtMoved);
+            pEvtMoved->merge(p);
             bAddToBuffer=false;
             break;
           }

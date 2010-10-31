@@ -4,6 +4,7 @@
   #include <CIrrOdeWorld.h>
   #include <event/IIrrOdeEventListener.h>
   #include <event/CIrrOdeEventBodyMoved.h>
+  #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventInit.h>
   #include <event/CIrrOdeEventClose.h>
   #include <event/CIrrOdeEventProgress.h>
@@ -397,11 +398,26 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
     }
     return true;
   }
+
+  if (pEvt->getType()==eIrrOdeEventBodyRemoved) {
+    CIrrOdeEventBodyRemoved *pBr=(CIrrOdeEventBodyRemoved *)pEvt;
+    if (pBr->getBody()!=NULL)
+      pBr->getBody()->doRemoveFromPhysics();
+    else {
+      ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pBr->getBodyId());
+      if (pNode!=NULL) {
+        if (pNode->getType()==(ESCENE_NODE_TYPE)IRR_ODE_BODY_ID) {
+          CIrrOdeBody *pBody=(CIrrOdeBody *)pNode;
+          pBody->doRemoveFromPhysics();
+        }
+      }
+    }
+  }
   return false;
 }
 
 bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==eIrrOdeEventBodyMoved;
+  return pEvent->getType()==eIrrOdeEventBodyMoved || pEvent->getType()==eIrrOdeEventBodyRemoved;
 }
 
 } //namespace ode

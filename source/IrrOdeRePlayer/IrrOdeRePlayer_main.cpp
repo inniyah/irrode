@@ -27,20 +27,18 @@ int main(int argc, char** argv) {
   irr::ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
+  ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
+
   CIrrOdeRePlayer *pPlayer=new CIrrOdeRePlayer(device,"../../data/replay/car.rec");
 
-  ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
   vector3df v=pCam->getAbsolutePosition();
   smgr->setActiveCamera(pCam);
-  printf("--> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
 
   while(device->run()) {
     pPlayer->update();
     pCam->setParent(smgr->getRootSceneNode());
     vector3df v=pCam->getAbsolutePosition();
-    printf("==> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
     v=pCam->getPosition();
-    printf("--> %.2f, %.2f, %.2f\n",v.X,v.Y,v.Z);
 
     driver->beginScene(true, true, SColor(0,200,200,200));
 

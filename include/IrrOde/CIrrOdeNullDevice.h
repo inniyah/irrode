@@ -39,7 +39,7 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld) { }
 
     virtual void worldDestroy(u32 iIdx) { }
-    virtual u32 worldCreate() { return 0; }
+    virtual u32 worldCreate() { return 1; }
     virtual void worldSetLinearDamping(u32 iWorld, f32 fScale) { }
     virtual f32 worldGetLinearDamping(u32 iWorld) { return 0.0f; }
     virtual void worldSetAngularDamping(u32 iWorld, f32 fScale) { }
@@ -70,14 +70,14 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void worldSetCFM(u32 iWorld, f32 fCfm) { }
     virtual f32 worldGetCFM(u32 iWorld) { return 0.0f; }
 
-    virtual u32 jointCreateBallSocket(u32 iWorld) { return 0; }
-    virtual u32 jointCreateFixed(u32 iWorld) { return 0; }
-    virtual u32 jointCreateHinge(u32 iWorld) { return 0; }
-    virtual u32 jointCreateHinge2(u32 iWorld) { return 0; }
-    virtual u32 jointCreatePiston(u32 iWorld) { return 0; }
-    virtual u32 jointCreateSlider(u32 iWorld) { return 0; }
-    virtual u32 jointCreateUniversal(u32 iWorld) { return 0; }
-    virtual u32 jointCreatePR(u32 iWorld) { return 0; }
+    virtual u32 jointCreateBallSocket(u32 iWorld) { return 1; }
+    virtual u32 jointCreateFixed(u32 iWorld) { return 1; }
+    virtual u32 jointCreateHinge(u32 iWorld) { return 1; }
+    virtual u32 jointCreateHinge2(u32 iWorld) { return 1; }
+    virtual u32 jointCreatePiston(u32 iWorld) { return 1; }
+    virtual u32 jointCreateSlider(u32 iWorld) { return 1; }
+    virtual u32 jointCreateUniversal(u32 iWorld) { return 1; }
+    virtual u32 jointCreatePR(u32 iWorld) { return 1; }
 
     virtual void jointAttach(u32 iJoint, CIrrOdeBody *b1, CIrrOdeBody *b2) { }
     virtual void jointSetData(u32 iJoint, void *pData) { }
@@ -154,7 +154,7 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void  jointSetPrParam(u32 iJoint, s32 iParam, f32 iValue) { }
     virtual f32 jointGetPrParam(u32 iJoint, s32 iParam) { return 0.0f; }
 
-    virtual u32 bodyCreate(u32 iWorld) { return 0; }
+    virtual u32 bodyCreate(u32 iWorld) { return 1; }
     virtual void bodyDestroy(u32 iBody) { }
     virtual void bodySetPosition(u32 iBody, vector3df pos) { }
     virtual vector3df bodyGetPosition(u32 iBody) { _VEC; }
@@ -173,7 +173,7 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void bodySetMaxAngularSpeed(u32 iBody, f32 f) { }
     virtual f32 bodyGetMaxAngularSpeed(u32 iBody) { return 0.0f; }
     virtual void bodySetAutoDisableFlag(u32 iBody, s32 i) { }
-    virtual s32 bodyGetAutoDisableFlag(u32 iBody) { return 0; }
+    virtual s32 bodyGetAutoDisableFlag(u32 iBody) { return 1; }
     virtual void bodySetLinearAutoDisableThreshold(u32 iBody, f32 f) { }
     virtual f32 bodyGetLinearAutoDisableThreshold(u32 iBody) { return 0.0f; }
     virtual void bodySetAngularAutoDisableThreshold(u32 iBody, f32 f) { }
@@ -215,27 +215,27 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void geomSetData(u32 iGeom, void *pData) { }
     virtual void geomSetOffsetPosition(u32 iGeom, vector3df offset) { }
     virtual void geomSetOffsetQuaternion(u32 iGeom, vector3df rot) { }
-    virtual u32 geomCreateBox(u32 iSpace, f32 fWidth, f32 fHeight, f32 fDepth) { return 0; }
-    virtual u32 geomCreateCapsule(u32 iSpace, f32 fRadius, f32 fLength) { return 0; }
-    virtual u32 geomCreateCylinder(u32 iSpace, f32 fRadius, f32 fLength) { return 0; }
-    virtual u32 geomCreateHeightfield(u32 iSpace, u32 iData) { return 0; }
-    virtual u32 geomCreatePlane(u32 iSpace, f32 A, f32 B, f32 C, f32 D) { return 0; }
-    virtual u32 geomCreateRay(u32 iSpace, f32 fLength) { return 0; }
+    virtual u32 geomCreateBox(u32 iSpace, f32 fWidth, f32 fHeight, f32 fDepth) { return 1; }
+    virtual u32 geomCreateCapsule(u32 iSpace, f32 fRadius, f32 fLength) { return 1; }
+    virtual u32 geomCreateCylinder(u32 iSpace, f32 fRadius, f32 fLength) { return 1; }
+    virtual u32 geomCreateHeightfield(u32 iSpace, u32 iData) { return 1; }
+    virtual u32 geomCreatePlane(u32 iSpace, f32 A, f32 B, f32 C, f32 D) { return 1; }
+    virtual u32 geomCreateRay(u32 iSpace, f32 fLength) { return 1; }
     virtual void geomSetBackfaceCull(u32 iGeom, bool bBackfaceCull) { }
-    virtual u32 geomCreateSphere(u32 iSpace, f32 fRadius) { return 0; }
-    virtual u32 geomCreateTrimesh(u32 iSpace, u32 iData) { return 0; }
-    virtual u32 geomHeightfieldDataCreate() { return 0; }
+    virtual u32 geomCreateSphere(u32 iSpace, f32 fRadius) { return 1; }
+    virtual u32 geomCreateTrimesh(u32 iSpace, u32 iData) { return 1; }
+    virtual u32 geomHeightfieldDataCreate() { return 1; }
     virtual void geomHeightfieldSetBounds(u32 iHFData, f32 fMinHeight, f32 fMaxHeight) { }
     virtual void geomHeightfieldDataCallback(u32 iHFData, void *pData, void *pCallback, f32 fWidth, f32 fDepth, s32 iWidthSamples, s32 iDepthSamples, f32 fScale, f32 fOffset, f32 fThickness, s32 bWrap) { }
 
     virtual void geomSetPosition(u32 iGeom, vector3df pos) { }
     virtual void geomRaySetData(u32 iGeom, vector3df pos, vector3df dir, f32 fLength) { }
 
-    virtual u32 geomTrimeshDataCreate() { return 0; }
+    virtual u32 geomTrimeshDataCreate() { return 1; }
     virtual void geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) { }
     virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer) { }
 
-    virtual u32 massCreate() { return 0; }
+    virtual u32 massCreate() { return 1; }
     virtual void massAdd(u32 iDst, u32 iSrc) { }
     virtual void massSetZero(u32 iMass) { }
     virtual void massSetParameters(u32 iMass, f32 fMass, vector3df c, vector3df i1, vector3df i2) { }
@@ -245,12 +245,12 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void massSetCylinderTotal(u32 iMass, f32 fMass, s32 iDirection, f32 fRadius, f32 fLength) { }
     virtual void massSetSphereTotal(u32 iMass, f32 fMass, f32 fRadius) { }
 
-    virtual u32 spaceCreateSimple(u32 iParent) { return 0; }
-    virtual u32 spaceCreateHash(u32 iParent) { return 0; }
-    virtual u32 spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth) { return 0; }
+    virtual u32 spaceCreateSimple(u32 iParent) { return 1; }
+    virtual u32 spaceCreateHash(u32 iParent) { return 1; }
+    virtual u32 spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth) { return 1; }
     virtual void spaceDestroy(u32 iSpace) { }
 
-    virtual u32 jointGroupCreate(s32 iMaxSize) { return 0; }
+    virtual u32 jointGroupCreate(s32 iMaxSize) { return 1; }
     virtual void jointGroupDestroy(u32 iJointGroup) { }
     virtual void jointGroupEmtpy(u32 iJointGroup) { }
 
