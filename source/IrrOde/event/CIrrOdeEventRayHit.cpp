@@ -60,17 +60,7 @@ f32 CIrrOdeEventRayHit::getDistance() {
 }
 
 CSerializer *CIrrOdeEventRayHit::serialize() {
-  if (m_pSerializer==NULL) {
-    m_pSerializer=new CSerializer();
-    m_pSerializer->addU16(eIrrOdeEventRayHit);
-    m_pSerializer->addU32(m_pRay->getID());
-    m_pSerializer->addU32(m_pBody->getID());
-    m_pSerializer->addU32(m_pGeom->getID());
-    m_pSerializer->addVector3df(m_cPos);
-    m_pSerializer->addF32(m_fDistance);
-  }
-
-  return m_pSerializer;
+  return NULL;
 }
 
 const c8 *CIrrOdeEventRayHit::toString() {

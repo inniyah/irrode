@@ -1,6 +1,7 @@
   #include <observer/CIrrOdeRecorder.h>
   #include <observer/CIrrOdeWorldObserver.h>
   #include <event/CIrrOdeEventIdentify.h>
+  #include <event/CIrrOdeEventNodeCloned.h>
 
 namespace irr {
 namespace ode {

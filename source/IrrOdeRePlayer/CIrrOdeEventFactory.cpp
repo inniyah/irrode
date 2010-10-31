@@ -8,6 +8,7 @@
   #include <event/CIrrOdeEventBodyMoved.h>
   #include <event/CIrrOdeEventLoadScene.h>
   #include <event/CIrrOdeEventActivationChanged.h>
+  #include <event/CIrrOdeEventNodeCloned.h>
   #include <event/CIrrOdeEventRayHit.h>
   #include <event/CIrrOdeEventStep.h>
   #include <event/CIrrOdeEventIdentify.h>
@@ -28,6 +29,7 @@ IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, ISce
     case irr::ode::eIrrOdeEventBodyMoved        : return new irr::ode::CIrrOdeEventBodyMoved        (pData,pSmgr);
     case irr::ode::eIrrOdeEventActivationChanged: return new irr::ode::CIrrOdeEventActivationChanged(pData,pSmgr);
     case irr::ode::eIrrOdeEventRayHit           : return new irr::ode::CIrrOdeEventRayHit           (pData,pSmgr);
+    case irr::ode::eIrrOdeEventNodeCloned       : printf("clone!\n"); return new irr::ode::CIrrOdeEventNodeCloned       (pData);
     case irr::ode::eIrrOdeEventLoadScene        : return new irr::ode::CIrrOdeEventLoadScene        (pData);
     case irr::ode::eIrrOdeEventIdentify         : return new irr::ode::CIrrOdeEventIdentify         (pData);
     default: return NULL;
