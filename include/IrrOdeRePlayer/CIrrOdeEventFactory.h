@@ -19,7 +19,7 @@ using namespace ode;
  * events.
  * @see IEventFactory
  */
-class CIrrOdeDefaultEventFactory : public IEventFactory {
+class CIrrOdeDefaultEventFactory : public IIrrOdeEventFactory {
   protected:
 
   public:
@@ -39,7 +39,7 @@ class CIrrOdeEventFactory {
   protected:
     ISceneManager *m_pSmgr;                       /**<! the scene manager to use */
     CIrrOdeDefaultEventFactory *m_pDefaultFact;   /**< the default event factory */
-    list<IEventFactory *> m_lFactories;           /**< a list of all registered event factories */
+    list<IIrrOdeEventFactory *> m_lFactories;     /**< a list of all registered event factories */
     CIrrOdeEventFactory();                        /**< protected constructor */
     ~CIrrOdeEventFactory();                       /**< protected destructor */
 
@@ -62,13 +62,13 @@ class CIrrOdeEventFactory {
      * @param p the event factory to register
      * @see IEventFactory
      */
-    void registerEventFactory(IEventFactory *p);
+    void registerEventFactory(IIrrOdeEventFactory *p);
 
     /**
      * Remove a registered event factory. The event factory is deleted by this method.
      * @param p the event factory to remove
      */
-    void removeEventFactory(IEventFactory *p);
+    void removeEventFactory(IIrrOdeEventFactory *p);
 
     /**
      * Set the scene manager to use

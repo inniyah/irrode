@@ -29,7 +29,7 @@ IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, ISce
     case irr::ode::eIrrOdeEventBodyMoved        : return new irr::ode::CIrrOdeEventBodyMoved        (pData,pSmgr);
     case irr::ode::eIrrOdeEventActivationChanged: return new irr::ode::CIrrOdeEventActivationChanged(pData,pSmgr);
     case irr::ode::eIrrOdeEventRayHit           : return new irr::ode::CIrrOdeEventRayHit           (pData,pSmgr);
-    case irr::ode::eIrrOdeEventNodeCloned       : printf("clone!\n"); return new irr::ode::CIrrOdeEventNodeCloned       (pData);
+    case irr::ode::eIrrOdeEventNodeCloned       : return new irr::ode::CIrrOdeEventNodeCloned       (pData);
     case irr::ode::eIrrOdeEventLoadScene        : return new irr::ode::CIrrOdeEventLoadScene        (pData);
     case irr::ode::eIrrOdeEventIdentify         : return new irr::ode::CIrrOdeEventIdentify         (pData);
     default: return NULL;
@@ -43,8 +43,8 @@ CIrrOdeEventFactory::CIrrOdeEventFactory() {
 
 CIrrOdeEventFactory::~CIrrOdeEventFactory() {
   while (m_lFactories.getSize()>0) {
-    list<IEventFactory *>::Iterator it=m_lFactories.begin();
-    IEventFactory *p=*it;
+    list<IIrrOdeEventFactory *>::Iterator it=m_lFactories.begin();
+    IIrrOdeEventFactory *p=*it;
     m_lFactories.erase(it);
     delete p;
   }
@@ -56,7 +56,7 @@ CIrrOdeEventFactory *CIrrOdeEventFactory::getSharedEventFactory() {
 }
 
 IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, ISceneManager *pSmgr) {
-  list<IEventFactory *>::Iterator it;
+  list<IIrrOdeEventFactory *>::Iterator it;
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++) {
     IIrrOdeEvent *evt=(*it)->createMessage(pData,pSmgr);
     if (evt!=NULL) return evt;
@@ -64,17 +64,17 @@ IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, ISceneManag
   return NULL;
 }
 
-void CIrrOdeEventFactory::registerEventFactory(IEventFactory *p) {
-  list<IEventFactory *>::Iterator it;
+void CIrrOdeEventFactory::registerEventFactory(IIrrOdeEventFactory *p) {
+  list<IIrrOdeEventFactory *>::Iterator it;
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++) if (*it==p) return;
   m_lFactories.push_back(p);
 }
 
-void CIrrOdeEventFactory::removeEventFactory(IEventFactory *p) {
-  list<IEventFactory *>::Iterator it;
+void CIrrOdeEventFactory::removeEventFactory(IIrrOdeEventFactory *p) {
+  list<IIrrOdeEventFactory *>::Iterator it;
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++)
     if (*it==p) {
-      IEventFactory *pFactory=*it;
+      IIrrOdeEventFactory *pFactory=*it;
       m_lFactories.erase(it);
       delete pFactory;
       return;

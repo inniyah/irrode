@@ -60,8 +60,6 @@ void CIrrOdeWorldObserver::removeEventListener(IIrrOdeEventListener *pListener) 
 bool CIrrOdeWorldObserver::onEvent(IIrrOdeEvent *pEvent) {
   bool bAddToBuffer=true;
 
-  if (pEvent->getType()==eIrrOdeEventNodeCloned) printf("clone!\n");
-
   if (pEvent->getType()==eIrrOdeEventBodyMoved) {
     //if we receieve a "body moved" event we will search the list and update
     //the data of the "body moved" event of the same body (if there is one)
