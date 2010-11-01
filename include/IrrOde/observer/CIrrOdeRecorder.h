@@ -55,6 +55,11 @@ class CIrrOdeRecorder : public IIrrOdeEventListener {
     bool saveRecording(const c8 *sFileName);
 
     /**
+     * Is a recording running?
+     */
+    bool isRecording() { return m_bRecording; }
+
+    /**
      * IrrOde callback method
      */
     virtual bool onEvent(IIrrOdeEvent *pEvent);

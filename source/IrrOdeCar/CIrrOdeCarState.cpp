@@ -1,5 +1,10 @@
   #include "CIrrOdeCarState.h"
 
+static IGUIStaticText *g_pRecording=NULL,
+                      *g_pSaveFile=NULL;
+static CIrrOdeRecorder *g_pRecorder=NULL;
+static u32 g_iCount=0;
+
 CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
   //initialize the members
   m_pDevice=pDevice;
@@ -22,7 +27,22 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   m_bHelp=false;
   m_bSwitchToMenu=false;
   m_pFps=NULL;
-  m_pRecorder=NULL;
+
+  if (g_pRecording==NULL) {
+    dimension2d<u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
+    rect<s32> cRect=rect<s32>(cSize.Width/2-100,5,cSize.Width/2+100,20);
+    g_pRecording=m_pGuiEnv->addStaticText(L"Recording",cRect,true,true,0,-1,true);
+    g_pRecording->setTextAlignment(EGUIA_CENTER,EGUIA_CENTER);
+    g_pRecording->setVisible(false);
+  }
+
+  if (g_pSaveFile==NULL) {
+    dimension2d<u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
+    rect<s32> cRect=rect<s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
+    g_pSaveFile=m_pGuiEnv->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
+    g_pSaveFile->setTextAlignment(EGUIA_CENTER,EGUIA_CENTER);
+    g_pSaveFile->setVisible(false);
+  }
 
   m_bInitialized=false;
 }
@@ -38,17 +58,21 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
           break;
 
         case KEY_F2:
-          if (m_pRecorder==NULL) {
+          if (g_pRecorder==NULL) {
             printf("starting recording...\n");
-            m_pRecorder=new CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
-            m_pRecorder->startRecording();
+            g_pRecorder=new CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
+            g_pRecorder->startRecording();
+            g_pRecording->setVisible(true);
           }
           else {
             printf("stopping recording...\n");
-            m_pRecorder->stopRecording();
-            m_pRecorder->saveRecording("../../data/replay/car.rec");
-            delete m_pRecorder;
-            m_pRecorder=NULL;
+            g_pRecorder->stopRecording();
+            g_pRecorder->saveRecording("../../data/replay/car.rec");
+            delete g_pRecorder;
+            g_pRecorder=NULL;
+            g_pRecording->setVisible(false);
+            g_pSaveFile->setVisible(true);
+            g_iCount=m_pDevice->getTimer()->getTime()+3000;
           }
           break;
 
@@ -86,6 +110,8 @@ u32 CIrrOdeCarState::update() {
       if (m_pFps) m_pFps->setVisible(true);
       activate();
     }
+
+  if (g_pSaveFile->isVisible() && m_pDevice->getTimer()->getTime()>g_iCount) g_pSaveFile->setVisible(false);
 
   return iRet;
 }
