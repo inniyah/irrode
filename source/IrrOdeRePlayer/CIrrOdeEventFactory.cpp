@@ -70,6 +70,17 @@ void CIrrOdeEventFactory::registerEventFactory(IEventFactory *p) {
   m_lFactories.push_back(p);
 }
 
+void CIrrOdeEventFactory::removeEventFactory(IEventFactory *p) {
+  list<IEventFactory *>::Iterator it;
+  for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++)
+    if (*it==p) {
+      IEventFactory *pFactory=*it;
+      m_lFactories.erase(it);
+      delete pFactory;
+      return;
+    }
+}
+
 void CIrrOdeEventFactory::setSceneManager(ISceneManager *pSmgr) {
   m_pSmgr=pSmgr;
 }

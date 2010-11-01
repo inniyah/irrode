@@ -771,7 +771,7 @@ void CIrrOdeBody::doRemoveFromPhysics() {
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
   }
-  else if (!m_bPhysicsInitialized) m_pWorld->removeBody(this);
+  else if (!m_bPhysicsInitialized && m_pWorld!=NULL) m_pWorld->removeBody(this);
 }
 
 /**

@@ -28,11 +28,12 @@ void CIrrOdeRecorder::stopRecording() {
   m_bRecording=false;
 }
 
-void CIrrOdeRecorder::saveRecording(const c8 *sFileName) {
+bool CIrrOdeRecorder::saveRecording(const c8 *sFileName) {
   printf("saving replay to file \"%s\" (%i events) ",sFileName,m_lEvents.getSize());
   IWriteFile *f=m_pDevice->getFileSystem()->createAndWriteFile(sFileName);
 
-  if (!f) { printf("error while saving\n"); return; }
+  if (m_lEvents.getSize()==0) { printf("no recording to save!\n"); return false; }
+  if (!f) { printf("error while saving\n"); return false; }
 
   list<IIrrOdeEvent *>::Iterator it;
   for (it=m_lEvents.begin(); it!=m_lEvents.end(); it++) {
@@ -48,6 +49,7 @@ void CIrrOdeRecorder::saveRecording(const c8 *sFileName) {
   f->drop();
   clearRecording();
   printf("... Ready.\n");
+  return true;
 }
 
 void CIrrOdeRecorder::clearRecording() {

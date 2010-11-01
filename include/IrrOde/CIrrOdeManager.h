@@ -98,8 +98,9 @@ class CIrrOdeManager : public IIrrOdeEventListener {
      * @param pSource the node to be cloned
      * @param newParent the parent the clone will be attached to
      * @param newSmgr the new scene manager
+     * @param iNewId the new ID of the node ("-1" (default) will auto generate new id)
 		 */
-    irr::scene::ISceneNode *cloneOdeNode(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr);
+    irr::scene::ISceneNode *cloneOdeNode(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr, s32 iNewId=-1);
 
 		/**
 		 * This methdo is used to clone a complete (sub)tree with ODE scene nodes in (can as well clone any other type of node. Actually this method

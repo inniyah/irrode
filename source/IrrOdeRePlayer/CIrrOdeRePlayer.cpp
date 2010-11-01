@@ -6,6 +6,7 @@
   #include <event/CIrrOdeEventLoadScene.h>
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyRemoved.h>
+  #include <event/CIrrOdeEventNodeCloned.h>
   #include <CIrrOdeManager.h>
 
 CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay) {
@@ -89,6 +90,12 @@ void CIrrOdeRePlayer::update() {
           m_pSmgr->loadScene(m_sSceneFile.c_str());
           irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
           printf("scene file: \"%s\"\n",m_sSceneFile.c_str());
+        }
+
+        if (p->getType()==irr::ode::eIrrOdeEventNodeCloned) {
+          irr::ode::CIrrOdeEventNodeCloned *pClone=(irr::ode::CIrrOdeEventNodeCloned *)p;
+          irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pClone->getSourceId());
+          if (pNode) irr::ode::CIrrOdeManager::getSharedInstance()->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
         }
 
         if (p->getType()==irr::ode::eIrrOdeEventStep) bStep=true;
