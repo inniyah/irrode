@@ -1,16 +1,16 @@
 #ifndef _C_IRR_ODE_MESSAGE_FACTORY
   #define _C_IRR_ODE_MESSAGE_FACTORY
 
-  #include <IEventFactory.h>
+  #include <observer/IEventFactory.h>
 
-using namespace irr;
+namespace irr {
+namespace ode {
 
 using namespace core;
 using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-using namespace ode;
 
 /**
  * @class CIrrOdeDefaultEventFactory
@@ -20,8 +20,6 @@ using namespace ode;
  * @see IEventFactory
  */
 class CIrrOdeDefaultEventFactory : public IIrrOdeEventFactory {
-  protected:
-
   public:
     CIrrOdeDefaultEventFactory();
     virtual IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr);
@@ -82,5 +80,8 @@ class CIrrOdeEventFactory {
      */
     ISceneManager *getSceneManager() { return m_pSmgr; }
 };
+
+}
+}
 
 #endif

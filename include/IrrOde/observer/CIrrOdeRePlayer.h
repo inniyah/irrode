@@ -9,9 +9,6 @@ namespace ode {
 
 class IIrrOdeEvent;
 
-}
-}
-
 class CIrrOdeRePlayer {
   protected:
     irr::IrrlichtDevice *m_pDevice;
@@ -37,5 +34,8 @@ class CIrrOdeRePlayer {
 
     void update();
 };
+
+}
+}
 
 #endif

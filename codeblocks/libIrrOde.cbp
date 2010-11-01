@@ -126,8 +126,11 @@
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeServo.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\IIrrOdeStepMotor.h" />
+		<Unit filename="..\include\IrrOde\observer\CIrrOdeEventFactory.h" />
+		<Unit filename="..\include\IrrOde\observer\CIrrOdeRePlayer.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeRecorder.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeWorldObserver.h" />
+		<Unit filename="..\include\IrrOde\observer\IEventFactory.h" />
 		<Unit filename="..\source\IrrOde\CIrrOdeBody.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeContactParameters.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeDampable.cpp" />
@@ -175,6 +178,8 @@
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeMotor.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeServo.cpp" />
 		<Unit filename="..\source\IrrOde\motors\CIrrOdeTorqueMotor.cpp" />
+		<Unit filename="..\source\IrrOde\observer\CIrrOdeEventFactory.cpp" />
+		<Unit filename="..\source\IrrOde\observer\CIrrOdeRePlayer.cpp" />
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeRecorder.cpp" />
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp" />
 		<Extensions>

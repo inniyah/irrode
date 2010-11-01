@@ -227,6 +227,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventIdentify.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventInit.cpp"
 					>
 				</File>
@@ -363,6 +367,18 @@
 				Name="observer"
 				>
 				<File
+					RelativePath="..\source\IrrOde\observer\CIrrOdeEventFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\observer\CIrrOdeRecorder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\observer\CIrrOdeRePlayer.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp"
 					>
 				</File>
@@ -454,6 +470,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventClose.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventIdentify.h"
 					>
 				</File>
 				<File
@@ -609,7 +629,23 @@
 				Name="observer"
 				>
 				<File
+					RelativePath="..\include\IrrOde\observer\CIrrOdeEventFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\observer\CIrrOdeRecorder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\observer\CIrrOdeRePlayer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\observer\CIrrOdeWorldObserver.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\observer\IEventFactory.h"
 					>
 				</File>
 			</Filter>

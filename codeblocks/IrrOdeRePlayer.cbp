@@ -58,11 +58,6 @@
 			<Add library="gdi32" />
 			<Add directory="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc" />
 		</Linker>
-		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeEventFactory.h" />
-		<Unit filename="..\include\IrrOdeRePlayer\CIrrOdeRePlayer.h" />
-		<Unit filename="..\include\IrrOdeRePlayer\IEventFactory.h" />
-		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeEventFactory.cpp" />
-		<Unit filename="..\source\IrrOdeRePlayer\CIrrOdeRePlayer.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayer\IrrOdeRePlayer_main.cpp" />
 		<Extensions>
 			<code_completion />

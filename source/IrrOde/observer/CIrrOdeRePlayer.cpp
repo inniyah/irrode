@@ -1,5 +1,5 @@
-  #include <CIrrOdeRePlayer.h>
-  #include <CIrrOdeEventFactory.h>
+  #include <observer/CIrrOdeRePlayer.h>
+  #include <observer/CIrrOdeEventFactory.h>
 
   #include <event/IIrrOdeEvent.h>
   #include <event/CIrrOdeEventIdentify.h>
@@ -8,6 +8,9 @@
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventNodeCloned.h>
   #include <CIrrOdeManager.h>
+
+namespace irr {
+namespace ode {
 
 CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay) {
   m_pDevice=pDevice;
@@ -42,8 +45,8 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
     if (evt) {
       m_lEvents.push_back(evt);
       if (!m_bValidReplay) {
-        if (evt->getType()==irr::ode::eIrrOdeEventIdentify) {
-          irr::ode::CIrrOdeEventIdentify *p=(irr::ode::CIrrOdeEventIdentify *)evt;
+        if (evt->getType()==eIrrOdeEventIdentify) {
+          CIrrOdeEventIdentify *p=(CIrrOdeEventIdentify *)evt;
           m_bValidReplay=!strcmp(p->getIdentify(),_IRR_ODE_IDENTIFY_STRING);
         }
       }
@@ -59,7 +62,7 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
     return;
   }
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->initODE();
+  CIrrOdeManager::getSharedInstance()->initODE();
 
   while (m_pTimer->isStopped()) m_pTimer->start();
 }
@@ -77,29 +80,29 @@ void CIrrOdeRePlayer::update() {
     while (m_iTimeBuffer>16 && m_iIt!=m_lEvents.end()) {
       bool bStep=false;
       do {
-        irr::ode::IIrrOdeEvent *p=(irr::ode::IIrrOdeEvent *)*m_iIt,*p2=p->clone();
-        if (p->getType()==irr::ode::eIrrOdeEventBodyRemoved) {
-          irr::ode::CIrrOdeEventBodyRemoved *r=(irr::ode::CIrrOdeEventBodyRemoved *)p;
+        IIrrOdeEvent *p=(IIrrOdeEvent *)*m_iIt,*p2=p->clone();
+        if (p->getType()==eIrrOdeEventBodyRemoved) {
+          CIrrOdeEventBodyRemoved *r=(CIrrOdeEventBodyRemoved *)p;
           irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(r->getBodyId());
           if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
         }
 
-        if (p->getType()==irr::ode::eIrrOdeEventLoadScene) {
-          irr::ode::CIrrOdeEventLoadScene *pEvt=(irr::ode::CIrrOdeEventLoadScene *)p;
+        if (p->getType()==eIrrOdeEventLoadScene) {
+          CIrrOdeEventLoadScene *pEvt=(CIrrOdeEventLoadScene *)p;
           m_sSceneFile=stringc(pEvt->getScene());
           m_pSmgr->loadScene(m_sSceneFile.c_str());
-          irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
+          CIrrOdeManager::getSharedInstance()->initPhysics();
           printf("scene file: \"%s\"\n",m_sSceneFile.c_str());
         }
 
-        if (p->getType()==irr::ode::eIrrOdeEventNodeCloned) {
-          irr::ode::CIrrOdeEventNodeCloned *pClone=(irr::ode::CIrrOdeEventNodeCloned *)p;
+        if (p->getType()==eIrrOdeEventNodeCloned) {
+          CIrrOdeEventNodeCloned *pClone=(CIrrOdeEventNodeCloned *)p;
           irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pClone->getSourceId());
-          if (pNode) irr::ode::CIrrOdeManager::getSharedInstance()->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
+          if (pNode) CIrrOdeManager::getSharedInstance()->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
         }
 
-        if (p->getType()==irr::ode::eIrrOdeEventStep) bStep=true;
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
+        if (p->getType()==eIrrOdeEventStep) bStep=true;
+        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
         m_iIt++;
       }
       while (!bStep && m_iIt!=m_lEvents.end());
@@ -112,9 +115,12 @@ void CIrrOdeRePlayer::update() {
 
 void CIrrOdeRePlayer::clearEventList() {
   while (m_lEvents.getSize()>0) {
-    irr::core::list<irr::ode::IIrrOdeEvent *>::Iterator it=m_lEvents.begin();
-    irr::ode::IIrrOdeEvent *p=*it;
+    irr::core::list<IIrrOdeEvent *>::Iterator it=m_lEvents.begin();
+    IIrrOdeEvent *p=*it;
     m_lEvents.erase(it);
     delete p;
   }
+}
+
+}
 }

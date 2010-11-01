@@ -1,4 +1,4 @@
-  #include <CIrrOdeEventFactory.h>
+  #include <observer/CIrrOdeEventFactory.h>
 
   #include <event/CIrrOdeEventInit.h>
   #include <event/CIrrOdeEventClose.h>
@@ -13,6 +13,9 @@
   #include <event/CIrrOdeEventStep.h>
   #include <event/CIrrOdeEventIdentify.h>
 
+namespace irr {
+namespace ode {
+
 CIrrOdeDefaultEventFactory::CIrrOdeDefaultEventFactory() {
 }
 
@@ -20,18 +23,18 @@ IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, ISce
   pData->resetBufferPos();
   u16 iCode=pData->getU16();
   switch (iCode) {
-    case irr::ode::eIrrOdeEventInit             : return new irr::ode::CIrrOdeEventInit             (pData);
-    case irr::ode::eIrrOdeEventClose            : return new irr::ode::CIrrOdeEventClose            (pData);
-    case irr::ode::eIrrOdeEventBeforeStep       : return new irr::ode::CIrrOdeEventBeforeStep       (pData);
-    case irr::ode::eIrrOdeEventStep             : return new irr::ode::CIrrOdeEventStep             (pData);
-    case irr::ode::eIrrOdeEventBodyCreated      : return new irr::ode::CIrrOdeEventBodyCreated      (pData,pSmgr);
-    case irr::ode::eIrrOdeEventBodyRemoved      : return new irr::ode::CIrrOdeEventBodyRemoved      (pData,pSmgr);
-    case irr::ode::eIrrOdeEventBodyMoved        : return new irr::ode::CIrrOdeEventBodyMoved        (pData,pSmgr);
-    case irr::ode::eIrrOdeEventActivationChanged: return new irr::ode::CIrrOdeEventActivationChanged(pData,pSmgr);
-    case irr::ode::eIrrOdeEventRayHit           : return new irr::ode::CIrrOdeEventRayHit           (pData,pSmgr);
-    case irr::ode::eIrrOdeEventNodeCloned       : return new irr::ode::CIrrOdeEventNodeCloned       (pData);
-    case irr::ode::eIrrOdeEventLoadScene        : return new irr::ode::CIrrOdeEventLoadScene        (pData);
-    case irr::ode::eIrrOdeEventIdentify         : return new irr::ode::CIrrOdeEventIdentify         (pData);
+    case eIrrOdeEventInit             : return new CIrrOdeEventInit             (pData);
+    case eIrrOdeEventClose            : return new CIrrOdeEventClose            (pData);
+    case eIrrOdeEventBeforeStep       : return new CIrrOdeEventBeforeStep       (pData);
+    case eIrrOdeEventStep             : return new CIrrOdeEventStep             (pData);
+    case eIrrOdeEventBodyCreated      : return new CIrrOdeEventBodyCreated      (pData,pSmgr);
+    case eIrrOdeEventBodyRemoved      : return new CIrrOdeEventBodyRemoved      (pData,pSmgr);
+    case eIrrOdeEventBodyMoved        : return new CIrrOdeEventBodyMoved        (pData,pSmgr);
+    case eIrrOdeEventActivationChanged: return new CIrrOdeEventActivationChanged(pData,pSmgr);
+    case eIrrOdeEventRayHit           : return new CIrrOdeEventRayHit           (pData,pSmgr);
+    case eIrrOdeEventNodeCloned       : return new CIrrOdeEventNodeCloned       (pData);
+    case eIrrOdeEventLoadScene        : return new CIrrOdeEventLoadScene        (pData);
+    case eIrrOdeEventIdentify         : return new CIrrOdeEventIdentify         (pData);
     default: return NULL;
   }
 }
@@ -83,4 +86,7 @@ void CIrrOdeEventFactory::removeEventFactory(IIrrOdeEventFactory *p) {
 
 void CIrrOdeEventFactory::setSceneManager(ISceneManager *pSmgr) {
   m_pSmgr=pSmgr;
+}
+
+}
 }

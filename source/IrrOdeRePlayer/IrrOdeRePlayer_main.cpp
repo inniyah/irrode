@@ -1,6 +1,6 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
-  #include <CIrrOdeRePlayer.h>
+  #include <observer/CIrrOdeRePlayer.h>
 
 using namespace irr;
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
 
-  CIrrOdeRePlayer *pPlayer=new CIrrOdeRePlayer(device,"../../data/replay/car.rec");
+  irr::ode::CIrrOdeRePlayer *pPlayer=new irr::ode::CIrrOdeRePlayer(device,"../../data/replay/car.rec");
 
   vector3df v=pCam->getAbsolutePosition();
   smgr->setActiveCamera(pCam);
