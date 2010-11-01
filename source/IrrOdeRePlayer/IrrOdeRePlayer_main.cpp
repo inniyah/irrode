@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(800,600),24,false,false,false,0);
   irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
-  device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
+  device->setWindowCaption(L"IrrOdeRePlayer");
 
   IVideoDriver* driver = device->getVideoDriver();
   ISceneManager* smgr = device->getSceneManager();
