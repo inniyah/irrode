@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\gcc-win32\IrrOdeSurfaceEdit" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\gcc-win32-debug\IrrOdeSurfaceEdit" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
 				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeSurfaceEdit\debug\" />
 				<Option type="1" />

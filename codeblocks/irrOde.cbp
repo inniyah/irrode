@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\gcc-win32\irrOdePlayground" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\gcc-win32-debug\irrOdePlayground" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
 				<Option object_output="..\..\_obj_dump\irrOde\IrrOdePlayground\debug" />
 				<Option external_deps="..\bin\gcc-win32\libIrrOde.a;" />
