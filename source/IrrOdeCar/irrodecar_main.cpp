@@ -1,6 +1,7 @@
   #include <irrlicht.h>
   #include <IrrODE.h>
   #include <CSettings.h>
+  #include <CAdvancedParticleSystemNode.h>
 
   #include "CCar.h"
   #include "CTank.h"
@@ -213,6 +214,10 @@ int main(int argc, char** argv) {
   //register the IrrOde scene node factory
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
+
+  CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(smgr);
+  smgr->registerSceneNodeFactory(cParticleFactory);
+  cParticleFactory->drop();
 
   //init the ODE
   CIrrOdeManager::getSharedInstance()->initODE();
