@@ -75,7 +75,7 @@
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
-			<Add library="..\..\bbsandbox\particle_clone\bin\gcc-win32\libAdvancedParticle.a" />
+			<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
 			<Add directory="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CCar.h" />
