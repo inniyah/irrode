@@ -20,9 +20,9 @@
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="libIrrOde.cbp" />
-		<Project filename="IrrOdeRePlayer.cbp" active="1">
+		<Project filename="IrrOdeRePlayer.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="RePLayerPlugin.cbp" />
+		<Project filename="RePLayerPlugin.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>
