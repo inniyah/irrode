@@ -2,6 +2,8 @@
   #include <IrrOde.h>
   #include <observer/CIrrOdeRePlayer.h>
 
+  #include <CPluginInfo.h>
+
 using namespace irr;
 
 using namespace core;
@@ -14,7 +16,7 @@ using namespace gui;
 //the unresolved external of the IdentityMaterial
 
 int main(int argc, char** argv) {
-  IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(800,600),24,false,false,false,0);
+  irr::IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(800,600),24,false,false,false,0);
   irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
   device->setWindowCaption(L"IrrOdeRePlayer");
@@ -28,6 +30,13 @@ int main(int argc, char** argv) {
   smgr->registerSceneNodeFactory(&cFactory);
 
   ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
+
+  printf("Installing plugin ... device=%i\n",(int)device);
+  CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugin.dll",device);
+  if (pPlugin->dllLoaded())
+    pPlugin->pluginInstall();
+  else
+    printf("Plugin not installed!\n");
 
   irr::ode::CIrrOdeRePlayer *pPlayer=new irr::ode::CIrrOdeRePlayer(device,"../../data/replay/car.rec");
 
@@ -48,6 +57,8 @@ int main(int argc, char** argv) {
 
     driver->endScene();
   }
+
+  if (pPlugin->dllLoaded()) pPlugin->pluginDestall();
   device->drop();
 
   return 0;
