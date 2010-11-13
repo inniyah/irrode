@@ -12,12 +12,14 @@ class CProjectile {
     irr::s32 m_iTtl;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::scene::ISceneManager *m_pSmgr;
+    irr::scene::IAnimatedMeshSceneNode *m_pNode;
 
     array<CAdvancedParticleSystemNode *> m_aParticleSystems;
 
     bool m_bActive;
 
     void findParticleSystems(irr::scene::ISceneNode *pNode);
+    void findMesh(irr::scene::ISceneNode *pNode);
   public:
     /**
      * The projectile's constructor

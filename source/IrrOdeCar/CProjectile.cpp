@@ -15,10 +15,23 @@ void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
     findParticleSystems(*i);
 }
 
+void CProjectile::findMesh(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType()==irr::scene::ESNT_ANIMATED_MESH) {
+    m_pNode=(irr::scene::IAnimatedMeshSceneNode *)pNode;
+    return;
+  }
+
+  list<ISceneNode *> children=pNode->getChildren();
+  list<ISceneNode *>::Iterator i;
+
+  for (i=children.begin(); i!=children.end(); i++) findMesh(*i);
+}
+
 CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
   m_bActive=true;
+  m_pNode=NULL;
 
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
@@ -27,6 +40,7 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
     m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNewNode);
     if (m_pBody!=NULL) {
       findParticleSystems(m_pBody);
+      findMesh(m_pBody);
 
       m_pBody->setPosition(vPos);
       m_pBody->setRotation(vRot);
@@ -64,8 +78,10 @@ void CProjectile::step() {
 
     if (m_bActive) {
       m_bActive=false;
-      for (u32 i=0; i<m_aParticleSystems.size(); i++)
+      for (u32 i=0; i<m_aParticleSystems.size(); i++) {
+        if (m_pNode) m_pNode->setVisible(false);
         m_aParticleSystems[i]->setIsActive(false);
+      }
     }
   }
 }
