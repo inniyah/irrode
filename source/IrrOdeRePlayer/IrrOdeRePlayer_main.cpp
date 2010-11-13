@@ -31,10 +31,10 @@ int main(int argc, char** argv) {
 
   ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
 
-  printf("Installing plugin ... device=%i\n",(int)device);
-  CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugin.dll",device);
+  CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugins/RePlayerPlugin.dll",device);
+  printf("--> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
   if (pPlugin->dllLoaded())
-    pPlugin->pluginInstall();
+    pPlugin->pluginInstall((void *)irr::ode::CIrrOdeManager::getSharedInstance());
   else
     printf("Plugin not installed!\n");
 
@@ -58,7 +58,9 @@ int main(int argc, char** argv) {
     driver->endScene();
   }
 
-  if (pPlugin->dllLoaded()) pPlugin->pluginDestall();
+  if (pPlugin->dllLoaded())
+    pPlugin->pluginDestall((void *)irr::ode::CIrrOdeManager::getSharedInstance());
+
   device->drop();
 
   return 0;

@@ -4,6 +4,8 @@
   #include <irrlicht.h>
   #include <irrOde.h>
 
+class CAdvancedParticleSystemNode;
+
 class CProjectile {
   protected:
     irr::ode::CIrrOdeBody *m_pBody;
@@ -11,6 +13,11 @@ class CProjectile {
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::scene::ISceneManager *m_pSmgr;
 
+    array<CAdvancedParticleSystemNode *> m_aParticleSystems;
+
+    bool m_bActive;
+
+    void findParticleSystems(irr::scene::ISceneNode *pNode);
   public:
     /**
      * The projectile's constructor
@@ -32,6 +39,8 @@ class CProjectile {
 
     void step();
     void collide();
+
+    bool particlesActive();
 };
 
 class CProjectileManager : irr::ode::IIrrOdeEventListener {

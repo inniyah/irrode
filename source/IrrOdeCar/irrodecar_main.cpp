@@ -89,7 +89,11 @@ void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
   if (pNode!=NULL) {
     CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+    s32 iNodeId=pNode->getID();
     pNode->remove();
+
+    irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
+    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
   }
 }
 

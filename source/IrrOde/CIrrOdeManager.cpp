@@ -11,6 +11,7 @@
   #include <event/CIrrOdeEventNodeCloned.h>
   #include <event/CIrrOdeEventLoadScene.h>
   #include <event/CIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventNodeRemoved.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -349,6 +350,11 @@ void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
   }
 }
 
+void CIrrOdeManager::removeSceneNode(ISceneNode *pNode) {
+  CIrrOdeEventNodeRemoved *p=new CIrrOdeEventNodeRemoved(pNode);
+  m_pQueue->postEvent(p);
+}
+
 bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr) {
   bool bRet=pSmgr->loadScene(sScene);
   if (bRet) {
@@ -369,6 +375,8 @@ bool CIrrOdeManager::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
 }
 
 bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
+  if (pEvt==NULL) return false;
+
   if (pEvt->getType()==eIrrOdeEventBodyMoved) {
     CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
     CIrrOdeBody *pBody=pEvent->getBody();
@@ -414,11 +422,23 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
       }
     }
   }
+
+  if (pEvt->getType()==eIrrOdeEventNodeRemoved) {
+    CIrrOdeEventNodeRemoved *pNr=(CIrrOdeEventNodeRemoved *)pEvt;
+    ISceneNode *pNode=pNr->getRemovedNode();
+    if (pNode==NULL && pNr->getRemovedNodeId()!=-1) {
+      pNode=m_pSmgr->getSceneNodeFromId(pNr->getRemovedNodeId());
+    }
+
+    if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
+  }
   return false;
 }
 
 bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==eIrrOdeEventBodyMoved || pEvent->getType()==eIrrOdeEventBodyRemoved;
+  return pEvent->getType()==eIrrOdeEventBodyMoved   ||
+         pEvent->getType()==eIrrOdeEventBodyRemoved ||
+         pEvent->getType()==eIrrOdeEventNodeRemoved;
 }
 
 } //namespace ode

@@ -81,11 +81,11 @@ void CIrrOdeRePlayer::update() {
       bool bStep=false;
       do {
         IIrrOdeEvent *p=(IIrrOdeEvent *)*m_iIt,*p2=p->clone();
-        if (p->getType()==eIrrOdeEventBodyRemoved) {
+        /*if (p->getType()==eIrrOdeEventBodyRemoved) {
           CIrrOdeEventBodyRemoved *r=(CIrrOdeEventBodyRemoved *)p;
           irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(r->getBodyId());
           if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
-        }
+        }*/
 
         if (p->getType()==eIrrOdeEventLoadScene) {
           CIrrOdeEventLoadScene *pEvt=(CIrrOdeEventLoadScene *)p;

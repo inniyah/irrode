@@ -124,6 +124,13 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
 
     /**
+     * Remove a node from the scene. This method sends a CIrrOdeEventNodeRemoved event
+     * @param pNode node to remove
+     * @see CIrrOdeEventNodeRemoved
+     */
+    void removeSceneNode(ISceneNode *pNode);
+
+    /**
      * This method encapsulates the "loadScene" method of the Irrlicht scene manager. It loads the
      * scene and posts an event of type "CIrrOdeEventSceneLoaded" to the IrrOde event queue
      * @param sScene the scene to load

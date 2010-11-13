@@ -2,10 +2,23 @@
   #include <geom/CIrrOdeGeom.h>
   #include <CIrrOdeBody.h>
   #include <CIrrOdeManager.h>
+  #include <CAdvancedParticleSystemNode.h>
+
+void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType()==(irr::scene::ESCENE_NODE_TYPE)ADVANCED_PARTICLE_NODE_ID) {
+    m_aParticleSystems.push_back((CAdvancedParticleSystemNode *)pNode);
+  }
+  list<ISceneNode *> children=pNode->getChildren();
+  list<ISceneNode *>::Iterator i;
+
+  for (i=children.begin(); i!=children.end(); i++)
+    findParticleSystems(*i);
+}
 
 CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
+  m_bActive=true;
 
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
@@ -13,6 +26,8 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
     irr::scene::ISceneNode *pNewNode=irr::ode::CIrrOdeManager::getSharedInstance()->cloneTree(pSource,pWorld,m_pSmgr);
     m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNewNode);
     if (m_pBody!=NULL) {
+      findParticleSystems(m_pBody);
+
       m_pBody->setPosition(vPos);
       m_pBody->setRotation(vRot);
       m_pBody->setLinearVelocity(vVel);
@@ -45,10 +60,27 @@ void CProjectile::step() {
   //if the lifetime has reached 0 ...
   if (m_iTtl<=0) {
     //... we remove the body
-    m_pBody->remove();
+    m_pBody->removeFromPhysics();
+
+    if (m_bActive) {
+      m_bActive=false;
+      for (u32 i=0; i<m_aParticleSystems.size(); i++)
+        m_aParticleSystems[i]->setIsActive(false);
+    }
   }
 }
 
+bool CProjectile::particlesActive() {
+  u32 iParticles=0;
+  for (u32 i=0; i<m_aParticleSystems.size(); i++)
+    iParticles+=m_aParticleSystems[i]->getParticleCount();
+
+  bool bRet=iParticles!=0;
+
+  if (!bRet) irr::ode::CIrrOdeManager::getSharedInstance()->removeSceneNode(m_pBody);
+
+  return bRet;
+}
 //if a collision occured we set the remaining
 //lifetime to zero
 void CProjectile::collide() {
@@ -80,7 +112,7 @@ bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     for (it=m_lShots.begin(); it!=m_lShots.end(); it++) {
       CProjectile *p=*it;
       p->step();
-      if (p->getTtl()<=0) {
+      if (p->getTtl()<=0 && !p->particlesActive()) {
         if (m_pLast==p) m_pLast=NULL;
         m_lShots.erase(it);
         delete p;

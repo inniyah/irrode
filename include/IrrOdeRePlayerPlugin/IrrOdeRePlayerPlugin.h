@@ -23,17 +23,21 @@ extern "C"
 
 /**
  * This method is called when a replay from an application that this plugin is registered for is started.
+ * @param pDevice the used Irrlicht device
+ * @param pUserData some user data
  * @see CPluginInfo::pluginInstall
  * @return "0" if successful
  */
-int DLL_EXPORT install(irr::IrrlichtDevice *pDevice);
+int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData);
 
 /**
  * This method is called when a replay from an application that this plugin is registered for has finished.
+ * @param pDevice the used Irrlicht device
+ * @param pUserData some user data
  * @see CPluginInfo::pluginDestall
  * @return "0" if successful
  */
-int DLL_EXPORT destall(irr::IrrlichtDevice *pDevice);
+int DLL_EXPORT destall(irr::IrrlichtDevice *pDevice, void *pUserData);
 
 #ifdef __cplusplus
 }

@@ -7,13 +7,12 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="debug">
-				<Option output="..\bin\gcc-win32-debug\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\gcc-win32-debug\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
 				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
+				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32-debug\IrrOdeRePlayer.exe" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -21,18 +20,18 @@
 				</Compiler>
 				<Linker>
 					<Add library="user32" />
+					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
 					<Add library="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc\libIrrlicht.a" />
 				</Linker>
 			</Target>
 			<Target title="release">
-				<Option output="..\bin\gcc-win32\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\gcc-win32\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
 				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\release" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
+				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32\IrrOdeRePlayer.exe" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
@@ -41,8 +40,10 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="user32" />
+					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
 					<Add library="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc\libIrrlicht.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -51,6 +52,7 @@
 			<Add directory="..\..\libs\irrlicht-1.7.1\include" />
 			<Add directory="..\include\IrrOdeRePlayerPlugin" />
 			<Add directory="..\..\bbsandbox\particle_clone\project" />
+			<Add directory="..\include\IrrOde" />
 		</Compiler>
 		<Unit filename="..\include\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.h" />
 		<Unit filename="..\source\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.cpp" />

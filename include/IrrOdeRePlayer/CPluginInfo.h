@@ -11,13 +11,13 @@ class CIrrOdeManager;
 
 class IPlugin {
   protected:
-    typedef int(*PI_install )(irr::IrrlichtDevice *);   /**< typedef for the "install" method of the dll */
-    typedef int(*PI_destall )(irr::IrrlichtDevice *);   /**< typedef for the "destall" method of the dll */
+    typedef int(*PI_install )(irr::IrrlichtDevice *, void *);   /**< typedef for the "install" method of the dll */
+    typedef int(*PI_destall )(irr::IrrlichtDevice *, void *);   /**< typedef for the "destall" method of the dll */
 
   public:
     virtual ~IPlugin() { }
-    virtual int pluginInstall()=0;    /**< This method calls the dll's "install" method */
-    virtual int pluginDestall()=0;    /**< This method calls the dll's "destall" method */
+    virtual int pluginInstall(void *pUserData)=0;    /**< This method calls the dll's "install" method */
+    virtual int pluginDestall(void *pUserData)=0;    /**< This method calls the dll's "destall" method */
 
     virtual bool dllLoaded()=0;
 };
@@ -59,8 +59,8 @@ class CPluginInfo : public IPlugin {
      */
     virtual ~CPluginInfo();
 
-    virtual int pluginInstall();    /**< This method calls the dll's "install" method */
-    virtual int pluginDestall();    /**< This method calls the dll's "destall" method */
+    virtual int pluginInstall(void *pUserData); /**< This method calls the dll's "install" method */
+    virtual int pluginDestall(void *pUserData); /**< This method calls the dll's "destall" method */
 
     /**
      * This method checks whether or not the dll was loaded by verifying the adresses

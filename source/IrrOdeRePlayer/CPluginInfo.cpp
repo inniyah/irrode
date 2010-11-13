@@ -31,15 +31,15 @@ CPluginInfo::~CPluginInfo() {
 /**
  * call the dll's "install" method
  */
-int CPluginInfo::pluginInstall() {
-  return m_pFuncInstall(m_pDevice);
+int CPluginInfo::pluginInstall(void *pUserData) {
+  return m_pFuncInstall(m_pDevice,pUserData);
 }
 
 /**
  * call the dll's "destall" method
  */
-int CPluginInfo::pluginDestall() {
-  return m_pFuncDestall(m_pDevice);
+int CPluginInfo::pluginDestall(void *pUserData) {
+  return m_pFuncDestall(m_pDevice,pUserData);
 }
 
 /**
