@@ -24,7 +24,9 @@ class CIrrOdeRePlayer {
 
     irr::core::list<irr::ode::IIrrOdeEvent *>::Iterator m_iIt;
 
-    bool m_bValidReplay;
+    bool m_bIsPaused,
+         m_bValidReplay,
+         m_bSceneLoaded;
 
     void clearEventList();
 
@@ -33,6 +35,8 @@ class CIrrOdeRePlayer {
     ~CIrrOdeRePlayer();
 
     void update();
+
+    void setIsPaused(bool b) { m_bIsPaused=b; }
 };
 
 }

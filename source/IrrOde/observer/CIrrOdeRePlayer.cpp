@@ -20,6 +20,8 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
   m_iLastStep=0;
   m_iTimeBuffer=0;
 
+  m_bIsPaused=false;
+
   clearEventList();
   irr::io::IFileSystem *pFs=m_pDevice->getFileSystem();
   irr::io::IReadFile *f=pFs->createAndOpenFile(irr::io::path(sReplay));
@@ -74,6 +76,12 @@ CIrrOdeRePlayer::~CIrrOdeRePlayer() {
 void CIrrOdeRePlayer::update() {
   u32 iThisTime=m_pTimer->getTime();
 
+  if (m_bIsPaused && m_bSceneLoaded) {
+    m_iTimeBuffer+=iThisTime-m_iLastStep;
+    while (m_iTimeBuffer>16) m_iTimeBuffer-=16;
+    return;
+  }
+
   if (m_iLastStep!=0) {
     m_iTimeBuffer+=iThisTime-m_iLastStep;
 
@@ -81,16 +89,10 @@ void CIrrOdeRePlayer::update() {
       bool bStep=false;
       do {
         IIrrOdeEvent *p=(IIrrOdeEvent *)*m_iIt,*p2=p->clone();
-        /*if (p->getType()==eIrrOdeEventBodyRemoved) {
-          CIrrOdeEventBodyRemoved *r=(CIrrOdeEventBodyRemoved *)p;
-          irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(r->getBodyId());
-          if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
-        }*/
-
         if (p->getType()==eIrrOdeEventLoadScene) {
           CIrrOdeEventLoadScene *pEvt=(CIrrOdeEventLoadScene *)p;
           m_sSceneFile=stringc(pEvt->getScene());
-          m_pSmgr->loadScene(m_sSceneFile.c_str());
+          m_bSceneLoaded=m_pSmgr->loadScene(m_sSceneFile.c_str());
           CIrrOdeManager::getSharedInstance()->initPhysics();
           printf("scene file: \"%s\"\n",m_sSceneFile.c_str());
         }

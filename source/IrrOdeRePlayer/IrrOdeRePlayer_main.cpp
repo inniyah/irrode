@@ -32,7 +32,6 @@ int main(int argc, char** argv) {
   ICameraSceneNode *pCam=smgr->addCameraSceneNodeFPS();
 
   CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugins/RePlayerPlugin.dll",device);
-  printf("--> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
   if (pPlugin->dllLoaded())
     pPlugin->pluginInstall((void *)irr::ode::CIrrOdeManager::getSharedInstance());
   else
