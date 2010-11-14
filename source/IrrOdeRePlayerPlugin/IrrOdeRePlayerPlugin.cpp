@@ -27,6 +27,20 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
       for (i=children.begin(); i!=children.end(); i++) deactivateParticleSystems(*i);
     }
 
+    /**
+     * This method hides the projectile which is an animated mesh
+     * @param pNode the node to check
+     */
+    void hideAnimatedMesh(irr::scene::ISceneNode *pNode) {
+      if (pNode->getType()==irr::scene::ESNT_ANIMATED_MESH) {
+        irr::scene::IAnimatedMeshSceneNode *p=(irr::scene::IAnimatedMeshSceneNode *)pNode;
+        p->setVisible(false);
+      }
+      list<ISceneNode *> children=pNode->getChildren();
+      list<ISceneNode *>::Iterator i;
+      for (i=children.begin(); i!=children.end(); i++) hideAnimatedMesh(*i);
+    }
+
   public:
     APS_EventListener(irr::IrrlichtDevice *pDevice) {
       m_pDevice=pDevice;
@@ -38,6 +52,7 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         ISceneNode *pNode=m_pDevice->getSceneManager()->getSceneNodeFromId(p->getBodyId());
         if (pNode!=NULL) {
           deactivateParticleSystems(pNode);
+          hideAnimatedMesh(pNode);
         }
       }
       return false;
