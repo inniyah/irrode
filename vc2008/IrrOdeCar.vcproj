@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\myStuff\projects\libs\ode-0.11-vc\include&quot;;D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;;..\include\IrrOdeCar;D:\myStuff\projects\irrOde\include\IrrOdeMarble"
+				AdditionalIncludeDirectories="D:\myStuff\projects\bbsandbox\particle_clone\project;&quot;D:\myStuff\projects\libs\ode-0.11-vc\include&quot;;D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;;..\include\IrrOdeCar;D:\myStuff\projects\irrOde\include\IrrOdeMarble"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_USE_MATH_DEFINES"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\ode-0.11-vc\include&quot;;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;;..\include\IrrOdeCar;D:\myStuff\projects\irrOde\include\IrrOdeMarble"
+				AdditionalIncludeDirectories="D:\myStuff\projects\bbsandbox\particle_clone\project;D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\ode-0.11-vc\include&quot;;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;;..\include\IrrOdeCar;D:\myStuff\projects\irrOde\include\IrrOdeMarble"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_USE_MATH_DEFINES"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -179,6 +179,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\bbsandbox\particle_clone\project\CAdvancedParticleSystemNode.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\IrrOdeCar\CCar.cpp"
 				>
 			</File>
@@ -236,6 +240,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\bbsandbox\particle_clone\project\CAdvancedParticleSystemNode.h"
+				>
+			</File>
 			<File
 				RelativePath="..\include\IrrOdeCar\CCar.h"
 				>
