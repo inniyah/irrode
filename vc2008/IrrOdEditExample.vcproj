@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="D:\myStuff\projects\irrode\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.2\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="D:\myStuff\projects\irrOde\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.1\include&quot;"
+				AdditionalIncludeDirectories="D:\myStuff\projects\irrode\include\IrrOde;&quot;D:\myStuff\projects\libs\irrlicht-1.7.2\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

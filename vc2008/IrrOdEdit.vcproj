@@ -331,6 +331,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventNodeRemoved.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventProgress.cpp"
 					>
 				</File>
@@ -552,6 +556,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\event\CIrrOdeEventNodeRemoved.h"
 					>
 				</File>
 				<File
