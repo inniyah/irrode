@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="IrrODE">
-		<Project filename="irrOde.cbp" active="1">
+		<Project filename="irrOde.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="IrrOdEditExample.cbp">
@@ -20,7 +20,7 @@
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="libIrrOde.cbp" />
-		<Project filename="IrrOdeRePlayer.cbp">
+		<Project filename="IrrOdeRePlayer.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="RePLayerPlugin.cbp" />

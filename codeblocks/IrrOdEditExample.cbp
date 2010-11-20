@@ -66,14 +66,14 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="D:\myStuff\projects\libs\irrlicht-1.7.1\include" />
+			<Add directory="D:\myStuff\projects\libs\irrlicht-1.7.2\include" />
 			<Add directory="..\include\IrrOde" />
 		</Compiler>
 		<Linker>
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
-			<Add directory="D:\myStuff\projects\libs\irrlicht-1.7.1\lib\Win32-gcc" />
+			<Add directory="D:\myStuff\projects\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\source\IrrOdEditExample\main.cpp" />
 		<Extensions>

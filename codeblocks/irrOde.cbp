@@ -72,7 +72,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\..\libs\irrlicht-1.7.1\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdePlayground" />
 		</Compiler>
@@ -80,7 +80,7 @@
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
-			<Add directory="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdePlayground\myEventListeners.h" />
 		<Unit filename="..\include\IrrOdePlayground\myEventReceiver.h" />

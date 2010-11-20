@@ -22,7 +22,7 @@
 					<Add library="user32" />
 					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
-					<Add library="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc\libIrrlicht.a" />
+					<Add library="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc\libIrrlicht.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="release">
@@ -39,17 +39,16 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="user32" />
 					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
-					<Add library="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc\libIrrlicht.a" />
+					<Add library="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc\libIrrlicht.dll.a" />
 					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-D_DONT_INCLUDE_NODE" />
-			<Add directory="..\..\libs\irrlicht-1.7.1\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
 			<Add directory="..\include\IrrOdeRePlayerPlugin" />
 			<Add directory="..\..\bbsandbox\particle_clone\project" />
 			<Add directory="..\include\IrrOde" />

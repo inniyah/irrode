@@ -20,6 +20,8 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
     void deactivateParticleSystems(irr::scene::ISceneNode *pNode) {
       if (pNode->getType()==ADVANCED_PARTICLE_NODE_ID) {
         CAdvancedParticleSystemNode *p=(CAdvancedParticleSystemNode *)pNode;
+        //We deactivate the normal particle systems and activate those for explosions
+        //which will automatically be deactivated once finished.
         p->setIsActive(!p->isActive());
       }
       list<ISceneNode *> children=pNode->getChildren();

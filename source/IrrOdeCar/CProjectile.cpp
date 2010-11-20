@@ -79,6 +79,8 @@ void CProjectile::step() {
     if (m_bActive) {
       m_bActive=false;
       if (m_pNode) m_pNode->setVisible(false);
+      //We deactivate the normal particle systems and activate those for explosions
+      //which will automatically be deactivated once finished.
       for (u32 i=0; i<m_aParticleSystems.size(); i++) {
         m_aParticleSystems[i]->setIsActive(!m_aParticleSystems[i]->isActive());
       }
@@ -131,7 +133,6 @@ bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (p->getTtl()<=0 && !p->particlesActive()) {
         if (m_pLast==p) m_pLast=NULL;
         m_lShots.erase(it);
-        printf("deleting projectile!\n");
         delete p;
         return false;
       }

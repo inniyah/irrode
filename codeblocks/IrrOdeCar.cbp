@@ -66,7 +66,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\..\libs\irrlicht-1.7.1\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
 			<Add directory="..\..\bbsandbox\particle_clone\project" />
@@ -76,7 +76,7 @@
 			<Add library="glu32" />
 			<Add library="gdi32" />
 			<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
-			<Add directory="..\..\libs\irrlicht-1.7.1\lib\Win32-gcc" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CConfigFileManager.h" />
