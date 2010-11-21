@@ -29,14 +29,31 @@ class COdeEventListener : public ode::IIrrOdeEventListener {
       for (u32 i=0; i<m_aBodies.size(); i++) {
         ode::CIrrOdeBody *p=m_aBodies[i];
         if (p!=NULL) {
-          s+="\n";
           s+=p->getID();
           s+=" -- (";
           s+=p->getName();
           s+=")";
+          s+="\n";
         }
       }
       m_pLblBodies->setText(s.c_str());
+    }
+
+    void removeNode(ISceneNode *pNode) {
+      if (pNode==NULL) return;
+
+      list<ISceneNode *> children=pNode->getChildren();
+      list<ISceneNode *>::Iterator it;
+
+      for (it=children.begin(); it!=children.end(); it++) removeNode(*it);
+
+      if (pNode->getType()==ode::IRR_ODE_BODY_ID) {
+        ode::CIrrOdeBody *pBody=(ode::CIrrOdeBody *)pNode;
+        for (u32 i=0; i<m_aBodies.size(); i++) if (m_aBodies[i]==pBody) {
+          m_aBodies.erase(i); break;
+          updateBodyList();
+        }
+      }
     }
   public:
     COdeEventListener(IGUIStaticText *pLblBodies, ISceneManager *pSmgr) {
@@ -80,26 +97,17 @@ class COdeEventListener : public ode::IIrrOdeEventListener {
             if (pBody->getParentBody()==NULL) {
               pBody->grab();
               m_aBodies.push_back(pBody);
-              updateBodyList();
             }
           }
+          updateBodyList();
           return true;
         }
 
         if (pEvent->getType()==ode::eIrrOdeEventNodeRemoved) {
           ode::CIrrOdeEventNodeRemoved *p=(ode::CIrrOdeEventNodeRemoved *)pEvent;
           ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(p->getRemovedNodeId());
-          if (pNode!=NULL && pNode->getType()==ode::IRR_ODE_BODY_ID) {
-            ode::CIrrOdeBody *pBody=(ode::CIrrOdeBody *)pNode;
-            for (u32 i=0; i<m_aBodies.size(); i++) {
-              if (m_aBodies[i]==pBody) {
-                m_aBodies.erase(i);
-                pBody->drop();
-                updateBodyList();
-                break;
-              }
-            }
-          }
+          if (pNode!=NULL) removeNode(pNode);
+          updateBodyList();
           return true;
         }
       }
@@ -136,7 +144,7 @@ int main(int argc, char** argv) {
   else
     printf("Plugin not installed!\n");
 
-  IGUIStaticText *pLblBodies=guienv->addStaticText(L"Hello World",rect<s32>(5,5,200,763),true,true,0,-1,true);
+  IGUIStaticText *pLblBodies=guienv->addStaticText(L"Hello World",rect<s32>(5,5,200,300),true,true,0,-1,true);
   COdeEventListener *pListener=new COdeEventListener(pLblBodies,smgr);
   ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(pListener);
 
