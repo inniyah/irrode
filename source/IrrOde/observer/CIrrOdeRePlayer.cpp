@@ -21,6 +21,7 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
   m_iTimeBuffer=0;
 
   m_bIsPaused=false;
+  m_bReplayFinished=false;
 
   clearEventList();
   irr::io::IFileSystem *pFs=m_pDevice->getFileSystem();
@@ -77,8 +78,7 @@ void CIrrOdeRePlayer::update() {
   u32 iThisTime=m_pTimer->getTime();
 
   if (m_bIsPaused && m_bSceneLoaded) {
-    m_iTimeBuffer+=iThisTime-m_iLastStep;
-    while (m_iTimeBuffer>16) m_iTimeBuffer-=16;
+    m_iLastStep=iThisTime;
     return;
   }
 
@@ -110,6 +110,7 @@ void CIrrOdeRePlayer::update() {
       while (!bStep && m_iIt!=m_lEvents.end());
       m_iTimeBuffer-=16;
     }
+    if (m_iIt==m_lEvents.end()) m_bReplayFinished=true;
   }
 
   m_iLastStep=iThisTime;

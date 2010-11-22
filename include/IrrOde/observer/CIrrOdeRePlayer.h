@@ -26,7 +26,8 @@ class CIrrOdeRePlayer {
 
     bool m_bIsPaused,
          m_bValidReplay,
-         m_bSceneLoaded;
+         m_bSceneLoaded,
+         m_bReplayFinished;
 
     void clearEventList();
 
@@ -37,6 +38,9 @@ class CIrrOdeRePlayer {
     void update();
 
     void setIsPaused(bool b) { m_bIsPaused=b; }
+    bool isPaused() { return m_bIsPaused; }
+
+    bool isFinished() { return m_bReplayFinished; }
 };
 
 }
