@@ -72,18 +72,16 @@ void CProjectile::step() {
   m_iTtl--;
 
   //if the lifetime has reached 0 ...
-  if (m_iTtl<=0) {
+  if (m_iTtl<=0 && m_bActive) {
     //... we remove the body
     m_pBody->removeFromPhysics();
 
-    if (m_bActive) {
-      m_bActive=false;
-      if (m_pNode) m_pNode->setVisible(false);
-      //We deactivate the normal particle systems and activate those for explosions
-      //which will automatically be deactivated once finished.
-      for (u32 i=0; i<m_aParticleSystems.size(); i++) {
-        m_aParticleSystems[i]->setIsActive(!m_aParticleSystems[i]->isActive());
-      }
+    m_bActive=false;
+    if (m_pNode) m_pNode->setVisible(false);
+    //We deactivate the normal particle systems and activate those for explosions
+    //which will automatically be deactivated once finished.
+    for (u32 i=0; i<m_aParticleSystems.size(); i++) {
+      m_aParticleSystems[i]->setIsActive(!m_aParticleSystems[i]->isActive());
     }
   }
 }
