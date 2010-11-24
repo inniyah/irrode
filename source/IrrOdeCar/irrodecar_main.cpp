@@ -188,20 +188,21 @@ int main(int argc, char** argv) {
   pController->createFader(iCtrls[2][eHeliPowerUp],iCtrls[2][eHeliPowerDown],10,0.01f);
 
   //last but not least: the airplane. This one gets the most controls
-  iCtrls[3][ePlaneYawLeft  ]=pController->addItem(3,stringw(L"Yaw Left"   ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneYawRight ]=pController->addItem(3,stringw(L"Yaw Right"  ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneRollLeft ]=pController->addItem(3,stringw(L"Roll Left"  ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneRollRight]=pController->addItem(3,stringw(L"Roll Right" ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePitchUp  ]=pController->addItem(3,stringw(L"Pitch Up"   ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePitchDown]=pController->addItem(3,stringw(L"Pitch Down" ),KEY_UP    ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePowerUp  ]=pController->addItem(3,stringw(L"Power Plus" ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-  iCtrls[3][ePlanePowerDown]=pController->addItem(3,stringw(L"Power Minus"),KEY_KEY_S ,CIrrCC::eCtrlFader);
-  iCtrls[3][ePlanePowerZero]=pController->addItem(3,stringw(L"Power Zero" ),KEY_KEY_Z ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneBackview ]=pController->addItem(3,stringw(L"Backview"   ),KEY_KEY_R ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneFire     ]=pController->addItem(3,stringw(L"Drop Bomb"  ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneToggleCam]=pController->addItem(3,stringw(L"Toggle Cam" ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton );
-  iCtrls[3][ePlaneBrake    ]=pController->addItem(3,stringw(L"Wheel Brake"),KEY_KEY_B ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneFlip     ]=pController->addItem(3,stringw(L"Flip"       ),KEY_RETURN,CIrrCC::eCtrlButton);
+  iCtrls[3][ePlaneYawLeft  ]=pController->addItem(3,stringw(L"Yaw Left"    ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlaneYawRight ]=pController->addItem(3,stringw(L"Yaw Right"   ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlaneRollLeft ]=pController->addItem(3,stringw(L"Roll Left"   ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlaneRollRight]=pController->addItem(3,stringw(L"Roll Right"  ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlanePitchUp  ]=pController->addItem(3,stringw(L"Pitch Up"    ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlanePitchDown]=pController->addItem(3,stringw(L"Pitch Down"  ),KEY_UP    ,CIrrCC::eCtrlAxis);
+  iCtrls[3][ePlanePowerUp  ]=pController->addItem(3,stringw(L"Power Plus"  ),KEY_KEY_W ,CIrrCC::eCtrlFader);
+  iCtrls[3][ePlanePowerDown]=pController->addItem(3,stringw(L"Power Minus" ),KEY_KEY_S ,CIrrCC::eCtrlFader);
+  iCtrls[3][ePlanePowerZero]=pController->addItem(3,stringw(L"Power Zero"  ),KEY_KEY_Z ,CIrrCC::eCtrlButton);
+  iCtrls[3][ePlaneBackview ]=pController->addItem(3,stringw(L"Backview"    ),KEY_KEY_R ,CIrrCC::eCtrlButton);
+  iCtrls[3][ePlaneFire     ]=pController->addItem(3,stringw(L"Fire Missile"),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
+  iCtrls[3][ePlaneGun      ]=pController->addItem(3,stringw(L"Fire Gun"    ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+  iCtrls[3][ePlaneToggleCam]=pController->addItem(3,stringw(L"Toggle Cam"  ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton );
+  iCtrls[3][ePlaneBrake    ]=pController->addItem(3,stringw(L"Wheel Brake" ),KEY_KEY_B ,CIrrCC::eCtrlButton);
+  iCtrls[3][ePlaneFlip     ]=pController->addItem(3,stringw(L"Flip"        ),KEY_KEY_F ,CIrrCC::eCtrlButton);
 
   //just like the helicopter the plane gets three axes (pitch, roll, yaw)...
   pController->createAxis(iCtrls[3][ePlaneYawRight],iCtrls[3][ePlaneYawLeft  ]);

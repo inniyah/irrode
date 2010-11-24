@@ -201,6 +201,17 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
       }
 
+      if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f) {
+        m_pController->set(m_pCtrls[ePlaneGun],0.0f);
+        //We add a new bullet...
+        vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.2f,1.5f,-11.0f)),
+                  rot=m_pPlaneBody->getRotation(),
+                  vel=m_pPlaneBody->getLinearVelocity().getLength()*m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
+
+        new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true);
+
+      }
+
       m_pRearWheels[0]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
       m_pRearWheels[1]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
 

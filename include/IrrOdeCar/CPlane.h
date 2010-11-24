@@ -25,6 +25,7 @@ enum ePlaneControls {
   ePlanePowerDown,
   ePlanePowerZero,
   ePlaneFire,
+  ePlaneGun,
   ePlaneToggleCam,
   ePlaneBackview,
   ePlaneBrake,
