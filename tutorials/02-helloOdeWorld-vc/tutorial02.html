@@ -164,6 +164,9 @@ int main(int argc, char** argv) {
   pSphere->getSurfaceParameters(0)->setBounce(1.0f);
   pSphere->getSurfaceParameters(0)->setModeBounce(true);
   pSphere->drop();</pre>
+	Before adding objects to the system we init ODE.
+	<pre>
+  CIrrOdeManager::getSharedInstance()->initODE();</pre>
 	  In order to make IrrOde initialize the physics entities of the objects we have added until now we tell the worldNode to do so.
 	  <pre>
   worldNode->initPhysics();</pre>
