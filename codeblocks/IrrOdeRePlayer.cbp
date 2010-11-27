@@ -48,6 +48,7 @@
 		<Unit filename="..\include\IrrOdeRePlayer\CPluginInfo.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\CReplayerStateReplay.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\IState.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
 		<Unit filename="..\source\IrrOdeRePlayer\CPluginInfo.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayer\CReplayerStateReplay.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayer\IrrOdeRePlayer_main.cpp" />

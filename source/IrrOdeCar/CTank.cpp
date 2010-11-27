@@ -14,8 +14,8 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
     m_pMotor[2]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRL"));
     m_pMotor[3]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFL"));
 
-    m_pTurretServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("turretServo"));
-    m_pCannonServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("cannonServo"));
+    m_pTurretMotor=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("turretMotor"));
+    m_pCannonMotor=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("cannonMotor"));
 
     m_pCam=m_pSmgr->addCameraSceneNode();
 
@@ -153,21 +153,8 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
       fVel[3]-=fSteer*25.0f;
     }
 
-    f32 tPos=m_pTurretServo->getServoPos(),
-        cPos=m_pCannonServo->getServoPos(),
-        fMove=m_pController->get(m_pCtrls[eTankCannonLeft]),
-        fElev=m_pController->get(m_pCtrls[eTankCannonUp  ]);
-
-    tPos+=0.25f*fMove;
-    cPos+=0.5f*fElev;
-
-    if (cPos< -10) cPos= -10;
-    if (cPos>  50) cPos=  50;
-    if (tPos> 175) tPos= 175;
-    if (tPos<-175) tPos=-175;
-
-    m_pTurretServo->setServoPos(tPos);
-    m_pCannonServo->setServoPos(cPos);
+    m_pTurretMotor->setVelocity(0.25f*m_pController->get(m_pCtrls[eTankCannonLeft]));
+    m_pCannonMotor->setVelocity(0.20f*m_pController->get(m_pCtrls[eTankCannonUp  ]));
 
     for (int i=0; i<4; i++) {
       m_pMotor[i]->setVelocity(fVel[i]);

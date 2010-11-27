@@ -3,14 +3,15 @@
 
   #include <event/IIrrOdeEvent.h>
 
-using namespace irr;
+namespace irr {
+namespace ode {
 
 using namespace core;
 using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-using namespace ode;
+
 
 class CIrrOdeEventFactory;
 
@@ -30,6 +31,9 @@ class IIrrOdeEventFactory {
      */
     virtual IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr)=0;
 };
+
+}
+}
 
 #endif
 

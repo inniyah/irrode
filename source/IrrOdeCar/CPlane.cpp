@@ -45,6 +45,10 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
     m_iThrustDir=0;
     m_fThrust=0.0f;
 
+    m_fYaw=0.0f;
+    m_fPitch=0.0f;
+    m_fRoll=0.0f;
+
     //finally we need a static text to display some information
     m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
     m_pInfo->setDrawBackground(true);
@@ -181,13 +185,13 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setRoll (fRoll );
       m_pTorque->setYaw  (fYaw  );
 
-      u32 i;
-      for(i=0; i<2; i++) m_pRoll [i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
-      for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
-
-      m_pSteer->setServoPos(-10.0f*fYaw);
-      m_pYaw[0]->setRotation(vector3df(-15.0f*fYaw,13,90));
-      m_pYaw[1]->setRotation(vector3df(0, 10.0f*fYaw, 0));
+      if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
+        CEventRudderPositions *p=new CEventRudderPositions(fYaw,fPitch,fRoll);
+        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        m_fYaw=fYaw;
+        m_fRoll=fRoll;
+        m_fPitch=fPitch;
+      }
 
       if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f) {
         m_pController->set(m_pCtrls[ePlaneFire],0.0f);
@@ -227,12 +231,24 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType()==EVENT_RUDDER_ID) {
+    CEventRudderPositions *p=(CEventRudderPositions *)pEvent;
+    u32 i;
+    f32 fYaw=p->getYaw(),fPitch=p->getPitch(),fRoll=p->getRoll();
+    for(i=0; i<2; i++) m_pRoll [i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
+    for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
+
+    m_pSteer->setServoPos(-10.0f*fYaw);
+    m_pYaw[0]->setRotation(vector3df(-15.0f*fYaw,13,90));
+    m_pYaw[1]->setRotation(vector3df(0, 10.0f*fYaw, 0));
+  }
+
   return false;
 }
 
 bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
   //we are just interested in the step event.
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==EVENT_RUDDER_ID;
 }
 
 

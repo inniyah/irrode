@@ -3,6 +3,7 @@
 
   #include <irrlicht.h>
   #include <event/IIrrOdeEventListener.h>
+  #include <observer/CIrrOdeEventFactory.h>
 
 namespace irr {
 namespace ode {
@@ -146,6 +147,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     IIrrOdeEventQueue *getQueue() { return m_pQueue; }
 
     ITimer *getTimer() { return m_pTimer; }
+
+    CIrrOdeEventFactory *getEventFactory() { return CIrrOdeEventFactory::getSharedEventFactory(); }
 };
 
 } //namespace ode

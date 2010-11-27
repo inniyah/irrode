@@ -62,10 +62,16 @@ CIrrOdeEventFactory *CIrrOdeEventFactory::getSharedEventFactory() {
 
 IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, ISceneManager *pSmgr) {
   list<IIrrOdeEventFactory *>::Iterator it;
+  pData->resetBufferPos();
+  u16 iCode=pData->getU16();
+  bool b=iCode>255;
+  if (b) printf("%i: ",iCode);
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++) {
+    if (b) printf("*");
     IIrrOdeEvent *evt=(*it)->createMessage(pData,pSmgr);
-    if (evt!=NULL) return evt;
+    if (evt!=NULL) { if (b) printf("\n"); return evt; }
   }
+  if (b) printf("#\n");
   return NULL;
 }
 

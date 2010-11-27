@@ -5,6 +5,7 @@
   #include <IrrOde.h>
 
   #include "CIrrOdeCarState.h"
+  #include <CEventRudderPositions.h>
 
 using namespace irr;
 
@@ -37,7 +38,7 @@ class CProjectile;
 class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
     s32 m_iThrustDir;
-    f32 m_fThrust;
+    f32 m_fThrust,m_fYaw,m_fPitch,m_fRoll;
     bool m_bFollowBombCam,
          m_bBackView,
          m_bLeftMissile;

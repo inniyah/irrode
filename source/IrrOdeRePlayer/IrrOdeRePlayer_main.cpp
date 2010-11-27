@@ -5,6 +5,7 @@
   #include <IState.h>
 
   #include <CReplayerStateReplay.h>
+  #include <SSharedManagers.h>
 
 using namespace irr;
 
@@ -32,8 +33,13 @@ int main(int argc, char** argv) {
   smgr->registerSceneNodeFactory(&cFactory);
 
   CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugins/RePlayerPlugin.dll",device);
+
+  SSharedManagers cManagers;
+  cManagers.m_pOdeManager=(void *)irr::ode::CIrrOdeManager::getSharedInstance();
+  cManagers.m_pEventFactory=(void *)irr::ode::CIrrOdeEventFactory::getSharedEventFactory();
+
   if (pPlugin->dllLoaded())
-    pPlugin->pluginInstall((void *)irr::ode::CIrrOdeManager::getSharedInstance());
+    pPlugin->pluginInstall(&cManagers);
   else
     printf("Plugin not installed!\n");
 
@@ -56,7 +62,7 @@ int main(int argc, char** argv) {
   pActiveState->deactivate();
 
   if (pPlugin->dllLoaded())
-    pPlugin->pluginDestall((void *)irr::ode::CIrrOdeManager::getSharedInstance());
+    pPlugin->pluginDestall(&cManagers);
 
   delete pActiveState;
   device->drop();
