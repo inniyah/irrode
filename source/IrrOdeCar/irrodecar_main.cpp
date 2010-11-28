@@ -13,6 +13,7 @@
   #include "CConfigFileManager.h"
   #include "CProgressBar.h"
   #include "irrCC.h"
+  #include "CCustomEventReceiver.h"
 
 using namespace irr;
 
@@ -117,6 +118,8 @@ int main(int argc, char** argv) {
 
   CIrrOdeManager::getSharedInstance()->install(device);
   irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
+  CCustomEventReceiver::setMembers(device,CIrrOdeManager::getSharedInstance());
+  CCustomEventReceiver::getSharedInstance()->install();
 
   CProgress *pProg=new CProgress(device);
 

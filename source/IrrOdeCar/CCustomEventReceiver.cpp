@@ -1,0 +1,79 @@
+  #include <CCustomEventReceiver.h>
+  #include <CEventRudderPositions.h>
+
+using namespace irr;
+
+CCustomEventReceiver::CCustomEventReceiver() {
+  m_pDevice=NULL;
+  m_pOdeManager=NULL;
+  m_bInstalled=false;
+}
+
+CCustomEventReceiver::~CCustomEventReceiver() {
+  if (m_bInstalled) m_pOdeManager->getQueue()->removeEventListener(this);
+}
+
+void CCustomEventReceiver::install() {
+  if (m_bInstalled) return;
+  m_bInstalled=true;
+
+  m_pOdeManager->getQueue()->addEventListener(this);
+}
+
+void CCustomEventReceiver::searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane) {
+  core::list<scene::ISceneNode *> children=pNode->getChildren();
+  core::list<scene::ISceneNode *>::Iterator it;
+
+  if (!strcmp(pNode->getName(),"yaw"   ) || !strcmp(pNode->getName(),"yaw2"  )) pPlane->aYaw  .push_back(pNode);
+  if (!strcmp(pNode->getName(),"pitch1") || !strcmp(pNode->getName(),"pitch2")) pPlane->aPitch.push_back(pNode);
+  if (!strcmp(pNode->getName(),"roll1" ) || !strcmp(pNode->getName(),"roll2" )) pPlane->aRoll .push_back(pNode);
+
+  for (it=children.begin(); it!=children.end(); it++) {
+    searchPlaneNodes(*it,pPlane);
+  }
+}
+
+void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr) {
+  CCustomEventReceiver::getSharedInstance()->m_pDevice=pDevice;
+  CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
+}
+
+CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
+  static CCustomEventReceiver theReceiver;
+  return &theReceiver;
+}
+
+void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
+  SPlaneNodes *pNodes=new SPlaneNodes();
+  pNodes->iNodeId=pPlane->getID();
+  searchPlaneNodes(pPlane,pNodes);
+  m_lPlanes.push_back(pNodes);
+}
+
+bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==EVENT_RUDDER_ID) {
+    CEventRudderPositions *p=(CEventRudderPositions *)pEvent;
+    list<SPlaneNodes *>::Iterator it;
+    for (it=m_lPlanes.begin(); it!=m_lPlanes.end(); it++) {
+      if ((*it)->iNodeId==p->getNodeId()) {
+        SPlaneNodes *nodes=*it;
+        u32 i;
+        f32 fYaw=p->getYaw(),fPitch=p->getPitch(),fRoll=p->getRoll();
+        for(i=0; i<nodes->aRoll.size(); i++)
+          nodes->aRoll[i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
+
+        for(i=0; i<nodes->aPitch.size(); i++)
+          nodes->aPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
+
+        if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0, 10.0f*fYaw, 0));
+        if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
+      }
+    }
+  }
+
+  return false;
+}
+
+bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==EVENT_RUDDER_ID;
+}

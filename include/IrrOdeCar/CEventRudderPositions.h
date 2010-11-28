@@ -30,6 +30,8 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     irr::f32 getYaw() { return ((irr::f32)m_iYaw)/100.0f; }
     irr::f32 getPitch() { return ((irr::f32)m_iPitch)/100.0f; }
     irr::f32 getRoll() { return ((irr::f32)m_iRoll)/100.0f; }
+
+    irr::s32 getNodeId() { return m_iNodeId; }
 };
 
 #endif

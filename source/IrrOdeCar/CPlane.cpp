@@ -1,4 +1,5 @@
   #include "CPlane.h"
+  #include "CCustomEventReceiver.h"
   #include <math.h>
   #include <CProjectile.h>
   #include <irrCC.h>
@@ -9,6 +10,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("thePlane"));
   if (m_pPlaneBody!=NULL) {
+    CCustomEventReceiver::getSharedInstance()->addPlane(m_pPlaneBody);
     //get the terrain
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
     //get the front wheel that is needed for steering the plane on ground
@@ -234,23 +236,12 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
     }
   }
 
-  if (pEvent->getType()==EVENT_RUDDER_ID) {
-    CEventRudderPositions *p=(CEventRudderPositions *)pEvent;
-    u32 i;
-    f32 fYaw=p->getYaw(),fPitch=p->getPitch(),fRoll=p->getRoll();
-    for(i=0; i<2; i++) m_pRoll [i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
-    for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
-
-    m_pYaw[0]->setRotation(vector3df(-15.0f*fYaw,13,90));
-    m_pYaw[1]->setRotation(vector3df(0, 10.0f*fYaw, 0));
-  }
-
   return false;
 }
 
 bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
   //we are just interested in the step event.
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==EVENT_RUDDER_ID;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
 
 
