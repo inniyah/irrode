@@ -53,7 +53,7 @@ class CProjectileManager : irr::ode::IIrrOdeEventListener {
     CProjectile *m_pLast;
 
     CProjectileManager();
-    virtual ~CProjectileManager() { }
+    virtual ~CProjectileManager();
 
   public:
     static CProjectileManager *getSharedInstance();

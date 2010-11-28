@@ -39,6 +39,7 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
 }
 
 CTank::~CTank() {
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CTank::activate() {

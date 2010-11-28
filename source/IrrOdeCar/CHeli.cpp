@@ -32,6 +32,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
 }
 
 CHeli::~CHeli() {
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CHeli::activate() {

@@ -9,13 +9,14 @@
 
 class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
   protected:
-    irr::f32 m_fYaw,
-             m_fRoll,
-             m_fPitch;
+    irr::s32 m_iNodeId;
+    irr::s8 m_iYaw,
+            m_iRoll,
+            m_iPitch;
 
   public:
     CEventRudderPositions();
-    CEventRudderPositions(irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll);
+    CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll);
     CEventRudderPositions(irr::ode::CSerializer *pData);
 
     virtual ~CEventRudderPositions() { }
@@ -26,9 +27,9 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     virtual const irr::c8 *toString();
     virtual irr::ode::IIrrOdeEvent *clone();
 
-    irr::f32 getYaw() { return m_fYaw; }
-    irr::f32 getPitch() { return m_fPitch; }
-    irr::f32 getRoll() { return m_fRoll; }
+    irr::f32 getYaw() { return ((irr::f32)m_iYaw)/100.0f; }
+    irr::f32 getPitch() { return ((irr::f32)m_iPitch)/100.0f; }
+    irr::f32 getRoll() { return ((irr::f32)m_iRoll)/100.0f; }
 };
 
 #endif

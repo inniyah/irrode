@@ -64,6 +64,7 @@ CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOd
 }
 
 CCar::~CCar() {
+  CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 //This method is called when the state is activated.

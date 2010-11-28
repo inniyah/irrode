@@ -60,6 +60,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice
 }
 
 CPlane::~CPlane() {
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 //on activation we do the usual stuff (activate camera, set Irrlicht event receiver, hide mouse cursor...)
@@ -185,8 +186,10 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setRoll (fRoll );
       m_pTorque->setYaw  (fYaw  );
 
+      m_pSteer->setServoPos(-10.0f*fYaw);
+
       if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
-        CEventRudderPositions *p=new CEventRudderPositions(fYaw,fPitch,fRoll);
+        CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll);
         ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
         m_fYaw=fYaw;
         m_fRoll=fRoll;
@@ -238,7 +241,6 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
     for(i=0; i<2; i++) m_pRoll [i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
     for(i=0; i<2; i++) m_pPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
 
-    m_pSteer->setServoPos(-10.0f*fYaw);
     m_pYaw[0]->setRotation(vector3df(-15.0f*fYaw,13,90));
     m_pYaw[1]->setRotation(vector3df(0, 10.0f*fYaw, 0));
   }

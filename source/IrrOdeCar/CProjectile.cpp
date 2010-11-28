@@ -111,6 +111,10 @@ CProjectileManager::CProjectileManager() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 }
 
+CProjectileManager::~CProjectileManager() {
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+}
+
 CProjectileManager *CProjectileManager::getSharedInstance() {
   static CProjectileManager theManager;
   return &theManager;

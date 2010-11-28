@@ -68,6 +68,13 @@ class CSerializer {
       m_iCnt++;
     }
 
+    void addS8(s8 c) {
+      *((s8 *)m_pBufferPos)=c;
+      m_pBufferPos+=sizeof(s8);
+      recalcSize();
+      m_iCnt++;
+    }
+
 		/**
 		 * add a s16
 		 * @param i s16 to add
@@ -174,6 +181,17 @@ class CSerializer {
     u8 getU8() {
       u8 iRet=*((u8 *)m_pBufferPos);
       m_pBufferPos+=sizeof(u8);
+      m_iCnt--;
+      return iRet;
+    }
+
+    /**
+     * get a s8
+     * @return a s8
+     */
+    s8 getS8() {
+      s8 iRet=*((s8 *)m_pBufferPos);
+      m_pBufferPos+=sizeof(s8);
       m_iCnt--;
       return iRet;
     }
