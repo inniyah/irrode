@@ -20,6 +20,19 @@ void CCustomEventReceiver::install() {
   m_pOdeManager->getQueue()->addEventListener(this);
 }
 
+void CCustomEventReceiver::destall() {
+  m_pOdeManager->getQueue()->removeEventListener(this);
+
+  while (m_lPlanes.getSize()>0) {
+    list<SPlaneNodes *>::Iterator it=m_lPlanes.begin();
+    SPlaneNodes *p=*it;
+    m_lPlanes.erase(it);
+    delete p;
+  }
+
+  m_bInstalled=false;
+}
+
 void CCustomEventReceiver::searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane) {
   core::list<scene::ISceneNode *> children=pNode->getChildren();
   core::list<scene::ISceneNode *>::Iterator it;

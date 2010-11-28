@@ -29,6 +29,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     static CCustomEventReceiver *getSharedInstance();
 
     void install();
+    void destall();
 
     void addPlane(irr::scene::ISceneNode *pPlane);
 
