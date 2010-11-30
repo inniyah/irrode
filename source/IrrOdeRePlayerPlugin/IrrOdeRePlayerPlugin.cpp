@@ -29,6 +29,8 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
       if (pEvent->getType()==irr::ode::eIrrOdeEventLoadScene) {
         irr::scene::ISceneNode *p=m_pDevice->getSceneManager()->getSceneNodeFromName("thePlane");
         if (p!=NULL) CCustomEventReceiver::getSharedInstance()->addPlane(p);
+        p=m_pDevice->getSceneManager()->getSceneNodeFromName("theTank");
+        if (p!=NULL) CCustomEventReceiver::getSharedInstance()->addTank(p);
         return true;
       }
 
@@ -46,7 +48,8 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       pData->resetBufferPos();
       irr::u16 iCode=pData->getU16();
 
-      if (iCode==EVENT_RUDDER_ID) return new CEventRudderPositions(pData);
+      if (iCode==EVENT_RUDDER_ID    ) return new CEventRudderPositions(pData);
+      if (iCode==EVENT_TANK_STATE_ID) return new CEventTankState      (pData);
 
       return NULL;
     }

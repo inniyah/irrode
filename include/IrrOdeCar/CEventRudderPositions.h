@@ -6,6 +6,7 @@
   #include <irrlicht.h>
 
 #define EVENT_RUDDER_ID irr::ode::eIrrOdeEventUser+1
+#define EVENT_TANK_STATE_ID irr::ode::eIrrOdeEventUser+2
 
 class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
   protected:
@@ -31,6 +32,28 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     irr::f32 getPitch() { return ((irr::f32)m_iPitch)/100.0f; }
     irr::f32 getRoll() { return ((irr::f32)m_iRoll)/100.0f; }
 
+    irr::s32 getNodeId() { return m_iNodeId; }
+};
+
+class CEventTankState : public irr::ode::IIrrOdeEvent {
+  protected:
+    irr::s32 m_iNodeId;
+    irr::s8 m_aAngles[4];
+
+  public:
+    CEventTankState();
+    CEventTankState(irr::s32 iId, const irr::s8 *aAngles);
+    CEventTankState(irr::ode::CSerializer *pData);
+
+    virtual ~CEventTankState() { }
+
+    virtual irr::u16 getType() { return EVENT_TANK_STATE_ID; }
+
+    virtual irr::ode::CSerializer *serialize();
+    virtual const irr::c8 *toString();
+    virtual irr::ode::IIrrOdeEvent *clone();
+
+    const irr::s8 *getAngles() { return m_aAngles; }
     irr::s32 getNodeId() { return m_iNodeId; }
 };
 

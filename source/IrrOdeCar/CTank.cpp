@@ -1,12 +1,15 @@
   #include "CTank.h"
   #include <CProjectile.h>
   #include <irrCC.h>
+  #include <CEventRudderPositions.h>
+  #include <CCustomEventReceiver.h>
 
 CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("theTank"));
 
   if (m_pTankBody!=NULL) {
+    CCustomEventReceiver::getSharedInstance()->addTank(m_pTankBody);
     m_pTurret=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("turret"));
 
     m_pMotor[0]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRR"));
@@ -16,6 +19,16 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
 
     m_pTurretMotor=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("turretMotor"));
     m_pCannonMotor=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("cannonMotor"));
+
+    stringc aAxesNames[]={"tankAxisRR","tankAxisFR","tankAxisRL","tankAxisFL"};
+
+    for (u32 i=0; i<4; i++) {
+      ISceneNode *pNode=m_pSmgr->getSceneNodeFromName(aAxesNames[i].c_str());
+      if (pNode!=NULL && pNode->getType()==irr::ode::IRR_ODE_JOINT_HINGE_ID) {
+        m_lAxes.push_back((irr::ode::CIrrOdeJointHinge *)pNode);
+        m_aAxesAngles[i]=0.0f;
+      }
+    }
 
     m_pCam=m_pSmgr->addCameraSceneNode();
 
@@ -179,6 +192,23 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
     if (m_pController->get(m_pCtrls[eTankFastCollision])) {
       m_pController->set(m_pCtrls[eTankFastCollision],0.0f);
       m_bFastCollision=!m_bFastCollision;
+    }
+
+    list<irr::ode::CIrrOdeJointHinge *>::Iterator it;
+    bool bMoved=false;
+    u32 i=0;
+    for (it=m_lAxes.begin(); it!=m_lAxes.end() && i<4; it++) {
+      irr::ode::CIrrOdeJointHinge *p=*it;
+      irr::s8 iAngle=(irr::s8)(p->getHingeAngle()*60/M_PI);
+      if (m_aAxesAngles[i]!=iAngle) {
+        bMoved=true;
+        m_aAxesAngles[i]=iAngle;
+      }
+      i++;
+    }
+    if (bMoved) {
+      CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
     }
   }
   return false;

@@ -51,6 +51,9 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
 
     ICameraSceneNode *m_pCam;
 
+    list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
+    irr::s8 m_aAxesAngles[4];
+
     const u32 *m_pCtrls;
 
     int getSteer();

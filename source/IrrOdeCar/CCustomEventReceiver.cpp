@@ -47,6 +47,21 @@ void CCustomEventReceiver::searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlan
   }
 }
 
+void CCustomEventReceiver::searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank) {
+  core::list<scene::ISceneNode *> children=pNode->getChildren();
+  core::list<scene::ISceneNode *>::Iterator it;
+
+  irr::core::stringc aNames[]={"tankAxisRR","tankAxisFR","tankAxisRL","tankAxisFL"};
+
+  for (irr::u32 i=0; i<4; i++)
+    if (!strcmp(pNode->getName(),aNames[i].c_str()))
+      pTank->aAxes.push_back(pNode);
+
+  for (it=children.begin(); it!=children.end(); it++) {
+    searchTankNodes(*it,pTank);
+  }
+}
+
 void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr) {
   CCustomEventReceiver::getSharedInstance()->m_pDevice=pDevice;
   CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
@@ -62,6 +77,13 @@ void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
   pNodes->iNodeId=pPlane->getID();
   searchPlaneNodes(pPlane,pNodes);
   m_lPlanes.push_back(pNodes);
+}
+
+void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
+  STankNodes *pNodes=new STankNodes();
+  pNodes->iNodeId=pTank->getID();
+  searchTankNodes(pTank,pNodes);
+  m_lTanks.push_back(pNodes);
 }
 
 /**
@@ -111,9 +133,10 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
         if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0, 10.0f*fYaw, 0));
         if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
+
+        return true;
       }
     }
-    return true;
   }
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved) {
@@ -126,10 +149,24 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     return true;
   }
 
+  if (pEvent->getType()==EVENT_TANK_STATE_ID) {
+    CEventTankState *p=(CEventTankState *)pEvent;
+    list<STankNodes *>::Iterator it;
+    for (it=m_lTanks.begin(); it!=m_lTanks.end(); it++) {
+      STankNodes *pNodes=*it;
+      if (pNodes->iNodeId==p->getNodeId()) {
+        for (irr::u32 i=0; i<4; i++) {
+          f32 f=((f32)p->getAngles()[i])*M_PI/60.0f;
+          pNodes->aAxes[i]->setRotation(vector3df(0.0f,0.0f,-f*180/M_PI));
+        }
+      }
+    }
+  }
 
   return false;
 }
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==EVENT_RUDDER_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved;
+  return pEvent->getType()==EVENT_RUDDER_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
+         pEvent->getType()==EVENT_TANK_STATE_ID;
 }
