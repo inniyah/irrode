@@ -23,6 +23,17 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
 
+    /**
+     * This method deactivates all particles systems that are children of a node
+     * @param pNode the node
+     */
+    void deactivateParticleSystems(irr::scene::ISceneNode *pNode);
+
+    /**
+     * This method hides the projectile which is an animated mesh
+     * @param pNode the node to check
+     */
+    void hideAnimatedMesh(irr::scene::ISceneNode *pNode);
   public:
     static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr);
 

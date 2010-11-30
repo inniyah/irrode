@@ -1,5 +1,6 @@
   #include <CCustomEventReceiver.h>
   #include <CEventRudderPositions.h>
+  #include <CAdvancedParticleSystemNode.h>
 
 using namespace irr;
 
@@ -63,6 +64,36 @@ void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
   m_lPlanes.push_back(pNodes);
 }
 
+/**
+ * This method deactivates all particles systems that are children of a node
+ * @param pNode the node
+ */
+void CCustomEventReceiver::deactivateParticleSystems(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType()==ADVANCED_PARTICLE_NODE_ID) {
+    CAdvancedParticleSystemNode *p=(CAdvancedParticleSystemNode *)pNode;
+    //We deactivate the normal particle systems and activate those for explosions
+    //which will automatically be deactivated once finished.
+    p->setIsActive(!p->isActive());
+  }
+  list<ISceneNode *> children=pNode->getChildren();
+  list<ISceneNode *>::Iterator i;
+  for (i=children.begin(); i!=children.end(); i++) deactivateParticleSystems(*i);
+}
+
+/**
+ * This method hides the projectile which is an animated mesh
+ * @param pNode the node to check
+ */
+void CCustomEventReceiver::hideAnimatedMesh(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType()==irr::scene::ESNT_ANIMATED_MESH) {
+    irr::scene::IAnimatedMeshSceneNode *p=(irr::scene::IAnimatedMeshSceneNode *)pNode;
+    p->setVisible(false);
+  }
+  list<ISceneNode *> children=pNode->getChildren();
+  list<ISceneNode *>::Iterator i;
+  for (i=children.begin(); i!=children.end(); i++) hideAnimatedMesh(*i);
+}
+
 bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==EVENT_RUDDER_ID) {
     CEventRudderPositions *p=(CEventRudderPositions *)pEvent;
@@ -82,11 +113,23 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
       }
     }
+    return true;
   }
+
+  if (pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved) {
+    irr::ode::CIrrOdeEventBodyRemoved *p=(irr::ode::CIrrOdeEventBodyRemoved *)pEvent;
+    ISceneNode *pNode=m_pDevice->getSceneManager()->getSceneNodeFromId(p->getBodyId());
+    if (pNode!=NULL) {
+      deactivateParticleSystems(pNode);
+      hideAnimatedMesh(pNode);
+    }
+    return true;
+  }
+
 
   return false;
 }
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==EVENT_RUDDER_ID;
+  return pEvent->getType()==EVENT_RUDDER_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved;
 }

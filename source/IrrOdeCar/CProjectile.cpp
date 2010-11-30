@@ -75,14 +75,9 @@ void CProjectile::step() {
   if (m_iTtl<=0 && m_bActive) {
     //... we remove the body
     m_pBody->removeFromPhysics();
-
     m_bActive=false;
-    if (m_pNode) m_pNode->setVisible(false);
-    //We deactivate the normal particle systems and activate those for explosions
-    //which will automatically be deactivated once finished.
-    for (u32 i=0; i<m_aParticleSystems.size(); i++) {
-      m_aParticleSystems[i]->setIsActive(!m_aParticleSystems[i]->isActive());
-    }
+    //Toggling the particle systems and removing the scene node has been moved
+    //to the CCustomEventReceiver which is reused in the plugin for the RePlayer
   }
 }
 

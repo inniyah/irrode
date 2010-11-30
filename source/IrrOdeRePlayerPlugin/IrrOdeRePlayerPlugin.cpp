@@ -19,35 +19,6 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
   protected:
     irr::IrrlichtDevice *m_pDevice;
 
-    /**
-     * This method deactivates all particles systems that are children of a node
-     * @param pNode the node
-     */
-    void deactivateParticleSystems(irr::scene::ISceneNode *pNode) {
-      if (pNode->getType()==ADVANCED_PARTICLE_NODE_ID) {
-        CAdvancedParticleSystemNode *p=(CAdvancedParticleSystemNode *)pNode;
-        //We deactivate the normal particle systems and activate those for explosions
-        //which will automatically be deactivated once finished.
-        p->setIsActive(!p->isActive());
-      }
-      list<ISceneNode *> children=pNode->getChildren();
-      list<ISceneNode *>::Iterator i;
-      for (i=children.begin(); i!=children.end(); i++) deactivateParticleSystems(*i);
-    }
-
-    /**
-     * This method hides the projectile which is an animated mesh
-     * @param pNode the node to check
-     */
-    void hideAnimatedMesh(irr::scene::ISceneNode *pNode) {
-      if (pNode->getType()==irr::scene::ESNT_ANIMATED_MESH) {
-        irr::scene::IAnimatedMeshSceneNode *p=(irr::scene::IAnimatedMeshSceneNode *)pNode;
-        p->setVisible(false);
-      }
-      list<ISceneNode *> children=pNode->getChildren();
-      list<ISceneNode *>::Iterator i;
-      for (i=children.begin(); i!=children.end(); i++) hideAnimatedMesh(*i);
-    }
 
   public:
     APS_EventListener(irr::IrrlichtDevice *pDevice) {
@@ -55,19 +26,8 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
     }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      if (pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved) {
-        irr::ode::CIrrOdeEventBodyRemoved *p=(irr::ode::CIrrOdeEventBodyRemoved *)pEvent;
-        ISceneNode *pNode=m_pDevice->getSceneManager()->getSceneNodeFromId(p->getBodyId());
-        if (pNode!=NULL) {
-          deactivateParticleSystems(pNode);
-          hideAnimatedMesh(pNode);
-        }
-        return true;
-      }
-
       if (pEvent->getType()==irr::ode::eIrrOdeEventLoadScene) {
         irr::scene::ISceneNode *p=m_pDevice->getSceneManager()->getSceneNodeFromName("thePlane");
-        printf("--> %i\n",(int)p);
         if (p!=NULL) CCustomEventReceiver::getSharedInstance()->addPlane(p);
         return true;
       }
@@ -76,8 +36,7 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
     }
 
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      return pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
-             pEvent->getType()==irr::ode::eIrrOdeEventLoadScene;
+      return pEvent->getType()==irr::ode::eIrrOdeEventLoadScene;
     }
 };
 
