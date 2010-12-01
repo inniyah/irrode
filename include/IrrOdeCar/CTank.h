@@ -47,7 +47,8 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     CIrrOdeWorld *m_pWorld;
     CIrrOdeMotor *m_pMotor[4];
     CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
-    CIrrOdeMotor *m_pTurretMotor,*m_pCannonMotor;
+    CIrrOdeMotor *m_pTurretMotor;
+    CIrrOdeServo *m_pCannonServo;
 
     ICameraSceneNode *m_pCam;
 
