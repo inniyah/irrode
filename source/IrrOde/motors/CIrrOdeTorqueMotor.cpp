@@ -19,6 +19,10 @@ CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32
   m_fRoll  =0.0f;
   m_fYaw   =0.0f;
 
+  m_fPitchFactor=1.0f;
+  m_fYawFactor  =1.0f;
+  m_fRollFactor =1.0f;
+
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
       c8 sFileName[1024];
@@ -48,7 +52,7 @@ void CIrrOdeTorqueMotor::step() {
       //OK, if the linear velocity is bigger than the minimum velocity (or smaller than the negative of minimum velocity)...
       if (m_fForewardVel>=m_fMinVel || m_fForewardVel<=-m_fMinVel) {
         //...we create a vector with the rudder settings and...
-        vector3df vRudder=m_vPitchAxis*m_fPitch+m_vYawAxis*m_fYaw+m_vRollAxis*m_fRoll;
+        vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor;
         //...rotate this vector by the bodie's rotation
         vTorque=vRot.rotationToDirection(vRudder);
         if (m_fForewardVel>=m_fMaxVel || m_fForewardVel<=-m_fMaxVel)
@@ -81,6 +85,10 @@ void CIrrOdeTorqueMotor::serializeAttributes(IAttributes* out, SAttributeReadWri
   out->addVector3d("pitch_axis",m_vPitchAxis);
   out->addVector3d("yaw_axis"  ,m_vYawAxis  );
 
+  out->addFloat("roll_factor" ,m_fRollFactor );
+  out->addFloat("pitch_factor",m_fPitchFactor);
+  out->addFloat("yaw_factor"  ,m_fYawFactor  );
+
   out->addBool("aero_rudder",m_bAeroRudder);
 
   out->addFloat("min_vel",m_fMinVel);
@@ -93,6 +101,10 @@ void CIrrOdeTorqueMotor::deserializeAttributes(io::IAttributes* in, io::SAttribu
   m_vRollAxis =in->getAttributeAsVector3d("roll_axis" );
   m_vPitchAxis=in->getAttributeAsVector3d("pitch_axis");
   m_vYawAxis  =in->getAttributeAsVector3d("yaw_axis"  );
+
+  if (in->existsAttribute("roll_factor" )) m_fRollFactor =in->getAttributeAsFloat("roll_factor" );
+  if (in->existsAttribute("pitch_factor")) m_fPitchFactor=in->getAttributeAsFloat("pitch_factor");
+  if (in->existsAttribute("yaw_factor"  )) m_fYawFactor  =in->getAttributeAsFloat("yaw_factor"  );
 
   m_bAeroRudder=in->getAttributeAsBool("aero_rudder");
 
@@ -118,7 +130,15 @@ ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newM
   pRet->setPower(m_fPower);
   pRet->setMaxPower(m_fMaxPower);
   pRet->setIsActive(m_bIsActive);
+
+  pRet->setFactors(m_fPitch,m_fYaw,m_fRoll);
   return pRet;
+}
+
+void CIrrOdeTorqueMotor::setFactors(f32 fPitch, f32 fYaw, f32 fRoll) {
+  m_fPitch=fPitch;
+  m_fYaw=fYaw;
+  m_fRoll=fRoll;
 }
 
 }

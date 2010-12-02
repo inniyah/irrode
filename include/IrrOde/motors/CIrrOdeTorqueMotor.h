@@ -27,7 +27,10 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
         m_fPitch,         /*!< the pitch rudder position (between -1.0 and 1.0) */
         m_fRoll,          /*!< the roll rudder position (between -1.0 and 1.0) */
         m_fYaw,           /*!< the yaw rudder position (between -1.0 and 1.0) */
-        m_fForewardVel;   /*!< the foreward velocity. This attribute can't be set but queried */
+        m_fForewardVel,   /*!< the foreward velocity. This attribute can't be set but queried */
+        m_fPitchFactor,   /*!< factor for the pitch rotation */
+        m_fYawFactor,     /*!< factor for the yaw fotation */
+        m_fRollFactor;    /*!< factor for the roll rotation */
 
   public:
     CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
@@ -70,6 +73,14 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
     virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+
+    /**
+     * Set the factors for the torque forces
+     * @param fPitch the pitch factpr
+     * @param fYaw the yaw factor
+     * @param fRoll the roll factor
+     */
+    void setFactors(f32 fPitch, f32 fYaw, f32 fRoll);
 };
 
   } //namespace ode
