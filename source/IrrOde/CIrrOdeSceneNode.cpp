@@ -227,5 +227,13 @@ void CIrrOdeSceneNode::removeFromPhysics() {
   m_pOdeManager->removeOdeSceneNode(this);
 }
 
+void CIrrOdeSceneNode::cloneChildren(ISceneNode *pNewParent, ISceneManager *pNewManager) {
+  list<ISceneNode *> children=getChildren();
+  list<ISceneNode *>::Iterator it;
+
+  for (it=children.begin(); it!=children.end(); it++)
+    (*it)->clone(pNewParent,pNewManager);
+}
+
 } //namespace ode
 } //namespace irr

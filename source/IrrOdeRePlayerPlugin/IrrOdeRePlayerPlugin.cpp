@@ -25,11 +25,20 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
       m_pDevice=pDevice;
     }
 
+    void searchPlaneBodies(irr::scene::ISceneNode *pNode) {
+      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
+        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+        if (p->getOdeClassname().equals_ignore_case("plane")) {
+          printf("\t\t#### add plane \"%s\"\n",pNode->getName());
+          CCustomEventReceiver::getSharedInstance()->addPlane(p);
+        }
+      }
+    }
+
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (pEvent->getType()==irr::ode::eIrrOdeEventLoadScene) {
-        irr::scene::ISceneNode *p=m_pDevice->getSceneManager()->getSceneNodeFromName("thePlane");
-        if (p!=NULL) CCustomEventReceiver::getSharedInstance()->addPlane(p);
-        p=m_pDevice->getSceneManager()->getSceneNodeFromName("theTank");
+        searchPlaneBodies(m_pDevice->getSceneManager()->getRootSceneNode());
+        irr::scene::ISceneNode *p=m_pDevice->getSceneManager()->getSceneNodeFromName("theTank");
         if (p!=NULL) CCustomEventReceiver::getSharedInstance()->addTank(p);
         return true;
       }

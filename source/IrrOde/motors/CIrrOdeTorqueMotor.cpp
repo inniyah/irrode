@@ -132,6 +132,9 @@ ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newM
   pRet->setIsActive(m_bIsActive);
 
   pRet->setFactors(m_fPitch,m_fYaw,m_fRoll);
+
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
+
   return pRet;
 }
 

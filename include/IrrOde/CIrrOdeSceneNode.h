@@ -54,6 +54,8 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
   	  c8 m_sResources[1024];    /**> the path name of the resources when copiled as plugin */
   	  bool m_bDrawEditorMesh;
     #endif
+
+    void cloneChildren(ISceneNode *pNewParent, ISceneManager *pNewManager);
   public:
     CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
                      const vector3df &position=core::vector3df(0,0,0),

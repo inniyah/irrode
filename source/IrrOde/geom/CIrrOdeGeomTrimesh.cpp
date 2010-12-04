@@ -183,6 +183,7 @@ void CIrrOdeGeomTrimesh::deserializeAttributes(IAttributes* in, SAttributeReadWr
 ISceneNode *CIrrOdeGeomTrimesh::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomTrimesh *pRet=new CIrrOdeGeomTrimesh(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

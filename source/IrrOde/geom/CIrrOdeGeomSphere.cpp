@@ -133,6 +133,7 @@ void CIrrOdeGeomSphere::deserializeAttributes(IAttributes* in, SAttributeReadWri
 ISceneNode *CIrrOdeGeomSphere::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomSphere *pRet=new CIrrOdeGeomSphere(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

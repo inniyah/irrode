@@ -4,9 +4,9 @@
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
-CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
+CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
-  m_pTankBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("theTank"));
+  m_pTankBody=reinterpret_cast<CIrrOdeBody *>(pNode);
 
   if (m_pTankBody!=NULL) {
     CCustomEventReceiver::getSharedInstance()->addTank(m_pTankBody);

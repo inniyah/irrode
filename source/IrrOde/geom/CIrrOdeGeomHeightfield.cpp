@@ -160,6 +160,7 @@ void CIrrOdeGeomHeightfield::setDepthSamples(u32 iDepthSamples) {
 ISceneNode *CIrrOdeGeomHeightfield::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomHeightfield *pRet=new CIrrOdeGeomHeightfield(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

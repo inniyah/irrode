@@ -63,7 +63,7 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     int getAcc  ();
 
   public:
-    CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CTank();
 
     virtual void activate();
@@ -76,6 +76,8 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+
+    virtual stringc &getButtonText() { static stringc s=stringc("select tank"); return s; }
 };
 
 #endif

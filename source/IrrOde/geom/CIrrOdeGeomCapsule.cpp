@@ -139,6 +139,7 @@ void CIrrOdeGeomCapsule::deserializeAttributes(IAttributes* in, SAttributeReadWr
 ISceneNode *CIrrOdeGeomCapsule::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomCapsule *pRet=new CIrrOdeGeomCapsule(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

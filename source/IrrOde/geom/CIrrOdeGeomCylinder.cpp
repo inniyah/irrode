@@ -139,6 +139,7 @@ void CIrrOdeGeomCylinder::deserializeAttributes(IAttributes* in, SAttributeReadW
 ISceneNode *CIrrOdeGeomCylinder::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomCylinder *pRet=new CIrrOdeGeomCylinder(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

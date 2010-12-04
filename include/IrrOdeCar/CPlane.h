@@ -60,7 +60,7 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     const u32 *m_pCtrls;
 
   public:
-    CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CPlane();
 
     virtual void activate();
@@ -73,6 +73,8 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+
+    virtual stringc &getButtonText() { static stringc s=stringc("select airplane"); return s; }
 };
 
 #endif

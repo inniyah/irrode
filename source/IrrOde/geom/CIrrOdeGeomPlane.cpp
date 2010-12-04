@@ -81,6 +81,7 @@ void CIrrOdeGeomPlane::deserializeAttributes(IAttributes* in, SAttributeReadWrit
 ISceneNode *CIrrOdeGeomPlane::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomPlane *pRet=new CIrrOdeGeomPlane(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

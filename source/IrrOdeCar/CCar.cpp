@@ -15,9 +15,9 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
-  m_pCarBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sNodeName));
+  m_pCarBody=reinterpret_cast<CIrrOdeBody *>(pNode);
 
   if (m_pCarBody) {
     array<ISceneNode *> aNodes;

@@ -4,11 +4,11 @@
   #include <CProjectile.h>
   #include <irrCC.h>
 
-CPlane::CPlane(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
+CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   //get the plane
-  m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("thePlane"));
+  m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pPlaneBody!=NULL) {
     CCustomEventReceiver::getSharedInstance()->addPlane(m_pPlaneBody);
     //get the terrain

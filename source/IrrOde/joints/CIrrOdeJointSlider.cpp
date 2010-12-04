@@ -147,8 +147,8 @@ void CIrrOdeJointSlider::deserializeAttributes(IAttributes* in, SAttributeReadWr
 
 ISceneNode *CIrrOdeJointSlider::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeJointSlider *pRet=new CIrrOdeJointSlider(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
-
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

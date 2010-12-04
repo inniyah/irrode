@@ -704,6 +704,8 @@ void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
 ISceneNode *CIrrOdeBody::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeBody *pRet=new CIrrOdeBody(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
+
   copyParams(pRet,true);
   return pRet;
 }

@@ -147,6 +147,7 @@ s32 CIrrOdeSpace::getDepth() {
 ISceneNode *CIrrOdeSpace::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeSpace *pRet=new CIrrOdeSpace(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

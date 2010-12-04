@@ -326,13 +326,6 @@ ISceneNode *CIrrOdeManager::cloneOdeNode(ISceneNode *pSource, ISceneNode *newPar
   pRet->setID(iNewId==-1?getNextId():iNewId);
   pRet->setParent(newParent);
 
-  list<ISceneNode *> ch=pSource->getChildren();
-  list<ISceneNode *>::Iterator it;
-
-  for (it=ch.begin(); it!=ch.end(); it++) {
-    ISceneNode *p=*it;
-    if (p) cloneOdeNode(p,pRet,newSmgr);
-  }
   return pRet;
 }
 

@@ -143,6 +143,7 @@ const wchar_t *CIrrOdeMotor::getTypeName() {
 ISceneNode *CIrrOdeMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
 	CIrrOdeMotor *pRet=new CIrrOdeMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

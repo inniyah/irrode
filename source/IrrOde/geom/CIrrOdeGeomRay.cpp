@@ -112,6 +112,7 @@ void CIrrOdeGeomRay::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
 ISceneNode *CIrrOdeGeomRay::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeGeomRay *pRet=new CIrrOdeGeomRay(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

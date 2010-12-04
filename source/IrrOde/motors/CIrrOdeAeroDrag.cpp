@@ -159,6 +159,9 @@ ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newMana
   pRet->setPower(m_fPower);
   pRet->setMaxPower(m_fMaxPower);
   pRet->setIsActive(m_bIsActive);
+  
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
+
   return pRet;
 }
 

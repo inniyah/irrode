@@ -98,6 +98,35 @@ void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   }
 }
 
+void removeFromScene(ISceneNode *pNode) {
+  CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+  s32 iNodeId=pNode->getID();
+  pNode->remove();
+
+  irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
+  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+}
+
+void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax) {
+  if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
+    irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+    if (p->getOdeClassname().equals_ignore_case(sClassName)) {
+      printf("%s found (%i)\n",sClassName,aPlanes.size());
+      if (aPlanes.size()<iMax)
+        aPlanes.push_back(pNode);
+      else {
+        removeFromScene(pNode);
+        return;
+      }
+    }
+  }
+
+  irr::core::list<ISceneNode *> children=pNode->getChildren();
+  irr::core::list<ISceneNode *>::Iterator it;
+
+  for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax);
+}
+
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
   CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
@@ -233,20 +262,32 @@ int main(int argc, char** argv) {
   //load the scene
   CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
 
-  if (!pSettings->isActive( 0)) removeFromScene("theCar"      ,smgr);
-  if (!pSettings->isActive( 1)) removeFromScene("simpleCar"   ,smgr);
-  if (!pSettings->isActive( 2)) removeFromScene("complexCar"  ,smgr);
-  if (!pSettings->isActive( 3)) removeFromScene("theTank"     ,smgr);
-  if (!pSettings->isActive( 4)) removeFromScene("thePlane"    ,smgr);
-  if (!pSettings->isActive( 5)) removeFromScene("theHeli"     ,smgr);
-  if (!pSettings->isActive( 6)) removeFromScene("bumps"       ,smgr);
-  if (!pSettings->isActive( 7)) removeFromScene("targets"     ,smgr);
-  if (!pSettings->isActive( 8)) removeFromScene("signs"       ,smgr);
-  if (!pSettings->isActive( 9)) removeFromScene("buildings"   ,smgr);
-  if (!pSettings->isActive(10)) removeFromScene("plane_course",smgr);
-  if (!pSettings->isActive(11)) removeFromScene("pillars"     ,smgr);
-  if (!pSettings->isActive(12)) removeFromScene("car_ramps"   ,smgr);
-  if (!pSettings->isActive(13)) {
+  printf("==> %i\n",pSettings->getCountOf(0));
+  irr::core::list<ISceneNode *> lCars;
+  fillBodyList(lCars,smgr->getRootSceneNode(),"car",pSettings->getCountOf(0));
+
+  printf("==> %i\n",pSettings->getCountOf(1));
+  irr::core::list<ISceneNode *> lPlanes;
+  fillBodyList(lPlanes,smgr->getRootSceneNode(),"plane",pSettings->getCountOf(1));
+
+  printf("==> %i\n",pSettings->getCountOf(2));
+  irr::core::list<ISceneNode *> lTanks;
+  fillBodyList(lTanks,smgr->getRootSceneNode(),"tank",pSettings->getCountOf(2));
+
+  printf("==> %i\n",pSettings->getCountOf(3));
+  irr::core::list<ISceneNode *> lHelis;
+  fillBodyList(lHelis,smgr->getRootSceneNode(),"heli",pSettings->getCountOf(3));
+
+  printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lTanks.size(),lHelis.size());
+
+  if (!pSettings->isActive(0)) removeFromScene("bumps"       ,smgr);
+  if (!pSettings->isActive(1)) removeFromScene("targets"     ,smgr);
+  if (!pSettings->isActive(2)) removeFromScene("signs"       ,smgr);
+  if (!pSettings->isActive(3)) removeFromScene("buildings"   ,smgr);
+  if (!pSettings->isActive(4)) removeFromScene("plane_course",smgr);
+  if (!pSettings->isActive(5)) removeFromScene("pillars"     ,smgr);
+  if (!pSettings->isActive(6)) removeFromScene("car_ramps"   ,smgr);
+  if (!pSettings->isActive(7)) {
     printf("removing terrain trimesh...\n");
     removeFromScene("terrain_trimesh",smgr);
   }
@@ -282,20 +323,35 @@ int main(int argc, char** argv) {
   array<CIrrOdeCarState *> aStates;
 
   CMenu       *theMenu   =new CMenu      (device             ,pController); aStates.push_back(theMenu );
-  CCar        *theCar    =new CCar       (device,"theCar"    ,pController); aStates.push_back(theCar  );
-  CCar        *theCar2   =new CCar       (device,"simpleCar" ,pController); aStates.push_back(theCar2 );
-  CCar        *theCar3   =new CCar       (device,"complexCar",pController); aStates.push_back(theCar3 );
-  CTank       *theTank   =new CTank      (device             ,pController); aStates.push_back(theTank );
-  CHeli       *theHeli   =new CHeli      (device             ,pController); aStates.push_back(theHeli );
-  CPlane      *thePlane  =new CPlane     (device             ,pController); aStates.push_back(thePlane);
-  CController *theCtrl   =new CController(device             ,pController); aStates.push_back(theCtrl );
 
-  theCar  ->setCtrl((const u32 *)iCtrls[0]); theCar  ->setFpsInfo(pFps);
-  theCar2 ->setCtrl((const u32 *)iCtrls[0]); theCar2 ->setFpsInfo(pFps);
-  theCar3 ->setCtrl((const u32 *)iCtrls[0]); theCar3 ->setFpsInfo(pFps);
-  theTank ->setCtrl((const u32 *)iCtrls[1]); theTank ->setFpsInfo(pFps);
-  theHeli ->setCtrl((const u32 *)iCtrls[2]); theHeli ->setFpsInfo(pFps);
-  thePlane->setCtrl((const u32 *)iCtrls[3]); thePlane->setFpsInfo(pFps);
+  list<ISceneNode *>::Iterator it;
+  for (it=lCars.begin(); it!=lCars.end(); it++) {
+    CCar *p=new CCar(device,*it,pController);
+    p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
+    aStates.push_back(p);
+  }
+
+  for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
+    CPlane *p=new CPlane(device,*it,pController);
+    p->setCtrl((const u32 *)iCtrls[3]); p->setFpsInfo(pFps);
+    aStates.push_back(p);
+  }
+
+  for (it=lTanks.begin(); it!=lTanks.end(); it++) {
+    CTank *p=new CTank(device,*it,pController);
+    p->setCtrl((const u32 *)iCtrls[1]); p->setFpsInfo(pFps);
+    aStates.push_back(p);
+  }
+
+  for (it=lHelis.begin(); it!=lHelis.end(); it++) {
+    CHeli *p=new CHeli(device,*it,pController);
+    p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
+    aStates.push_back(p);
+  }
+
+
+  CController *theCtrl   =new CController(device,pController); aStates.push_back(theCtrl );
+
 
   if (!theCar  ->isInitialized()) theMenu->setBtnEnabled(0,false);
   if (!theCar2 ->isInitialized()) theMenu->setBtnEnabled(1,false);

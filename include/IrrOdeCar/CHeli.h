@@ -50,7 +50,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     const u32 *m_pCtrls;
 
   public:
-    CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CHeli();
 
     virtual void activate();
@@ -63,6 +63,8 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+
+    virtual stringc &getButtonText() { static stringc s=stringc("select helicopter"); return s; }
 };
 
 #endif

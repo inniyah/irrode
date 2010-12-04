@@ -36,6 +36,8 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     virtual bool OnEvent(const SEvent &event);  /*!< the Irrlicht event receiver */
 
     void setBtnEnabled(u32 iNum, bool b);
+
+    virtual stringc &getButtonText() { static stringc s=stringc("menu"); return s; }
 };
 
 #endif

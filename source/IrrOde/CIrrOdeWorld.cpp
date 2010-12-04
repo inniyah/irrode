@@ -410,7 +410,8 @@ void CIrrOdeWorld::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
 
 ISceneNode *CIrrOdeWorld::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeWorld *pWorld=new CIrrOdeWorld(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
-  copyParams(pWorld);
+  copyParams(pWorld); 
+  CIrrOdeSceneNode::cloneChildren(pWorld,newManager);
   return pWorld;
 }
 

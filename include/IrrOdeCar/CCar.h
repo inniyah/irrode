@@ -48,7 +48,7 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
     const u32 *m_pCtrls;
 
   public:
-    CCar(IrrlichtDevice *pDevice, const c8* sNodeName, CIrrCC *pCtrl);  /*!< the car's constructor */
+    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */
@@ -61,6 +61,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+
+    virtual stringc &getButtonText() { static stringc s=stringc("select car"); return s; }
 };
 
 #endif

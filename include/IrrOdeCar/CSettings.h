@@ -41,8 +41,13 @@ class CSettings : public IEventReceiver {
     IGUIComboBox *m_pDrivers,     /**< combobox to pick the video driver */
                  *m_pResolution;  /**< combobox to pick the screen mode */
     IGUICheckBox *m_pFullscreen;  /**< checkbox to choose whether or not fullscreen is wanted */
+
     array<IGUICheckBox *> m_aActiveBodies;
-    bool m_aAct[14];
+    array<IGUIComboBox *> m_aBodyCount;
+
+    bool m_aAct[8];
+    u32 m_iCnt[4];
+
     IGUIButton *m_pOk,            /**< the "OK" button */
                *m_pCancel;        /**< the "Cancel" button */
     SColor m_cBackground;         /**< the background color */
@@ -99,6 +104,8 @@ class CSettings : public IEventReceiver {
 		void setMinResolution(dimension2du iMin) { m_iMinResolution=iMin; }
 
 		bool isActive(u32 i) { return m_aAct[i]; }
+
+		u32 getCountOf(u32 i) { return m_iCnt[i]; }
 };
 
 #endif

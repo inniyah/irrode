@@ -58,6 +58,8 @@ class CIrrOdeCarState {
     void setFpsInfo(gui::IGUIStaticText *pFps);
 
     bool isInitialized() { return m_bInitialized; }
+
+    virtual stringc &getButtonText()=0;
 };
 
 #endif

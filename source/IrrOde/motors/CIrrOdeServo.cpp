@@ -123,6 +123,7 @@ const wchar_t *CIrrOdeServo::getTypeName() {
 ISceneNode *CIrrOdeServo::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeServo *pRet=new CIrrOdeServo(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
+  CIrrOdeSceneNode::cloneChildren(pRet,newManager);
   return pRet;
 }
 

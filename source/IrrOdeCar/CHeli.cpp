@@ -2,9 +2,9 @@
   #include <CProjectile.h>
   #include <irrCC.h>
 
-CHeli::CHeli(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
-  m_pHeliBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("theHeli"));
+  m_pHeliBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pHeliBody!=NULL) {
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
