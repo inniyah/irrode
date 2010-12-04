@@ -1,5 +1,5 @@
   #include <CCustomEventReceiver.h>
-  #include <CEventRudderPositions.h>
+  #include <CEventVehicleState.h>
   #include <CAdvancedParticleSystemNode.h>
 
 using namespace irr;
@@ -51,6 +51,9 @@ void CCustomEventReceiver::searchTankNodes(irr::scene::ISceneNode *pNode, STankN
   core::list<scene::ISceneNode *> children=pNode->getChildren();
   core::list<scene::ISceneNode *>::Iterator it;
 
+  if (!strcmp(pNode->getName(),"cannonAxis")) pTank->pCannon=pNode;
+  if (!strcmp(pNode->getName(),"turretAxis")) pTank->pTurret=pNode;
+
   irr::core::stringc aNames[]={"tankAxisRR","tankAxisFR","tankAxisRL","tankAxisFL"};
 
   for (irr::u32 i=0; i<4; i++)
@@ -81,6 +84,7 @@ void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
 
 void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
   STankNodes *pNodes=new STankNodes();
+  pNodes->pCannon=NULL;
   pNodes->iNodeId=pTank->getID();
   searchTankNodes(pTank,pNodes);
   m_lTanks.push_back(pNodes);
@@ -159,6 +163,16 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           f32 f=((f32)p->getAngles()[i])*M_PI/60.0f;
           pNodes->aAxes[i]->setRotation(vector3df(0.0f,0.0f,-f*180/M_PI));
         }
+      }
+
+      if (pNodes->pCannon!=NULL) {
+        f32 f=p->getCannonAngle()*180.0f/M_PI;
+        pNodes->pCannon->setRotation(vector3df(0.0f,0.0f,-f));
+      }
+
+      if (pNodes->pTurret!=NULL) {
+        f32 f=p->getTurretAngle()*180.0f/M_PI;
+        pNodes->pTurret->setRotation(vector3df(0.0f,-f,0.0f));
       }
     }
   }

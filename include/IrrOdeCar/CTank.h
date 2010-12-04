@@ -37,12 +37,12 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     bool m_bBrake,
          m_bFollowTurret,
          m_bFastCollision,
-         m_bFire,
          m_bFollowBullet;
     ITexture *m_pTextures[2];
 
     IGUIStaticText *m_pInfo;
-    f32 m_fSteer,m_fActSteer;
+    f32 m_fCannonAngle,
+        m_fTurretAngle;
 
     CIrrOdeWorld *m_pWorld;
     CIrrOdeMotor *m_pMotor[4];
@@ -53,6 +53,8 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     ICameraSceneNode *m_pCam;
 
     list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
+    irr::ode::CIrrOdeJointHinge *m_pCannonHinge,
+                                *m_pTurretHinge;
     irr::s8 m_aAxesAngles[4];
 
     const u32 *m_pCtrls;

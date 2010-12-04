@@ -56,11 +56,11 @@
 			<Add directory="..\include\IrrOdeRePlayer" />
 		</Compiler>
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
-		<Unit filename="..\include\IrrOdeCar\CEventRudderPositions.h" />
+		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
 		<Unit filename="..\include\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
-		<Unit filename="..\source\IrrOdeCar\CEventRudderPositions.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.cpp" />
 		<Extensions>
 			<code_completion />

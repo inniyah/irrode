@@ -1,7 +1,7 @@
   #include "CTank.h"
   #include <CProjectile.h>
   #include <irrCC.h>
-  #include <CEventRudderPositions.h>
+  #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
 CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
@@ -30,12 +30,17 @@ CTank::CTank(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
       }
     }
 
+    m_pCannonHinge=(irr::ode::CIrrOdeJointHinge *)m_pSmgr->getSceneNodeFromName("cannonAxis");
+    m_pTurretHinge=(irr::ode::CIrrOdeJointHinge *)m_pSmgr->getSceneNodeFromName("turretAxis");
+
     m_pCam=m_pSmgr->addCameraSceneNode();
 
-    m_bFire=false;
     m_bFollowTurret=false;
     m_bFollowBullet=false;
     m_bFastCollision=true;
+
+    m_fCannonAngle=0.0f;
+    m_fTurretAngle=0.0f;
 
     m_pCannon=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("cannon"));
 
@@ -109,7 +114,7 @@ u32 CTank::update() {
     m_pCam->setTarget(p->getBody()->getPosition());
   }
   else {
-    vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getRotation();
+    vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getAbsoluteTransformation().getRotationDegrees();
 
     vector3df pos=rot.rotationToDirection(vector3df(7.5,2.5,0)),
               up =m_pTankBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
@@ -142,9 +147,9 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
     if (m_pController->get(m_pCtrls[eTankFire])!=0.0f) {
       m_pController->set(m_pCtrls[eTankFire],0);
       //We add a new bullet...
-      vector3df pos=m_pCannon->getPosition()+m_pCannon->getRotation().rotationToDirection(vector3df(-3.0f,0,0)),
-                vel=m_pTankBody->getLinearVelocity()+m_pCannon->getRotation().rotationToDirection(vector3df(-350.0f,0.0f,0.0f)),
-                rot=m_pCannon->getRotation();
+      vector3df rot=m_pCannon->getAbsoluteTransformation().getRotationDegrees(),
+                pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(vector3df(-3.0f,0,0)),
+                vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(vector3df(-350.0f,0.0f,0.0f));
 
       new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision);
     }
@@ -215,8 +220,19 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
       }
       i++;
     }
+
+    if (m_fCannonAngle!=m_pCannonHinge->getHingeAngle()) {
+      bMoved=true;
+      m_fCannonAngle=m_pCannonHinge->getHingeAngle();
+    }
+
+    if (m_fTurretAngle!=m_pTurretHinge->getHingeAngle()) {
+      bMoved=true;
+      m_fTurretAngle=m_pTurretHinge->getHingeAngle();
+    }
+
     if (bMoved) {
-      CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles);
+      CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles,m_fCannonAngle,m_fTurretAngle);
       irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
     }
   }

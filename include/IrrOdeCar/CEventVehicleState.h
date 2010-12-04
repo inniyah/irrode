@@ -39,10 +39,12 @@ class CEventTankState : public irr::ode::IIrrOdeEvent {
   protected:
     irr::s32 m_iNodeId;
     irr::s8 m_aAngles[4];
+    irr::f32 m_fCannonAngle,
+             m_fTurretAngle;
 
   public:
     CEventTankState();
-    CEventTankState(irr::s32 iId, const irr::s8 *aAngles);
+    CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle);
     CEventTankState(irr::ode::CSerializer *pData);
 
     virtual ~CEventTankState() { }
@@ -55,6 +57,8 @@ class CEventTankState : public irr::ode::IIrrOdeEvent {
 
     const irr::s8 *getAngles() { return m_aAngles; }
     irr::s32 getNodeId() { return m_iNodeId; }
+    irr::f32 getCannonAngle() { return m_fCannonAngle; }
+    irr::f32 getTurretAngle() { return m_fTurretAngle; }
 };
 
 #endif

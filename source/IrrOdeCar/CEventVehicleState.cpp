@@ -1,4 +1,4 @@
-  #include <CEventRudderPositions.h>
+  #include <CEventVehicleState.h>
 
 CEventRudderPositions::CEventRudderPositions() {
   m_pSerializer=NULL;
@@ -51,11 +51,14 @@ irr::ode::IIrrOdeEvent *CEventRudderPositions::clone() {
 CEventTankState::CEventTankState() {
   m_iNodeId=0;
   for (irr::u32 i=0; i<4; i++) m_aAngles[i]=0;
+  m_fCannonAngle=0.0f;
 }
 
-CEventTankState::CEventTankState(irr::s32 iId, const irr::s8 *aAngles) {
+CEventTankState::CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle) {
   m_iNodeId=iId;
   for (irr::u32 i=0; i<4; i++) m_aAngles[i]=aAngles[i];
+  m_fCannonAngle=fCannonAngle;
+  m_fTurretAngle=fTurretAngle;
 }
 
 CEventTankState::CEventTankState(irr::ode::CSerializer *pData) {
@@ -65,6 +68,8 @@ CEventTankState::CEventTankState(irr::ode::CSerializer *pData) {
     m_iNodeId=pData->getS32();
     for (irr::u32 i=0; i<4; i++) m_aAngles[i]=pData->getS8();
   }
+  m_fCannonAngle=pData->getF32();
+  m_fTurretAngle=pData->getF32();
 }
 
 irr::ode::CSerializer *CEventTankState::serialize() {
@@ -73,19 +78,19 @@ irr::ode::CSerializer *CEventTankState::serialize() {
     m_pSerializer->addU16(EVENT_TANK_STATE_ID);
     m_pSerializer->addS32(m_iNodeId);
     for (irr::u32 i=0; i<4; i++) {
-      printf("+");
       m_pSerializer->addS8(m_aAngles[i]);
     }
-    printf("\n");
+    m_pSerializer->addF32(m_fCannonAngle);
+    m_pSerializer->addF32(m_fTurretAngle);
   }
   return m_pSerializer;
 }
 
 const irr::c8 *CEventTankState::toString() {
-  sprintf(m_sString,"CEventTankState: %i, %i, %i, %i, %i",m_iNodeId,m_aAngles[0],m_aAngles[1],m_aAngles[2],m_aAngles[3]);
+  sprintf(m_sString,"CEventTankState: %i, %i, %i, %i, %i, %.2f, %.2f",m_iNodeId,m_aAngles[0],m_aAngles[1],m_aAngles[2],m_aAngles[3],m_fCannonAngle,m_fTurretAngle);
   return m_sString;
 }
 
 irr::ode::IIrrOdeEvent *CEventTankState::clone() {
-  return new CEventTankState(m_iNodeId,m_aAngles);
+  return new CEventTankState(m_iNodeId,m_aAngles,m_fCannonAngle,m_fTurretAngle);
 }

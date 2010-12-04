@@ -6,7 +6,7 @@
   #include <observer/IEventFactory.h>
   #include <observer/CIrrOdeEventFactory.h>
 
-  #include <CEventRudderPositions.h>
+  #include <CEventVehicleState.h>
   #include <SSharedManagers.h>
   #include <CCustomEventReceiver.h>
 

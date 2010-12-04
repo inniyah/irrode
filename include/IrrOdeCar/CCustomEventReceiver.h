@@ -14,6 +14,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     typedef struct sTankNodes {
       irr::s32 iNodeId;
       irr::core::array<irr::scene::ISceneNode *> aAxes;
+      irr::scene::ISceneNode *pCannon,
+                             *pTurret;
     } STankNodes;
 
     irr::IrrlichtDevice *m_pDevice;

@@ -82,7 +82,7 @@
 		<Unit filename="..\include\IrrOdeCar\CConfigFileManager.h" />
 		<Unit filename="..\include\IrrOdeCar\CController.h" />
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
-		<Unit filename="..\include\IrrOdeCar\CEventRudderPositions.h" />
+		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
 		<Unit filename="..\include\IrrOdeCar\CHeli.h" />
 		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarState.h" />
 		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
@@ -96,7 +96,7 @@
 		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
-		<Unit filename="..\source\IrrOdeCar\CEventRudderPositions.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CHeli.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarState.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />

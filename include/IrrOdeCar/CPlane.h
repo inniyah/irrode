@@ -5,7 +5,7 @@
   #include <IrrOde.h>
 
   #include "CIrrOdeCarState.h"
-  #include <CEventRudderPositions.h>
+  #include <CEventVehicleState.h>
 
 using namespace irr;
 
