@@ -128,6 +128,7 @@ void CMenu::addButtonForState(CIrrOdeCarState *pState) {
 
   //create the buttons necessary to select the vehicle to control
   b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,stringw(pState->getButtonText()).c_str());
+  b->setVisible(false);
   m_aButtons.push_back(b);
   m_cPos.Y+=25;
 }
