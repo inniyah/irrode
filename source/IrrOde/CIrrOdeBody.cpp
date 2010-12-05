@@ -9,6 +9,7 @@
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventActivationChanged.h>
   #include <motors/IIrrOdeStepMotor.h>
+  #include <motors/IIrrOdeMotor.h>
 
 namespace irr {
 namespace ode {
@@ -53,6 +54,9 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pRay=NULL;
 
   m_pQueue=CIrrOdeManager::getSharedInstance()->getQueue();
+
+  CIrrOdeBody *pParent=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
+  if (pParent!=NULL) pParent->addChildBody(this);
 
   updateAbsolutePosition();
 }
@@ -659,10 +663,20 @@ void CIrrOdeBody::addChild(ISceneNode *pChild) {
  * @param pBody the child body to be added
  */
 void CIrrOdeBody::addChildBody(CIrrOdeBody *pBody) {
+  list<CIrrOdeBody *>::Iterator it;
+  for (it=m_pChildBodies.begin(); it!=m_pChildBodies.end(); it++) if (*it==pBody) return;
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeBody::addChildBody: adding body %i to list\n",pBody->getID());
   #endif
   m_pChildBodies.push_back(pBody);
+}
+
+/**
+ * Get a list of all child bodies attached to this one
+ * @return list of all child bodies attached to this one
+ */
+list<CIrrOdeBody *> &CIrrOdeBody::getChildBodies() {
+  return m_pChildBodies;
 }
 
 /**
@@ -737,8 +751,12 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
     printf("CIrrOdeBody copy contructor\n");
   #endif
 
+  pDest->setName(getName());
+
   if (bRecurse) CIrrOdeDampable::copyParams(pDest);
   CIrrOdeBody *pDst=(CIrrOdeBody *)pDest;
+
+  pDst->setUpdateGraphics(updateGraphics());
 
   pDst->setFiniteRotationAxis(m_vFiniteRotationAxis);
   pDst->setFiniteRotationMode(m_bFiniteRotationMode);
@@ -920,6 +938,13 @@ void CIrrOdeBody::addStepMotor(IIrrOdeStepMotor *pMotor) {
   m_lStepMotors.push_back(pMotor);
 }
 
+void CIrrOdeBody::addMotor(IIrrOdeMotor *p) {
+  list<IIrrOdeMotor *>::Iterator it;
+  for (it=m_lMotors.begin(); it!=m_lMotors.end(); it++) if (*it==p) return;
+  printf("motor added (\"%s\" / %i)\n",p->getName(),p->getID());
+  m_lMotors.push_back(p);
+}
+
 void CIrrOdeBody::removeStepMotor(IIrrOdeStepMotor *pMotor) {
   list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
@@ -939,6 +964,92 @@ vector3df CIrrOdeBody::getVectorFromWorld(vector3df vPos) {
 
 void CIrrOdeBody::getOdeRotation(vector3df &cRot) {
   cRot=m_pOdeDevice->bodyGetRotation(m_iBodyId);
+}
+
+CIrrOdeGeom *CIrrOdeBody::getGeomFromName(const c8 *sName) {
+  list<CIrrOdeGeom *>::Iterator it;
+  for (it=m_pGeoms.begin(); it!=m_pGeoms.end(); it++) {
+    CIrrOdeGeom *p=*it;
+    printf("find geom: \"%s\" -- \"%s\"\n",p->getName(),sName);
+    if (!strcmp(p->getName(),sName)) return *it;
+  }
+
+  list<CIrrOdeBody *>::Iterator it2;
+  for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
+    CIrrOdeGeom *p=(*it2)->getGeomFromName(sName);
+    if (p!=NULL) return p;
+  }
+  return NULL;
+}
+
+CIrrOdeJoint *CIrrOdeBody::getJointFromName(const c8 *sName) {
+  list<CIrrOdeJoint *>::Iterator it;
+  for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
+    CIrrOdeJoint *p=*it;
+    printf("find joint: \"%s\" -- \"%s\"\n",p->getName(),sName);
+    if (!strcmp(p->getName(),sName)) return *it;
+  }
+
+  list<CIrrOdeBody *>::Iterator it2;
+  for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
+    CIrrOdeJoint *p=(*it2)->getJointFromName(sName);
+    if (p!=NULL) return p;
+  }
+  return NULL;
+}
+
+CIrrOdeBody *CIrrOdeBody::getChildBodyFromName(const c8 *sName) {
+  if (!strcmp(getName(),sName)) return this;
+
+  list<CIrrOdeBody *>::Iterator it;
+  for (it=m_pChildBodies.begin(); it!=m_pChildBodies.end(); it++) {
+    CIrrOdeBody *p=(*it)->getChildBodyFromName(sName);
+    if (p!=NULL) return p;
+  }
+
+  list<CIrrOdeJoint *>::Iterator it2;
+  for (it2=m_pJoints.begin(); it2!=m_pJoints.end(); it2++) {
+    CIrrOdeJoint *p=*it2;
+    CIrrOdeBody *pRet=NULL;
+
+    if (p->getBody1()!=NULL && p->getBody1()!=this) pRet=p->getBody1()->getChildBodyFromName(sName);
+    if (p->getBody2()!=NULL && p->getBody2()!=this) pRet=p->getBody2()->getChildBodyFromName(sName);
+
+    if (pRet!=NULL) return pRet;
+  }
+  return NULL;
+}
+
+IIrrOdeStepMotor *CIrrOdeBody::getStepMotorFromName(const c8 *sName) {
+  list<IIrrOdeStepMotor *>::Iterator it;
+  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) {
+    IIrrOdeStepMotor *p=*it;
+    printf("find step motor: \"%s\" -- \"%s\"\n",p->getName(),sName);
+    if (!strcmp(p->getName(),sName)) return *it;
+  }
+
+  list<CIrrOdeBody *>::Iterator it2;
+  for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
+    IIrrOdeStepMotor *p=(*it2)->getStepMotorFromName(sName);
+    if (p!=NULL) return p;
+  }
+  return NULL;
+}
+
+IIrrOdeMotor *CIrrOdeBody::getMotorFromName(const c8 *sName) {
+  list<IIrrOdeMotor *>::Iterator it;
+  for (it=m_lMotors.begin(); it!=m_lMotors.end(); it++) {
+    IIrrOdeMotor *p=*it;
+    printf("find motor: \"%s\" -- \"%s\"\n",p->getName(),sName);
+    if (!strcmp(p->getName(),sName)) return *it;
+  }
+
+  list<CIrrOdeBody *>::Iterator it2;
+  for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
+    IIrrOdeMotor *p=(*it2)->getMotorFromName(sName);
+    if (p!=NULL) return p;
+  }
+  return NULL;
 }
 
 } //namespace ode

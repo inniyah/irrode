@@ -16,6 +16,7 @@ class CIrrOdeGeom;        /**< foreward declaration of CIrrOdeGeom       */
 class CIrrOdeGeomRay;     /**< foreward declaration of CIrrOdeGeomRay    */
 class IIrrOdeStepMotor;   /**< foreware declaration of IIrrOdeStepMotor  */
 class IIrrOdeEventQueue;  /**< foreward declaration of IIrrOdeEventQueue */
+class IIrrOdeMotor;       /**< foreward declaration of IIrrOdeMotor      */
 
 /**
  * @class CIrrOdeBody
@@ -30,7 +31,8 @@ class CIrrOdeBody : public CIrrOdeDampable {
     list<CIrrOdeGeom *> m_pGeoms;           /**< this body's geoms */
     list<CIrrOdeJoint *> m_pJoints;         /**< this body's joints */
     list<CIrrOdeBody *> m_pChildBodies;     /**< this body's child bodies connected by joints */
-    list<IIrrOdeStepMotor *>m_lStepMotors;  /**< list of all step motors attached to the body */
+    list<IIrrOdeStepMotor *> m_lStepMotors; /**< list of all step motors attached to the body */
+    list<IIrrOdeMotor *> m_lMotors;         /**< list of all motors and servos attached to the body */
     bool m_bEnabled,                        /**< is this body active or not? */
          m_bParamMaster,                    /**< is this body the parameter master, i.e. does it set the body parameters of other bodies with the same ODE classname? */
          m_bCollision,                      /**< did this body collide in the last simulation step? */
@@ -213,6 +215,12 @@ class CIrrOdeBody : public CIrrOdeDampable {
     void addStepMotor(IIrrOdeStepMotor *p);
 
     /**
+     * add a motor or servo
+     * @param p the motor/servo to add
+     */
+    void addMotor(IIrrOdeMotor *p);
+
+    /**
      * remove a step motor
      * @param p the step motor to remove
      */
@@ -237,6 +245,18 @@ class CIrrOdeBody : public CIrrOdeDampable {
 		 * Parameter can't be changed after "initPhysics" was called.
 		 */
 		void setUpdateGraphics(bool b) { if (!m_bPhysicsInitialized) m_bUpdateGraphics=b; }
+
+		/**
+		 * Get a list of all child bodies attached to this one
+		 * @return list of all child bodies attached to this one
+		 */
+    list<CIrrOdeBody *> &getChildBodies();
+
+    CIrrOdeGeom *getGeomFromName(const c8 *sName);
+    CIrrOdeJoint *getJointFromName(const c8 *sName);
+    CIrrOdeBody *getChildBodyFromName(const c8 *sName);
+    IIrrOdeStepMotor *getStepMotorFromName(const c8 *sName);
+    IIrrOdeMotor *getMotorFromName(const c8 *sName);
 };
 
 } //namespace ode

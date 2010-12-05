@@ -162,10 +162,12 @@ void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
 
 void CIrrOdeJoint::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeSceneNode::copyParams(pDest);
+  pDest->setName(getName());
   CIrrOdeJoint *pDst=(CIrrOdeJoint *)pDest;
 
   for (int i=0; i<eParamEnd; i++)
     for (int j=0; j<numParamGroups(); j++) {
+      pDst->m_bParamUsed[i][j]=m_bParamUsed[i][j];
       pDst->m_fParam[i][j]=m_fParam[i][j];
     }
 }

@@ -41,6 +41,7 @@ void CIrrOdeImpulseMotor::deserializeAttributes(io::IAttributes* in, io::SAttrib
 
 ISceneNode *CIrrOdeImpulseMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeImpulseMotor *pRet=new CIrrOdeImpulseMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
+  pRet->setName(getName());
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
   pRet->setForeward(m_vForeward);
   pRet->setPower(m_fPower);

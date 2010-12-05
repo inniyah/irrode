@@ -232,6 +232,8 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 }
 
 void CIrrOdeSurfaceParameters::copy(CIrrOdeSurfaceParameters *pDest) {
+  pDest->setUseDefined(m_bUseOther);
+  pDest->setName(getName());
   pDest->mode=mode;
   pDest->mu=mu;
   pDest->mu2=mu2;

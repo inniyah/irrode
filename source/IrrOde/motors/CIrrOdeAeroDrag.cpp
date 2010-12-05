@@ -144,6 +144,7 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeAeroDrag *pRet=new CIrrOdeAeroDrag(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
+  pRet->setName(getName());
 
   pRet->setForeward(m_vForeward);
   pRet->setSideward(m_vSideward);

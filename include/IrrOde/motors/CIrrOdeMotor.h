@@ -1,7 +1,7 @@
 #ifndef _C_IRR_ODE_MOTOR
   #define _C_IRR_ODE_MOTOR
 
-  #include <CIrrOdeSceneNode.h>
+  #include <motors/IIrrOdeMotor.h>
 
 namespace irr {
 namespace ode {
@@ -15,7 +15,7 @@ class CIrrOdeJoint;
  * @class CIrrOdeMotor
  * This class can be used as linear or angular motor. It has to be child of the joint it will affect
  */
-class CIrrOdeMotor : public CIrrOdeSceneNode {
+class CIrrOdeMotor : public IIrrOdeMotor {
   protected:
     CIrrOdeJoint *m_pJoint;   /**< the joint the motor is attached to */
     u32 m_iAxis;              /**< the axis the motor affects */

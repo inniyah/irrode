@@ -4,17 +4,14 @@
 CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu","../../data/irrOdeVehicleHelp.txt", pCtrl) {
   IGUIButton *b=NULL;
 
-  dimension2di dim=dimension2di(120,20);
-  position2di pos=position2di(5,5);
-  u32 iIdx=2;
+  m_cDim=dimension2di(120,20);
+  m_cPos=position2di(5,5);
+  m_iIdx=2;
+
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Car"        ); m_aButtons.push_back(b); pos.Y+=25;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Simple Car" ); m_aButtons.push_back(b); pos.Y+=25;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Complex Car"); m_aButtons.push_back(b); pos.Y+=25;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Tank"       ); m_aButtons.push_back(b); pos.Y+=25;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Helicopter" ); m_aButtons.push_back(b); pos.Y+=25;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Select Plane"      ); m_aButtons.push_back(b); pos.Y+=50;
-  b=m_pGuiEnv->addButton(rect<s32>(pos,dim),0,iIdx++,L"Controller Setup"  ); m_aButtons.push_back(b); pos.Y+=25;
+  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,L"Controller Setup");
+  m_aButtons.push_back(b);
+  m_cPos.Y+=25;
 
   //initialize the info text
   m_pText=m_pGuiEnv->addStaticText(m_pHelp->getText(),rect<s32>(135,5,325,50));
@@ -124,4 +121,13 @@ void CMenu::setBtnEnabled(u32 iNum, bool b) {
       (*it)->setEnabled(b);
       return;
     }
+}
+
+void CMenu::addButtonForState(CIrrOdeCarState *pState) {
+  IGUIButton *b=NULL;
+
+  //create the buttons necessary to select the vehicle to control
+  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,stringw(pState->getButtonText()).c_str());
+  m_aButtons.push_back(b);
+  m_cPos.Y+=25;
 }

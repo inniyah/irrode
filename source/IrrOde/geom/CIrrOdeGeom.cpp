@@ -197,7 +197,11 @@ void CIrrOdeGeom::initPhysics() {
 
 void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeSceneNode::copyParams(pDest);
+  pDest->setName(getName());
+
   CIrrOdeGeom *pDst=(CIrrOdeGeom *)pDest;
+  pDst->setCollide(doesCollide());
+
   for (u32 i=0; i<getSurfaceParametersCount() && i<pDst->getSurfaceParametersCount(); i++)
     m_aParams[i]->copy(pDst->getSurfaceParameters(i));
 

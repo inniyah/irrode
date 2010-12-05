@@ -26,7 +26,8 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
                      const vector3df &position=core::vector3df(0,0,0),
 		                 const vector3df &rotation = core::vector3df(0,0,0),
 		                 const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f)) : CIrrOdeSceneNode(parent,mgr,id,position,rotation,scale) {
-      m_pBody=NULL;
+      m_pBody=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
+      if (m_pBody!=NULL) m_pBody->addStepMotor(this);
       CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
       if (pWorld!=NULL) CIrrOdeManager::getSharedInstance()->addStepMotor(this);
       m_fMaxPower=0.0f;
@@ -61,11 +62,10 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
       CIrrOdeSceneNode::initPhysics();
 
       ISceneNode *pParent=getParent();
-      if (pParent->getType()==IRR_ODE_BODY_ID) {
+      if (pParent->getType()==IRR_ODE_BODY_ID)
         m_pBody=reinterpret_cast<CIrrOdeBody *>(pParent);
-        if (m_pBody) m_pBody->addStepMotor(this);
-      }
-      else m_pBody=NULL;
+      else
+        m_pBody=NULL;
     }
 
     void setBody(CIrrOdeBody *pBody) {

@@ -126,6 +126,7 @@
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeServo.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h" />
+		<Unit filename="..\include\IrrOde\motors\IIrrOdeMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\IIrrOdeStepMotor.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeEventFactory.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeRePlayer.h" />

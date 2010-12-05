@@ -607,6 +607,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\IrrOde\motors\IIrrOdeMotor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\include\IrrOde\motors\IIrrOdeStepMotor.h"
 					>
 				</File>

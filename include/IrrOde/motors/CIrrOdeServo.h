@@ -1,7 +1,7 @@
 #ifndef _IRR_ODE_SERVO
   #define _IRR_ODE_SERVO
 
-  #include <CIrrOdeSceneNode.h>
+ #include <motors/IIrrOdeMotor.h>
 
 namespace irr {
 namespace ode {
@@ -15,7 +15,7 @@ const wchar_t IRR_ODE_SERVO_NAME[0xFF]=L"CIrrOdeServo";
  * @class CIrrOdeServo
  * the CIrrOdeServo class can be used to set a joint to a desired position, e.g. for steering of a car
  */
-class CIrrOdeServo : public CIrrOdeSceneNode {
+class CIrrOdeServo : public IIrrOdeMotor {
   protected:
     CIrrOdeJoint *m_pJoint;   /**< the joint the servo is attached to */
     u32 m_iAxis;              /**< the axis the servo affects */

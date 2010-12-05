@@ -20,6 +20,9 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     IGUIStaticText *m_pText,        /*!< the info text */
                    *m_pHits;        /*!< some additional information about shots and hits */
     u32 m_iMenuSelect;              /*!< this member is used to store state changes */
+    dimension2di m_cDim;
+    position2di m_cPos;
+    u32 m_iIdx;
 
   public:
     /**
@@ -38,6 +41,8 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     void setBtnEnabled(u32 iNum, bool b);
 
     virtual stringc &getButtonText() { static stringc s=stringc("menu"); return s; }
+
+    void addButtonForState(CIrrOdeCarState *pState);
 };
 
 #endif

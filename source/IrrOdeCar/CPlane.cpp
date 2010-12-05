@@ -14,7 +14,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     //get the terrain
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
     //get the front wheel that is needed for steering the plane on ground
-    m_pSteer=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("plane_wheel_steer"));
+    m_pSteer=(CIrrOdeServo *)m_pPlaneBody->getMotorFromName("plane_wheel_steer");
 
     //get the visual rudders
     m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
@@ -25,17 +25,24 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_pYaw  [1]=m_pSmgr->getSceneNodeFromName("yaw2");
 
     //get the motor, the rudders and the aerodynamic caluclator of the plane
-    m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("plane_motor"));
-    m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("plane_torque"));
-    m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("plane_aero"));
+    m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pPlaneBody->getStepMotorFromName("plane_motor" );
+    m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pPlaneBody->getStepMotorFromName("plane_torque");
+    m_pAero  =(irr::ode::CIrrOdeAeroDrag     *)m_pPlaneBody->getStepMotorFromName("plane_aero"  );
 
     //intially we don't follow the bombs and look to the front
     m_bFollowBombCam=false;
     m_bBackView=false;
 
     //we need the rear wheel bodies for the braking on ground
-    m_pRearWheels[0]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rl"));
-    m_pRearWheels[1]=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("plane_wheel_rr"));
+    m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
+    m_pRearWheels[1]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rr");
+
+    printf("\nplane state\n\n");
+    printf("rudders: (%i, %i), (%i, %i), (%i, %i)\n",(int)m_pRoll [0],(int)m_pRoll [1],
+                                                     (int)m_pPitch[0],(int)m_pPitch[1],
+                                                     (int)m_pYaw  [0],(int)m_pYaw  [1]);
+    printf("motors: %i, %i, %i\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero);
+    printf("rear wheels: %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1]);
 
     //let's add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();

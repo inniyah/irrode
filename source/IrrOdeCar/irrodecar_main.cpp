@@ -322,43 +322,38 @@ int main(int argc, char** argv) {
   CIrrOdeCarState *pActive=NULL;
   array<CIrrOdeCarState *> aStates;
 
-  CMenu       *theMenu   =new CMenu      (device             ,pController); aStates.push_back(theMenu );
+  CMenu       *theMenu=new CMenu      (device,pController); aStates.push_back(theMenu);
+  CController *theCtrl=new CController(device,pController); aStates.push_back(theCtrl );
 
   list<ISceneNode *>::Iterator it;
   for (it=lCars.begin(); it!=lCars.end(); it++) {
     CCar *p=new CCar(device,*it,pController);
     p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
+    theMenu->addButtonForState(p);
   }
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController);
     p->setCtrl((const u32 *)iCtrls[3]); p->setFpsInfo(pFps);
     aStates.push_back(p);
+    theMenu->addButtonForState(p);
   }
 
   for (it=lTanks.begin(); it!=lTanks.end(); it++) {
     CTank *p=new CTank(device,*it,pController);
     p->setCtrl((const u32 *)iCtrls[1]); p->setFpsInfo(pFps);
     aStates.push_back(p);
+    theMenu->addButtonForState(p);
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
     CHeli *p=new CHeli(device,*it,pController);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
+    theMenu->addButtonForState(p);
   }
 
-
-  CController *theCtrl   =new CController(device,pController); aStates.push_back(theCtrl );
-
-
-  if (!theCar  ->isInitialized()) theMenu->setBtnEnabled(0,false);
-  if (!theCar2 ->isInitialized()) theMenu->setBtnEnabled(1,false);
-  if (!theCar3 ->isInitialized()) theMenu->setBtnEnabled(2,false);
-  if (!theTank ->isInitialized()) theMenu->setBtnEnabled(3,false);
-  if (!theHeli ->isInitialized()) theMenu->setBtnEnabled(4,false);
-  if (!thePlane->isInitialized()) theMenu->setBtnEnabled(5,false);
 
   theCtrl->setFpsInfo(pFps);
 
@@ -438,13 +433,10 @@ int main(int argc, char** argv) {
   device->drop();
 
   //and now some more cleanup...
-  delete theMenu;
-  delete theCar;
-  delete theTank;
-  delete theHeli;
-  delete thePlane;
-
-  delete pController;
+  for (u32 i=0; i<aStates.size(); i++) {
+    delete aStates[i];
+  }
+  aStates.clear();
 
   return 0;
 }

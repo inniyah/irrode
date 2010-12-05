@@ -7,7 +7,7 @@ namespace ode {
 CIrrOdeMotor::CIrrOdeMotor(ISceneNode *parent,ISceneManager *mgr,s32 id,
                            const vector3df &position,
 		                       const vector3df &rotation,
-          		             const vector3df &scale) : CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale) {
+          		             const vector3df &scale) : IIrrOdeMotor(parent, mgr, id, position, rotation, scale) {
 
   m_iAxis=0;
   m_fVelocity=0.0f;
@@ -149,6 +149,7 @@ ISceneNode *CIrrOdeMotor::clone(ISceneNode* newParent, ISceneManager* newManager
 
 void CIrrOdeMotor::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeSceneNode::copyParams(pDest);
+  pDest->setName(getName());
   CIrrOdeMotor *pDst=(CIrrOdeMotor *)pDest;
   pDst->setAxis(m_iAxis);
   pDst->setVelocity(m_fVelocity);

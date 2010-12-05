@@ -4,34 +4,64 @@
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
+irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const c8 *sName) {
+  printf("%s .. %s\n",pBody->getName(),sName);
+
+  list<irr::ode::CIrrOdeBody *> children=pBody->getChildBodies();
+  list<irr::ode::CIrrOdeBody *>::Iterator it;
+  printf("children: %i\n",children.size());
+
+  for (it=children.begin(); it!=children.end(); it++) {
+    irr::ode::CIrrOdeBody *pBody=NULL;
+    pBody=getChildBodyFromName(*it,sName);
+    if (pBody!=NULL) return pBody;
+  }
+
+  return NULL;
+}
+
 CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<CIrrOdeBody *>(pNode);
 
   if (m_pTankBody!=NULL) {
     CCustomEventReceiver::getSharedInstance()->addTank(m_pTankBody);
-    m_pTurret=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("turret"));
 
-    m_pMotor[0]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRR"));
-    m_pMotor[1]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFR"));
-    m_pMotor[2]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorRL"));
-    m_pMotor[3]=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("motorFL"));
+    m_pTurret=m_pTankBody->getChildBodyFromName("turret");
 
-    m_pTurretMotor=reinterpret_cast<CIrrOdeMotor *>(m_pSmgr->getSceneNodeFromName("turretMotor"));
-    m_pCannonServo=reinterpret_cast<CIrrOdeServo *>(m_pSmgr->getSceneNodeFromName("cannonServo"));
+    m_pMotor[0]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRR");
+    m_pMotor[1]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFR");
+    m_pMotor[2]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRL");
+    m_pMotor[3]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFL");
 
-    stringc aAxesNames[]={"tankAxisRR","tankAxisFR","tankAxisRL","tankAxisFL"};
+    m_pTurretMotor=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("turretMotor");
+    m_pCannonServo=(CIrrOdeServo *)m_pTankBody->getMotorFromName("cannonServo");
 
-    for (u32 i=0; i<4; i++) {
-      ISceneNode *pNode=m_pSmgr->getSceneNodeFromName(aAxesNames[i].c_str());
-      if (pNode!=NULL && pNode->getType()==irr::ode::IRR_ODE_JOINT_HINGE_ID) {
-        m_lAxes.push_back((irr::ode::CIrrOdeJointHinge *)pNode);
-        m_aAxesAngles[i]=0.0f;
-      }
-    }
+    printf("\t\tturret motor: %i\n\t\tcannon servo: %i\n",(int)m_pTurretMotor,(int)m_pCannonServo);
 
-    m_pCannonHinge=(irr::ode::CIrrOdeJointHinge *)m_pSmgr->getSceneNodeFromName("cannonAxis");
-    m_pTurretHinge=(irr::ode::CIrrOdeJointHinge *)m_pSmgr->getSceneNodeFromName("turretAxis");
+    irr::ode::CIrrOdeJointHinge *pAxis=NULL;
+
+    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+
+    m_pCannonHinge=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("cannonAxis");
+    m_pTurretHinge=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("turretAxis");
+
+    m_pCannon=m_pTankBody->getChildBodyFromName("cannon");
+
+    printf("\ntank state:\n\n");
+    printf("axes: ");
+    list<CIrrOdeJointHinge *>::Iterator it;
+    for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) printf("%i  ",(int)(*it));
+    printf("\n");
+    printf("motors: ");
+    for (u32 i=0; i<4; i++) printf("%i  ",(int)m_pMotor[i]);
+    printf("\n");
+
+    printf("turret: %i -- axis=%i, motor=%i\n",(int)m_pTurret,(int)m_pTurretHinge,(int)m_pTurretMotor);
+    printf("cannon: %i -- axis=%i, motor=%i\n",(int)m_pCannon,(int)m_pCannonHinge,(int)m_pCannonServo);
 
     m_pCam=m_pSmgr->addCameraSceneNode();
 
@@ -41,8 +71,6 @@ CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
 
     m_fCannonAngle=0.0f;
     m_fTurretAngle=0.0f;
-
-    m_pCannon=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("cannon"));
 
     m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
     m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
