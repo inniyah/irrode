@@ -19,9 +19,12 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
 
-    m_pMotor=reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("heli_motor"));
-    m_pTorque=reinterpret_cast<irr::ode::CIrrOdeTorqueMotor *>(m_pSmgr->getSceneNodeFromName("heli_torque"));
-    m_pAero=reinterpret_cast<irr::ode::CIrrOdeAeroDrag *>(m_pSmgr->getSceneNodeFromName("heli_aero"));
+    m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pHeliBody->getStepMotorFromName("heli_motor" );
+    m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pHeliBody->getStepMotorFromName("heli_torque");
+    m_pAero  =(irr::ode::CIrrOdeAeroDrag     *)m_pHeliBody->getStepMotorFromName("heli_aero"  );
+
+    printf("\nheli state:\n\n");
+    printf("motors: %i, %i, %i\n\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero);
 
     m_fThrust=0;
     m_fPitch=0;

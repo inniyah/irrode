@@ -278,7 +278,7 @@ int main(int argc, char** argv) {
   irr::core::list<ISceneNode *> lHelis;
   fillBodyList(lHelis,smgr->getRootSceneNode(),"heli",pSettings->getCountOf(3));
 
-  printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lTanks.size(),lHelis.size());
+  printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lHelis.size(),lTanks.size());
 
   if (!pSettings->isActive(0)) removeFromScene("bumps"       ,smgr);
   if (!pSettings->isActive(1)) removeFromScene("targets"     ,smgr);

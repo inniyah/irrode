@@ -115,6 +115,7 @@ void CIrrOdeTorqueMotor::deserializeAttributes(io::IAttributes* in, io::SAttribu
 ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
   CIrrOdeTorqueMotor *pRet=new CIrrOdeTorqueMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
+  pRet->setName(getName());
   pRet->setRollAxis(m_vRollAxis);
   pRet->setYawAxis(m_vYawAxis);
   pRet->setPitchAxis(m_vPitchAxis);
