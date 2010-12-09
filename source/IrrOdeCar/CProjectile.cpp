@@ -37,6 +37,7 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
 
   if (pSource!=NULL) {
     irr::scene::ISceneNode *pNewNode=irr::ode::CIrrOdeManager::getSharedInstance()->cloneTree(pSource,pWorld,m_pSmgr);
+    pNewNode->setName("projectile_clone");
     m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNewNode);
     if (m_pBody!=NULL) {
       findParticleSystems(m_pBody);
