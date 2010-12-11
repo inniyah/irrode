@@ -31,6 +31,13 @@ void CCustomEventReceiver::destall() {
     delete p;
   }
 
+  while (m_lTanks.getSize()>0) {
+    list<STankNodes *>::Iterator it=m_lTanks.begin();
+    STankNodes *p=*it;
+    m_lTanks.erase(it);
+    delete p;
+  }
+
   m_bInstalled=false;
 }
 
@@ -51,14 +58,13 @@ void CCustomEventReceiver::searchTankNodes(irr::scene::ISceneNode *pNode, STankN
   core::list<scene::ISceneNode *> children=pNode->getChildren();
   core::list<scene::ISceneNode *>::Iterator it;
 
-  if (!strcmp(pNode->getName(),"cannonAxis")) { printf("1\n"); pTank->pCannon=pNode; }
-  if (!strcmp(pNode->getName(),"turretAxis")) { printf("2\n"); pTank->pTurret=pNode; }
+  if (!strcmp(pNode->getName(),"cannonAxis")) { pTank->pCannon=pNode; }
+  if (!strcmp(pNode->getName(),"turretAxis")) { pTank->pTurret=pNode; }
 
   irr::core::stringc aNames[]={"tankAxisRR","tankAxisFR","tankAxisRL","tankAxisFL"};
 
   for (irr::u32 i=0; i<4; i++)
     if (!strcmp(pNode->getName(),aNames[i].c_str())) {
-      printf("axis %i!\n",pNode->getID());
       pTank->aAxes.push_back(pNode);
     }
 
@@ -85,7 +91,6 @@ void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
 }
 
 void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
-  printf("\t\tadd tank!\n");
   STankNodes *pNodes=new STankNodes();
   pNodes->pCannon=NULL;
   pNodes->iNodeId=pTank->getID();

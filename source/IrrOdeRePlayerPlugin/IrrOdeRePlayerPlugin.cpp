@@ -33,6 +33,10 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
           CCustomEventReceiver::getSharedInstance()->addPlane(p);
         }
       }
+      irr::core::list<ISceneNode *> children=pNode->getChildren();
+      irr::core::list<ISceneNode *>::Iterator it;
+
+      for (it=children.begin(); it!=children.end(); it++) searchPlaneBodies(*it);
     }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
