@@ -48,6 +48,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     ITerrainSceneNode *m_pTerrain;
 
     const u32 *m_pCtrls;
+    u32 m_iLastShot;
 
   public:
     CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);

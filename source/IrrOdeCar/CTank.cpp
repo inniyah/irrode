@@ -23,6 +23,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
 CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<CIrrOdeBody *>(pNode);
+  m_iLastShot=0;
 
   if (m_pTankBody!=NULL) {
     CCustomEventReceiver::getSharedInstance()->addTank(m_pTankBody);
@@ -172,8 +173,9 @@ bool CTank::OnEvent(const SEvent &event) {
 
 bool CTank::onEvent(IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep && m_bActive) {
-    if (m_pController->get(m_pCtrls[eTankFire])!=0.0f) {
-      m_pController->set(m_pCtrls[eTankFire],0);
+    irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
+    if (m_pController->get(m_pCtrls[eTankFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
+      m_iLastShot=pStep->getStepNo();
       //We add a new bullet...
       vector3df rot=m_pCannon->getAbsoluteTransformation().getRotationDegrees(),
                 pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(vector3df(-3.0f,0,0)),

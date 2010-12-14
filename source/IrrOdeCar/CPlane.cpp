@@ -7,6 +7,10 @@
 CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
+
+  m_iLastShot=0;
+  m_iLastMissile=0;
+
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pPlaneBody!=NULL) {
@@ -156,6 +160,7 @@ bool CPlane::OnEvent(const SEvent &event) {
 
 bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     if (m_bActive) {
       //in order to regulate the increase and decrease of thrust we
       //just calculate the new value when the irrOdeStep event was
@@ -205,20 +210,19 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_fPitch=fPitch;
       }
 
-      if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f) {
-        m_pController->set(m_pCtrls[ePlaneFire],0.0f);
+      if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f && pStep->getStepNo()-m_iLastMissile>=120) {
+        m_iLastMissile=pStep->getStepNo();
         //We add a new bomb...
         vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
                   rot=m_pPlaneBody->getRotation(),vel=m_pPlaneBody->getLinearVelocity();
 
         m_bLeftMissile=!m_bLeftMissile;
 
-        //new CProjectile(m_pSmgr,pos,rot,vel,"bomb",600,m_pWorld,true);
         new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
       }
 
-      if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f) {
-        m_pController->set(m_pCtrls[ePlaneGun],0.0f);
+      if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
+        m_iLastShot=pStep->getStepNo();
         //We add a new bullet...
         vector3df pos=m_pPlaneBody->getAbsolutePosition()+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.2f,1.5f,-11.0f)),
                   rot=m_pPlaneBody->getRotation(),

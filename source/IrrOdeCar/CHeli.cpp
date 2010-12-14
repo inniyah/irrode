@@ -128,6 +128,7 @@ bool CHeli::OnEvent(const SEvent &event) {
 
 bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     vector3df rot=m_pHeliBody->getRotation();
     f32 alt=m_pHeliBody->getAbsolutePosition().Y,f=alt<=0?1:(2000-alt)/2000;
 
@@ -146,8 +147,8 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setRoll(m_fRoll);
       m_pTorque->setYaw(-m_fYaw);
 
-      if (m_pController->get(m_pCtrls[eHeliFire])!=0.0f) {
-        m_pController->set(m_pCtrls[eHeliFire],0.0f);
+      if (m_pController->get(m_pCtrls[eHeliFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
+        m_iLastShot=pStep->getStepNo();
         //We add a new missile...
         vector3df pos=m_pHeliBody->getAbsolutePosition()+m_pHeliBody->getRotation().rotationToDirection(vector3df(m_bLeft?-3.0f:3.0f,-0.6f,-2.0f)),
                   rot=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees(),
