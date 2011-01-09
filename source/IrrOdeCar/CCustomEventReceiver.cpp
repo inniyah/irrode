@@ -73,6 +73,16 @@ void CCustomEventReceiver::searchTankNodes(irr::scene::ISceneNode *pNode, STankN
   }
 }
 
+void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNodes *pCar) {
+  core::list<scene::ISceneNode *> children=pNode->getChildren();
+  core::list<scene::ISceneNode *>::Iterator it;
+
+  if (!strcmp(pNode->getName(),"frontaxis")) pCar->aFrontAxes.push_back(pNode);
+  if (!strcmp(pNode->getName(),"rearaxis" )) pCar->aRearAxes .push_back(pNode);
+
+  for (it=children.begin(); it!=children.end(); it++) searchCarNodes(*it,pCar);
+}
+
 void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr) {
   CCustomEventReceiver::getSharedInstance()->m_pDevice=pDevice;
   CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
@@ -96,6 +106,12 @@ void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
   pNodes->iNodeId=pTank->getID();
   searchTankNodes(pTank,pNodes);
   m_lTanks.push_back(pNodes);
+}
+
+void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
+  SCarNodes *pNodes=new SCarNodes();
+  searchCarNodes(pCar,pNodes);
+  m_lCars.push_back(pNodes);
 }
 
 /**

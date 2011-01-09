@@ -1,4 +1,5 @@
   #include "CCar.h"
+  #include <CCustomEventReceiver.h>
   #include <math.h>
 
   #include <irrCC.h>
@@ -20,6 +21,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeC
   m_pCarBody=reinterpret_cast<CIrrOdeBody *>(pNode);
 
   if (m_pCarBody) {
+    CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
     array<ISceneNode *> aNodes;
 
     //get the two motors that are attached to the rear wheels

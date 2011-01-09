@@ -98,7 +98,7 @@ void CIrrOdeAeroDrag::step() {
     //vUp: the lifting force
     //vForewardDamp: the damping of the foreward velocity
     //fSideDamp: the damping of the sideward slide
-    //fUpdamp: the damping of the upward slide
+    //fUpdamp: the damping of the upward slidet
     //
     //now we combine these vectors to a single one that is then...
     vector3df vForce=vUp-vForewardDamp-vSideDamp-vUpDamp;
@@ -160,7 +160,7 @@ ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newMana
   pRet->setPower(m_fPower);
   pRet->setMaxPower(m_fMaxPower);
   pRet->setIsActive(m_bIsActive);
-  
+
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
 
   return pRet;

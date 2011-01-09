@@ -18,6 +18,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                              *pTurret;
     } STankNodes;
 
+    typedef struct sCarNodes {
+      irr::s32 iNodeId;
+      irr::core::array<irr::scene::ISceneNode *> aFrontAxes,aRearAxes;
+    } SCarNodes;
+
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
 
@@ -28,9 +33,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     list<SPlaneNodes *> m_lPlanes;
     list<STankNodes *> m_lTanks;
+    list<SCarNodes *> m_lCars;
 
     void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
     void searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank);
+    void searchCarNodes(irr::scene::ISceneNode *pNode, SCarNodes *pCar);
 
     /**
      * This method deactivates all particles systems that are children of a node
@@ -53,6 +60,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     void addPlane(irr::scene::ISceneNode *pPlane);
     void addTank(irr::scene::ISceneNode *pTank);
+    void addCar(irr::scene::ISceneNode *pCar);
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
