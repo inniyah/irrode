@@ -76,6 +76,18 @@ void CIrrOdeSurfaceParameters::setModeSlip2(bool bIn) {
   if (bIn) mode|=eContactSlip2; else mode^=(eContactSlip2&mode);
 }
 
+void CIrrOdeSurfaceParameters::setModeApprox1_1(bool bIn) {
+  if (bIn) mode|=eContactApprox1_1; else mode^=(eContactApprox1_1&mode);
+}
+
+void CIrrOdeSurfaceParameters::setModeApprox1_2(bool bIn) {
+  if (bIn) mode|=eContactApprox1_2; else mode^=(eContactApprox1_2&mode);
+}
+
+void CIrrOdeSurfaceParameters::setModeApprox1(bool bIn) {
+  if (bIn) mode|=eContactApprox1; else mode^=(eContactApprox1&mode);
+}
+
 bool CIrrOdeSurfaceParameters::getModeMu2() {
   return mode&eContactMu2;
 }
@@ -116,6 +128,18 @@ bool CIrrOdeSurfaceParameters::getModeSlip2() {
   return (bool)(mode&eContactSlip2);
 }
 
+bool CIrrOdeSurfaceParameters::getModeApprox1_1() {
+  return (bool)(mode&eContactApprox1_1);
+}
+
+bool CIrrOdeSurfaceParameters::getModeApprox1_2() {
+  return (bool)(mode&eContactApprox1_2);
+}
+
+bool CIrrOdeSurfaceParameters::getModeApprox1() {
+  return (bool)(mode&eContactApprox1);
+}
+
 void CIrrOdeSurfaceParameters::initPhysics() {
   #ifndef _IRR_ODE_SURFACE_EDIT
     CIrrOdeSurfaceParameters *pOther=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(m_sName);
@@ -137,16 +161,19 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 	sprintf(sName,"useDefined%s",sGroup); out->addBool(sName,(pOther==this || m_sName=="")?false:m_bUseOther);
 
 	if (!m_bUseOther || m_sName=="" || pOther==NULL || pOther==this) {
-		sprintf(sName,"mode_mu2%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2    ));
-		sprintf(sName,"mode_fdir1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1  ));
-		sprintf(sName,"mode_bounce%s" ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce ));
-		sprintf(sName,"mode_softERP%s",sGroup); out->addBool(sName,(bool)(mode&eContactSoftERP));
-		sprintf(sName,"mode_softCFM%s",sGroup); out->addBool(sName,(bool)(mode&eContactSoftCFM));
-		sprintf(sName,"mode_motion1%s",sGroup); out->addBool(sName,(bool)(mode&eContactMotion1));
-		sprintf(sName,"mode_motion2%s",sGroup); out->addBool(sName,(bool)(mode&eContactMotion2));
-		sprintf(sName,"mode_motionN%s",sGroup); out->addBool(sName,(bool)(mode&eContactMotionN));
-		sprintf(sName,"mode_slip1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip1  ));
-		sprintf(sName,"mode_slip2%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip2  ));
+		sprintf(sName,"mode_mu2%s"      ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2      ));
+		sprintf(sName,"mode_fdir1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1    ));
+		sprintf(sName,"mode_bounce%s"   ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce   ));
+		sprintf(sName,"mode_softERP%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftERP  ));
+		sprintf(sName,"mode_softCFM%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftCFM  ));
+		sprintf(sName,"mode_motion1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion1  ));
+		sprintf(sName,"mode_motion2%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion2  ));
+		sprintf(sName,"mode_motionN%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotionN  ));
+		sprintf(sName,"mode_slip1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip1    ));
+		sprintf(sName,"mode_slip2%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip2    ));
+		sprintf(sName,"mode_approx1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactApprox1  ));
+		sprintf(sName,"mode_approx1_1%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_1));
+		sprintf(sName,"mode_approx1_2%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_2));
 
 		sprintf(sName,"mu%s"        ,sGroup); out->addFloat(sName,mu        );
 		sprintf(sName,"mu2%s"       ,sGroup); out->addFloat(sName,mu2       );
@@ -190,16 +217,19 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 	sprintf(sName,"useDefined%s",sGroup); m_bUseOther=in->getAttributeAsBool(sName);
 
 	if (!m_bUseOther || m_sName=="" || pOther==NULL || pOther==this) {
-		sprintf(sName,"mode_mu2%s"    ,sGroup); setModeMu2    (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_fdir1%s"  ,sGroup); setModeFDir1  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_bounce%s" ,sGroup); setModeBounce (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_softERP%s",sGroup); setModeSoftERP(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_softCFM%s",sGroup); setModeSoftCFM(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motion1%s",sGroup); setModeMotion1(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motion2%s",sGroup); setModeMotion2(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motionN%s",sGroup); setModeMotionN(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_slip1%s"  ,sGroup); setModeSlip1  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_slip2%s"  ,sGroup); setModeSlip2  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_mu2%s"      ,sGroup); setModeMu2      (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_fdir1%s"    ,sGroup); setModeFDir1    (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_bounce%s"   ,sGroup); setModeBounce   (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_softERP%s"  ,sGroup); setModeSoftERP  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_softCFM%s"  ,sGroup); setModeSoftCFM  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_motion1%s"  ,sGroup); setModeMotion1  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_motion2%s"  ,sGroup); setModeMotion2  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_motionN%s"  ,sGroup); setModeMotionN  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_slip1%s"    ,sGroup); setModeSlip1    (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_slip2%s"    ,sGroup); setModeSlip2    (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_approx1%s"  ,sGroup); setModeApprox1  (in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_approx1_1%s",sGroup); setModeApprox1_1(in->getAttributeAsBool(sName));
+		sprintf(sName,"mode_approx1_2%s",sGroup); setModeApprox1_2(in->getAttributeAsBool(sName));
 
 		sprintf(sName,"mu%s"        ,sGroup); mu        =in->getAttributeAsFloat(sName);
 		sprintf(sName,"mu2%s"       ,sGroup); mu2       =in->getAttributeAsFloat(sName);

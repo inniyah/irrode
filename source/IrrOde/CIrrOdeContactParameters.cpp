@@ -5,7 +5,14 @@ namespace irr {
 namespace ode {
 
 void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParameters *pParam1, CIrrOdeSurfaceParameters *pParam2, CIrrOdeSurfaceParameters *pParams) {
-  pParams->setMode     (pParam1->getMode()&pParam2->getMode()                );
+  s32 iMode=pParam1->getMode()&pParam2->getMode();
+
+  if (pParam1->getMode()&eContactApprox1 || pParam2->getMode()&eContactApprox1) pParams->setModeApprox1(true);
+  if (pParam1->getMode()&eContactApprox1_1 || pParam2->getMode()&eContactApprox1_1) pParams->setModeApprox1_1(true);
+  if (pParam1->getMode()&eContactApprox1_2 || pParam2->getMode()&eContactApprox1_2) pParams->setModeApprox1_2(true);
+
+  pParams->setMode(iMode);
+
   pParams->setMu       (sqrt(pParam1->getMu()       *pParam2->getMu()       ));
   pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      ));
   pParams->setBounce   (sqrt(pParam1->getBounce()   *pParam2->getBounce()   ));

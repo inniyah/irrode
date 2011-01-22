@@ -67,16 +67,19 @@ class CIrrOdeSurfaceParameters {
 		bool doesUseDefined();
 		void setUseDefined(bool b);
 
-    void setModeMu2(bool bIn);
-    void setModeFDir1(bool bIn);
-    void setModeBounce(bool bIn);
-    void setModeSoftERP(bool bIn);
-    void setModeSoftCFM(bool bIn);
-    void setModeMotion1(bool bIn);
-    void setModeMotion2(bool bIn);
-    void setModeMotionN(bool bIn);
-    void setModeSlip1(bool bIn);
-    void setModeSlip2(bool bIn);
+    void setModeMu2(bool bIn);        /**!< set the "mu2" contact flag */
+    void setModeFDir1(bool bIn);      /**!< set the "FDir1" contact flag */
+    void setModeBounce(bool bIn);     /**!< set the "bounce" contact flag */
+    void setModeSoftERP(bool bIn);    /**!< set the "SoftERP" contact flag */
+    void setModeSoftCFM(bool bIn);    /**!< set the "SoftCFM" contact flag */
+    void setModeMotion1(bool bIn);    /**!< set the "Motion1" contact flag */
+    void setModeMotion2(bool bIn);    /**!< set the "Motion2" contact flag */
+    void setModeMotionN(bool bIn);    /**!< set the "MotionN" contact flag */
+    void setModeSlip1(bool bIn);      /**!< set the "slip1" contact flag */
+    void setModeSlip2(bool bIn);      /**!< set the "slip2" contact flag */
+    void setModeApprox1_1(bool bIn);  /**!< set the "Approx1_1" contact flag */
+    void setModeApprox1_2(bool bIn);  /**!< set the "Aprrox1_2" contact flag */
+    void setModeApprox1(bool bIn);    /**!< set the "Approx1" contact flag */
 
     bool getModeMu2();
     bool getModeFDir1();
@@ -88,6 +91,9 @@ class CIrrOdeSurfaceParameters {
     bool getModeMotionN();
     bool getModeSlip1();
     bool getModeSlip2();
+    bool getModeApprox1_1();
+    bool getModeApprox1_2();
+    bool getModeApprox1();
 
     void copy(CIrrOdeSurfaceParameters *pParam);
 
