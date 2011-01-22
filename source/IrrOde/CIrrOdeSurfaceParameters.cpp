@@ -171,7 +171,6 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 		sprintf(sName,"mode_motionN%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotionN  ));
 		sprintf(sName,"mode_slip1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip1    ));
 		sprintf(sName,"mode_slip2%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip2    ));
-		sprintf(sName,"mode_approx1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactApprox1  ));
 		sprintf(sName,"mode_approx1_1%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_1));
 		sprintf(sName,"mode_approx1_2%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_2));
 
@@ -227,7 +226,6 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 		sprintf(sName,"mode_motionN%s"  ,sGroup); setModeMotionN  (in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_slip1%s"    ,sGroup); setModeSlip1    (in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_slip2%s"    ,sGroup); setModeSlip2    (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_approx1%s"  ,sGroup); setModeApprox1  (in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_approx1_1%s",sGroup); setModeApprox1_1(in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_approx1_2%s",sGroup); setModeApprox1_2(in->getAttributeAsBool(sName));
 

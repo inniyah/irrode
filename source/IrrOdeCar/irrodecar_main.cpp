@@ -262,19 +262,15 @@ int main(int argc, char** argv) {
   //load the scene
   CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
 
-  printf("==> %i\n",pSettings->getCountOf(0));
   irr::core::list<ISceneNode *> lCars;
   fillBodyList(lCars,smgr->getRootSceneNode(),"car",pSettings->getCountOf(0));
 
-  printf("==> %i\n",pSettings->getCountOf(1));
   irr::core::list<ISceneNode *> lPlanes;
   fillBodyList(lPlanes,smgr->getRootSceneNode(),"plane",pSettings->getCountOf(1));
 
-  printf("==> %i\n",pSettings->getCountOf(2));
   irr::core::list<ISceneNode *> lTanks;
   fillBodyList(lTanks,smgr->getRootSceneNode(),"tank",pSettings->getCountOf(2));
 
-  printf("==> %i\n",pSettings->getCountOf(3));
   irr::core::list<ISceneNode *> lHelis;
   fillBodyList(lHelis,smgr->getRootSceneNode(),"heli",pSettings->getCountOf(3));
 

@@ -75,7 +75,9 @@ class myReceiver : public IEventReceiver {
                  *m_pCbMotionN,
                  *m_pCbSlip1,
                  *m_pCbSlip2,
-                 *m_pCbDamps;
+                 *m_pCbDamps,
+                 *m_pApprox1_1,
+                 *m_pApprox1_2;
 
     IGUIStaticText *m_pStBounce,
                    *m_pStLinDamp,
@@ -122,17 +124,19 @@ class myReceiver : public IEventReceiver {
 
       CIrrOdeSurfaceParameters *p=*it;
 
-      m_pCbMu2    ->setChecked(p->getModeMu2    ());
-      //m_pCbFDir1  ->setChecked(p->getModeFDir1());
-      m_pCbBounce ->setChecked(p->getModeBounce ());
-      m_pCbSoftERP->setChecked(p->getModeSoftERP());
-      m_pCbSoftCfm->setChecked(p->getModeSoftCFM());
-      m_pCbMotion1->setChecked(p->getModeMotion1());
-      m_pCbMotion2->setChecked(p->getModeMotion2());
-      m_pCbMotionN->setChecked(p->getModeMotionN());
-      m_pCbSlip1  ->setChecked(p->getModeSlip1  ());
-      m_pCbSlip2  ->setChecked(p->getModeSlip2  ());
-      m_pCbDamps  ->setChecked(p->dampsObjects  ());
+      m_pCbMu2    ->setChecked(p->getModeMu2      ());
+      //m_pCbFDir1  ->setChecked(p->getModeFDir1  ());
+      m_pCbBounce ->setChecked(p->getModeBounce   ());
+      m_pCbSoftERP->setChecked(p->getModeSoftERP  ());
+      m_pCbSoftCfm->setChecked(p->getModeSoftCFM  ());
+      m_pCbMotion1->setChecked(p->getModeMotion1  ());
+      m_pCbMotion2->setChecked(p->getModeMotion2  ());
+      m_pCbMotionN->setChecked(p->getModeMotionN  ());
+      m_pCbSlip1  ->setChecked(p->getModeSlip1    ());
+      m_pCbSlip2  ->setChecked(p->getModeSlip2    ());
+      m_pCbDamps  ->setChecked(p->dampsObjects    ());
+      m_pApprox1_1->setChecked(p->getModeApprox1_1());
+      m_pApprox1_2->setChecked(p->getModeApprox1_2());
 
       wchar_t ws[0xFF];
 
@@ -370,7 +374,7 @@ class myReceiver : public IEventReceiver {
       m_pEdMotion2  =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdMotion2  ); pos+=dist;
       m_pEdMotionN  =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdMotionN  ); pos+=dist;
       m_pEdSlip1    =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdSlip1    ); pos+=dist;
-      m_pEdSlip2    =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdSlip2    ); pos+=dist; pos+=dist;
+      m_pEdSlip2    =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdSlip2    ); pos+=dist; pos+=dist; pos+=dist; pos+=dist;
       m_pEdLinDamp  =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdLinDamp  ); pos+=dist;
       m_pEdAngDamp  =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eEdAngDamp  ); pos+=dist;
       m_pEdVMaxLin  =m_pGuienv->addEditBox(L"",rect<s32>(pos,dim),true,NULL,eVMaxLin    );
@@ -396,6 +400,8 @@ class myReceiver : public IEventReceiver {
       m_pCbMotionN=m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
       m_pCbSlip1  =m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
       m_pCbSlip2  =m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
+      m_pApprox1_1=m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
+      m_pApprox1_2=m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
       m_pCbDamps  =m_pGuienv->addCheckBox(true,rect<s32>(pos,cb)); pos+=dist;
 
       pos=position2di(150,10);
@@ -415,6 +421,8 @@ class myReceiver : public IEventReceiver {
       t=m_pGuienv->addStaticText(L"MotionN:  "     ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
       t=m_pGuienv->addStaticText(L"Slip1:  "       ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
       t=m_pGuienv->addStaticText(L"Slip2:  "       ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
+      t=m_pGuienv->addStaticText(L"Approx1_1:  "   ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
+      t=m_pGuienv->addStaticText(L"Approx1_2:  "   ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
       t=m_pGuienv->addStaticText(L"Damps:  "       ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
       t=m_pGuienv->addStaticText(L"Damp Linear: "  ,rect<s32>(pos,dim)); t->setDrawBackground(true); t->setTextAlignment(EGUIA_LOWERRIGHT,EGUIA_CENTER); pos+=dist;
       m_pStLinDamp=t;
@@ -457,6 +465,8 @@ class myReceiver : public IEventReceiver {
           if (event.GUIEvent.Caller==m_pCbMotionN) { m_pActive->setModeMotionN(b); m_pEdMotionN->setVisible(b); bRet=true; }
           if (event.GUIEvent.Caller==m_pCbSlip1  ) { m_pActive->setModeSlip1  (b); m_pEdSlip1  ->setVisible(b); bRet=true; }
           if (event.GUIEvent.Caller==m_pCbSlip2  ) { m_pActive->setModeSlip2  (b); m_pEdSlip2  ->setVisible(b); bRet=true; }
+          if (event.GUIEvent.Caller==m_pApprox1_1) { m_pActive->setModeApprox1_1(b); }
+          if (event.GUIEvent.Caller==m_pApprox1_2) { m_pActive->setModeApprox1_2(b); }
           if (event.GUIEvent.Caller==m_pCbDamps  ) {
             m_pActive->setDampsObjects(b);
             m_pEdAngDamp   ->setVisible(b);
