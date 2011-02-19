@@ -54,6 +54,7 @@ void CIrrOdeGeomBox::OnRegisterSceneNode() {
 }
 
 void CIrrOdeGeomBox::initPhysics() {
+  printf("box init physics: %s\n",m_bPhysicsInitialized?"YES":"NO");
   if (m_bPhysicsInitialized) return;
 
   getParent()->updateAbsolutePosition();
@@ -227,6 +228,8 @@ void CIrrOdeGeomBox::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
 }
 
 ISceneNode *CIrrOdeGeomBox::clone(ISceneNode* newParent, ISceneManager* newManager) {
+  printf("clone box - %i - %i\n",(int)newParent,(int)newManager);
+
   if (newManager==NULL) newManager=m_pSceneManager;
   if (newParent==NULL) newParent=getParent();
 

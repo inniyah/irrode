@@ -24,7 +24,11 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pOdeDevice=m_pOdeManager->getOdeDevice();
 
   CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
+  if (pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+    printf("add node to world!\n");
+    m_pOdeManager->addOdeSceneNode(this);
+  }
+  else printf("no world!\n");
 
   m_iIdent=-1;
   m_pUserData=NULL;

@@ -124,6 +124,7 @@ void CSettings::createGUI() {
   p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"pillars"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
   p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"car ramps"      ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[6]);
   p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"trimesh terrain",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[7]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[8]);
 
 
   //add the "OK" and "Cancel" buttons

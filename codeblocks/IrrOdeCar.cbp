@@ -89,6 +89,7 @@
 		<Unit filename="..\include\IrrOdeCar\CPlane.h" />
 		<Unit filename="..\include\IrrOdeCar\CProgressBar.h" />
 		<Unit filename="..\include\IrrOdeCar\CProjectile.h" />
+		<Unit filename="..\include\IrrOdeCar\CRandomForestNode.h" />
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
@@ -103,6 +104,7 @@
 		<Unit filename="..\source\IrrOdeCar\CPlane.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CProgressBar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CProjectile.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CRandomForestNode.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />

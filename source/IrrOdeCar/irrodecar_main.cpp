@@ -14,6 +14,7 @@
   #include "CProgressBar.h"
   #include "irrCC.h"
   #include "CCustomEventReceiver.h"
+  #include <CRandomForestNode.h>
 
 using namespace irr;
 
@@ -252,6 +253,9 @@ int main(int argc, char** argv) {
   CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
+  CRandomForestFactory fFactory(smgr);
+  smgr->registerSceneNodeFactory(&fFactory);
+
   CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(smgr);
   smgr->registerSceneNodeFactory(cParticleFactory);
   cParticleFactory->drop();
@@ -291,6 +295,7 @@ int main(int argc, char** argv) {
     printf("removing terrain heightfield...\n");
     removeFromScene("terrain_heightfield",smgr);
   }
+  if (!pSettings->isActive((8))) removeFromScene("forests",smgr);
 
   delete pSettings;
 
