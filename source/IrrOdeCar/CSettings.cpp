@@ -214,7 +214,7 @@ CSettings::~CSettings() {
     pXml->writeElement(L"fullscreen",true,aFlsN,aFlsV); pXml->writeLineBreak();
     pXml->writeElement(L"driver"    ,true,aDrvN,aDrvV); pXml->writeLineBreak();
 
-    for (u32 i=0; i<8; i++) {
+    for (u32 i=0; i<9; i++) {
       wchar_t s[0xFF];
       swprintf(s,0xFE,L"%i",i);
       pXml->writeElement(L"active",true,L"num",s,L"active",m_aAct[i]?L"1":L"0");
