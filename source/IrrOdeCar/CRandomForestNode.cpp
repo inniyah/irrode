@@ -2,6 +2,7 @@
   #ifdef _IRREDIT_PLUGIN
     #define _USE_MATH_DEFINES
     #include <cmath>
+    #include <windows.h>
   #endif
 
 void CRandomForest::CRandom::init(unsigned long s) {
@@ -146,7 +147,7 @@ bool CRandomForest::RectInsidePolygon(irr::core::array<irr::core::position2di> p
 CRandomForest::CRandomForest(irr::scene::ISceneNode *pParent,irr::scene::ISceneManager *pSmgr,irr::s32 iId,
             const irr::core::vector3df &cPos, const irr::core::vector3df &cRot, const irr::core::vector3df &cScale)
             : irr::scene::ISceneNode(pParent!=NULL?pParent:pSmgr->getRootSceneNode(),pSmgr,
-                                                 iId,cPos,cRot,cScale) {
+                                                 iId,cPos,cRot,cScale), m_cBox() {
   m_pDriver=pSmgr->getVideoDriver();
   m_pSmgr=pSmgr;
   m_iStepsizeX=16;
@@ -171,6 +172,18 @@ CRandomForest::CRandomForest(irr::scene::ISceneNode *pParent,irr::scene::ISceneM
 
   m_fResize=0.0f;
   m_bSerializeTrees=false;
+  #ifdef _IRREDIT_PLUGIN
+    c8 sResources[1024];
+  	GetModuleFileName(NULL,sResources,1024);
+	  if (strstr(sResources,"irrEdit.exe")) *strstr(sResources,"irrEdit.exe")='\0';
+  	strcat(sResources,"resources\\");
+	  c8 sFileName[1024],sTexture[1024];
+	  sprintf(sFileName,"%spole.obj",sResources);
+    sprintf(sTexture,"%spole.jpg",sResources);
+    m_pMesh=m_pSmgr->getMesh(sFileName);
+    m_cMat.setTexture(0,m_pDriver->getTexture(sTexture));
+    this->setAutomaticCulling(scene::EAC_OFF);
+  #endif
 }
 
 CRandomForest::~CRandomForest() {
@@ -192,8 +205,8 @@ void CRandomForest::setThreshold(irr::u32 i) {
 
 void CRandomForest::addToPolygon(irr::core::position2di newVert) {
   m_aPoly.push_back(newVert);
-  m_cBox.addInternalPoint(irr::core::vector3df(newVert.X,0.0f,newVert.Y));
-  clearForest();
+  irr::f32 f=m_pTerrain!=NULL?m_pTerrain->getHeight(newVert.X,newVert.Y):0.0f;
+  m_cBox.addInternalPoint(irr::core::vector3df(newVert.X,f,newVert.Y)+getAbsolutePosition());
 }
 
 void CRandomForest::clearForest() {
@@ -225,17 +238,12 @@ void CRandomForest::createForest() {
     if (m_aPoly[i].Y<cMin.Y) cMin.Y=m_aPoly[i].Y;
   }
 
-  m_aColors.push_back(irr::video::SColor(255,255,255,  0));
-  m_aColors.push_back(irr::video::SColor(255,255,  0,  0));
-  m_aColors.push_back(irr::video::SColor(255,  0,255,255));
-  m_aColors.push_back(irr::video::SColor(255,  0,  0,255));
-
   for (irr::s32 y=cMin.Y; y<cMax.Y; y+=m_iStepsizeY)
     for (irr::s32 x=cMin.X; x<cMax.X; x+=m_iStepsizeX) {
       irr::core::rect<irr::s32> cRect(x,y,x+m_iStepsizeX,y+m_iStepsizeY);
       if (RectInsidePolygon(m_aPoly,cRect)) {
         irr::f32 fFact=m_fResize*((irr::f32)(rand.next()%2000)-1000)/1000.0f,fSize=1.0f+fFact;
-        CCheckRect *r=new CCheckRect(cRect,m_aColors[rand.next()%m_aColors.size()],false,fSize);
+        CCheckRect *r=new CCheckRect(cRect,fSize);
         irr::u32 iRand=rand.next()%1000;
         r->m_bTree=iRand>m_iThreshold;
         r->m_iIndex=rand.next()%m_aTrees.size();
@@ -289,7 +297,7 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
   for (irr::u32 i=0; i<count; i++) {
     irr::c8 s[0xFF];
     sprintf(s,"seed_%i",i);
-    if (in->existsAttribute(s))
+    if (in->existsAttribute(s)) 
       m_aSeed.push_back(in->getAttributeAsInt(s));
     else
       m_aSeed.push_back(0);
@@ -303,13 +311,20 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
     sprintf(s,"poly_%i",i);
     if (in->existsAttribute(s)) {
       irr::core::vector3df v=in->getAttributeAsVector3d(s);
-      m_aPoly.push_back(irr::core::position2di(v.X,v.Y));
+      this->addToPolygon(core::position2di(v.X,v.Z));
     }
     else m_aPoly.push_back(irr::core::position2di(0.0f,0.0f));
+
+    if (i==0) {
+      m_cBox.reset(core::vector3df(m_aPoly[m_aPoly.size()-1].X,0.0f,m_aPoly[m_aPoly.size()-1].Y)+getAbsolutePosition());
+    }
   }
 
   if (in->getAttributeAsBool("generate_trees") || m_lTrees.getSize()==0) plantTrees();
   m_bSerializeTrees=in->getAttributeAsBool("serialize_trees");
+  #ifdef _IRREDIT_PLUGIN
+    this->setAutomaticCulling(scene::EAC_OFF);
+  #endif
 }
 
 void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAttributeReadWriteOptions *options) const {
@@ -319,6 +334,7 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
   out->addInt("trees",m_aTrees.size());
   out->addString("terrain",m_sTerrain.c_str());
   out->addString("parent_node",m_sParentName.c_str());
+  out->addInt("generated_trees",m_lTrees.getSize());
 
   out->addInt("stepsize_x",m_iStepsizeX);
   out->addInt("stepsize_y",m_iStepsizeY);
@@ -338,8 +354,8 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
   for (irr::u32 i=0; i<m_aPoly.size(); i++) {
     irr::c8 s[0xFF];
     sprintf(s,"poly_%i",i);
-    out->addVector3d(s,irr::core::vector3df(m_aPoly[i].X,m_aPoly[i].Y,0.0f));
-    //out->addPosition2d(s,m_aPoly[i]);
+    core::position2di p=m_aPoly[i];
+    out->addVector3d(s,irr::core::vector3df(p.X,0.0f,p.Y));
   }
 
   out->addBool("generate_trees",false);
@@ -348,6 +364,31 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
 
 void CRandomForest::render() {
   #ifdef _IRREDIT_PLUGIN
+    core::list<scene::ISceneNode *> lChild=getChildren();
+    core::list<scene::ISceneNode *>::Iterator it;
+
+    for (it=lChild.begin(); it!=lChild.end(); it++) (*it)->render();
+    if (m_pMesh && m_pMesh->getMesh(0) && m_pMesh->getMesh(0)->getMeshBuffer(0)) {
+      for (irr::u32 i=0; i<m_aPoly.size(); i++) {
+
+        irr::core::position2di p=m_aPoly[i];
+
+        irr::f32 y=0.0f;
+        irr::core::vector3df vPos=getPosition();
+
+        if (m_pTerrain) {
+          y=m_pTerrain->getHeight(p.X+vPos.X,p.Y+vPos.Z);
+        }
+
+        irr::core::matrix4 tmpMatrix;
+        tmpMatrix.setTranslation(AbsoluteTransformation.getTranslation()+irr::core::vector3df(p.X,y+vPos.Y,p.Y));
+        tmpMatrix.setScale(irr::core::vector3df(25.0f,30.0f,25.0f));
+        m_pDriver->setMaterial(m_cMat);
+        m_pDriver->setTransform(video::ETS_WORLD,tmpMatrix);
+        m_pDriver->drawMeshBuffer(m_pMesh->getMesh(0)->getMeshBuffer(0));
+      }
+    }
+
     if (m_aPoly.size()<3) return;
 
     m_pDriver->setMaterial(m_cMat);
@@ -367,20 +408,13 @@ void CRandomForest::render() {
         y2=m_pTerrain->getHeight(p2.X+vPos.X,p2.Y+vPos.Z);
       }
 
-      irr::core::vector3df v1=irr::core::vector3df(p1.X,y1-30.0f,p1.Y)+getPosition(),
-                           v2=irr::core::vector3df(p1.X,y1+30.0f,p1.Y)+getPosition(),
-                           v3=irr::core::vector3df(p2.X,y2-30.0f,p2.Y)+getPosition(),
-                           v4=irr::core::vector3df(p2.X,y2+30.0f,p2.Y)+getPosition();
+      y1+=25.0f;
+      y2+=25.0f;
 
-      irr::core::triangle3df tri1=irr::core::triangle3df(v1,v2,v3),
-                             tri2=irr::core::triangle3df(v4,v3,v2),
-                             tri3=irr::core::triangle3df(v3,v2,v1),
-                             tri4=irr::core::triangle3df(v2,v3,v4);
-
-      m_pDriver->draw3DTriangle(tri1,irr::video::SColor(64,255,0,0));
-      m_pDriver->draw3DTriangle(tri2,irr::video::SColor(64,255,0,0));
-      m_pDriver->draw3DTriangle(tri3,irr::video::SColor(64,255,0,0));
-      m_pDriver->draw3DTriangle(tri4,irr::video::SColor(64,255,0,0));
+      irr::core::vector3df v1=irr::core::vector3df(p1.X,y1,p1.Y)+getPosition(),
+                           v2=irr::core::vector3df(p2.X,y2,p2.Y)+getPosition();
+      
+      m_pDriver->draw3DLine(v1,v2,video::SColor(0xFF,0xFF,0,0));
     }
   #endif
 }
@@ -395,7 +429,7 @@ void CRandomForest::setTemplateNodeName(const irr::c8 *sTemplate) {
     irr::core::list<irr::scene::ISceneNode *> children=m_pTemplate->getChildren();
     irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
-    for (it=children.begin(); it!=children.end(); it++)
+    for (it=children.begin(); it!=children.end(); it++) 
        m_aTrees.push_back(*it);
   }
   else printf("template==NULL!\n");
@@ -433,9 +467,15 @@ void CRandomForest::plantTrees() {
       irr::core::vector3df vPos=irr::core::vector3df(x,y,z);
 
       irr::u32 idx=m_aRects[i]->m_iIndex;
-      irr::scene::ISceneNode *clone=m_aTrees[idx]->clone(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
+      irr::scene::ISceneNode *clone=NULL;
+      
+      #ifdef _IRREDIT_PLUGIN
+        clone=m_aTrees[idx]->clone();
+        clone->setParent(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
+      #else
+        clone=m_aTrees[idx]->clone(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
+      #endif
       clone->setIsDebugObject(!m_bSerializeTrees);
-
       clone->setScale(m_aRects[i]->m_fResize*clone->getScale());
       clone->setPosition(vPos);
       m_lTrees.push_back(clone);

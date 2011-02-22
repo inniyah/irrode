@@ -11,17 +11,15 @@ class CRandomForest : public irr::scene::ISceneNode {
   protected:
     class CCheckRect {
       public:
-        irr::video::SColor m_cColor;
         irr::core::rect<irr::s32> m_cRect;
         irr::core::position2df m_cOffset;
         irr::u32 m_iIndex;
         irr::f32 m_fResize;
         bool m_bTree;
 
-        CCheckRect(irr::core::rect<irr::s32> cRect, irr::video::SColor cColor, bool bTree, irr::f32 fResize) {
-          m_cColor=cColor;
+        CCheckRect(irr::core::rect<irr::s32> cRect, irr::f32 fResize) {
           m_cRect=cRect;
-          m_bTree=bTree;
+          m_bTree=false;
           m_fResize=fResize;
           m_cOffset=irr::core::position2df(0.0f,0.0f);
         }
@@ -54,6 +52,10 @@ class CRandomForest : public irr::scene::ISceneNode {
     irr::f32 m_fResize;
 
     bool m_bSerializeTrees;
+
+    #ifdef _IRREDIT_PLUGIN
+      irr::scene::IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit */
+    #endif
 
     /**
      * @class CRandom
