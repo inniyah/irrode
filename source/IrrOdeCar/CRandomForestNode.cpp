@@ -475,6 +475,10 @@ void CRandomForest::plantTrees() {
       #else
         clone=m_aTrees[idx]->clone(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
       #endif
+      irr::scene::IAnimatedMeshSceneNode *pAnimClone=(irr::scene::IAnimatedMeshSceneNode *)clone;
+
+      irr::scene::IMesh *pMesh=pAnimClone->getMesh();
+      pMesh->setHardwareMappingHint(irr::scene::EHM_STATIC);
       clone->setIsDebugObject(!m_bSerializeTrees);
       clone->setScale(m_aRects[i]->m_fResize*clone->getScale());
       clone->setPosition(vPos);

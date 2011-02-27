@@ -266,6 +266,13 @@ int main(int argc, char** argv) {
   //load the scene
   CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
 
+  for (irr::u32 i=0; i<smgr->getMeshCache()->getMeshCount(); i++) {
+    irr::scene::IAnimatedMesh *p=smgr->getMeshCache()->getMeshByIndex(i);
+    for (irr::u32 j=0; j<p->getMeshBufferCount(); j++) {
+      p->getMeshBuffer(j)->setHardwareMappingHint(irr::scene::EHM_STATIC);
+    }
+  }
+
   irr::core::list<ISceneNode *> lCars;
   fillBodyList(lCars,smgr->getRootSceneNode(),"car",pSettings->getCountOf(0));
 
