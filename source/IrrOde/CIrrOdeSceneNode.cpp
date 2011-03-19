@@ -25,7 +25,6 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
   if (pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
-    printf("add node to world!\n");
     m_pOdeManager->addOdeSceneNode(this);
   }
   else printf("no world!\n");

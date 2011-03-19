@@ -54,7 +54,6 @@ void CIrrOdeGeomBox::OnRegisterSceneNode() {
 }
 
 void CIrrOdeGeomBox::initPhysics() {
-  printf("box init physics: %s\n",m_bPhysicsInitialized?"YES":"NO");
   if (m_bPhysicsInitialized) return;
 
   getParent()->updateAbsolutePosition();
