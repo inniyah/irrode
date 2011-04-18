@@ -34,8 +34,13 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   #ifdef _IRREDIT_PLUGIN
     m_bDrawEditorMesh=true;
   	GetModuleFileName(NULL,m_sResources,1024);
-	  if (strstr(m_sResources,"irrEdit.exe")) *strstr(m_sResources,"irrEdit.exe")='\0';
-  	strcat(m_sResources,"resources\\");
+	  if (strstr(m_sResources,"irrEdit.exe")) 
+      *strstr(m_sResources,"irrEdit.exe")='\0';
+    else
+      if (strrchr(m_sResources,'\\'))
+        *strrchr(m_sResources,'\\')='\0';
+
+  	strcat(m_sResources,"\\resources\\");
 	  c8 sFileName[1024];
 	  sprintf(sFileName,"%sIrrOde.3ds",m_sResources);
     m_pMesh=mgr->getMesh(sFileName);

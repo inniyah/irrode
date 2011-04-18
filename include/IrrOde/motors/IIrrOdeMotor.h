@@ -15,7 +15,7 @@ class IIrrOdeMotor : public CIrrOdeSceneNode {
 		             const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f)) :
 		             CIrrOdeSceneNode(parent,mgr,id,position,rotation,scale) {
       CIrrOdeBody *pBody=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
-      pBody->addMotor(this);
+      if (pBody!=NULL) pBody->addMotor(this);
     }
 };
 

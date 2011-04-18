@@ -939,8 +939,6 @@ void CIrrOdeBody::addStepMotor(IIrrOdeStepMotor *pMotor) {
 }
 
 void CIrrOdeBody::addMotor(IIrrOdeMotor *p) {
-  list<IIrrOdeMotor *>::Iterator it;
-  for (it=m_lMotors.begin(); it!=m_lMotors.end(); it++) if (*it==p) return;
   printf("motor added (\"%s\" / %i)\n",p->getName(),p->getID());
   m_lMotors.push_back(p);
 }
