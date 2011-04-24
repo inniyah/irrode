@@ -14,6 +14,9 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pPlaneBody!=NULL) {
+    m_bThreeWheeler=!strcmp(m_pPlaneBody->getName(),"plane2") || !strcmp(m_pPlaneBody->getName(),"plane4");
+    printf("==> %s (%s)\n",m_pPlaneBody->getName(),m_bThreeWheeler?"YES":"NO");
+
     CCustomEventReceiver::getSharedInstance()->addPlane(m_pPlaneBody);
     //get the terrain
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
@@ -200,7 +203,11 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setRoll (fRoll );
       m_pTorque->setYaw  (fYaw  );
 
-      m_pSteer->setServoPos(-10.0f*fYaw);
+      printf("%s\n",m_bThreeWheeler?"YES":"NO");
+      if (m_bThreeWheeler)
+        m_pSteer->setServoPos(-10.0f*fYaw);
+      else
+        m_pSteer->setServoPos(10.0f*fYaw);
 
       if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
         CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll);

@@ -25,7 +25,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
         m_fForewardDamp,  /*!< This is the foreward damping applied */
         m_fSidewardDamp,  /*!< The sideward damping applied */
         m_fUpwardDamp,    /*!< The damping applied from the angle of attack */
-        m_fForewardVel;   /*!< This is the calculated foreward velocity. This value can't be set but queried */
+        m_fForewardVel,   /*!< This is the calculated foreward velocity. This value can't be set but queried */
+        m_fPitchTrim,     /*!< pitch trim */
+        m_fPitchTrimPwr;  /*!< pitch trim power */
 
   public:
     CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
@@ -52,6 +54,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
     void setUpwardDamp(f32 f) { m_fUpwardDamp=f; }
     void setUpFactor(f32 f) { m_fUpFactor=f; }
 
+    void setPitchTrim(f32 f) { m_fPitchTrim=f; }
+    void setPitchTrimPower(f32 f) { m_fPitchTrimPwr=f; }
+
     f32 getStallSpeed() { return m_fStallSpeed; }
     f32 getMaxUpSpeed() { return m_fMaxUpSpeed; }
     f32 getForewardDamp() { return m_fForewardDamp; }
@@ -59,6 +64,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
     f32 getUpwardDamp() { return m_fUpwardDamp; }
     f32 getForewardVel() { return m_fForewardVel; }
     f32 getUpFactor() { return m_fUpFactor; }
+
+    f32 getPitchTrim() { return m_fPitchTrim; }
+    f32 getPitchTrimPower() { return m_fPitchTrimPwr; }
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);

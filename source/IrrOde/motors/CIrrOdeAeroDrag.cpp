@@ -18,6 +18,8 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_fUpwardDamp  =0.0f;
   m_fForewardVel =0.0f;
   m_fUpFactor    =1.0f;
+  m_fPitchTrim   =0.1f;
+  m_fPitchTrimPwr=0.15f;
 
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -39,6 +41,18 @@ void CIrrOdeAeroDrag::step() {
 
     vector3df vForeward=vRot.rotationToDirection(m_vForeward);
     f32 fForeward=vForeward.dotProduct(vNormVel.normalize());
+
+    if (m_fPitchTrimPwr!=0.0f) {
+      f32 v=vUp.dotProduct(vNormVel);
+      v-=m_fPitchTrim;
+      if (v>=0.001f || v<=-0.001f) {
+        v*=vVel.getLength();
+        if (v>= 10.0f) v= 10.0f;
+        if (v<=-10.0f) v=-10.0f;
+        v*=m_fPitchTrimPwr;
+        m_pBody->addForceAtPosition(m_pBody->getPosition()-vForeward,-vUp*v);
+      }
+    }
 
     m_fForewardVel=fForeward*vVel.getLength();
     if (m_fForewardVel<0.0f) return;
@@ -125,6 +139,9 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
   out->addFloat("foreward_damp",m_fForewardDamp);
   out->addFloat("sideward_damp",m_fSidewardDamp);
   out->addFloat("upward_damp"  ,m_fUpwardDamp  );
+
+  out->addFloat("pitch_trim",m_fPitchTrim);
+  if (m_fPitchTrim!=0.0f) out->addFloat("pitch_trim_pwr",m_fPitchTrimPwr);
 }
 
 void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
@@ -139,6 +156,9 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
   m_fSidewardDamp=in->getAttributeAsFloat("sideward_damp");
   m_fUpwardDamp  =in->getAttributeAsFloat("upward_damp"  );
   m_fUpFactor    =in->getAttributeAsFloat("up_factor"    );
+
+  m_fPitchTrim=in->getAttributeAsFloat("pitch_trim");
+  if (m_fPitchTrim!=0.0f) m_fPitchTrimPwr=in->getAttributeAsFloat("pitch_trim_pwr");
 }
 
 ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
