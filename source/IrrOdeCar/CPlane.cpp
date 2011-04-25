@@ -203,14 +203,13 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setRoll (fRoll );
       m_pTorque->setYaw  (fYaw  );
 
-      printf("%s\n",m_bThreeWheeler?"YES":"NO");
       if (m_bThreeWheeler)
         m_pSteer->setServoPos(-10.0f*fYaw);
       else
         m_pSteer->setServoPos(10.0f*fYaw);
 
       if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
-        CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll);
+        CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll,m_bThreeWheeler);
         ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
         m_fYaw=fYaw;
         m_fRoll=fRoll;

@@ -153,13 +153,15 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         SPlaneNodes *nodes=*it;
         u32 i;
         f32 fYaw=p->getYaw(),fPitch=p->getPitch(),fRoll=p->getRoll();
+        bool tw=p->isThreeWheeler();
+
         for(i=0; i<nodes->aRoll.size(); i++)
           nodes->aRoll[i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
 
         for(i=0; i<nodes->aPitch.size(); i++)
           nodes->aPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
 
-        if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0, 10.0f*fYaw, 0));
+        if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0,tw?10.0f*fYaw:-10.0f*fYaw, 0));
         if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
 
         return true;

@@ -14,10 +14,11 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     irr::s8 m_iYaw,
             m_iRoll,
             m_iPitch;
+    bool m_bThreeWheeler;
 
   public:
     CEventRudderPositions();
-    CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll);
+    CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, bool bThreeWheeler);
     CEventRudderPositions(irr::ode::CSerializer *pData);
 
     virtual ~CEventRudderPositions() { }
@@ -33,6 +34,8 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     irr::f32 getRoll() { return ((irr::f32)m_iRoll)/100.0f; }
 
     irr::s32 getNodeId() { return m_iNodeId; }
+
+    bool isThreeWheeler() { return m_bThreeWheeler; }
 };
 
 class CEventTankState : public irr::ode::IIrrOdeEvent {

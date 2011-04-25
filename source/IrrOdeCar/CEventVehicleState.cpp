@@ -8,12 +8,13 @@ CEventRudderPositions::CEventRudderPositions() {
   m_iRoll=0;
 }
 
-CEventRudderPositions::CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll) {
+CEventRudderPositions::CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, bool bThreeWheeler) {
   m_iNodeId=iId;
   m_pSerializer=NULL;
   m_iYaw=(irr::u8)(fYaw*100.0f);
   m_iPitch=(irr::u8)(fPitch*100.0f);
   m_iRoll=(irr::u8)(fRoll*100.0f);
+  m_bThreeWheeler=bThreeWheeler;
 }
 
 CEventRudderPositions::CEventRudderPositions(irr::ode::CSerializer *pData) {
@@ -24,6 +25,7 @@ CEventRudderPositions::CEventRudderPositions(irr::ode::CSerializer *pData) {
     m_iYaw=pData->getS8();
     m_iPitch=pData->getS8();
     m_iRoll=pData->getS8();
+    m_bThreeWheeler=pData->getU8();
   }
 }
 
@@ -35,6 +37,7 @@ irr::ode::CSerializer *CEventRudderPositions::serialize() {
     m_pSerializer->addS8(m_iYaw);
     m_pSerializer->addS8(m_iPitch);
     m_pSerializer->addS8(m_iRoll);
+    m_pSerializer->addU8(m_bThreeWheeler?1:0);
   }
   return m_pSerializer;
 }
@@ -45,7 +48,7 @@ const irr::c8 *CEventRudderPositions::toString() {
 }
 
 irr::ode::IIrrOdeEvent *CEventRudderPositions::clone() {
-  return new CEventRudderPositions(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f);
+  return new CEventRudderPositions(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f,m_bThreeWheeler);
 }
 
 CEventTankState::CEventTankState() {
