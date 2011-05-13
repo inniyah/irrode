@@ -508,7 +508,7 @@ void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld) {
 }
 
 void CIrrOdeDevice::quickStep(f32 fTime, CIrrOdeWorld *pWorld) {
-  m_fStepSize+=fTime;
+  m_fStepTime+=fTime;
   while (m_fStepTime>0.0f) {
     pWorld->resetCollisionAttributes();
     CIrrOdeEventBeforeStep *pBeforeStepEvent=new CIrrOdeEventBeforeStep();

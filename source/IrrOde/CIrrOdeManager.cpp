@@ -155,7 +155,7 @@ void CIrrOdeManager::quickStep() {
   f32 fStep=((f32)(thisStep-m_iLastStep))/1000;
   m_iFrameNo++;
 
-    list<CIrrOdeWorld *>::Iterator it;
+  list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->quickStep(fStep);
 
   m_iLastStep=thisStep;
