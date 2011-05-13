@@ -282,6 +282,12 @@ class IIrrOdeDevice {
     virtual void geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode)=0;
     virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer)=0;
 
+    virtual void geomSetCategoryBits(u32 iGeom, u32 iBits)=0;
+    virtual void geomSetCollisionBits(u32 iGeom, u32 iBits)=0;
+
+    virtual u32 geomGetCategoryBits(u32 iGeom)=0;
+    virtual u32 geomGetCollisionBits(u32 iGeom)=0;
+
     virtual u32 massCreate()=0;
     virtual void massAdd(u32 iDst, u32 iSrc)=0;
     virtual void massSetZero(u32 iMass)=0;

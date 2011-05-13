@@ -305,6 +305,12 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual void geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode);
     virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer);
 
+    virtual void geomSetCategoryBits(u32 iGeom, u32 iBits);
+    virtual void geomSetCollisionBits(u32 iGeom, u32 iBits);
+
+    virtual u32 geomGetCategoryBits(u32 iGeom);
+    virtual u32 geomGetCollisionBits(u32 iGeom);
+
     virtual u32 massCreate();
     virtual void massAdd(u32 iDst, u32 iSrc);
     virtual void massSetZero(u32 iMass);

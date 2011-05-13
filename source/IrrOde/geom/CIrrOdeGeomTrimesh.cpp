@@ -125,6 +125,8 @@ void CIrrOdeGeomTrimesh::initPhysics() {
       u32 iData=m_pOdeDevice->geomTrimeshDataCreate();
       m_pOdeDevice->geomTrimeshDataBuildFromMeshBuffer(iData,pNode,i);
       u32 iGeom=m_pOdeDevice->geomCreateTrimesh(m_pSpace->getSpaceId(),iData);
+      //m_pOdeDevice->geomSetCategoryBits(iGeom,1);
+      m_pOdeDevice->geomSetCollisionBits(iGeom,0);
 
       #ifdef _TRACE_INIT_PHYSICS
         printf("create trimesh for material #%i (%i)\n",i,iGeom);

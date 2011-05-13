@@ -1559,6 +1559,22 @@ void CIrrOdeDevice::geomHeightfieldDataCallback(u32 iHFData, void *pData, void *
   dGeomHeightfieldDataBuildCallback(GETHFDATA(iHFData),pData,(dHeightfieldGetHeight *)pCallback,fWidth,fDepth,iWidthSamples,iDepthSamples,fScale,fOffset,fThickness,bWrap);
 }
 
+void CIrrOdeDevice::geomSetCategoryBits(u32 iGeom, u32 iBits) {
+  dGeomSetCategoryBits(GETGEOM(iGeom),iBits);
+}
+
+void CIrrOdeDevice::geomSetCollisionBits(u32 iGeom, u32 iBits) {
+  dGeomSetCollideBits(GETGEOM(iGeom),iBits);
+}
+
+u32 CIrrOdeDevice::geomGetCategoryBits(u32 iGeom) {
+  return dGeomGetCollideBits(GETGEOM(iGeom));
+}
+
+u32 CIrrOdeDevice::geomGetCollisionBits(u32 iGeom) {
+  return dGeomGetCategoryBits(GETGEOM(iGeom));
+}
+
 u32 CIrrOdeDevice::massCreate() {
   u32 iRet;
   COdeDataWrapper *wrap=new COdeDataWrapper();

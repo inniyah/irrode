@@ -228,6 +228,12 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void geomHeightfieldSetBounds(u32 iHFData, f32 fMinHeight, f32 fMaxHeight) { }
     virtual void geomHeightfieldDataCallback(u32 iHFData, void *pData, void *pCallback, f32 fWidth, f32 fDepth, s32 iWidthSamples, s32 iDepthSamples, f32 fScale, f32 fOffset, f32 fThickness, s32 bWrap) { }
 
+    virtual void geomSetCategoryBits(u32 iGeom, u32 iBits) { }
+    virtual void geomSetCollisionBits(u32 iGeom, u32 iBits) { }
+
+    virtual u32 geomGetCategoryBits(u32 iGeom) { return 0; }
+    virtual u32 geomGetCollisionBits(u32 iGeom) { return 0; }
+
     virtual void geomSetPosition(u32 iGeom, vector3df pos) { }
     virtual void geomRaySetData(u32 iGeom, vector3df pos, vector3df dir, f32 fLength) { }
 

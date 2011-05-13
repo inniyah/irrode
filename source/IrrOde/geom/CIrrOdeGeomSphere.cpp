@@ -82,6 +82,10 @@ void CIrrOdeGeomSphere::initPhysics() {
       }
       setBody(m_pBody);
     }
+    else {
+      //m_pOdeDevice->geomSetCategoryBits(m_iGeomId,1);
+      m_pOdeDevice->geomSetCollisionBits(m_iGeomId,0);
+    }
   }
   #ifdef _TRACE_INIT_PHYSICS
     printf("CIrrOdeGeomSphere::initPhysics: %i\n",(int)m_iGeomId);
