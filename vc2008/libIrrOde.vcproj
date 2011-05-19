@@ -438,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\IrrOde\CSerializer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\IrrOde\IIrrOdeContactParameters.h"
 				>
 			</File>
@@ -626,6 +630,10 @@
 				</File>
 				<File
 					RelativePath="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\IrrOde\motors\IIrrOdeMotor.h"
 					>
 				</File>
 				<File

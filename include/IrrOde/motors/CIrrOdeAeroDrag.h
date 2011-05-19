@@ -19,15 +19,17 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
               m_vSideward,  /*!< the sideward vector */
               m_vUpward;    /*!< the upward vector */
 
-    f32 m_fStallSpeed,    /*!< If the airplane is below this foreward velocity no up force is applied */
-        m_fMaxUpSpeed,    /*!< This is the foreward speed where the highest up force is reached */
-        m_fUpFactor,      /*!< uplift factor */
-        m_fForewardDamp,  /*!< This is the foreward damping applied */
-        m_fSidewardDamp,  /*!< The sideward damping applied */
-        m_fUpwardDamp,    /*!< The damping applied from the angle of attack */
-        m_fForewardVel,   /*!< This is the calculated foreward velocity. This value can't be set but queried */
-        m_fPitchTrim,     /*!< pitch trim */
-        m_fPitchTrimPwr;  /*!< pitch trim power */
+    f32 m_fStallSpeed,      /*!< If the airplane is below this foreward velocity no up force is applied */
+        m_fMaxUpSpeed,      /*!< This is the foreward speed where the highest up force is reached */
+        m_fUpFactor,        /*!< uplift factor */
+        m_fForewardDamp,    /*!< This is the foreward damping applied */
+        m_fSidewardDamp,    /*!< The sideward damping applied */
+        m_fUpwardDamp,      /*!< The damping applied from the angle of attack */
+        m_fForewardVel,     /*!< This is the calculated foreward velocity. This value can't be set but queried */
+        m_fPitchTrim,       /*!< pitch trim */
+        m_fPitchTrimPwr,    /*!< pitch trim power */
+        m_fUpToForeward,    /*!< factor for upward force pushing foreward */
+        m_fSideToForeward;  /*!< factor for sideward force pushing foreward */
 
   public:
     CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,

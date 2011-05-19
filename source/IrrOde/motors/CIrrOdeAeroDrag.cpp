@@ -11,15 +11,17 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_vSideward=vector3df(0.0f,0.0f,1.0f);
   m_vUpward  =vector3df(0.0f,1.0f,0.0f);
 
-  m_fStallSpeed  =0.0f;
-  m_fMaxUpSpeed  =0.0f;
-  m_fForewardDamp=0.0f;
-  m_fSidewardDamp=0.0f;
-  m_fUpwardDamp  =0.0f;
-  m_fForewardVel =0.0f;
-  m_fUpFactor    =1.0f;
-  m_fPitchTrim   =0.1f;
-  m_fPitchTrimPwr=0.15f;
+  m_fStallSpeed    =0.0f;
+  m_fMaxUpSpeed    =0.0f;
+  m_fForewardDamp  =0.0f;
+  m_fSidewardDamp  =0.0f;
+  m_fUpwardDamp    =0.0f;
+  m_fForewardVel   =0.0f;
+  m_fUpFactor      =1.0f;
+  m_fPitchTrim     =0.1f;
+  m_fPitchTrimPwr  =0.15f;
+  m_fUpToForeward  =0.0f;
+  m_fSideToForeward=0.0f;
 
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -35,7 +37,8 @@ void CIrrOdeAeroDrag::step() {
     vector3df vRot=m_pBody->getRotation(),
               vVel=m_pBody->getLinearVelocity(),
               vNormVel=vVel,
-              vUp=vRot.rotationToDirection(m_vUpward);
+              vUp=vRot.rotationToDirection(m_vUpward),
+              vPushForeward=core::vector3df(0.0f,0.0f,0.0f);
 
     vNormVel.normalize();
 
@@ -74,6 +77,8 @@ void CIrrOdeAeroDrag::step() {
 
       //now calculate the upwards force vector...
       vUp=m_fPower*m_fMaxPower*fUp*vUp;
+
+      vPushForeward=vForeward*(m_fUpToForeward*vUp.getLength());
     }
     else vUp=vector3df(0.0f,0.0f,0.0f);  //...or set it to a "null" vector if no up force is done
 
@@ -96,7 +101,10 @@ void CIrrOdeAeroDrag::step() {
       vector3df vSideward=vRot.rotationToDirection(m_vSideward);
       f32 fSideward=vSideward.dotProduct(vNormVel.normalize());
 
-      if (fSideward>=0.01f || fSideward<=-0.01f) vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
+      if (fSideward>=0.01f || fSideward<=-0.01f) {
+        vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
+        vPushForeward+=vForeward+(m_fSideToForeward*vSideDamp.getLength());
+      }
     }
 
     vector3df vUpDamp=vector3df(0.0f,0.0f,0.0f);
@@ -115,7 +123,7 @@ void CIrrOdeAeroDrag::step() {
     //fUpdamp: the damping of the upward slidet
     //
     //now we combine these vectors to a single one that is then...
-    vector3df vForce=vUp-vForewardDamp-vSideDamp-vUpDamp;
+    vector3df vForce=vUp+vPushForeward-vForewardDamp-vSideDamp-vUpDamp;
 
     //...applied to the body
     m_pBody->addForce(vForce);
@@ -142,6 +150,9 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
 
   out->addFloat("pitch_trim",m_fPitchTrim);
   if (m_fPitchTrim!=0.0f) out->addFloat("pitch_trim_pwr",m_fPitchTrimPwr);
+
+  out->addFloat("up_to_foreward"  ,m_fUpToForeward  );
+  out->addFloat("side_to_foreward",m_fSideToForeward);
 }
 
 void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
@@ -159,6 +170,9 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 
   m_fPitchTrim=in->getAttributeAsFloat("pitch_trim");
   if (m_fPitchTrim!=0.0f) m_fPitchTrimPwr=in->getAttributeAsFloat("pitch_trim_pwr");
+
+  m_fUpToForeward  =in->getAttributeAsFloat("up_to_foreward"  );
+  m_fSideToForeward=in->getAttributeAsFloat("side_to_foreward");
 }
 
 ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
