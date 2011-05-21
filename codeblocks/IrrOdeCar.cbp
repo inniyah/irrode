@@ -70,12 +70,14 @@
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
 			<Add directory="..\..\bbsandbox\particle_clone\project" />
+			<Add directory="..\include\IrrOdeCar\CodeSnippets" />
+			<Add directory="CodeSnippets" />
 		</Compiler>
 		<Linker>
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
-			<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
+			<Add library="CodeSnippets\libAdvancedParticle.a" />
 			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CCar.h" />
