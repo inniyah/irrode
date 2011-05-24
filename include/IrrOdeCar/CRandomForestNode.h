@@ -35,14 +35,14 @@ class CRandomForest : public irr::scene::ISceneNode {
 
     irr::core::array<irr::core::position2di> m_aPoly;
     irr::core::array<CCheckRect *> m_aRects;
-    irr::core::list<irr::scene::ISceneNode *> m_lTrees;
+    irr::core::array<irr::scene::ISceneNode *> m_aTrees;
     irr::core::array<irr::video::SColor> m_aColors;
     irr::core::array<irr::u32> m_aSeed;
     irr::core::aabbox3df m_cBox;
     irr::core::stringc m_sTemplate,
                        m_sTerrain,
                        m_sParentName;
-    irr::core::array<ISceneNode *> m_aTrees;
+    irr::core::array<ISceneNode *> m_aGeneratedTrees;
 
     irr::u32 m_iStepsizeX,
              m_iStepsizeY,
@@ -148,6 +148,8 @@ class CRandomForest : public irr::scene::ISceneNode {
     virtual irr::video::SMaterial &getMaterial(irr::u32 iIdx) { return m_cMat; }
 
     virtual irr::u32 getMaterialCount() { return 1; }
+
+    const irr::core::array<irr::scene::ISceneNode *> getGeneratedTrees() { return m_aGeneratedTrees; }
 };
 
 

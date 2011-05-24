@@ -213,10 +213,9 @@ void CRandomForest::clearForest() {
   for (irr::u32 i=0; i<m_aRects.size(); i++) delete m_aRects[i];
   m_aRects.clear();
 
-  while (m_lTrees.getSize()>0) {
-    irr::core::list<irr::scene::ISceneNode *>::Iterator it=m_lTrees.begin();
-    irr::scene::ISceneNode *p=*it;
-    m_lTrees.erase(it);
+  while (m_aGeneratedTrees.size()>0) {
+    irr::scene::ISceneNode *p=m_aGeneratedTrees[0];
+    m_aGeneratedTrees.erase(0);
     p->remove();
   }
 }
@@ -238,22 +237,23 @@ void CRandomForest::createForest() {
     if (m_aPoly[i].Y<cMin.Y) cMin.Y=m_aPoly[i].Y;
   }
 
-  for (irr::s32 y=cMin.Y; y<cMax.Y; y+=m_iStepsizeY)
-    for (irr::s32 x=cMin.X; x<cMax.X; x+=m_iStepsizeX) {
-      irr::core::rect<irr::s32> cRect(x,y,x+m_iStepsizeX,y+m_iStepsizeY);
-      if (RectInsidePolygon(m_aPoly,cRect)) {
-        irr::f32 fFact=m_fResize*((irr::f32)(rand.next()%2000)-1000)/1000.0f,fSize=1.0f+fFact;
-        CCheckRect *r=new CCheckRect(cRect,fSize);
-        irr::u32 iRand=rand.next()%1000;
-        r->m_bTree=iRand>m_iThreshold;
-        r->m_iIndex=rand.next()%m_aTrees.size();
+  if (m_aTrees.size()!=0)
+    for (irr::s32 y=cMin.Y; y<cMax.Y; y+=m_iStepsizeY)
+      for (irr::s32 x=cMin.X; x<cMax.X; x+=m_iStepsizeX) {
+        irr::core::rect<irr::s32> cRect(x,y,x+m_iStepsizeX,y+m_iStepsizeY);
+        if (RectInsidePolygon(m_aPoly,cRect)) {
+          irr::f32 fFact=m_fResize*((irr::f32)(rand.next()%2000)-1000)/1000.0f,fSize=1.0f+fFact;
+          CCheckRect *r=new CCheckRect(cRect,fSize);
+          irr::u32 iRand=rand.next()%1000;
+          r->m_bTree=iRand>m_iThreshold;
+          r->m_iIndex=rand.next()%m_aTrees.size();
 
-        irr::f32 ox=rand.next()%m_iStepsizeX,oy=rand.next()%m_iStepsizeY;
-        r->m_cOffset=irr::core::position2df(ox,oy);
+          irr::f32 ox=rand.next()%m_iStepsizeX,oy=rand.next()%m_iStepsizeY;
+          r->m_cOffset=irr::core::position2df(ox,oy);
 
-        m_aRects.push_back(r);
+          m_aRects.push_back(r);
+        }
       }
-    }
 }
 
 void CRandomForest::OnRegisterSceneNode() {
@@ -297,7 +297,7 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
   for (irr::u32 i=0; i<count; i++) {
     irr::c8 s[0xFF];
     sprintf(s,"seed_%i",i);
-    if (in->existsAttribute(s)) 
+    if (in->existsAttribute(s))
       m_aSeed.push_back(in->getAttributeAsInt(s));
     else
       m_aSeed.push_back(0);
@@ -320,7 +320,7 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
     }
   }
 
-  if (in->getAttributeAsBool("generate_trees") || m_lTrees.getSize()==0) plantTrees();
+  if (in->getAttributeAsBool("generate_trees") || m_aGeneratedTrees.size()==0) plantTrees();
   m_bSerializeTrees=in->getAttributeAsBool("serialize_trees");
   #ifdef _IRREDIT_PLUGIN
     this->setAutomaticCulling(scene::EAC_OFF);
@@ -334,7 +334,7 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
   out->addInt("trees",m_aTrees.size());
   out->addString("terrain",m_sTerrain.c_str());
   out->addString("parent_node",m_sParentName.c_str());
-  out->addInt("generated_trees",m_lTrees.getSize());
+  out->addInt("generated_trees",m_aGeneratedTrees.size());
 
   out->addInt("stepsize_x",m_iStepsizeX);
   out->addInt("stepsize_y",m_iStepsizeY);
@@ -413,7 +413,7 @@ void CRandomForest::render() {
 
       irr::core::vector3df v1=irr::core::vector3df(p1.X,y1,p1.Y)+getPosition(),
                            v2=irr::core::vector3df(p2.X,y2,p2.Y)+getPosition();
-      
+
       m_pDriver->draw3DLine(v1,v2,video::SColor(0xFF,0xFF,0,0));
     }
   #endif
@@ -429,7 +429,7 @@ void CRandomForest::setTemplateNodeName(const irr::c8 *sTemplate) {
     irr::core::list<irr::scene::ISceneNode *> children=m_pTemplate->getChildren();
     irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
-    for (it=children.begin(); it!=children.end(); it++) 
+    for (it=children.begin(); it!=children.end(); it++)
        m_aTrees.push_back(*it);
   }
   else printf("template==NULL!\n");
@@ -468,21 +468,32 @@ void CRandomForest::plantTrees() {
 
       irr::u32 idx=m_aRects[i]->m_iIndex;
       irr::scene::ISceneNode *clone=NULL;
-      
+
       #ifdef _IRREDIT_PLUGIN
         clone=m_aTrees[idx]->clone();
         clone->setParent(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
       #else
         clone=m_aTrees[idx]->clone(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
       #endif
-      irr::scene::IAnimatedMeshSceneNode *pAnimClone=(irr::scene::IAnimatedMeshSceneNode *)clone;
 
-      irr::scene::IMesh *pMesh=pAnimClone->getMesh();
-      pMesh->setHardwareMappingHint(irr::scene::EHM_STATIC);
+      irr::scene::IMesh *pMesh=NULL;
+
+      if (clone->getType()==irr::scene::ESNT_MESH) {
+        irr::scene::IMeshSceneNode *pAnimClone=(irr::scene::IMeshSceneNode *)clone;
+        pMesh=pAnimClone->getMesh();
+      }
+
+      if (clone->getType()==irr::scene::ESNT_ANIMATED_MESH) {
+        irr::scene::IAnimatedMeshSceneNode *pAnimClone=(irr::scene::IAnimatedMeshSceneNode *)clone;
+        pMesh=pAnimClone->getMesh();
+      }
+
+      if (pMesh!=NULL) pMesh->setHardwareMappingHint(irr::scene::EHM_STATIC);
+
       clone->setIsDebugObject(!m_bSerializeTrees);
       clone->setScale(m_aRects[i]->m_fResize*clone->getScale());
       clone->setPosition(vPos);
-      m_lTrees.push_back(clone);
+      m_aGeneratedTrees.push_back(clone);
     }
   }
 }
