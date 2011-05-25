@@ -371,7 +371,7 @@ int main(int argc, char** argv) {
 
   delete pProg;
 
-  /*const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
+  const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
 
   for (u32 i=0; i<2; i++) {
     printf("merging \"%s\"...\n",sForests[i]);
@@ -392,13 +392,14 @@ int main(int argc, char** argv) {
       irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,driver,aMeshSceneNodes,s);
       if (pCombined!=NULL) {
         irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
-        printf("pRoot=%i\n",(int)pRoot);
         irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
-        for (u32 i=0; i<pNode->getMaterialCount(); i++)
+        for (u32 i=0; i<pNode->getMaterialCount(); i++) {
           pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
+          pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+        }
       }
     }
-  }*/
+  }
 
   //set the menu state to active
   pActive=theMenu;

@@ -476,6 +476,7 @@ void CRandomForest::plantTrees() {
         clone=m_aTrees[idx]->clone(m_pParentNode!=NULL?m_pParentNode:m_pSmgr->getRootSceneNode());
       #endif
 
+      clone->setName("cloned");
       irr::scene::IMesh *pMesh=NULL;
 
       if (clone->getType()==irr::scene::ESNT_MESH) {

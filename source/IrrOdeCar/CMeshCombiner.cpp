@@ -2,12 +2,14 @@
 #include <iostream>
 // Rect Packer stuff
 
+static int globalPackedTextureCount = 0;
+
 // Pack rectangles into box with dimensions sizeOfPackxsizeOfPack. Packed outputs new rectangles
 void CRectPacker::pack(const irr::core::array<irr::core::rect<irr::u32> > &rects, irr::core::array<irr::core::array<SPacked> > &packed, irr::u32 sizeOfPack) {
 	clear();
 	mPackSize = sizeOfPack;
-	for (int x = 0; x < rects.size(); x++) {
-		SRect addRect;
+	for (irr::u32 x = 0; x < rects.size(); x++) {
+		SRect addRect=SRect();
 		addRect.pos = rects[x];
 		addRect.id = x;
 		addRect.packed = false;
@@ -16,7 +18,7 @@ void CRectPacker::pack(const irr::core::array<irr::core::rect<irr::u32> > &rects
 	mRects.sort();
 
 	while (mNumPacked < mRects.size()) {
-		SRect empty;
+		SRect empty=SRect();
 		empty.id = -1;
 		empty.children[0] = -1;
 		empty.children[1] = -1;
@@ -29,7 +31,7 @@ void CRectPacker::pack(const irr::core::array<irr::core::rect<irr::u32> > &rects
 
 
 
-	for (int x = 0; x < mRoots.size(); x++) {
+	for (irr::u32 x = 0; x < mRoots.size(); x++) {
 		irr::core::array<SPacked> arr;
 		packed.push_back(arr);
 		packed[x].clear();
@@ -51,7 +53,7 @@ void CRectPacker::clear()
 // Fill the pack with rects
 void CRectPacker::fill(int pack) {
 	if (isPackValid(pack)) {
-		for (int x = 0; x < mRects.size(); x++) {
+		for (irr::u32 x = 0; x < mRects.size(); x++) {
 			if (!mRects[x].packed) {
 				if (fits(mRects[x],mPacks[pack])) {
 					++mNumPacked;
@@ -92,10 +94,10 @@ void CRectPacker::split(int pack, int rect) {
 	int topHeight = top.pos.getHeight() - mRects[rect].pos.getHeight();
 	top.pos = irr::core::rect<irr::u32>(topX,topY,topX+topWidth,topY+topHeight);
 
-	int maxLeftRightArea = left.pos.getArea();
+	irr::u32 maxLeftRightArea = left.pos.getArea();
 	if (right.pos.getArea() > maxLeftRightArea)
 		maxLeftRightArea = right.pos.getArea();
-	int maxTopBottomArea = top.pos.getArea();
+	irr::u32 maxTopBottomArea = top.pos.getArea();
 	if (bottom.pos.getArea() > maxTopBottomArea)
 		maxTopBottomArea = bottom.pos.getArea();
 
@@ -161,12 +163,12 @@ void CRectPacker::addPackToArray(int pack, irr::core::array<SPacked> &addArray) 
 }
 
 // Return if pack is within boundaires
-bool CRectPacker::isPackValid(int i) const {
+bool CRectPacker::isPackValid(irr::u32 i) const {
 	return i >= 0 && i < mPacks.size();
 }
 
 // Return if rect is within boundaries
-bool CRectPacker::isRectValid(int i) const {
+bool CRectPacker::isRectValid(irr::u32 i) const {
 	return i >= 0 && i < mRects.size();
 }
 
@@ -185,7 +187,7 @@ CMeshCombiner::CMeshCombiner(irr::f32 sizingTolerance, irr::u32 texturePadding, 
 // Find a good area to pack rects into. If the area of the rects divided by the area of the nearest power of two calculated is above a certain tolerance, the size is doubled
 irr::core::dimension2du CMeshCombiner::findOptimalPackingArea(irr::core::array<irr::core::rect<irr::u32> > rectangles) {
 	irr::u32 totalArea = 0;
-	for (int x = 0; x < rectangles.size(); x++) {
+	for (irr::u32 x = 0; x < rectangles.size(); x++) {
 		totalArea += rectangles[x].getArea();
 	}
 	irr::u32 smallestDimension = ceil(sqrtf(totalArea));
@@ -199,7 +201,7 @@ irr::core::dimension2du CMeshCombiner::findOptimalPackingArea(irr::core::array<i
 irr::video::ITexture* CMeshCombiner::packTextures(irr::video::IVideoDriver *driver, irr::core::array<irr::video::ITexture*> textures, irr::core::array<irr::core::position2di> &outPositions) {
 	irr::video::ITexture* newTexture;
 	irr::core::array<irr::core::rect<irr::u32> > textureRects;
-	for (int x = 0; x < textures.size(); x++) {
+	for (irr::u32 x = 0; x < textures.size(); x++) {
 		textureRects.push_back(irr::core::rect<irr::u32>(0,0,textures[x]->getSize().Width+mTexturePadding,textures[x]->getSize().Height+mTexturePadding));
 	}
 
@@ -209,17 +211,17 @@ irr::video::ITexture* CMeshCombiner::packTextures(irr::video::IVideoDriver *driv
 	packer.pack(textureRects,packed,textureSize.Height);
 	irr::video::IImage* packedImage = driver->createImage(textures[0]->getColorFormat(),textureSize);
 	irr::video::IImage** textureImages = new irr::video::IImage*[textures.size()];
-	for (int x = 0; x < textures.size(); x++) {
+	for (irr::u32 x = 0; x < textures.size(); x++) {
 		textureImages[x] = driver->createImage(textures[x],irr::core::vector2di(0,0),textures[x]->getSize());
 		outPositions.push_back(irr::core::position2di(0,0));
 	}
-	for (int x = 0; x < packed[0].size(); x++) {
+	for (irr::u32 x = 0; x < packed[0].size(); x++) {
 		irr::video::IImage* im = textureImages[packed[0][x].id];
 		int xPos = packed[0][x].pos.UpperLeftCorner.X+mTexturePadding/2;
 		int yPos = packed[0][x].pos.UpperLeftCorner.Y+mTexturePadding/2;
 		im->copyTo(packedImage,irr::core::vector2di(xPos,yPos));
 		if (mTexturePaddingTechnique == ETPT_EXPAND) {
-			for (int y = 0; y < mTexturePadding/2; y++) {
+			for (irr::u32 y = 0; y < mTexturePadding/2; y++) {
 				im->copyTo(packedImage,irr::core::vector2di(xPos-y,yPos),irr::core::rect<irr::s32>(0,0,1,textures[packed[0][x].id]->getSize().Height));
 				im->copyTo(packedImage,irr::core::vector2di(xPos+y+textures[packed[0][x].id]->getSize().Width,yPos),irr::core::rect<irr::s32>(0,0,1,textures[packed[0][x].id]->getSize().Height));
 				im->copyTo(packedImage,irr::core::vector2di(xPos,yPos-y),irr::core::rect<irr::s32>(0,0,textures[packed[0][x].id]->getSize().Width,1));
@@ -243,7 +245,7 @@ irr::video::ITexture* CMeshCombiner::packTextures(irr::video::IVideoDriver *driv
 	newTexture->regenerateMipMapLevels();
 	textureName += globalPackedTextureCount;
 	globalPackedTextureCount++;
-	for (int x = 0; x < textures.size(); x++)
+	for (irr::u32 x = 0; x < textures.size(); x++)
 	{
 		delete textureImages[x];
 	}
@@ -270,9 +272,9 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 	irr::u16 indexMax = 65535;
 
 	irr::core::array<irr::video::ITexture*> textures;
-	for (int x = 0; x < nodes.size(); x++) {
+	for (irr::u32 x = 0; x < nodes.size(); x++) {
 		nodes[x]->updateAbsolutePosition();
-		for (int y = 0; y < nodes[x]->getMesh()->getMeshBufferCount(); y++) {
+		for (irr::u32 y = 0; y < nodes[x]->getMesh()->getMeshBufferCount(); y++) {
 			indexTest += nodes[x]->getMesh()->getMeshBuffer(y)->getVertexCount();
 			bool newMb = false;
 			if (indexTest >= indexMax) {
@@ -285,7 +287,7 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 				irr::video::ITexture* tex = nodes[x]->getMaterial(y).getTexture(0);
 				if (tex != 0) {
 					bool copy = false;
-					for (int z = 0; z < textures.size(); z++) {
+					for (irr::u32 z = 0; z < textures.size(); z++) {
 						if (tex == textures[z])
 							copy = true;
 					}
@@ -306,14 +308,14 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 	irr::video::SMaterial newMaterial = nodes[0]->getMesh()->getMeshBuffer(0)->getMaterial();
 	newMaterial.setTexture(0,masterTexture);
 
-	float convertX = 1.0f/(float)masterTexture->getSize().Width;
-	float convertY = 1.0f/(float)masterTexture->getSize().Height;
+	/*float convertX = 1.0f/(float)masterTexture->getSize().Width;
+	float convertY = 1.0f/(float)masterTexture->getSize().Height;*/
 
-	for (int x = 0; x < nodes.size(); x++) {
-		for (int y = 0; y < nodes[x]->getMesh()->getMeshBufferCount(); y++) {
+	for (irr::u32 x = 0; x < nodes.size(); x++) {
+		for (irr::u32 y = 0; y < nodes[x]->getMesh()->getMeshBufferCount(); y++) {
 
 			int texID = -1;
-			for (int z = 0; z < textures.size(); z++) {
+			for (irr::u32 z = 0; z < textures.size(); z++) {
 				if (nodes[x]->getMaterial(y).getTexture(0) == textures[z]) {
 					texID = z;
 					break;
@@ -328,7 +330,7 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 				meshBufferOn++;
 			}
 
-			for (int u = 0; u < currentMeshBuffer->getVertexCount(); u++) {
+			for (irr::u32 u = 0; u < currentMeshBuffer->getVertexCount(); u++) {
 				irr::video::S3DVertex vert(meshBufferVertices[u].Pos,meshBufferVertices[u].Normal,meshBufferVertices[u].Color,meshBufferVertices[u].TCoords);
 				if (texID >= 0) {
 					float realTexX = vert.TCoords.X*textures[texID]->getSize().Width;
@@ -351,7 +353,7 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 				vertices[meshBufferOn].push_back(vert);
 			}
 
-			for (int u = 0; u < currentMeshBuffer->getIndexCount(); u++) {
+			for (irr::u32 u = 0; u < currentMeshBuffer->getIndexCount(); u++) {
 				irr::u16 index = currentMeshBuffer->getIndices()[u]+currentIndex;
 				indices[meshBufferOn].push_back(index);
 			}
@@ -370,8 +372,9 @@ irr::scene::IMesh* CMeshCombiner::combineMeshes(irr::scene::ISceneManager * smgr
 	}
 
 	if (clearNodesAfterUse) {
-		for (int x = 0; x < nodes.size(); x++) {
-			nodes[x]->remove();
+		for (irr::u32 x = 0; x < nodes.size(); x++) {
+			//nodes[x]->remove();
+			nodes[x]->setVisible(false);
 		}
 		nodes.clear();
 	}

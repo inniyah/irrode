@@ -27,17 +27,15 @@ public:
 	bool fits(SRect rect1, SRect rect2);
 	void addPackToArray(int pack, irr::core::array<SPacked> &addArray) const;
 
-	bool isRectValid(int i) const;
-	bool isPackValid(int i) const;
+	bool isRectValid(irr::u32 i) const;
+	bool isPackValid(irr::u32 i) const;
 
-	int mPackSize;
-	int mNumPacked;
+	irr::u32 mPackSize;
+	irr::u32 mNumPacked;
 	irr::core::array<SRect> mRects;
 	irr::core::array<SRect> mPacks;
 	irr::core::array<int> mRoots;
 };
-
-static int globalPackedTextureCount = 0;
 
 enum TEXTURE_PADDING_TECHNIQUE {
 	ETPT_EXPAND = 0,

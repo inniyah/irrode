@@ -195,6 +195,12 @@ ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newMana
   pRet->setMaxPower(m_fMaxPower);
   pRet->setIsActive(m_bIsActive);
 
+  pRet->setPitchTrim(m_fPitchTrim);
+  pRet->setPitchTrimPower(m_fPitchTrimPwr);
+
+  pRet->setUpToForeward(m_fUpToForeward);
+  pRet->setSideToForeward(m_fSideToForeward);
+
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
 
   return pRet;

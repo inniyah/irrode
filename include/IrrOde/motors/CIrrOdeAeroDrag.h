@@ -59,6 +59,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
     void setPitchTrim(f32 f) { m_fPitchTrim=f; }
     void setPitchTrimPower(f32 f) { m_fPitchTrimPwr=f; }
 
+    void setUpToForeward(f32 f) { m_fUpToForeward=f; }
+    void setSideToForeward(f32 f) { m_fSideToForeward=f; }
+
     f32 getStallSpeed() { return m_fStallSpeed; }
     f32 getMaxUpSpeed() { return m_fMaxUpSpeed; }
     f32 getForewardDamp() { return m_fForewardDamp; }
@@ -69,6 +72,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
 
     f32 getPitchTrim() { return m_fPitchTrim; }
     f32 getPitchTrimPower() { return m_fPitchTrimPwr; }
+
+    f32 getUpToForeward() { return m_fUpToForeward; }
+    f32 getSideToForeward() { return m_fSideToForeward; }
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);

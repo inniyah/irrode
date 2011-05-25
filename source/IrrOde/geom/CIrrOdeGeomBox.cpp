@@ -63,23 +63,10 @@ void CIrrOdeGeomBox::initPhysics() {
 
   if (m_fWidth==0.0f && m_fHeight==0.0f && m_fDepth==0.0f) {
     if (this->m_bUseAllMeshBuffers) {
-      IAnimatedMeshSceneNode *pParent=reinterpret_cast<IAnimatedMeshSceneNode *>(getParent());
-      IMesh *pMesh=pParent->getMesh()->getMesh(0);
-
-      m_fWidth =pMesh->getBoundingBox().getExtent().X*pParent->getScale().X,
-      m_fHeight=pMesh->getBoundingBox().getExtent().Y*pParent->getScale().Y,
-      m_fDepth =pMesh->getBoundingBox().getExtent().Z*pParent->getScale().Z;
-      #ifdef _TRACE_INIT_PHYSICS
-        printf("CIrrOdeGeomBox::initPhysics: getting size from parent node\n");
-        printf("CIrrOdeGeomBox::initPhysics: size=(%.2f, %.2f, %.2f)\n",m_fWidth,m_fHeight,m_fDepth);
-      #endif
-    }
-    else {
       IMesh *pMesh=NULL;
-      CDynamicMeshBuffer cDynMeshBuffer(EVT_2TCOORDS,EIT_16BIT);
-      aabbox3d<f32> theBox=aabbox3d<f32>(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+
       ISceneNode *pNode=getParent();
-      printf("pNode: %i",(int)pNode);
+
       switch (pNode->getType()) {
         case ESNT_MESH :
           pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
@@ -93,7 +80,36 @@ void CIrrOdeGeomBox::initPhysics() {
           printf("Non supported scene node type detected!\n");
           return;
       }
-      printf(" .. pMesh=%i",(int)pMesh);
+
+      if (pMesh) {
+        m_fWidth =pMesh->getBoundingBox().getExtent().X*pNode->getScale().X,
+        m_fHeight=pMesh->getBoundingBox().getExtent().Y*pNode->getScale().Y,
+        m_fDepth =pMesh->getBoundingBox().getExtent().Z*pNode->getScale().Z;
+        #ifdef _TRACE_INIT_PHYSICS
+          printf("CIrrOdeGeomBox::initPhysics: getting size from parent node\n");
+          printf("CIrrOdeGeomBox::initPhysics: size=(%.2f, %.2f, %.2f)\n",m_fWidth,m_fHeight,m_fDepth);
+        #endif
+      }
+    }
+    else {
+      IMesh *pMesh=NULL;
+      CDynamicMeshBuffer cDynMeshBuffer(EVT_2TCOORDS,EIT_16BIT);
+      aabbox3d<f32> theBox=aabbox3d<f32>(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+      ISceneNode *pNode=getParent();
+
+      switch (pNode->getType()) {
+        case ESNT_MESH :
+          pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+          break;
+
+        case ESNT_ANIMATED_MESH:
+          pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+          break;
+
+        default:
+          printf("Non supported scene node type detected!\n");
+          return;
+      }
       if (pMesh) {
         for (u32 i=0; i<pMesh->getMeshBufferCount(); i++) {
           if (i>=m_aUseMeshBuffer.size() || m_aUseMeshBuffer[i]) {
@@ -105,9 +121,7 @@ void CIrrOdeGeomBox::initPhysics() {
         m_fWidth =theBox.getExtent().X*pNode->getScale().X;
         m_fHeight=theBox.getExtent().Y*pNode->getScale().Y;
         m_fDepth =theBox.getExtent().Z*pNode->getScale().Z;
-        printf(" .. %.2f, %.2f, %.2f",m_fWidth,m_fHeight,m_fDepth);
       }
-      printf("\n");
     }
   }
 
@@ -117,7 +131,6 @@ void CIrrOdeGeomBox::initPhysics() {
     vector3df pos=getAbsolutePosition(),
               rot=getAbsoluteTransformation().getRotationDegrees();
 
-    printf("\t%.2f, %.2f, %.2f\n",pos.X,pos.Y,pos.Z);
     m_pOdeDevice->geomSetPosition(m_iGeomId,pos);
     m_pOdeDevice->geomSetRotation(m_iGeomId,rot);
 
