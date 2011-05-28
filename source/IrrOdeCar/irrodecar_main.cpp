@@ -322,15 +322,19 @@ int main(int argc, char** argv) {
           aMeshSceneNodes.push_back(p);
         }
 
-        c8 s[0xFF];
-        sprintf(s,"MyCombinedTrees_%i",i);
-        irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,driver,aMeshSceneNodes,s);
-        if (pCombined!=NULL) {
-          irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
-          irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
-          for (u32 i=0; i<pNode->getMaterialCount(); i++) {
-            pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
-            pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+        printf("%i trees\n",aMeshSceneNodes.size());
+
+        if (aMeshSceneNodes.size()>0) {
+          c8 s[0xFF];
+          sprintf(s,"MyCombinedTrees_%i",i);
+          irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,driver,aMeshSceneNodes,s);
+          if (pCombined!=NULL) {
+            irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
+            irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
+            for (u32 i=0; i<pNode->getMaterialCount(); i++) {
+              pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
+              pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+            }
           }
         }
       }
