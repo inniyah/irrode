@@ -303,7 +303,39 @@ int main(int argc, char** argv) {
     printf("removing terrain heightfield...\n");
     removeFromScene("terrain_heightfield",smgr);
   }
-  if (!pSettings->isActive((8))) removeFromScene("forests",smgr);
+  if (!pSettings->isActive((8)))
+    removeFromScene("forests",smgr);
+  else {
+   const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
+
+    for (u32 i=0; i<2; i++) {
+      printf("merging \"%s\"...\n",sForests[i]);
+      scene::ISceneNode *p=smgr->getSceneNodeFromName(sForests[i]);
+      CRandomForest *pForest=(CRandomForest *)p;
+      if (pForest!=NULL) {
+        CMeshCombiner *pCombine=new CMeshCombiner(0.8f);
+        irr::core::array<irr::scene::IMeshSceneNode *> aMeshSceneNodes;
+        irr::core::array<irr::scene::ISceneNode *> aTrees=pForest->getGeneratedTrees();
+
+        for (u32 j=0; j<aTrees.size(); j++) {
+          irr::scene::IMeshSceneNode *p=(irr::scene::IMeshSceneNode *)aTrees[j];
+          aMeshSceneNodes.push_back(p);
+        }
+
+        c8 s[0xFF];
+        sprintf(s,"MyCombinedTrees_%i",i);
+        irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,driver,aMeshSceneNodes,s);
+        if (pCombined!=NULL) {
+          irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
+          irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
+          for (u32 i=0; i<pNode->getMaterialCount(); i++) {
+            pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
+            pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+          }
+        }
+      }
+    }
+  }
 
   delete pSettings;
 
@@ -371,35 +403,6 @@ int main(int argc, char** argv) {
 
   delete pProg;
 
-  const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
-
-  for (u32 i=0; i<2; i++) {
-    printf("merging \"%s\"...\n",sForests[i]);
-    scene::ISceneNode *p=smgr->getSceneNodeFromName(sForests[i]);
-    CRandomForest *pForest=(CRandomForest *)p;
-    if (pForest!=NULL) {
-      CMeshCombiner *pCombine=new CMeshCombiner(0.8f);
-      irr::core::array<irr::scene::IMeshSceneNode *> aMeshSceneNodes;
-      irr::core::array<irr::scene::ISceneNode *> aTrees=pForest->getGeneratedTrees();
-
-      for (u32 j=0; j<aTrees.size(); j++) {
-        irr::scene::IMeshSceneNode *p=(irr::scene::IMeshSceneNode *)aTrees[j];
-        aMeshSceneNodes.push_back(p);
-      }
-
-      c8 s[0xFF];
-      sprintf(s,"MyCombinedTrees_%i",i);
-      irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,driver,aMeshSceneNodes,s);
-      if (pCombined!=NULL) {
-        irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
-        irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
-        for (u32 i=0; i<pNode->getMaterialCount(); i++) {
-          pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
-          pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
-        }
-      }
-    }
-  }
 
   //set the menu state to active
   pActive=theMenu;
