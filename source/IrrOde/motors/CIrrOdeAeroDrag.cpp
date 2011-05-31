@@ -11,17 +11,18 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_vSideward=vector3df(0.0f,0.0f,1.0f);
   m_vUpward  =vector3df(0.0f,1.0f,0.0f);
 
-  m_fStallSpeed    =0.0f;
-  m_fMaxUpSpeed    =0.0f;
-  m_fForewardDamp  =0.0f;
-  m_fSidewardDamp  =0.0f;
-  m_fUpwardDamp    =0.0f;
-  m_fForewardVel   =0.0f;
-  m_fUpFactor      =1.0f;
-  m_fPitchTrim     =0.1f;
-  m_fPitchTrimPwr  =0.15f;
-  m_fUpToForeward  =0.0f;
-  m_fSideToForeward=0.0f;
+  m_fStallSpeed      =0.0f;
+  m_fMaxUpSpeed      =0.0f;
+  m_fForewardDamp    =0.0f;
+  m_fSidewardDamp    =0.0f;
+  m_fUpwardDamp      =0.0f;
+  m_fForewardVel     =0.0f;
+  m_fUpFactor        =1.0f;
+  m_fPitchTrim       =0.1f;
+  m_fPitchTrimPwr    =0.15f;
+  m_fUpToForeward    =0.0f;
+  m_fUpDampToForeward=0.0f;
+  m_fSideToForeward  =0.0f;
 
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -113,7 +114,10 @@ void CIrrOdeAeroDrag::step() {
       vector3df vUpward=vRot.rotationToDirection(m_vUpward);
       f32 fUpward=vUpward.dotProduct(vNormVel.normalize());
 
-      if (fUpward>=0.1f || fUpward<=-0.1f) vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
+      if (fUpward>=0.1f || fUpward<=-0.1f) {
+        vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
+        vPushForeward+=vForeward*(m_fUpDampToForeward*vUpDamp.getLength());
+      }
     }
 
     //ok ... in the previous section we have calculated four vectors:
@@ -150,9 +154,10 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
 
   out->addFloat("pitch_trim",m_fPitchTrim);
   if (m_fPitchTrim!=0.0f) out->addFloat("pitch_trim_pwr",m_fPitchTrimPwr);
-
-  out->addFloat("up_to_foreward"  ,m_fUpToForeward  );
-  out->addFloat("side_to_foreward",m_fSideToForeward);
+  
+  out->addFloat("up_to_foreward"     ,m_fUpToForeward    );
+  out->addFloat("up_damp_to_foreward",m_fUpDampToForeward);
+  out->addFloat("side_to_foreward"   ,m_fSideToForeward  );
 }
 
 void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
@@ -171,8 +176,9 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
   m_fPitchTrim=in->getAttributeAsFloat("pitch_trim");
   if (m_fPitchTrim!=0.0f) m_fPitchTrimPwr=in->getAttributeAsFloat("pitch_trim_pwr");
 
-  m_fUpToForeward  =in->getAttributeAsFloat("up_to_foreward"  );
-  m_fSideToForeward=in->getAttributeAsFloat("side_to_foreward");
+  m_fUpToForeward    =in->getAttributeAsFloat("up_to_foreward"  );
+  m_fUpDampToForeward=in->getAttributeAsFloat("up_damp_to_foreward");
+  m_fSideToForeward  =in->getAttributeAsFloat("side_to_foreward");
 }
 
 ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
@@ -199,6 +205,7 @@ ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newMana
   pRet->setPitchTrimPower(m_fPitchTrimPwr);
 
   pRet->setUpToForeward(m_fUpToForeward);
+  pRet->setUpDampToForeward(m_fUpDampToForeward);
   pRet->setSideToForeward(m_fSideToForeward);
 
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

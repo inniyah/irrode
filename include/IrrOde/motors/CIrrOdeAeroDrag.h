@@ -29,6 +29,7 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
         m_fPitchTrim,       /*!< pitch trim */
         m_fPitchTrimPwr,    /*!< pitch trim power */
         m_fUpToForeward,    /*!< factor for upward force pushing foreward */
+        m_fUpDampToForeward,/*!< factor for upward damp force pushing foreward */
         m_fSideToForeward;  /*!< factor for sideward force pushing foreward */
 
   public:
@@ -60,6 +61,7 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
     void setPitchTrimPower(f32 f) { m_fPitchTrimPwr=f; }
 
     void setUpToForeward(f32 f) { m_fUpToForeward=f; }
+    void setUpDampToForeward(f32 f) { m_fUpDampToForeward=f; }
     void setSideToForeward(f32 f) { m_fSideToForeward=f; }
 
     f32 getStallSpeed() { return m_fStallSpeed; }
@@ -74,6 +76,7 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
     f32 getPitchTrimPower() { return m_fPitchTrimPwr; }
 
     f32 getUpToForeward() { return m_fUpToForeward; }
+    f32 getUpDampToForeward() { return m_fUpDampToForeward; }
     f32 getSideToForeward() { return m_fSideToForeward; }
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;

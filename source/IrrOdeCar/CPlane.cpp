@@ -261,4 +261,3 @@ bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
 
-
