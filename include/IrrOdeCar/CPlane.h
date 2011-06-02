@@ -30,19 +30,22 @@ enum ePlaneControls {
   ePlaneToggleCam,
   ePlaneBackview,
   ePlaneBrake,
-  ePlaneFlip
+  ePlaneFlip,
+  ePlaneAutoPilot
 };
 
 class CProjectile;
 
 class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
-    s32 m_iThrustDir;
-    f32 m_fThrust,m_fYaw,m_fPitch,m_fRoll;
+    s32 m_iThrustDir,
+        m_iNextCp;
+    f32 m_fThrust,m_fYaw,m_fPitch,m_fRoll,m_fSteerOld;
     bool m_bFollowBombCam,
          m_bBackView,
          m_bLeftMissile,
-         m_bThreeWheeler;
+         m_bThreeWheeler,
+         m_bAutoPilot;
 
     IGUIStaticText *m_pInfo;
 
@@ -56,6 +59,8 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
+
+    irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
     ISceneNode *m_pRoll[2],*m_pPitch[2],*m_pYaw[2];
     const u32 *m_pCtrls;

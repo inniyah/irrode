@@ -10,6 +10,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
   m_iLastShot=0;
   m_iLastMissile=0;
+  m_fSteerOld=0.0f;
 
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
@@ -39,6 +40,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     //intially we don't follow the bombs and look to the front
     m_bFollowBombCam=false;
     m_bBackView=false;
+
+    m_bAutoPilot=false;
 
     //we need the rear wheel bodies for the braking on ground
     m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
@@ -73,6 +76,17 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_bLeftMissile=true;
     m_bInitialized=true;
   }
+
+  m_iNextCp=-1;
+  ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
+  if (pCheckRoot!=NULL) {
+    irr::core::list<irr::scene::ISceneNode *> lChildren=pCheckRoot->getChildren();
+    irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+    for (it=lChildren.begin(); it!=lChildren.end(); it++) m_aCheckPoints.push_back(*it);
+    printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
+  }
+  else printf("no checkpoints for plane found!\n");
 }
 
 CPlane::~CPlane() {
@@ -163,6 +177,10 @@ bool CPlane::OnEvent(const SEvent &event) {
 
 bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    f32 fPitch=m_fPitch,fYaw=m_fYaw,fRoll=m_fRoll;
+    //Step 1: get the plane's position
+    vector3df vPos=m_pPlaneBody->getAbsolutePosition();
+
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     if (m_bActive) {
       //in order to regulate the increase and decrease of thrust we
@@ -181,10 +199,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       //next up we calculate the loss of aerodynamic power in high altitudes. In fact the
       //loss starts at 300 and at 1500 there is no more aerodynamic power.
-      f32 fMinHeight=300,fMaxHeight=1500;
-
-      //Step 1: get the plane's position
-      vector3df vPos=m_pPlaneBody->getAbsolutePosition();
+      f32 fMinHeight=300,fMaxHeight=2000;
 
       //Step 2: calculate the factor: full power (1.0f) if the height is below 300, no power (0.0f) if
       //        it's above 1500, linear interpolation in between.
@@ -195,26 +210,18 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pAero->setPower (fAltFact);            //... the aerodynamics ...
       m_pTorque->setPower(fAltFact);          //... and the rudders.
 
-      f32 fPitch=m_pController->get(m_pCtrls[ePlanePitchUp  ]),
-          fRoll =m_pController->get(m_pCtrls[ePlaneRollLeft ]),
-          fYaw  =m_pController->get(m_pCtrls[ePlaneYawRight ]);
+      fPitch=m_pController->get(m_pCtrls[ePlanePitchUp  ]);
+      fRoll =m_pController->get(m_pCtrls[ePlaneRollLeft ]);
+      fYaw  =m_pController->get(m_pCtrls[ePlaneYawRight ]);
 
       m_pTorque->setPitch(fPitch);
       m_pTorque->setRoll (fRoll );
       m_pTorque->setYaw  (fYaw  );
 
       if (m_bThreeWheeler)
-        m_pSteer->setServoPos(-10.0f*fYaw);
+        m_pSteer->setServoPos(-20.0f*fYaw);
       else
         m_pSteer->setServoPos(10.0f*fYaw);
-
-      if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
-        CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll,m_bThreeWheeler);
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-        m_fYaw=fYaw;
-        m_fRoll=fRoll;
-        m_fPitch=fPitch;
-      }
 
       if (m_pController->get(m_pCtrls[ePlaneFire])!=0.0f && pStep->getStepNo()-m_iLastMissile>=120) {
         m_iLastMissile=pStep->getStepNo();
@@ -250,6 +257,101 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(m_pCtrls[ePlaneFlip])!=0.0f)
         m_pPlaneBody->addForceAtPosition(m_pPlaneBody->getPosition()+vector3df(0.0f,0.5f,0.0f),vector3df(0.0f,12.0f,0.0f));
+
+      if (m_pController->get(m_pCtrls[ePlaneAutoPilot])) {
+        m_pController->set(m_pCtrls[ePlaneAutoPilot],0.0f);
+        m_bAutoPilot=!m_bAutoPilot;
+      }
+    }
+
+    /*if (m_pController->get(m_pCtrls[ePlaneAutoPilot])) */{
+
+      core::vector3df vInv=m_pPlaneBody->getRotation();
+
+      vInv=vInv.invert();
+
+      core::vector3df vUp=vInv.rotationToDirection(m_pAero->getUpward  ()),
+                      vSi=vInv.rotationToDirection(m_pAero->getSideward());
+
+      vSi.Y=0.0f;
+
+      vUp.normalize();
+      vSi.normalize();
+
+      f32 fRollAngle=acosf(vUp.dotProduct(vSi))*180/M_PI;//  Dot(NormalizeEx(v1), NormalizeEx(v2)));
+      f32 fARoll=fRollAngle-90.0f;
+
+      if (m_bAutoPilot) {
+        if (m_iNextCp==-1) {
+          m_iNextCp=rand()%m_aCheckPoints.size();
+        }
+
+        core::vector3df vCheckPos=m_aCheckPoints[m_iNextCp]->getPosition(),
+                        vPlaneVel=m_pPlaneBody->getLinearVelocity();
+
+        core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
+                        vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
+                        vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z),
+                        vCpVel=vPoint-vPlane;
+
+        irr::core::vector2df vxy=vVeloc+vCpVel,vxz=vVeloc-vCpVel;
+
+        vVeloc.normalize();
+        vCpVel.normalize();
+
+        f32 fSteer=vVeloc.getAngleWith(vCpVel);
+
+        if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
+        f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
+        if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
+        if (fSteer!=fSteer)
+          printf("ERROR!!\n");
+        else {
+          fYaw=0.015f*fSteer;
+          if (fYaw> 1.0f) fYaw= 1.0f;
+          if (fYaw<-1.0f) fYaw=-1.0f;
+
+          if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
+        }
+
+        f32 fDist=(vPlane-vPoint).getLength();
+
+        if (fDist<100.0f) {
+          s32 iNext=m_iNextCp;
+          while (iNext==m_iNextCp) {
+            iNext=rand()%m_aCheckPoints.size();
+            printf("next checkpoint: %i\n",iNext);
+          }
+          m_iNextCp=iNext;
+        }
+
+        f32 vy=m_pPlaneBody->getLinearVelocity().Y;
+
+        f32 fDiffY=(950-vPos.Y)/10.0f;
+
+        if (fDiffY> 10.0f) fDiffY= 10.0f;
+        if (fDiffY<-10.0f) fDiffY=-10.0f;
+
+        fPitch=(-vy+fDiffY)*0.05f;
+        if (fPitch> 1.0f) fPitch= 1.0f;
+        if (fPitch<-1.0f) fPitch=-1.0f;
+
+        fRoll=-fARoll*0.03f;
+        if (fRoll> 1.0f) fRoll= 1.0f;
+        if (fRoll<-1.0f) fRoll=-1.0f;
+
+        m_pTorque->setPitch(fPitch);
+        m_pTorque->setRoll (fRoll );
+        m_pTorque->setYaw  (fYaw  );
+      }
+    }
+
+    if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
+      CEventRudderPositions *p=new CEventRudderPositions(m_pPlaneBody->getID(),fYaw,fPitch,fRoll,m_bThreeWheeler);
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      m_fYaw=fYaw;
+      m_fRoll=fRoll;
+      m_fPitch=fPitch;
     }
   }
 

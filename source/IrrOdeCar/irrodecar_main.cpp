@@ -237,6 +237,7 @@ int main(int argc, char** argv) {
   iCtrls[3][ePlaneToggleCam]=pController->addItem(3,stringw(L"Toggle Cam"  ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton );
   iCtrls[3][ePlaneBrake    ]=pController->addItem(3,stringw(L"Wheel Brake" ),KEY_KEY_B ,CIrrCC::eCtrlButton);
   iCtrls[3][ePlaneFlip     ]=pController->addItem(3,stringw(L"Flip"        ),KEY_KEY_F ,CIrrCC::eCtrlButton);
+  iCtrls[3][ePlaneAutoPilot]=pController->addItem(3,stringw(L"Autopilot"   ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
 
   //just like the helicopter the plane gets three axes (pitch, roll, yaw)...
   pController->createAxis(iCtrls[3][ePlaneYawRight],iCtrls[3][ePlaneYawLeft  ]);
