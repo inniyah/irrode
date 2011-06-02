@@ -40,7 +40,11 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
   protected:
     s32 m_iThrustDir,
         m_iNextCp;
-    f32 m_fThrust,m_fYaw,m_fPitch,m_fRoll,m_fSteerOld;
+    f32 m_fThrust,
+        m_fYaw,
+        m_fPitch,
+        m_fRoll,
+        m_fApDist;
     bool m_bFollowBombCam,
          m_bBackView,
          m_bLeftMissile,

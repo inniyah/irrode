@@ -10,7 +10,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
   m_iLastShot=0;
   m_iLastMissile=0;
-  m_fSteerOld=0.0f;
+  m_fApDist=0.0f;
 
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
@@ -69,7 +69,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_fRoll=0.0f;
 
     //finally we need a static text to display some information
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,65),true);
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true);
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
@@ -155,7 +155,8 @@ u32 CPlane::update() {
   rot=m_pPlaneBody->getRotation();
   vector3df v=m_pPlaneBody->getLinearVelocity();
   swprintf(dummy,0xFE,L"pos: (%.0f, %.0f, %.0f)\nvelocity: (%.0f, %.0f, %.0f) %.2f",pos.X,pos.Y,pos.Z,v.X,v.Y,v.Z,m_pAero->getForewardVel());
-  swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)\n",dummy,rot.X,rot.Y,rot.Z);
+  swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)",dummy,rot.X,rot.Y,rot.Z);
+  swprintf(dummy,0xFE,L"%s\nrudder: (%.0f%%, %.0f%%, %.0f%%)\n",dummy,m_fPitch*100.0f,m_fRoll*100.0f,m_fYaw*100.0f);
 
   swprintf(dummy,0xFE,L"%sThrust=%.0f%%",dummy,m_fThrust*100.0f);
 
@@ -163,6 +164,7 @@ u32 CPlane::update() {
   swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
 
   if (m_bFollowBombCam) swprintf(dummy,0xFE,L"%s\nFollow Bomb Cam",dummy);
+  if (m_bAutoPilot) swprintf(dummy,0xFE,L"%s\nAutopilot active (%i, %.0f)",dummy,m_iNextCp,m_fApDist);
 
   m_pInfo->setText(dummy);
 
@@ -264,8 +266,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       }
     }
 
-    /*if (m_pController->get(m_pCtrls[ePlaneAutoPilot])) */{
-
+    if (m_bAutoPilot) {
       core::vector3df vInv=m_pPlaneBody->getRotation();
 
       vInv=vInv.invert();
@@ -281,69 +282,73 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       f32 fRollAngle=acosf(vUp.dotProduct(vSi))*180/M_PI;//  Dot(NormalizeEx(v1), NormalizeEx(v2)));
       f32 fARoll=fRollAngle-90.0f;
 
-      if (m_bAutoPilot) {
-        if (m_iNextCp==-1) {
-          m_iNextCp=rand()%m_aCheckPoints.size();
-        }
 
-        core::vector3df vCheckPos=m_aCheckPoints[m_iNextCp]->getPosition(),
-                        vPlaneVel=m_pPlaneBody->getLinearVelocity();
-
-        core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
-                        vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
-                        vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z),
-                        vCpVel=vPoint-vPlane;
-
-        irr::core::vector2df vxy=vVeloc+vCpVel,vxz=vVeloc-vCpVel;
-
-        vVeloc.normalize();
-        vCpVel.normalize();
-
-        f32 fSteer=vVeloc.getAngleWith(vCpVel);
-
-        if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
-        f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
-        if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
-        if (fSteer!=fSteer)
-          printf("ERROR!!\n");
-        else {
-          fYaw=0.015f*fSteer;
-          if (fYaw> 1.0f) fYaw= 1.0f;
-          if (fYaw<-1.0f) fYaw=-1.0f;
-
-          if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
-        }
-
-        f32 fDist=(vPlane-vPoint).getLength();
-
-        if (fDist<100.0f) {
-          s32 iNext=m_iNextCp;
-          while (iNext==m_iNextCp) {
-            iNext=rand()%m_aCheckPoints.size();
-            printf("next checkpoint: %i\n",iNext);
-          }
-          m_iNextCp=iNext;
-        }
-
-        f32 vy=m_pPlaneBody->getLinearVelocity().Y;
-
-        f32 fDiffY=(950-vPos.Y)/10.0f;
-
-        if (fDiffY> 10.0f) fDiffY= 10.0f;
-        if (fDiffY<-10.0f) fDiffY=-10.0f;
-
-        fPitch=(-vy+fDiffY)*0.05f;
-        if (fPitch> 1.0f) fPitch= 1.0f;
-        if (fPitch<-1.0f) fPitch=-1.0f;
-
-        fRoll=-fARoll*0.03f;
-        if (fRoll> 1.0f) fRoll= 1.0f;
-        if (fRoll<-1.0f) fRoll=-1.0f;
-
-        m_pTorque->setPitch(fPitch);
-        m_pTorque->setRoll (fRoll );
-        m_pTorque->setYaw  (fYaw  );
+      if (m_iNextCp==-1) {
+        m_iNextCp=rand()%m_aCheckPoints.size();
       }
+
+      core::vector3df vCheckPos=m_aCheckPoints[m_iNextCp]->getPosition(),
+                      vPlaneVel=m_pPlaneBody->getLinearVelocity();
+
+      core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
+                      vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
+                      vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z),
+                      vCpVel=vPoint-vPlane;
+
+      irr::core::vector2df vxy=vVeloc+vCpVel,vxz=vVeloc-vCpVel;
+
+      vVeloc.normalize();
+      vCpVel.normalize();
+
+      f32 fSteer=vVeloc.getAngleWith(vCpVel);
+
+      if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
+      f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
+      if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
+      if (fSteer!=fSteer)
+        printf("ERROR!!\n");
+      else {
+        fYaw=0.015f*fSteer;
+        if (fYaw> 1.0f) fYaw= 1.0f;
+        if (fYaw<-1.0f) fYaw=-1.0f;
+
+        if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
+      }
+
+      m_fApDist=(vPlane-vPoint).getLength();
+
+      if (m_fApDist<100.0f) {
+        s32 iNext=m_iNextCp;
+        while (iNext==m_iNextCp) {
+          iNext=rand()%m_aCheckPoints.size();
+          printf("next checkpoint: %i\n",iNext);
+        }
+        m_iNextCp=iNext;
+      }
+
+      f32 vy=m_pPlaneBody->getLinearVelocity().Y;
+
+      f32 fDiffY=(950-vPos.Y)/10.0f;
+
+      if (fDiffY> 10.0f) fDiffY= 10.0f;
+      if (fDiffY<-10.0f) fDiffY=-10.0f;
+
+      fPitch=(-vy+fDiffY)*0.05f;
+      if (fPitch> 1.0f) fPitch= 1.0f;
+      if (fPitch<-1.0f) fPitch=-1.0f;
+
+      fRoll=-fARoll*0.03f;
+      if (fRoll> 1.0f) fRoll= 1.0f;
+      if (fRoll<-1.0f) fRoll=-1.0f;
+
+      m_pTorque->setPitch(fPitch);
+      m_pTorque->setRoll (fRoll );
+      m_pTorque->setYaw  (fYaw  );
+
+      m_fThrust=vPlaneVel.getLength()<50.0f?1.0f:50.0f/vPlaneVel.getLength();
+      if (m_fThrust<0.0f) m_fThrust=0.0f;
+
+      m_pMotor->setPower(m_fThrust);
     }
 
     if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {
