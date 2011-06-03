@@ -305,15 +305,11 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
       f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
       if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
-      if (fSteer!=fSteer)
-        printf("ERROR!!\n");
-      else {
-        fYaw=0.015f*fSteer;
-        if (fYaw> 1.0f) fYaw= 1.0f;
-        if (fYaw<-1.0f) fYaw=-1.0f;
+      fYaw=0.015f*fSteer;
+      if (fYaw> 1.0f) fYaw= 1.0f;
+      if (fYaw<-1.0f) fYaw=-1.0f;
 
-        if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
-      }
+      if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
 
       m_fApDist=(vPlane-vPoint).getLength();
 
@@ -341,9 +337,9 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (fRoll> 1.0f) fRoll= 1.0f;
       if (fRoll<-1.0f) fRoll=-1.0f;
 
-      m_pTorque->setPitch(fPitch);
-      m_pTorque->setRoll (fRoll );
-      m_pTorque->setYaw  (fYaw  );
+      if (fPitch!=fPitch) printf("Error fPitch!\n"); else m_pTorque->setPitch(fPitch);
+      if (fRoll !=fRoll ) printf("Error fRoll!\n" ); else m_pTorque->setRoll (fRoll );
+      if (fYaw  !=fYaw  ) printf("Error fYaw!\n"  ); else m_pTorque->setYaw  (fYaw  );
 
       m_fThrust=vPlaneVel.getLength()<50.0f?1.0f:50.0f/vPlaneVel.getLength();
       if (m_fThrust<0.0f) m_fThrust=0.0f;

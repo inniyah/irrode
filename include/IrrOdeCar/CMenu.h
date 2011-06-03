@@ -23,6 +23,10 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     dimension2di m_cDim;
     position2di m_cPos;
     u32 m_iIdx;
+    s32 m_iMouseX,m_iMouseY;
+    f32 m_fAngleH,m_fAngleV;
+    bool m_bLeftBtn;
+    core::vector3df m_vCamLookAt;
 
   public:
     /**

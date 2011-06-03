@@ -27,6 +27,12 @@ CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L
 
   list<IGUIButton *>::Iterator i;
   for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
+
+  m_iMouseX=-100;
+  m_iMouseY=-100;
+  m_bLeftBtn=false;
+  m_fAngleH=0.0f;
+  m_fAngleV=0.0f;
 }
 
 CMenu::~CMenu() {
@@ -41,6 +47,7 @@ void CMenu::activate() {
   if (bFirstCall) {
     m_pSmgr->getActiveCamera()->setPosition(vector3df(3502.5f,1000.0f,2490.0f));
     m_pSmgr->getActiveCamera()->setTarget(vector3df(3500.0f,1000.0f,2500.0f));
+    m_vCamLookAt=m_pSmgr->getActiveCamera()->getTarget();
     bFirstCall=false;
   }
 
@@ -108,6 +115,39 @@ bool CMenu::OnEvent(const SEvent &event) {
       //the ID of the button is the return value necessary to switch to the wanted state
       m_iMenuSelect=event.GUIEvent.Caller->getID();
     }
+  }
+
+  //Handle mouse input events to update the camera (or the position of a segment when the arrow is dragged)
+  if (event.EventType==EET_MOUSE_INPUT_EVENT) {
+    scene::ICameraSceneNode *pCam=m_pSmgr->getActiveCamera();
+    if (m_iMouseX!=-100 && m_iMouseY!=-100) {
+      if (event.MouseInput.isLeftPressed()) {
+        m_bLeftBtn=true;
+        m_fAngleH-=0.5f*((f32)m_iMouseX-event.MouseInput.X);
+        m_fAngleV+=0.5f*((f32)m_iMouseY-event.MouseInput.Y);
+
+        while (m_fAngleV> 80.0f) m_fAngleV= 80.0f;
+        while (m_fAngleV<-80.0f) m_fAngleV=-80.0f;
+
+        f32 fCamX=(irr::f32)(1.0f*sin(m_fAngleH*GRAD_PI2)*cos(m_fAngleV*GRAD_PI2)),
+        fCamY=(irr::f32)(1.0f*sin(m_fAngleV*GRAD_PI2)),
+        fCamZ=(irr::f32)(1.0f*cos(m_fAngleH*GRAD_PI2)*cos(m_fAngleV*GRAD_PI2));
+
+        m_vCamLookAt=core::vector3df(fCamX,fCamY,fCamZ);
+        pCam->setTarget(pCam->getPosition()+m_vCamLookAt);
+      }
+      else m_bLeftBtn=false;
+
+      if (event.MouseInput.isRightPressed()) {
+        core::vector3df vStrafe=m_vCamLookAt.crossProduct(core::vector3df(0,1,0)),
+        v=pCam->getPosition()+((f32)(m_iMouseY-event.MouseInput.Y))*m_vCamLookAt+((f32)(m_iMouseX-event.MouseInput.X))*vStrafe;
+        pCam->setPosition(v);
+        pCam->setTarget(v+m_vCamLookAt);
+      }
+    }
+
+    m_iMouseX=event.MouseInput.X;
+    m_iMouseY=event.MouseInput.Y;
   }
 
   return false;
