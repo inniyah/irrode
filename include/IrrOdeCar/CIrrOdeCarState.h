@@ -60,6 +60,8 @@ class CIrrOdeCarState {
     bool isInitialized() { return m_bInitialized; }
 
     virtual stringc &getButtonText()=0;
+
+    virtual void drawSpecifics()=0;
 };
 
 #endif

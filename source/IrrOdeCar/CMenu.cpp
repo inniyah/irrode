@@ -64,6 +64,9 @@ void CMenu::activate() {
   //show the buttons
   list<IGUIButton *>::Iterator i;
   for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(true);
+
+  m_iMouseX=-100;
+  m_iMouseY=-100;
 }
 
 void CMenu::deactivate() {

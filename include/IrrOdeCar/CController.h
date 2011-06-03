@@ -31,6 +31,8 @@ class CController : public CIrrOdeCarState, public IEventReceiver {
     virtual bool OnEvent(const SEvent &event);  /*!< the Irrlicht event receiver callback */
 
     virtual stringc &getButtonText() { static stringc s=stringc("controller setup"); return s; }
+
+    virtual void drawSpecifics() { }
 };
 
 #endif

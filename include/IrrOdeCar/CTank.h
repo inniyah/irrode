@@ -79,6 +79,8 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual stringc &getButtonText() { static stringc s=stringc("select tank"); return s; }
+
+    virtual void drawSpecifics() { }
 };
 
 #endif

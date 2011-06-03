@@ -31,7 +31,8 @@ enum ePlaneControls {
   ePlaneBackview,
   ePlaneBrake,
   ePlaneFlip,
-  ePlaneAutoPilot
+  ePlaneAutoPilot,
+  ePlaneTarget
 };
 
 class CProjectile;
@@ -59,17 +60,26 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pPlaneBody;
     irr::ode::CIrrOdeServo *m_pSteer;
-    irr::ode::CIrrOdeBody *m_pRearWheels[2];
+    irr::ode::CIrrOdeBody *m_pRearWheels[2],
+                          *m_pFrontWheel;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
 
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
+    irr::scene::ISceneCollisionManager *m_pColMgr;
+
     ISceneNode *m_pRoll[2],*m_pPitch[2],*m_pYaw[2];
     const u32 *m_pCtrls;
     u32 m_iLastShot,m_iLastMissile;
 
+    irr::ode::CIrrOdeBody *m_pTarget;
+
+    irr::core::list<irr::ode::CIrrOdeSceneNode *> m_lOdeNodes;
+    irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator m_itTarget;
+
+    irr::core::dimension2du m_cScreen;
   public:
     CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CPlane();
@@ -86,6 +96,8 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual stringc &getButtonText() { static stringc s=stringc("select airplane"); return s; }
+
+    virtual void drawSpecifics();
 };
 
 #endif

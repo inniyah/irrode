@@ -12,6 +12,10 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
   m_iLastMissile=0;
   m_fApDist=0.0f;
 
+  m_pColMgr=pDevice->getSceneManager()->getSceneCollisionManager();
+  m_cScreen=pDevice->getVideoDriver()->getScreenSize();
+  m_pTarget=NULL;
+
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pPlaneBody!=NULL) {
@@ -47,12 +51,15 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
     m_pRearWheels[1]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rr");
 
+    m_pFrontWheel=m_pPlaneBody->getChildBodyFromName("frontwheel");
+
     printf("\nplane state\n\n");
     printf("rudders: (%i, %i), (%i, %i), (%i, %i)\n",(int)m_pRoll [0],(int)m_pRoll [1],
                                                      (int)m_pPitch[0],(int)m_pPitch[1],
                                                      (int)m_pYaw  [0],(int)m_pYaw  [1]);
     printf("motors: %i, %i, %i\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero);
     printf("rear wheels: %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1]);
+    printf("front wheel: %i\n",(int)m_pFrontWheel);
 
     //let's add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
@@ -87,6 +94,9 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
   }
   else printf("no checkpoints for plane found!\n");
+
+  m_lOdeNodes=irr::ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
+  m_itTarget=m_lOdeNodes.begin();
 }
 
 CPlane::~CPlane() {
@@ -264,6 +274,29 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[ePlaneAutoPilot],0.0f);
         m_bAutoPilot=!m_bAutoPilot;
       }
+
+      if (m_pController->get(m_pCtrls[ePlaneTarget])) {
+        m_pController->set(m_pCtrls[ePlaneTarget],0.0f);
+        m_pTarget=NULL;
+        bool bDone=false,b=false;
+        while (m_pTarget==NULL && !bDone) {
+          m_itTarget++;
+          if (m_itTarget==m_lOdeNodes.end()) {
+            m_itTarget=m_lOdeNodes.begin();
+            if (b) bDone=true;
+            b=true;
+          }
+
+          if ((*m_itTarget)->getType()==irr::ode::IRR_ODE_BODY_ID) {
+            irr::scene::ISceneNode *p=*m_itTarget;
+            if (p!=m_pPlaneBody && p!=m_pRearWheels[0] && p!=m_pRearWheels[1] && p!=m_pFrontWheel) {
+              irr::core::position2di cPos=m_pColMgr->getScreenCoordinatesFrom3DPosition(p->getAbsolutePosition());
+              if (cPos.X>=0 && cPos.Y>=0 && cPos.X<(s32)m_cScreen.Width && cPos.Y<(s32)m_cScreen.Height)
+              m_pTarget=(irr::ode::CIrrOdeBody *)(*m_itTarget);
+            }
+          }
+        }
+      }
     }
 
     if (m_bAutoPilot) {
@@ -364,3 +397,12 @@ bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
 
+void CPlane::drawSpecifics() {
+  if (m_pTarget!=NULL) {
+    irr::core::position2di cPos=m_pColMgr->getScreenCoordinatesFrom3DPosition(m_pTarget->getAbsolutePosition());
+    irr::core::recti cRect=irr::core::recti(cPos.X-15,cPos.Y-15,cPos.X+15,cPos.Y+15);
+    m_pDevice->getVideoDriver()->draw2DRectangleOutline(cRect,irr::video::SColor(0xFF,0xFF,0,0));
+
+    if (cPos.X<0 || cPos.Y<0 || cPos.X>=(s32)m_cScreen.Width || cPos.Y>=(s32)m_cScreen.Height) m_pTarget=NULL;
+  }
+}

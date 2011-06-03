@@ -47,6 +47,8 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     virtual stringc &getButtonText() { static stringc s=stringc("menu"); return s; }
 
     void addButtonForState(CIrrOdeCarState *pState);
+
+    virtual void drawSpecifics() { }
 };
 
 #endif

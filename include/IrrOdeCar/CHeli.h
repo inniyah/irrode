@@ -66,6 +66,8 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual stringc &getButtonText() { static stringc s=stringc("select helicopter"); return s; }
+
+    virtual void drawSpecifics() { }
 };
 
 #endif
