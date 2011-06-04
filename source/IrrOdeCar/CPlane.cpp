@@ -289,7 +289,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
           if ((*m_itTarget)->getType()==irr::ode::IRR_ODE_BODY_ID) {
             irr::scene::ISceneNode *p=*m_itTarget;
-            if (p!=m_pPlaneBody && p!=m_pRearWheels[0] && p!=m_pRearWheels[1] && p!=m_pFrontWheel) {
+            if (p!=m_pPlaneBody && ((irr::ode::CIrrOdeBody *)(*m_itTarget))->getParentBody()==NULL) {
               irr::core::position2di cPos=m_pColMgr->getScreenCoordinatesFrom3DPosition(p->getAbsolutePosition());
               if (cPos.X>=0 && cPos.Y>=0 && cPos.X<(s32)m_cScreen.Width && cPos.Y<(s32)m_cScreen.Height)
               m_pTarget=(irr::ode::CIrrOdeBody *)(*m_itTarget);
