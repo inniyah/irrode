@@ -5,14 +5,21 @@
   #include <irrOde.h>
 
 class CAdvancedParticleSystemNode;
+class CAutoPilotPlane;
 
 class CProjectile {
   protected:
-    irr::ode::CIrrOdeBody *m_pBody;
+    irr::ode::CIrrOdeBody *m_pBody,
+                          *m_pTarget;
     irr::s32 m_iTtl;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::scene::ISceneManager *m_pSmgr;
     irr::scene::IAnimatedMeshSceneNode *m_pNode;
+
+    irr::ode::CIrrOdeAeroDrag *m_pAero;
+    irr::ode::CIrrOdeTorqueMotor *m_pTorque;
+
+    CAutoPilotPlane *m_pAutoPilot;
 
     array<CAdvancedParticleSystemNode *> m_aParticleSystems;
 
@@ -20,6 +27,7 @@ class CProjectile {
 
     void findParticleSystems(irr::scene::ISceneNode *pNode);
     void findMesh(irr::scene::ISceneNode *pNode);
+
   public:
     /**
      * The projectile's constructor
@@ -43,6 +51,8 @@ class CProjectile {
     void collide();
 
     bool particlesActive();
+
+    void setTarget(irr::ode::CIrrOdeBody *pTarget);
 };
 
 class CProjectileManager : irr::ode::IIrrOdeEventListener {

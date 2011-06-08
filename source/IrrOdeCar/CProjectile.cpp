@@ -3,6 +3,7 @@
   #include <CIrrOdeBody.h>
   #include <CIrrOdeManager.h>
   #include <CAdvancedParticleSystemNode.h>
+  #include <CAutoPilotPlane.h>
 
 void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
   if (pNode->getType()==(irr::scene::ESCENE_NODE_TYPE)ADVANCED_PARTICLE_NODE_ID) {
@@ -11,8 +12,17 @@ void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
   list<ISceneNode *> children=pNode->getChildren();
   list<ISceneNode *>::Iterator i;
 
-  for (i=children.begin(); i!=children.end(); i++)
+  for (i=children.begin(); i!=children.end(); i++) {
     findParticleSystems(*i);
+    if ((*i)->getType()==irr::ode::IRR_ODE_AERO_DRAG_ID) {
+      m_pAero=(irr::ode::CIrrOdeAeroDrag *)(*i);
+      printf("\t\t**** aero drag!\n");
+    }
+    if ((*i)->getType()==irr::ode::IRR_ODE_TORQUE_MOTOR_ID) {
+      m_pTorque=(irr::ode::CIrrOdeTorqueMotor *)(*i);
+      printf("\t\t**** torque motor: %i!\n",(int)m_pTorque);
+    }
+  }
 }
 
 void CProjectile::findMesh(irr::scene::ISceneNode *pNode) {
@@ -27,11 +37,21 @@ void CProjectile::findMesh(irr::scene::ISceneNode *pNode) {
   for (i=children.begin(); i!=children.end(); i++) findMesh(*i);
 }
 
+void CProjectile::setTarget(irr::ode::CIrrOdeBody *pTarget) {
+  m_pTarget=pTarget;
+  if (m_pAutoPilot==NULL) m_pAutoPilot=new CAutoPilotPlane(m_pBody,m_pAero,m_pTorque,m_pMotor);
+  m_pAutoPilot->setTarget(m_pTarget);
+}
+
 CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
   m_bActive=true;
   m_pNode=NULL;
+  m_pTarget=NULL;
+  m_pAero=NULL;
+  m_pTorque=NULL;
+  m_pAutoPilot=NULL;
 
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
@@ -80,6 +100,15 @@ void CProjectile::step() {
     //Toggling the particle systems and removing the scene node has been moved
     //to the CCustomEventReceiver which is reused in the plugin for the RePlayer
   }
+  else
+    if (m_bActive && m_pTarget!=NULL && m_pAero!=NULL && m_pTorque!=NULL) {
+      f32 fYaw,fPitch,fRoll,fThrust;
+      m_pAutoPilot->step(fYaw,fPitch,fRoll,fThrust);
+
+      if (fYaw  ==fYaw  ) m_pTorque->setYaw  (fYaw  ); else printf("Error Missile Yaw!\n");
+      if (fPitch==fPitch) m_pTorque->setPitch(fPitch); else printf("Error Missile Pitch!\n");
+      if (fRoll ==fRoll ) m_pTorque->setRoll (fRoll ); else printf("Error Missile Roll!\n");
+    }
 }
 
 bool CProjectile::particlesActive() {

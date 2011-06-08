@@ -3,6 +3,7 @@
   #include <math.h>
   #include <CProjectile.h>
   #include <irrCC.h>
+  #include <CAutoPilotPlane.h>
 
 CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
@@ -46,6 +47,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_bBackView=false;
 
     m_bAutoPilot=false;
+    m_pAutoPilot=new CAutoPilotPlane(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
 
     //we need the rear wheel bodies for the braking on ground
     m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
@@ -243,7 +245,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
         m_bLeftMissile=!m_bLeftMissile;
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        p->setTarget(m_pTarget);
       }
 
       if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
@@ -300,52 +303,19 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
     }
 
     if (m_bAutoPilot) {
-      core::vector3df vInv=m_pPlaneBody->getRotation();
-
-      vInv=vInv.invert();
-
-      core::vector3df vUp=vInv.rotationToDirection(m_pAero->getUpward  ()),
-                      vSi=vInv.rotationToDirection(m_pAero->getSideward());
-
-      vSi.Y=0.0f;
-
-      vUp.normalize();
-      vSi.normalize();
-
-      f32 fRollAngle=acosf(vUp.dotProduct(vSi))*180/M_PI;//  Dot(NormalizeEx(v1), NormalizeEx(v2)));
-      f32 fARoll=fRollAngle-90.0f;
-
-
       if (m_iNextCp==-1) {
         m_iNextCp=rand()%m_aCheckPoints.size();
+        m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
       }
+      //m_aCheckPoints[m_iNextCp]
+      m_pAutoPilot->step(fYaw,fPitch,fRoll,m_fThrust);
+      m_pMotor->setPower(m_fThrust);
 
-      core::vector3df vCheckPos=m_aCheckPoints[m_iNextCp]->getPosition(),
-                      vPlaneVel=m_pPlaneBody->getLinearVelocity();
+      if (fPitch!=fPitch) printf("Error fPitch (%s)!\n",m_pPlaneBody->getName()); else m_pTorque->setPitch(fPitch);
+      if (fRoll !=fRoll ) printf("Error fRoll (%s)!\n" ,m_pPlaneBody->getName()); else m_pTorque->setRoll (fRoll );
+      if (fYaw  !=fYaw  ) printf("Error fYaw (%s)!\n"  ,m_pPlaneBody->getName()); else m_pTorque->setYaw  (fYaw  );
 
-      core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
-                      vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
-                      vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z),
-                      vCpVel=vPoint-vPlane;
-
-      irr::core::vector2df vxy=vVeloc+vCpVel,vxz=vVeloc-vCpVel;
-
-      vVeloc.normalize();
-      vCpVel.normalize();
-
-      f32 fSteer=vVeloc.getAngleWith(vCpVel);
-
-      if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
-      f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
-      if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
-      fYaw=0.015f*fSteer;
-      if (fYaw> 1.0f) fYaw= 1.0f;
-      if (fYaw<-1.0f) fYaw=-1.0f;
-
-      if (fYaw!=0.0f) fARoll+=5.0f*fYaw;
-
-      m_fApDist=(vPlane-vPoint).getLength();
-
+      m_fApDist=m_pAutoPilot->getApDist();
       if (m_fApDist<100.0f) {
         s32 iNext=m_iNextCp;
         while (iNext==m_iNextCp) {
@@ -353,31 +323,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
           printf("next checkpoint: %i\n",iNext);
         }
         m_iNextCp=iNext;
+        m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
       }
-
-      f32 vy=m_pPlaneBody->getLinearVelocity().Y;
-
-      f32 fDiffY=(950-vPos.Y)/10.0f;
-
-      if (fDiffY> 10.0f) fDiffY= 10.0f;
-      if (fDiffY<-10.0f) fDiffY=-10.0f;
-
-      fPitch=(-vy+fDiffY)*0.05f;
-      if (fPitch> 1.0f) fPitch= 1.0f;
-      if (fPitch<-1.0f) fPitch=-1.0f;
-
-      fRoll=-fARoll*0.03f;
-      if (fRoll> 1.0f) fRoll= 1.0f;
-      if (fRoll<-1.0f) fRoll=-1.0f;
-
-      if (fPitch!=fPitch) printf("Error fPitch!\n"); else m_pTorque->setPitch(fPitch);
-      if (fRoll !=fRoll ) printf("Error fRoll!\n" ); else m_pTorque->setRoll (fRoll );
-      if (fYaw  !=fYaw  ) printf("Error fYaw!\n"  ); else m_pTorque->setYaw  (fYaw  );
-
-      m_fThrust=vPlaneVel.getLength()<50.0f?1.0f:50.0f/vPlaneVel.getLength();
-      if (m_fThrust<0.0f) m_fThrust=0.0f;
-
-      m_pMotor->setPower(m_fThrust);
     }
 
     if (fYaw!=m_fYaw || fPitch!=m_fPitch || fRoll!=m_fRoll) {

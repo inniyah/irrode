@@ -79,6 +79,7 @@
 			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 			<Add directory="..\codeblocks" />
 		</Linker>
+		<Unit filename="..\include\IrrOdeCar\CAutoPilotPlane.h" />
 		<Unit filename="..\include\IrrOdeCar\CCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CConfigFileManager.h" />
 		<Unit filename="..\include\IrrOdeCar\CController.h" />
@@ -95,6 +96,7 @@
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
+		<Unit filename="..\source\IrrOdeCar\CAutoPilotPlane.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
