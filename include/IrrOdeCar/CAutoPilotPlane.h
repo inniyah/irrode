@@ -22,11 +22,13 @@ class CAutoPilotPlane {
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
 
     irr::core::vector2di m_vArtificialHorizon;
+    irr::core::vector2df m_vCpVel;
 
     irr::u32 m_iState;
     irr::f32 m_fApDist;
 
-    bool m_bEnabled;
+    bool m_bEnabled,
+         m_bLinkYawRoll;
 
   public:
     CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
@@ -46,6 +48,8 @@ class CAutoPilotPlane {
 
     void setEnabled(bool b) { m_bEnabled=b; }
     bool isEnabled() { return m_bEnabled; }
+
+    void setLinkYawRoll(bool b) { m_bLinkYawRoll=b; }
 };
 
 #endif

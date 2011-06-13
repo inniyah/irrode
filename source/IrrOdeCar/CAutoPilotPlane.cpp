@@ -18,6 +18,7 @@ CAutoPilotPlane::CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
   m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
 
   m_bEnabled=false;
+  m_bLinkYawRoll=false;
 }
 
 void CAutoPilotPlane::setTarget(irr::scene::ISceneNode *pTarget) {
@@ -51,22 +52,30 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
 
     core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
                     vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
-                    vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z),
-                    vCpVel=vPoint-vPlane;
+                    vVeloc=core::vector2df(vPlaneVel.X,vPlaneVel.Z);
 
-    irr::core::vector2df vxy=vVeloc+vCpVel,vxz=vVeloc-vCpVel;
+    m_vCpVel=vPoint-vPlane;
+
+    irr::core::vector2df vxy=vVeloc+m_vCpVel,vxz=vVeloc-m_vCpVel;
 
     vVeloc.normalize();
-    vCpVel.normalize();
+    m_vCpVel.normalize();
 
-    f32 fSteer=vVeloc.getAngleWith(vCpVel);
+    f32 fSteer=vVeloc.getAngleWith(m_vCpVel);
 
     if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
-    f32 fOrient=vVeloc.X*vCpVel.Y-vVeloc.Y*vCpVel.X;
+    f32 fOrient=vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X;
     if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
 
     if (m_bEnabled) {
-      fYaw=0.015f*fSteer;
+      fYaw=0.02f*fSteer;
+      if (fYaw> 1.0f) fYaw= 1.0f;
+      if (fYaw<-1.0f) fYaw=-1.0f;
+
+      f32 fSign=fYaw<0.0f?-1:1;
+
+      fYaw=fSign*fYaw*fYaw;
+      fYaw*=2.0f;
       if (fYaw> 1.0f) fYaw= 1.0f;
       if (fYaw<-1.0f) fYaw=-1.0f;
     }
@@ -90,7 +99,7 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
 
       case 1:
         if (m_bEnabled && m_pTarget!=NULL) {
-          irr::core::vector2df vPlaneY=irr::core::vector2df(vPlaneVel.getLength(),vPlaneVel.Y),
+          irr::core::vector2df vPlaneY=irr::core::vector2df(core::vector2df(vPlaneVel.X,vPlaneVel.Z).getLength(),vPlaneVel.Y),
                                vTgt=vPlaneY-irr::core::vector2df((vCheckPos-vPos).getLength(),(vCheckPos-vPos).Y),
                                vTargtY=irr::core::vector2df(vTgt.getLength(),vTgt.Y);
 
@@ -101,6 +110,12 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
               f=fDir<0?vPlaneY.getAngleWith(vTargtY):-vPlaneY.getAngleWith(vTargtY);
 
           fPitch=f/20.0f;
+          if (fPitch> 1.0f) fPitch= 1.0f;
+          if (fPitch<-1.0f) fPitch=-1.0f;
+
+          f32 fSign=fPitch<0.0f?-1.0f:1.0f;
+          fPitch=fSign*fPitch*fPitch;
+
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
@@ -127,7 +142,7 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
     while (fAngle> 180.0f) fAngle-=360.0f;
 
     if (m_bEnabled) {
-      fRoll=(fAngle-30.0f*fYaw)*0.01f;
+      if (m_bLinkYawRoll) fRoll=(fAngle-30.0f*fYaw)*0.01f; else fRoll=fAngle*0.01f;
       if (fRoll> 1.0f) fRoll= 1.0f;
       if (fRoll<-1.0f) fRoll=-1.0f;
     }
@@ -146,10 +161,20 @@ void CAutoPilotPlane::drawSpecifics(irr::video::IVideoDriver *pDrv) {
   vDir*=25.0f;
   vDir.Z=-vDir.Z;
 
-  core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
-  pDrv->draw2DLine(core::vector2di(50,100),core::vector2di(50,100)+vHead,video::SColor(0xFF,0xFF,0,0));
+  core::vector2di vCenter=core::vector2di(50,150);
 
-  core::vector2di vCenter=core::vector2di(50,200);
+  if (m_pTarget!=NULL && m_bEnabled) {
+    core::vector2df vTarget=m_vCpVel;
+    vTarget.normalize();
+    vTarget*=25.0f;
+    vTarget.Y=-vTarget.Y;
+    pDrv->draw2DLine(vCenter,vCenter+core::vector2di(vTarget.X,vTarget.Y),video::SColor(0xFF,192,255,192));
+  }
+
+  core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
+  pDrv->draw2DLine(vCenter,vCenter+vHead,video::SColor(0xFF,0xFF,0,0));
+
+  vCenter=core::vector2di(50,250);
 
   pDrv->draw2DLine(vCenter,vCenter-m_vArtificialHorizon,video::SColor(0xFF,0xFF,0,0));
   pDrv->draw2DLine(vCenter,vCenter+m_vArtificialHorizon,video::SColor(0xFF,0,0xFF,0));

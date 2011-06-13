@@ -48,6 +48,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
     m_bAutoPilot=false;
     m_pAutoPilot=new CAutoPilotPlane(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
+    m_pAutoPilot->setLinkYawRoll(true);
 
     //we need the rear wheel bodies for the braking on ground
     m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
