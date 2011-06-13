@@ -124,6 +124,10 @@ ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newM
   pRet->setYaw(m_fYaw);
   pRet->setPitch(m_fPitch);
 
+  pRet->setPitchFactor(m_fPitchFactor);
+  pRet->setRollFactor (m_fRollFactor );
+  pRet->setYawFactor  (m_fYawFactor  );
+
   pRet->setAeroRudder(m_bAeroRudder);
   pRet->setMinVel(m_fMinVel);
   pRet->setMaxVel(m_fMaxVel);

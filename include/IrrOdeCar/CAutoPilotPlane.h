@@ -21,8 +21,13 @@ class CAutoPilotPlane {
     irr::ode::CIrrOdeTorqueMotor  *m_pTorque;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
 
+    irr::core::vector2di m_vArtificialHorizon;
+
     irr::u32 m_iState;
     irr::f32 m_fApDist;
+
+    bool m_bEnabled;
+
   public:
     CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
                     irr::ode::CIrrOdeAeroDrag     *pAero,
@@ -36,6 +41,11 @@ class CAutoPilotPlane {
     irr::f32 getApDist() { return m_fApDist; }
 
     void step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust);
+
+    void drawSpecifics(irr::video::IVideoDriver *pDrv);
+
+    void setEnabled(bool b) { m_bEnabled=b; }
+    bool isEnabled() { return m_bEnabled; }
 };
 
 #endif

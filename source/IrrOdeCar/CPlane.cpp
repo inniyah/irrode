@@ -276,6 +276,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[ePlaneAutoPilot])) {
         m_pController->set(m_pCtrls[ePlaneAutoPilot],0.0f);
         m_bAutoPilot=!m_bAutoPilot;
+        m_pAutoPilot->setEnabled(m_bAutoPilot);
       }
 
       if (m_pController->get(m_pCtrls[ePlaneTarget])) {
@@ -302,13 +303,14 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       }
     }
 
+    m_pAutoPilot->step(fYaw,fPitch,fRoll,m_fThrust);
+
     if (m_bAutoPilot) {
       if (m_iNextCp==-1) {
         m_iNextCp=rand()%m_aCheckPoints.size();
         m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
       }
-      //m_aCheckPoints[m_iNextCp]
-      m_pAutoPilot->step(fYaw,fPitch,fRoll,m_fThrust);
+
       m_pMotor->setPower(m_fThrust);
 
       if (fPitch!=fPitch) printf("Error fPitch (%s)!\n",m_pPlaneBody->getName()); else m_pTorque->setPitch(fPitch);
@@ -352,4 +354,6 @@ void CPlane::drawSpecifics() {
 
     if (cPos.X<0 || cPos.Y<0 || cPos.X>=(s32)m_cScreen.Width || cPos.Y>=(s32)m_cScreen.Height) m_pTarget=NULL;
   }
+
+  m_pAutoPilot->drawSpecifics(m_pDevice->getVideoDriver());
 }

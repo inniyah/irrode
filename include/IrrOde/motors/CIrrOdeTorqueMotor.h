@@ -46,6 +46,10 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
     void setPitchAxis(vector3df v) { m_vPitchAxis=v; }
     void setYawAxis(vector3df v) { m_vYawAxis=v; }
 
+    void setRollFactor(f32 f) { m_fRollFactor=f; }
+    void setPitchFactor(f32 f) { m_fPitchFactor=f; }
+    void setYawFactor(f32 f) { m_fYawFactor=f; }
+
     void setAeroRudder(bool b) { m_bAeroRudder=b; }
 
     void setMinVel(f32 f) { m_fMinVel=f; }
