@@ -13,6 +13,7 @@
   #include "CConfigFileManager.h"
   #include "CProgressBar.h"
   #include "irrCC.h"
+  #include "CProjectile.h"
   #include "CCustomEventReceiver.h"
   #include <CRandomForestNode.h>
   #include <CMeshCombiner.h>
@@ -451,6 +452,7 @@ int main(int argc, char** argv) {
     guienv->drawAll();
 
     pActive->drawSpecifics();
+    CProjectileManager::getSharedInstance()->drawSpecifics(driver);
 
     driver->endScene();
     int fps = driver->getFPS();

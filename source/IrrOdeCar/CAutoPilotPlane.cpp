@@ -34,12 +34,14 @@ void CAutoPilotPlane::setTarget(irr::scene::ISceneNode *pTarget) {
 
 void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust) {
   core::vector3df vInv=m_pPlane->getRotation(),
+                  vRot=m_pPlane->getRotation(),
                   vPos=m_pPlane->getPosition();
 
   vInv=vInv.invert();
 
   core::vector3df vUp=vInv.rotationToDirection(m_pAero->getUpward  ()),
-                  vSi=vInv.rotationToDirection(m_pAero->getSideward());
+                  vSi=vInv.rotationToDirection(m_pAero->getSideward()),
+                  vFw=vRot.rotationToDirection(m_pAero->getForeward());
 
   vSi.Y=0.0f;
 
@@ -67,24 +69,16 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
     f32 fOrient=vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X;
     if (fOrient>0.0f) fSteer=-1*fSteer; else fSteer=fSteer;
 
-    if (m_bEnabled) {
-      fYaw=0.02f*fSteer;
-      if (fYaw> 1.0f) fYaw= 1.0f;
-      if (fYaw<-1.0f) fYaw=-1.0f;
-
-      f32 fSign=fYaw<0.0f?-1:1;
-
-      fYaw=fSign*fYaw*fYaw;
-      fYaw*=2.0f;
-      if (fYaw> 1.0f) fYaw= 1.0f;
-      if (fYaw<-1.0f) fYaw=-1.0f;
-    }
-
     m_fApDist=(vPlane-vPoint).getLength();
 
     switch (m_iState) {
       case 0:
         if (m_bEnabled) {
+          fYaw=0.02f*fSteer;
+
+          if (fYaw> 1.0f) fYaw= 1.0f;
+          if (fYaw<-1.0f) fYaw=-1.0f;
+
           f32 vy=m_pPlane->getLinearVelocity().Y,
               fDiffY=(950-vPos.Y)/10.0f;
 
@@ -99,27 +93,17 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
 
       case 1:
         if (m_bEnabled && m_pTarget!=NULL) {
-          irr::core::vector2df vPlaneY=irr::core::vector2df(core::vector2df(vPlaneVel.X,vPlaneVel.Z).getLength(),vPlaneVel.Y),
-                               vTgt=vPlaneY-irr::core::vector2df((vCheckPos-vPos).getLength(),(vCheckPos-vPos).Y),
-                               vTargtY=irr::core::vector2df(vTgt.getLength(),vTgt.Y);
+          fYaw=0.1f*fSteer;
+          if (fYaw> 1.0f) fYaw= 1.0f;
+          if (fYaw<-1.0f) fYaw=-1.0f;
 
-          //vPlaneY.normalize();
-          //vTargtY.normalize();
+          irr::core::line3df cLine=irr::core::line3df(m_pPlane->getPosition(),m_pPlane->getPosition()+3000.0f*vFw);
+          irr::core::vector3df vNear=cLine.getClosestPoint(m_pTarget->getPosition());
 
-          f32 fDir=vPlaneY.X*vTargtY.Y-vPlaneY.Y*vTargtY.X,
-              f=fDir<0?vPlaneY.getAngleWith(vTargtY):-vPlaneY.getAngleWith(vTargtY);
-
-          fPitch=f/20.0f;
-          if (fPitch> 1.0f) fPitch= 1.0f;
-          if (fPitch<-1.0f) fPitch=-1.0f;
-
-          f32 fSign=fPitch<0.0f?-1.0f:1.0f;
-          fPitch=fSign*fPitch*fPitch;
+          fPitch=(m_pTarget->getPosition().Y-vNear.Y)/50.0f;
 
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
-
-          printf("%.2f | %.2f\n",f,fPitch);
         }
         break;
     }
@@ -155,7 +139,9 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
 
 void CAutoPilotPlane::drawSpecifics(irr::video::IVideoDriver *pDrv) {
   core::vector3df vRot=m_pPlane->getRotation(),
-                  vDir=vRot.rotationToDirection(m_pAero->getForeward());
+                  vDir=vRot.rotationToDirection(m_pAero->getForeward()),
+                  vPos=m_pPlane->getPosition(),
+                  vFw=vRot.rotationToDirection(m_pAero->getForeward());
 
   vDir.normalize();
   vDir*=25.0f;
@@ -169,6 +155,17 @@ void CAutoPilotPlane::drawSpecifics(irr::video::IVideoDriver *pDrv) {
     vTarget*=25.0f;
     vTarget.Y=-vTarget.Y;
     pDrv->draw2DLine(vCenter,vCenter+core::vector2di(vTarget.X,vTarget.Y),video::SColor(0xFF,192,255,192));
+
+    irr::core::CMatrix4<f32> mat=irr::core::CMatrix4<f32>();
+    pDrv->setTransform(irr::video::ETS_WORLD,mat);
+    irr::video::SMaterial cMat;
+    cMat.Lighting=false;
+    pDrv->setMaterial(cMat);
+
+    irr::core::line3df cLine=irr::core::line3df(vPos,vPos+3000.0f*vFw);
+    pDrv->draw3DLine(cLine.start,cLine.end,video::SColor(0xFF,0xFF,0xFF,0xFF));
+    irr::core::vector3df vNear=cLine.getClosestPoint(m_pTarget->getPosition());
+    pDrv->draw3DLine(vNear,m_pTarget->getPosition(),video::SColor(0xFF,0xFF,0,0));
   }
 
   core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
