@@ -104,14 +104,18 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
           if (m_pTargetBody!=NULL) vTgtPos+=m_pTargetBody->getLinearVelocity();
 
           vVel.normalize();
-          fYaw=0.1f*(fSteer-2.5f*vAng2.Y);
+          if (vAng2.Y>0.1f || vAng2.Y<-0.1f) fSteer-=5.0f*vAng2.Y;
+
+          fYaw=0.1f*fSteer;
           if (fYaw> 1.0f) fYaw= 1.0f;
           if (fYaw<-1.0f) fYaw=-1.0f;
 
           irr::core::line3df cLine=irr::core::line3df(m_pPlane->getPosition(),m_pPlane->getPosition()+3000.0f*vVel);
           irr::core::vector3df vNear=cLine.getClosestPoint(vTgtPos);
 
-          fPitch=(m_pTarget->getPosition().Y-vNear.Y)/30.0f;
+          f32 f=m_pTarget->getPosition().Y-vNear.Y;
+          if (vAng2.X>0.1f || vAng2.X<-0.1f) f-=5.0f*vAng2.X;
+          fPitch=(f)/30.0f;
 
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;

@@ -158,10 +158,10 @@ void CProjectileManager::addShot(CProjectile *p) {
 }
 
 void CProjectileManager::drawSpecifics(irr::video::IVideoDriver *pDrv) {
-  irr::core::list<CProjectile *>::Iterator it;
+  /*irr::core::list<CProjectile *>::Iterator it;
   for (it=m_lShots.begin(); it!=m_lShots.end(); it++) {
     (*it)->drawSpecifics(pDrv);
-  }
+  }*/
 }
 
 bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
