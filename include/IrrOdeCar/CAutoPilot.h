@@ -13,6 +13,13 @@ namespace irr {
 }
 
 class CAutoPilot {
+  public:
+    enum eAutoPilotState {
+      eApPlaneCruise,
+      eApPlaneLowAlt,
+      eApMissile
+    };
+
   protected:
     irr::scene::ISceneNode        *m_pTarget;
     irr::ode::CIrrOdeBody         *m_pPlane,
@@ -24,7 +31,7 @@ class CAutoPilot {
     irr::core::vector2di m_vArtificialHorizon;
     irr::core::vector2df m_vCpVel;
 
-    irr::u32 m_iState;
+    eAutoPilotState m_iState;
     irr::f32 m_fApDist;
 
     bool m_bEnabled,
@@ -38,7 +45,7 @@ class CAutoPilot {
 
     void setTarget(irr::scene::ISceneNode *pTarget);
 
-    void setState(irr::u32 iState) { m_iState=iState; }
+    void setState(eAutoPilotState iState) { m_iState=iState; }
 
     irr::f32 getApDist() { return m_fApDist; }
 

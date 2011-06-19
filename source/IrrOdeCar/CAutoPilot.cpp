@@ -1,5 +1,8 @@
   #include <CAutoPilot.h>
   #include <IrrOde.h>
+  #include <irrlicht.h>
+
+using namespace irr;
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
                                  irr::ode::CIrrOdeAeroDrag     *pAero,
@@ -13,7 +16,7 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_pTorque=pTorque;
   m_pMotor=pMotor;
 
-  m_iState=0;
+  m_iState=eApPlaneCruise;
 
   m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
 
@@ -41,7 +44,9 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
   core::vector3df vUp=vInv.rotationToDirection(m_pAero->getUpward  ()),
                   vSi=vInv.rotationToDirection(m_pAero->getSideward()),
-                  vFw=vRot.rotationToDirection(m_pAero->getForeward());
+                  vFw=vRot.rotationToDirection(m_pAero->getForeward()),
+                  vSid=vRot.rotationToDirection(m_pAero->getSideward()),
+                  vPlaneVel=m_pPlane->getLinearVelocity();
 
   vSi.Y=0.0f;
 
@@ -50,10 +55,9 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
   if (m_pTarget!=NULL) {
     switch (m_iState) {
-      case 0:
+      case eApPlaneCruise:
         if (m_bEnabled) {
-          core::vector3df vCheckPos=m_pTarget->getPosition(),
-                          vPlaneVel=m_pPlane->getLinearVelocity();
+          core::vector3df vCheckPos=m_pTarget->getPosition();
 
           core::vector2df vPlane=core::vector2df(vPos.X,vPos.Z),
                           vPoint=core::vector2df(vCheckPos.X,vCheckPos.Z),
@@ -79,22 +83,75 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fYaw> 1.0f) fYaw= 1.0f;
           if (fYaw<-1.0f) fYaw=-1.0f;
 
-          f32 vy=m_pPlane->getLinearVelocity().Y,
-              fDiffY=(950-vPos.Y)/10.0f;
+          f32 fDiffY=(950-vPos.Y)/10.0f;
 
           if (fDiffY> vPlaneVel.getLength()/5.0f) fDiffY= vPlaneVel.getLength()/5.0f;
           if (fDiffY<-vPlaneVel.getLength()/5.0f) fDiffY=-vPlaneVel.getLength()/5.0f;
 
-          fPitch=(-vy+fDiffY)*0.05f;
+          fPitch=(-vPlaneVel.Y+fDiffY)*0.05f;
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
           fThrust=vPlaneVel.getLength()<50.0f?1.0f:1.0f-((vPlaneVel.getLength()-50.0f)/25.0f);
           if (fThrust<0.0f) fThrust=0.0f;
+
+          f32 fAngle=asin(vSid.Y)*180.0f/PI;
+          if (vUp.Y<0) fAngle=-180.0f-fAngle;
+
+          while (fAngle<-180.0f) fAngle+=360.0f;
+          while (fAngle> 180.0f) fAngle-=360.0f;
+
+          if (m_bLinkYawRoll) fRoll=(fAngle-30.0f*fYaw)*0.01f; else fRoll=fAngle*0.01f;
+          if (fRoll> 1.0f) fRoll= 1.0f;
+          if (fRoll<-1.0f) fRoll=-1.0f;
+
+          core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
+          m_vArtificialHorizon.X=vAhf.X;
+          m_vArtificialHorizon.Y=vAhf.Y;
+
+          if (vPos.Y<800.0f) {
+            printf("Autopilot new state: eApPlaneLowAlt\n");
+            m_iState=eApPlaneLowAlt;
+          }
         }
         break;
 
-      case 1:
+      case eApPlaneLowAlt:
+        if (m_bEnabled) {
+          fThrust=1.0f;
+
+          f32 fAngle=asin(vSid.Y)*180.0f/PI;
+          if (vUp.Y<0) fAngle=-180.0f-fAngle;
+
+          while (fAngle<-180.0f) fAngle+=360.0f;
+          while (fAngle> 180.0f) fAngle-=360.0f;
+
+          fRoll=fAngle*0.01f;
+
+          if (fRoll> 1.0f) fRoll= 1.0f;
+          if (fRoll<-1.0f) fRoll=-1.0f;
+
+          core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
+          m_vArtificialHorizon.X=vAhf.X;
+          m_vArtificialHorizon.Y=vAhf.Y;
+
+          f32 fDiffY=(950-vPos.Y)/10.0f;
+
+          if (fDiffY> vPlaneVel.getLength()/2.5f) fDiffY= vPlaneVel.getLength()/2.5f;
+          if (fDiffY<-vPlaneVel.getLength()/2.5f) fDiffY=-vPlaneVel.getLength()/2.5f;
+
+          fPitch=(-vPlaneVel.Y+fDiffY)*0.05f;
+          if (fPitch> 1.0f) fPitch= 1.0f;
+          if (fPitch<-1.0f) fPitch=-1.0f;
+
+          if (vPos.Y>800.0f) {
+            printf("Autopilot new state: eApPlaneCruise\n");
+            m_iState=eApPlaneCruise;
+          }
+        }
+        break;
+
+      case eApMissile:
         if (m_bEnabled && m_pTarget!=NULL) {
           core::vector3df vCheckPos=m_pTarget->getPosition(),
                           vPlaneVel=m_pPlane->getLinearVelocity();
@@ -146,12 +203,25 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
+
+          f32 fAngle=asin(vSid.Y)*180.0f/PI;
+          if (vUp.Y<0) fAngle=-180.0f-fAngle;
+
+          while (fAngle<-180.0f) fAngle+=360.0f;
+          while (fAngle> 180.0f) fAngle-=360.0f;
+
+          if (fRoll> 1.0f) fRoll= 1.0f;
+          if (fRoll<-1.0f) fRoll=-1.0f;
+
+          core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
+          m_vArtificialHorizon.X=vAhf.X;
+          m_vArtificialHorizon.Y=vAhf.Y;
         }
         break;
     }
   }
 
-  {
+  /*{
     core::vector3df vRot=m_pPlane->getRotation(),
                     vSid=vRot.rotationToDirection(m_pAero->getSideward()),
                     vUp=vRot.rotationToDirection(m_pAero->getUpward());
@@ -171,7 +241,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
     core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
     m_vArtificialHorizon.X=vAhf.X;
     m_vArtificialHorizon.Y=vAhf.Y;
-  }
+  }*/
 }
 
 void CAutoPilot::drawSpecifics(irr::video::IVideoDriver *pDrv) {
