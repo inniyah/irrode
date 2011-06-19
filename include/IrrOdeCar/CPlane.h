@@ -36,7 +36,7 @@ enum ePlaneControls {
 };
 
 class CProjectile;
-class CAutoPilotPlane;
+class CAutoPilot;
 
 class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
@@ -58,7 +58,7 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     ICameraSceneNode *m_pCam;
     ITerrainSceneNode *m_pTerrain;
 
-    CAutoPilotPlane *m_pAutoPilot;
+    CAutoPilot *m_pAutoPilot;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pPlaneBody;

@@ -5,7 +5,7 @@
   #include <irrOde.h>
 
 class CAdvancedParticleSystemNode;
-class CAutoPilotPlane;
+class CAutoPilot;
 
 class CProjectile {
   protected:
@@ -19,7 +19,7 @@ class CProjectile {
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
 
-    CAutoPilotPlane *m_pAutoPilot;
+    CAutoPilot *m_pAutoPilot;
 
     array<CAdvancedParticleSystemNode *> m_aParticleSystems;
 

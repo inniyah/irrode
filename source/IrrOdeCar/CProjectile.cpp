@@ -3,7 +3,7 @@
   #include <CIrrOdeBody.h>
   #include <CIrrOdeManager.h>
   #include <CAdvancedParticleSystemNode.h>
-  #include <CAutoPilotPlane.h>
+  #include <CAutoPilot.h>
 
 void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
   if (pNode->getType()==(irr::scene::ESCENE_NODE_TYPE)ADVANCED_PARTICLE_NODE_ID) {
@@ -39,7 +39,7 @@ void CProjectile::findMesh(irr::scene::ISceneNode *pNode) {
 
 void CProjectile::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pTarget=pTarget;
-  if (m_pAutoPilot==NULL) m_pAutoPilot=new CAutoPilotPlane(m_pBody,m_pAero,m_pTorque,m_pMotor);
+  if (m_pAutoPilot==NULL) m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor);
   m_pAutoPilot->setState(1);
   m_pAutoPilot->setEnabled(true);
   m_pAutoPilot->setTarget(m_pTarget);

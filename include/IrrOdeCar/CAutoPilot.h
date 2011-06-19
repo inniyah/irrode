@@ -12,7 +12,7 @@ namespace irr {
   }
 }
 
-class CAutoPilotPlane {
+class CAutoPilot {
   protected:
     irr::scene::ISceneNode        *m_pTarget;
     irr::ode::CIrrOdeBody         *m_pPlane,
@@ -31,7 +31,7 @@ class CAutoPilotPlane {
          m_bLinkYawRoll;
 
   public:
-    CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
+    CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
                     irr::ode::CIrrOdeAeroDrag     *pAero,
                     irr::ode::CIrrOdeTorqueMotor  *pTorque,
                     irr::ode::CIrrOdeImpulseMotor *pMotor);

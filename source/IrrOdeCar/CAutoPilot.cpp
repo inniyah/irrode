@@ -1,7 +1,7 @@
-  #include <CAutoPilotPlane.h>
+  #include <CAutoPilot.h>
   #include <IrrOde.h>
 
-CAutoPilotPlane::CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
+CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
                                  irr::ode::CIrrOdeAeroDrag     *pAero,
                                  irr::ode::CIrrOdeTorqueMotor  *pTorque,
                                  irr::ode::CIrrOdeImpulseMotor *pMotor) {
@@ -21,7 +21,7 @@ CAutoPilotPlane::CAutoPilotPlane(irr::ode::CIrrOdeBody         *pPlane,
   m_bLinkYawRoll=false;
 }
 
-void CAutoPilotPlane::setTarget(irr::scene::ISceneNode *pTarget) {
+void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
   m_pTarget=pTarget;
 
   if (pTarget!=NULL) {
@@ -32,7 +32,7 @@ void CAutoPilotPlane::setTarget(irr::scene::ISceneNode *pTarget) {
   }
 }
 
-void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust) {
+void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust) {
   core::vector3df vInv=m_pPlane->getRotation(),
                   vRot=m_pPlane->getRotation(),
                   vPos=m_pPlane->getPosition();
@@ -174,7 +174,7 @@ void CAutoPilotPlane::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, ir
   }
 }
 
-void CAutoPilotPlane::drawSpecifics(irr::video::IVideoDriver *pDrv) {
+void CAutoPilot::drawSpecifics(irr::video::IVideoDriver *pDrv) {
   core::vector3df vRot=m_pPlane->getRotation(),
                   vDir=vRot.rotationToDirection(m_pAero->getForeward()),
                   vPos=m_pPlane->getPosition(),

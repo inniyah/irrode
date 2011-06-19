@@ -3,7 +3,7 @@
   #include <math.h>
   #include <CProjectile.h>
   #include <irrCC.h>
-  #include <CAutoPilotPlane.h>
+  #include <CAutoPilot.h>
 
 CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
@@ -47,7 +47,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_bBackView=false;
 
     m_bAutoPilot=false;
-    m_pAutoPilot=new CAutoPilotPlane(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
+    m_pAutoPilot=new CAutoPilot(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
     m_pAutoPilot->setLinkYawRoll(true);
 
     //we need the rear wheel bodies for the braking on ground
