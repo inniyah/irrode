@@ -34,8 +34,23 @@ class CAutoPilot {
     eAutoPilotState m_iState;
     irr::f32 m_fApDist;
 
+    irr::core::vector3df m_vSideward,
+                         m_vForeward,
+                         m_vUpward,
+                         m_vSideward2,
+                         m_vVelocityLin,
+                         m_vVelocityAng,
+                         m_vVATransformed,
+                         m_vInvRot,
+                         m_vRotation,
+                         m_vPosition,
+                         m_vCheckPos;
+
     bool m_bEnabled,
          m_bLinkYawRoll;
+
+    irr::f32 getRollControl(irr::f32 fYaw);
+    irr::f32 getYawControl(bool b);
 
   public:
     CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
