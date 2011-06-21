@@ -46,7 +46,7 @@ void CIrrOdeAeroDrag::step() {
     vector3df vForeward=vRot.rotationToDirection(m_vForeward);
     f32 fForeward=vForeward.dotProduct(vNormVel.normalize());
 
-    if (m_fPitchTrimPwr!=0.0f) {
+    if (m_fPitchTrimPwr!=0.0f && m_fPitchTrim!=0.0f) {
       f32 v=vUp.dotProduct(vNormVel);
       v-=m_fPitchTrim;
       if (v>=0.001f || v<=-0.001f) {
@@ -154,7 +154,7 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
 
   out->addFloat("pitch_trim",m_fPitchTrim);
   if (m_fPitchTrim!=0.0f) out->addFloat("pitch_trim_pwr",m_fPitchTrimPwr);
-  
+
   out->addFloat("up_to_foreward"     ,m_fUpToForeward    );
   out->addFloat("up_damp_to_foreward",m_fUpDampToForeward);
   out->addFloat("side_to_foreward"   ,m_fSideToForeward  );

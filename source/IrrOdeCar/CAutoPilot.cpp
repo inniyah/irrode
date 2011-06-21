@@ -59,28 +59,41 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
 
   core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
                   vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
-                  vVeloc=core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z);
+                  vVeloc=core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z),
+                  vForew=core::vector2df(m_vForeward.X,m_vForeward.Z);
 
   m_vCpVel=vPoint-vPlane;
 
-  irr::core::vector2df vxy=vVeloc+m_vCpVel,vxz=vVeloc-m_vCpVel;
+  irr::core::vector2df vxy,vxz;
 
+  if (b) {
+    vxy=vVeloc+m_vCpVel;
+    vxz=vVeloc-m_vCpVel;
+  }
+  else {
+    vxy=vForew+m_vCpVel;
+    vxz=vForew-m_vCpVel;
+  }
+
+  vForew.normalize();
   vVeloc.normalize();
   m_vCpVel.normalize();
 
-  f32 fSteer=vVeloc.getAngleWith(m_vCpVel);
+  f32 fSteer=b?vVeloc.getAngleWith(m_vCpVel):vForew.getAngleWith(m_vCpVel);
 
   if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
-  f32 fOrient=vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X;
-  if (fOrient>0.0f) fSteer=-fSteer; else fSteer=fSteer;
+  f32 fOrient=b?(vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X):(vForew.X*m_vCpVel.Y-vForew.Y*m_vCpVel.X);
+  if (fOrient>0.0f) fSteer=-fSteer;
+
 
   m_fApDist=(vPlane-vPoint).getLength();
 
   m_vVATransformed=m_vInvRot.rotationToDirection(m_vVelocityAng);
 
   if (b && (m_vVATransformed.Y>0.1f || m_vVATransformed.Y<-0.1f)) {
-    f32 fMinus=10.0f*m_vVATransformed.Y;
-    fMinus*=fMinus;
+    f32 fSign=m_vVATransformed.Y>0.0f?1.0f:0.0f;
+    f32 fMinus=50.0f*m_vVATransformed.Y;
+    fMinus*=fSign*fMinus;
     if (fSteer>0 && fMinus>fSteer) fMinus=fSteer;
     if (fSteer<0 && fMinus<fSteer) fMinus=fSteer;
     fSteer-=fMinus;
@@ -184,8 +197,8 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           irr::core::vector3df vNear=cLine.getClosestPoint(m_vCheckPos);
 
           f32 f=m_pTarget->getPosition().Y-vNear.Y;
-          if (m_vVATransformed.X>0.1f || m_vVATransformed.X<-0.1f) f-=5.0f*m_vVATransformed.X;
-          fPitch=(f)/30.0f;
+          if ((f>0.0f && m_vVATransformed.X>0.01f) || (f<0.0f && m_vVATransformed.X<-0.01f))  f-=100.0f*m_vVATransformed.X;
+          fPitch=(f)/50.0f;
 
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
