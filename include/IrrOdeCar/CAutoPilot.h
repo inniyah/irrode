@@ -15,9 +15,10 @@ namespace irr {
 class CAutoPilot {
   public:
     enum eAutoPilotState {
-      eApPlaneCruise,
       eApPlaneLowAlt,
+      eApPlaneCruise,
       eApHeliLowAlt,
+      eApHeliCruise,
       eApMissile
     };
 
@@ -52,6 +53,9 @@ class CAutoPilot {
 
     irr::f32 getRollControl(irr::f32 fYaw);
     irr::f32 getYawControl(bool b);
+    irr::f32 getHeliPitch();
+
+    void updateApDist();
 
   public:
     CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -61,7 +65,7 @@ class CAutoPilot {
 
     void setTarget(irr::scene::ISceneNode *pTarget);
 
-    void setState(eAutoPilotState iState) { m_iState=iState; }
+    void setState(eAutoPilotState iState);
 
     irr::f32 getApDist() { return m_fApDist; }
 

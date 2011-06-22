@@ -46,6 +46,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
       printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
     }
     else printf("no checkpoints for helicopter found!\n");
+    m_fApDist=0.0f;
   }
 }
 
@@ -158,30 +159,6 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_fThrust> 1.0f) m_fThrust= 1.0f;
       if (m_fThrust<-0.1f) m_fThrust=-0.1f;
 
-      if (m_pAutoPilot->isEnabled()) {
-        if (m_iNextCp==-1) {
-          m_iNextCp=rand()%m_aCheckPoints.size();
-          m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
-        }
-        m_fApDist=m_pAutoPilot->getApDist();
-        /*if (m_fApDist<100.0f) {
-          s32 iNext=m_iNextCp;
-          while (iNext==m_iNextCp) {
-            iNext=rand()%m_aCheckPoints.size();
-            printf("next checkpoint: %i\n",iNext);
-          }
-          m_iNextCp=iNext;
-          m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
-        }*/
-      }
-
-      m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
-
-      m_pMotor->setPower(m_fThrust*f);
-      m_pTorque->setPitch(m_fPitch);
-      m_pTorque->setRoll(m_fRoll);
-      m_pTorque->setYaw(-m_fYaw);
-
       if (m_pController->get(m_pCtrls[eHeliFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
         m_iLastShot=pStep->getStepNo();
         //We add a new missile...
@@ -207,6 +184,30 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
       }
     }
+
+    if (m_pAutoPilot->isEnabled()) {
+      if (m_iNextCp==-1) {
+        m_iNextCp=rand()%m_aCheckPoints.size();
+        m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
+      }
+      m_fApDist=m_pAutoPilot->getApDist();
+      if (m_fApDist<100.0f) {
+        s32 iNext=m_iNextCp;
+        while (iNext==m_iNextCp) {
+          iNext=rand()%m_aCheckPoints.size();
+          printf("next checkpoint: %i\n",iNext);
+        }
+        m_iNextCp=iNext;
+        m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
+      }
+    }
+
+    m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
+
+    m_pMotor->setPower(m_fThrust*f);
+    m_pTorque->setPitch(m_fPitch);
+    m_pTorque->setRoll(m_fRoll);
+    m_pTorque->setYaw(-m_fYaw);
   }
 
   return false;

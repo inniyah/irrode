@@ -16,7 +16,7 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_pTorque=pTorque;
   m_pMotor=pMotor;
 
-  m_iState=eApPlaneCruise;
+  setState(eApPlaneCruise);
 
   m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
 
@@ -54,6 +54,13 @@ irr::f32 CAutoPilot::getRollControl(f32 fYaw) {
   return fRoll;
 }
 
+void CAutoPilot::updateApDist() {
+  core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
+                  vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z);
+
+  m_fApDist=(vPlane-vPoint).getLength();
+}
+
 irr::f32 CAutoPilot::getYawControl(bool b) {
   f32 fYaw=0.0f;
 
@@ -85,9 +92,6 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
   f32 fOrient=b?(vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X):(vForew.X*m_vCpVel.Y-vForew.Y*m_vCpVel.X);
   if (fOrient>0.0f) fSteer=-fSteer;
 
-
-  m_fApDist=(vPlane-vPoint).getLength();
-
   m_vVATransformed=m_vInvRot.rotationToDirection(m_vVelocityAng);
 
   if (b && (m_vVATransformed.Y>0.1f || m_vVATransformed.Y<-0.1f)) {
@@ -104,6 +108,28 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
   if (fYaw<-1.0f) fYaw=-1.0f;
 
   return fYaw;
+}
+
+irr::f32 CAutoPilot::getHeliPitch() {
+  f32 f=asin(m_vForeward.Y)*180.0f/M_PI,fPitch=0.0f;
+
+  if (m_iState==eApHeliLowAlt) {
+    fPitch=-f/10.0f;
+  }
+  else {
+    if (f<-15.0f)
+      fPitch=0.25f;
+    else
+      if (f>0.0f)
+        fPitch=-0.75f;
+      else
+        fPitch=(-15.0f-f)/20.0f;
+
+  }
+  if (fPitch> 1.0f) fPitch= 1.0f;
+  if (fPitch<-1.0f) fPitch=-1.0f;
+
+  return fPitch;
 }
 
 void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust) {
@@ -125,6 +151,8 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
   m_vUpward  .normalize();
   m_vSideward.normalize();
+
+  updateApDist();
 
   if (m_pTarget!=NULL) {
     switch (m_iState) {
@@ -156,10 +184,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           fYaw=getYawControl(false);
           fRoll=getRollControl(fYaw);
 
-          if (m_vPosition.Y<800.0f) {
-            printf("Autopilot new state: eApPlaneLowAlt\n");
-            m_iState=eApPlaneLowAlt;
-          }
+          if (m_vPosition.Y<800.0f) setState(eApPlaneLowAlt);
         }
         break;
 
@@ -178,17 +203,24 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
-          if (m_vPosition.Y>800.0f) {
-            printf("Autopilot new state: eApPlaneCruise\n");
-            m_iState=eApPlaneCruise;
-          }
+          if (m_vPosition.Y>800.0f) setState(eApPlaneCruise);
         }
         break;
 
       case eApHeliLowAlt:
+          if (m_vPosition.Y<550.0f)
+            fThrust=1.0f;
+          else
+            setState(eApHeliCruise);
+
+          fRoll=-getRollControl(fYaw);
+          fPitch=-5.0f*getHeliPitch();
+        break;
+
+      case eApHeliCruise:
         if (m_bEnabled) {
           if (m_vPosition.Y<550.0f) {
-            fThrust=1.0f;
+            setState(eApHeliLowAlt);
           }
           else
             if (m_vPosition.Y>600.0f) {
@@ -201,6 +233,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
             }
 
           fRoll=-getRollControl(fYaw);
+          fPitch=-5.0f*getHeliPitch();
         }
         break;
 
@@ -270,4 +303,16 @@ void CAutoPilot::drawSpecifics(irr::video::IVideoDriver *pDrv) {
 
   pDrv->draw2DLine(vCenter,vCenter-m_vArtificialHorizon,video::SColor(0xFF,0xFF,0,0));
   pDrv->draw2DLine(vCenter,vCenter+m_vArtificialHorizon,video::SColor(0xFF,0,0xFF,0));
+}
+
+void CAutoPilot::setState(eAutoPilotState iState) {
+  printf("**** autopilot of \"%s\": new state ",m_pPlane->getName());
+  switch (iState) {
+    case eApPlaneLowAlt: printf("\"eApPlaneLowAlt\"\n"); break;
+    case eApPlaneCruise: printf("\"eApPlaneCruise\"\n"); break;
+    case eApHeliLowAlt : printf("\"eApHeliLowAlt\"\n" ); break;
+    case eApHeliCruise : printf("\"eApHeliCruise\"\n" ); break;
+    case eApMissile    : printf("\"eApMissile\"\n"    ); break;
+  }
+  m_iState=iState;
 }
