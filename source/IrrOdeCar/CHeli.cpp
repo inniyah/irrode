@@ -1,5 +1,6 @@
   #include "CHeli.h"
   #include <CProjectile.h>
+  #include <CAutoPilot.h>
   #include <irrCC.h>
 
 CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
@@ -31,6 +32,20 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
     m_fRoll=0;
     m_fYaw=0;
     m_bInitialized=true;
+
+    m_pAutoPilot=new CAutoPilot(m_pHeliBody,m_pAero,m_pTorque,m_pMotor);
+    m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
+
+    m_iNextCp=-1;
+    ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
+    if (pCheckRoot!=NULL) {
+      irr::core::list<irr::scene::ISceneNode *> lChildren=pCheckRoot->getChildren();
+      irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+      for (it=lChildren.begin(); it!=lChildren.end(); it++) m_aCheckPoints.push_back(*it);
+      printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
+    }
+    else printf("no checkpoints for helicopter found!\n");
   }
 }
 
@@ -114,6 +129,7 @@ u32 CHeli::update() {
   f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
   swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
   if (m_bMissileCam) swprintf(dummy,0xFE,L"%s\nMissile Cam active",dummy);
+  if (m_pAutoPilot->isEnabled()) swprintf(dummy,0xFE,L"%s\nAutopilot active",dummy);
 
   m_pInfo->setText(dummy);
 
@@ -142,6 +158,25 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_fThrust> 1.0f) m_fThrust= 1.0f;
       if (m_fThrust<-0.1f) m_fThrust=-0.1f;
 
+      if (m_pAutoPilot->isEnabled()) {
+        if (m_iNextCp==-1) {
+          m_iNextCp=rand()%m_aCheckPoints.size();
+          m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
+        }
+        m_fApDist=m_pAutoPilot->getApDist();
+        /*if (m_fApDist<100.0f) {
+          s32 iNext=m_iNextCp;
+          while (iNext==m_iNextCp) {
+            iNext=rand()%m_aCheckPoints.size();
+            printf("next checkpoint: %i\n",iNext);
+          }
+          m_iNextCp=iNext;
+          m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
+        }*/
+      }
+
+      m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
+
       m_pMotor->setPower(m_fThrust*f);
       m_pTorque->setPitch(m_fPitch);
       m_pTorque->setRoll(m_fRoll);
@@ -165,6 +200,11 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(m_pCtrls[eHeliFlip])) {
         m_pHeliBody->addForceAtPosition(m_pHeliBody->getPosition()+vector3df(0.0f,1.5f,0.0f),vector3df(0.0f,15.0f,0.0f));
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliAutoPilot])) {
+        m_pController->set(m_pCtrls[eHeliAutoPilot],0.0f);
+        m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
       }
     }
   }

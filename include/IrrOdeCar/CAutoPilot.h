@@ -17,6 +17,7 @@ class CAutoPilot {
     enum eAutoPilotState {
       eApPlaneCruise,
       eApPlaneLowAlt,
+      eApHeliLowAlt,
       eApMissile
     };
 

@@ -25,10 +25,12 @@ enum eHeliControls {
   eHeliPowerDown,
   eHeliFire,
   eHeliToggleCam,
-  eHeliFlip
+  eHeliFlip,
+  eHeliAutoPilot
 };
 
 class CProjectile;
+class CAutoPilot;
 
 class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
   protected:
@@ -47,8 +49,14 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     ICameraSceneNode *m_pCam;
     ITerrainSceneNode *m_pTerrain;
 
+    CAutoPilot *m_pAutoPilot;
+
     const u32 *m_pCtrls;
     u32 m_iLastShot;
+    s32 m_iNextCp;
+    f32 m_fApDist;
+
+    irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
   public:
     CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);

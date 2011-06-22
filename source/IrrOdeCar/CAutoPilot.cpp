@@ -185,6 +185,25 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
         }
         break;
 
+      case eApHeliLowAlt:
+        if (m_bEnabled) {
+          if (m_vPosition.Y<550.0f) {
+            fThrust=1.0f;
+          }
+          else
+            if (m_vPosition.Y>600.0f) {
+              fThrust=0.0f;
+            }
+            else {
+              fThrust=1.0f-((m_vPosition.Y-550.0f)/50.0f)-m_vVelocityLin.Y/15.0f;
+              if (fThrust>1.0f) fThrust=1.0f;
+              if (fThrust<0.0f) fThrust=0.0f;
+            }
+
+          fRoll=-getRollControl(fYaw);
+        }
+        break;
+
       case eApMissile:
         if (m_bEnabled && m_pTarget!=NULL) {
 

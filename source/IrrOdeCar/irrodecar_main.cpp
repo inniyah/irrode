@@ -212,6 +212,7 @@ int main(int argc, char** argv) {
   iCtrls[2][eHeliFire     ]=pController->addItem(2,stringw(L"Fire Missile"),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eHeliToggleCam]=pController->addItem(2,stringw(L"Toggle Cam"  ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eHeliFlip     ]=pController->addItem(2,stringw(L"Flip"        ),KEY_RETURN,CIrrCC::eCtrlButton);
+  iCtrls[2][eHeliAutoPilot]=pController->addItem(2,stringw(L"Autopilot"   ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
 
 
   //the helicopter gets three axes: pitch, roll and yaw...
