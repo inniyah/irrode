@@ -111,9 +111,9 @@ void CProjectile::step() {
       f32 fYaw,fPitch,fRoll,fThrust;
       m_pAutoPilot->step(fYaw,fPitch,fRoll,fThrust);
 
-      if (fYaw  ==fYaw  ) m_pTorque->setYaw  (fYaw  ); else printf("Error Missile Yaw!\n");
-      if (fPitch==fPitch) m_pTorque->setPitch(fPitch); else printf("Error Missile Pitch!\n");
-      if (fRoll ==fRoll ) m_pTorque->setRoll (fRoll ); else printf("Error Missile Roll!\n");
+      if (fYaw  ==fYaw  ) m_pTorque->setYaw  (fYaw  );
+      if (fPitch==fPitch) m_pTorque->setPitch(fPitch);
+      if (fRoll ==fRoll ) m_pTorque->setRoll (fRoll );
     }
 }
 

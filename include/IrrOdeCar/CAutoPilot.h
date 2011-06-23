@@ -35,7 +35,11 @@ class CAutoPilot {
     irr::core::vector2df m_vCpVel;
 
     eAutoPilotState m_iState;
-    irr::f32 m_fApDist;
+    irr::u32  m_iHeliCheckCount;
+    irr::f32  m_fApDist,
+             *m_fHeliDistLeft,
+             *m_fHeliDistRight,
+              m_fHeliCheckMax;
 
     irr::core::vector3df m_vSideward,
                          m_vForeward,
@@ -71,6 +75,8 @@ class CAutoPilot {
                irr::ode::CIrrOdeTorqueMotor  *pTorque,
                irr::ode::CIrrOdeImpulseMotor *pMotor,
                irr::ode::CIrrOdeGeomRay      *pRay);
+
+    ~CAutoPilot();
 
     void setTarget(irr::scene::ISceneNode *pTarget);
 

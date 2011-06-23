@@ -23,6 +23,11 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_bEnabled=false;
   m_bLinkYawRoll=false;
   m_pRay=NULL;
+
+  m_fHeliDistLeft =NULL;
+  m_fHeliDistRight=NULL;
+  m_iHeliCheckCount=0;
+  m_fHeliCheckMax=0.0f;
 }
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -45,6 +50,23 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_bEnabled=false;
   m_bLinkYawRoll=false;
   m_pRay=pRay;
+
+  m_fHeliDistLeft =(f32 *)malloc(5*sizeof(f32));
+  m_fHeliDistRight=(f32 *)malloc(5*sizeof(f32));
+
+  m_fHeliDistLeft[0]=60.0f; m_fHeliDistRight[0]=-60.0f;
+  m_fHeliDistLeft[1]=45.0f; m_fHeliDistRight[1]=-45.0f;
+  m_fHeliDistLeft[2]=25.0f; m_fHeliDistRight[2]=-25.0f;
+  m_fHeliDistLeft[3]= 5.0f; m_fHeliDistRight[3]= -5.0f;
+  m_fHeliDistLeft[4]= 0.0f; m_fHeliDistRight[4]=  0.0f;
+
+  m_fHeliCheckMax=5000.0f;
+  m_iHeliCheckCount=5;
+}
+
+CAutoPilot::~CAutoPilot() {
+  if (m_fHeliDistLeft !=NULL) free(m_fHeliDistLeft );
+  if (m_fHeliDistRight!=NULL) free(m_fHeliDistRight);
 }
 
 void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
@@ -256,54 +278,84 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
               if (m_vPosition.Y>600.0f) {
                 fThrust=0.0f;
               }
-              else {
+              else
                 fThrust=1.0f-((m_vPosition.Y-550.0f)/50.0f)-m_vVelocityLin.Y/15.0f;
-                if (fThrust>1.0f) fThrust=1.0f;
-                if (fThrust<0.0f) fThrust=0.0f;
-              }
 
           if (m_pRay!=NULL) {
-            f32 fAngle[]={ -30.0f, -10.0f, 0.0f, 10.0f, 30.0f, 99.0f },
-                fDist []={   1000,   1000,  1000, 1000, 1000 },
-                fFact=3.0f,
-                fLeft=0.0f,fRight=0.0f;
+            f32 fLeft=0.0f,fRight=0.0f;
 
             vDir.normalize();
 
             core::vector2df vStart =core::vector2df( 10.0f*vDir.X, 10.0f*vDir.Z),
                             vCenter=core::vector2df(250.0f*vDir.X,250.0f*vDir.Z);
 
-            for (u32 i=0; fAngle[i]!=99.0f; i++) {
-              core::array<core::vector3df> aHits;
-              core::vector2df v=vCenter,vEnd=v.rotateBy(fAngle[i]);
-              core::vector3df v1=vPos+core::vector3df(vStart.X,0.0f,vStart.Y),
-                              v2=     core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
+            for (u32 j=0; j<2; j++) {
+              f32 fDist []={ 500.0f, 500.0f, 500.0f, 500.0f, 500.0f },
+                  fFact=1.0f;
 
-              m_pRay->set(v1,v2,1000.0f);
-              m_pRay->checkWithWorld(aHits);
+              for (u32 i=0; i<m_iHeliCheckCount; i++) {
+                core::array<core::vector3df> aHits;
+                core::vector2df v=vCenter,vEnd=v.rotateBy(j==0?m_fHeliDistLeft[i]:m_fHeliDistRight[i]);
+                core::vector3df v1=vPos+core::vector3df(vStart.X,0.0f,vStart.Y),
+                                v2=     core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
 
-              for (u32 j=0; j<aHits.size(); j++) {
-                core::vector3df vDist=m_vPosition-aHits[j];
-                f32 f=vDist.getLength();
-                if (f<fDist[i]) fDist[i]=f;
+                m_pRay->set(v1,v2,500.0f);
+                m_pRay->checkWithWorld(aHits);
+
+                for (u32 k=0; k<aHits.size(); k++) {
+                  core::vector3df vDist=m_vPosition-aHits[k];
+                  f32 f=vDist.getLength();
+                  if (f<fDist[i]) fDist[i]=f;
+                }
+
+                if (j==0) fLeft+=fFact*fDist[i]; else fRight+=fFact*fDist[i];
+
+                if (j==0) fLeft +=fFact*fDist[i];
+                if (j==1) fRight+=fFact*fDist[i];
               }
 
-              if (i<=2) fRight+=fFact*fDist[i];
-              if (i>=2) fLeft +=fFact*fDist[i];
-
-              if (i< 2) fFact-=1.0f;
-              if (i>=2) fFact+=1.0f;
+              fFact+=1.0f;
             }
 
             fYaw=getYawControl(false);
-            if (fLeft<6000.0f || fRight<6000.0f) {
+            if (fLeft<m_fHeliCheckMax || fRight<m_fHeliCheckMax) {
               if (fLeft>fRight)
-                fYaw=-(6000.0f-fLeft )/6000.0f;
+                fYaw=-10.0f*(m_fHeliCheckMax-fLeft )/m_fHeliCheckMax;
               else
-                fYaw= (6000.0f-fRight)/6000.0f;
+                fYaw= 10.0f*(m_fHeliCheckMax-fRight)/m_fHeliCheckMax;
+
+              if (fYaw> 1.0f) fYaw= 1.0f;
+              if (fYaw<-1.0f) fYaw=-1.0f;
             }
-            //printf("%.2f -- %.2f ==> %.2f\n",fLeft,fRight,fYaw);
+
+            {
+              core::array<core::vector3df> aHits;
+              m_pRay->set(m_vPosition-core::vector3df(0.0f,5.0f,0.0f),core::vector3df(0.0f,-1.0f,0.0f),200.0f);
+              m_pRay->checkWithWorld(aHits);
+              if (aHits.size()>0) {
+                f32 fHeight=200.0f;
+                for (u32 i=0; i<aHits.size(); i++) {
+                  core::vector3df vDist=m_vPosition-aHits[i];
+                  f32 f=vDist.getLength();
+                  if (f<fHeight) fHeight=f;
+                }
+
+                if (fHeight<175.0f) {
+                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-175.0f)/50.0f;
+                  fThrust+=fMaxAddPower+fAdd;
+                }
+              }
+            }
+
+            if (m_vVelocityLin.Y<-10.0f) {
+              f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f;
+              if (fAdd>1.0f) fAdd=1.0f;
+              fThrust+=fMaxAddPower*fAdd;
+            }
           }
+
+          if (fThrust>1.0f) fThrust=1.0f;
+          if (fThrust<0.0f) fThrust=0.0f;
 
           fRoll=getRollControl(fYaw);
           fPitch=getHeliPitch();

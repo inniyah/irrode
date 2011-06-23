@@ -314,9 +314,9 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       m_pMotor->setPower(m_fThrust);
 
-      if (fPitch!=fPitch) printf("Error fPitch (%s)!\n",m_pPlaneBody->getName()); else m_pTorque->setPitch(fPitch);
-      if (fRoll !=fRoll ) printf("Error fRoll (%s)!\n" ,m_pPlaneBody->getName()); else m_pTorque->setRoll (fRoll );
-      if (fYaw  !=fYaw  ) printf("Error fYaw (%s)!\n"  ,m_pPlaneBody->getName()); else m_pTorque->setYaw  (fYaw  );
+      if (fPitch==fPitch) m_pTorque->setPitch(fPitch);
+      if (fRoll ==fRoll ) m_pTorque->setRoll (fRoll );
+      if (fYaw  ==fYaw  ) m_pTorque->setYaw  (fYaw  );
 
       m_fApDist=m_pAutoPilot->getApDist();
       if (m_fApDist<100.0f) {

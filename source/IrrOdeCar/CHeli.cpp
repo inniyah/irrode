@@ -251,9 +251,9 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
     m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
 
     if (m_pAutoPilot->isEnabled()) {
-      if (m_fPitch!=m_fPitch) printf("Error fPitch (%s)!\n",m_pHeliBody->getName()); else m_pTorque->setPitch(m_fPitch);
-      if (m_fRoll !=m_fRoll ) printf("Error fRoll (%s)!\n" ,m_pHeliBody->getName()); else m_pTorque->setRoll (m_fRoll );
-      if (m_fYaw  !=m_fYaw  ) printf("Error fYaw (%s)!\n"  ,m_pHeliBody->getName()); else m_pTorque->setYaw  (m_fYaw  );
+      if (m_fPitch==m_fPitch) m_pTorque->setPitch(m_fPitch);
+      if (m_fRoll ==m_fRoll ) m_pTorque->setRoll (m_fRoll );
+      if (m_fYaw  ==m_fYaw  ) m_pTorque->setYaw  (m_fYaw  );
     }
     else {
       m_pTorque->setPitch(m_fPitch);
