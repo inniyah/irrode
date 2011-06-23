@@ -35,7 +35,7 @@ class CAutoPilot;
 class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
   protected:
     f32 m_fYaw,m_fPitch,m_fRoll,m_iThrust,m_fThrust;
-    bool m_bLeft,m_bMissileCam;
+    bool m_bLeft,m_bMissileCam,m_bBackView;
 
     IGUIStaticText *m_pInfo;
 
@@ -45,6 +45,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
     irr::ode::CIrrOdeAeroDrag *m_pAero;
+    irr::ode::CIrrOdeGeomRay *m_pRay;
 
     ICameraSceneNode *m_pCam;
     ITerrainSceneNode *m_pTerrain;
@@ -75,7 +76,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
 
     virtual stringc &getButtonText() { static stringc s=stringc("select helicopter"); return s; }
 
-    virtual void drawSpecifics() { }
+    virtual void drawSpecifics();
 };
 
 #endif

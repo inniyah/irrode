@@ -22,6 +22,29 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
 
   m_bEnabled=false;
   m_bLinkYawRoll=false;
+  m_pRay=NULL;
+}
+
+CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
+                       irr::ode::CIrrOdeAeroDrag     *pAero,
+                       irr::ode::CIrrOdeTorqueMotor  *pTorque,
+                       irr::ode::CIrrOdeImpulseMotor *pMotor,
+                       irr::ode::CIrrOdeGeomRay      *pRay) {
+  m_pTarget=NULL;
+  m_pTargetBody=NULL;
+
+  m_pPlane=pPlane;
+  m_pAero=pAero;
+  m_pTorque=pTorque;
+  m_pMotor=pMotor;
+
+  setState(eApHeliCruise);
+
+  m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
+
+  m_bEnabled=false;
+  m_bLinkYawRoll=false;
+  m_pRay=pRay;
 }
 
 void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
@@ -208,32 +231,82 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
         break;
 
       case eApHeliLowAlt:
-          if (m_vPosition.Y<550.0f)
+          if (m_vPosition.Y<450.0f)
             fThrust=1.0f;
           else
             setState(eApHeliCruise);
 
-          fRoll=-getRollControl(fYaw);
-          fPitch=-5.0f*getHeliPitch();
+          fRoll=getRollControl(fYaw);
+          fPitch=getHeliPitch();
         break;
 
       case eApHeliCruise:
         if (m_bEnabled) {
-          if (m_vPosition.Y<550.0f) {
+          core::vector3df vRot=m_pPlane->getRotation(),
+                          vDir=vRot.rotationToDirection(m_pAero->getForeward()),
+                          vPos=m_pPlane->getPosition();
+
+          if (m_vPosition.Y<450.0f) {
             setState(eApHeliLowAlt);
           }
           else
-            if (m_vPosition.Y>600.0f) {
-              fThrust=0.0f;
-            }
-            else {
-              fThrust=1.0f-((m_vPosition.Y-550.0f)/50.0f)-m_vVelocityLin.Y/15.0f;
-              if (fThrust>1.0f) fThrust=1.0f;
-              if (fThrust<0.0f) fThrust=0.0f;
+            if (m_vPosition.Y<550.0f)
+              fThrust=1.0f;
+            else
+              if (m_vPosition.Y>600.0f) {
+                fThrust=0.0f;
+              }
+              else {
+                fThrust=1.0f-((m_vPosition.Y-550.0f)/50.0f)-m_vVelocityLin.Y/15.0f;
+                if (fThrust>1.0f) fThrust=1.0f;
+                if (fThrust<0.0f) fThrust=0.0f;
+              }
+
+          if (m_pRay!=NULL) {
+            f32 fAngle[]={ -30.0f, -10.0f, 0.0f, 10.0f, 30.0f, 99.0f },
+                fDist []={   1000,   1000,  1000, 1000, 1000 },
+                fFact=3.0f,
+                fLeft=0.0f,fRight=0.0f;
+
+            vDir.normalize();
+
+            core::vector2df vStart =core::vector2df( 10.0f*vDir.X, 10.0f*vDir.Z),
+                            vCenter=core::vector2df(250.0f*vDir.X,250.0f*vDir.Z);
+
+            for (u32 i=0; fAngle[i]!=99.0f; i++) {
+              core::array<core::vector3df> aHits;
+              core::vector2df v=vCenter,vEnd=v.rotateBy(fAngle[i]);
+              core::vector3df v1=vPos+core::vector3df(vStart.X,0.0f,vStart.Y),
+                              v2=     core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
+
+              m_pRay->set(v1,v2,1000.0f);
+              m_pRay->checkWithWorld(aHits);
+
+              for (u32 j=0; j<aHits.size(); j++) {
+                core::vector3df vDist=m_vPosition-aHits[j];
+                f32 f=vDist.getLength();
+                if (f<fDist[i]) fDist[i]=f;
+              }
+
+              if (i<=2) fRight+=fFact*fDist[i];
+              if (i>=2) fLeft +=fFact*fDist[i];
+
+              if (i< 2) fFact-=1.0f;
+              if (i>=2) fFact+=1.0f;
             }
 
-          fRoll=-getRollControl(fYaw);
-          fPitch=-5.0f*getHeliPitch();
+            fYaw=getYawControl(false);
+            if (fLeft<6000.0f || fRight<6000.0f) {
+              if (fLeft>fRight)
+                fYaw=-(6000.0f-fLeft )/6000.0f;
+              else
+                fYaw= (6000.0f-fRight)/6000.0f;
+            }
+            //printf("%.2f -- %.2f ==> %.2f\n",fLeft,fRight,fYaw);
+          }
+
+          fRoll=getRollControl(fYaw);
+          fPitch=getHeliPitch();
         }
         break;
 
@@ -270,39 +343,50 @@ void CAutoPilot::drawSpecifics(irr::video::IVideoDriver *pDrv) {
                   vVel=m_pPlane->getLinearVelocity(),
                   vFw=vRot.rotationToDirection(m_pAero->getForeward());
 
-  vDir.normalize();
-  vDir*=25.0f;
-  vDir.Z=-vDir.Z;
-  vVel.normalize();
-
-  core::vector2di vCenter=core::vector2di(50,150);
-
   if (m_pTarget!=NULL && m_bEnabled) {
-    core::vector2df vTarget=m_vCpVel;
-    vTarget.normalize();
-    vTarget*=25.0f;
-    vTarget.Y=-vTarget.Y;
-    pDrv->draw2DLine(vCenter,vCenter+core::vector2di(vTarget.X,vTarget.Y),video::SColor(0xFF,192,255,192));
-
     irr::core::CMatrix4<f32> mat=irr::core::CMatrix4<f32>();
     pDrv->setTransform(irr::video::ETS_WORLD,mat);
     irr::video::SMaterial cMat;
     cMat.Lighting=false;
     pDrv->setMaterial(cMat);
 
-    irr::core::line3df cLine=irr::core::line3df(vPos,vPos+3000.0f*vVel);//vFw);
-    pDrv->draw3DLine(cLine.start,cLine.end,video::SColor(0xFF,0xFF,0xFF,0xFF));
-    irr::core::vector3df vNear=cLine.getClosestPoint(m_pTarget->getPosition());
-    pDrv->draw3DLine(vNear,m_pTarget->getPosition(),video::SColor(0xFF,0xFF,0,0));
+    switch (m_iState) {
+      case eApHeliLowAlt:
+      case eApPlaneLowAlt:
+        break;
+
+      case eApHeliCruise:
+        break;
+
+      default: {
+        vDir.normalize();
+        vDir*=25.0f;
+        vDir.Z=-vDir.Z;
+        vVel.normalize();
+
+        core::vector2di vCenter=core::vector2di(50,150);
+        core::vector2df vTarget=m_vCpVel;
+        vTarget.normalize();
+        vTarget*=25.0f;
+        vTarget.Y=-vTarget.Y;
+        pDrv->draw2DLine(vCenter,vCenter+core::vector2di(vTarget.X,vTarget.Y),video::SColor(0xFF,192,255,192));
+
+        irr::core::line3df cLine=irr::core::line3df(vPos,vPos+3000.0f*vVel);//vFw);
+        pDrv->draw3DLine(cLine.start,cLine.end,video::SColor(0xFF,0xFF,0xFF,0xFF));
+        irr::core::vector3df vNear=cLine.getClosestPoint(m_pTarget->getPosition());
+        pDrv->draw3DLine(vNear,m_pTarget->getPosition(),video::SColor(0xFF,0xFF,0,0));
+
+        core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
+        pDrv->draw2DLine(vCenter,vCenter+vHead,video::SColor(0xFF,0xFF,0,0));
+
+        vCenter=core::vector2di(50,250);
+
+        pDrv->draw2DLine(vCenter,vCenter-m_vArtificialHorizon,video::SColor(0xFF,0xFF,0,0));
+        pDrv->draw2DLine(vCenter,vCenter+m_vArtificialHorizon,video::SColor(0xFF,0,0xFF,0));
+      }
+      break;
+    }
   }
-
-  core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
-  pDrv->draw2DLine(vCenter,vCenter+vHead,video::SColor(0xFF,0xFF,0,0));
-
-  vCenter=core::vector2di(50,250);
-
-  pDrv->draw2DLine(vCenter,vCenter-m_vArtificialHorizon,video::SColor(0xFF,0xFF,0,0));
-  pDrv->draw2DLine(vCenter,vCenter+m_vArtificialHorizon,video::SColor(0xFF,0,0xFF,0));
 }
 
 void CAutoPilot::setState(eAutoPilotState iState) {

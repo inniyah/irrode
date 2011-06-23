@@ -23,8 +23,8 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pOdeManager=CIrrOdeManager::getSharedInstance();
   m_pOdeDevice=m_pOdeManager->getOdeDevice();
 
-  CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  if (m_pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
     m_pOdeManager->addOdeSceneNode(this);
   }
   else printf("no world!\n");
@@ -34,7 +34,7 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   #ifdef _IRREDIT_PLUGIN
     m_bDrawEditorMesh=true;
   	GetModuleFileName(NULL,m_sResources,1024);
-	  if (strstr(m_sResources,"irrEdit.exe")) 
+	  if (strstr(m_sResources,"irrEdit.exe"))
       *strstr(m_sResources,"irrEdit.exe")='\0';
     else
       if (strrchr(m_sResources,'\\'))
@@ -47,8 +47,8 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
     this->setID(m_pOdeManager->getNextId());
 
-    if (pWorld!=NULL) {
-      pWorld->addOdeChildNode(this);
+    if (m_pWorld!=NULL) {
+      m_pWorld->addOdeChildNode(this);
     }
   #endif
 }

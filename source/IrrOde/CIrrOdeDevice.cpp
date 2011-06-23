@@ -1943,6 +1943,29 @@ COdeDataWrapper *CIrrOdeDevice::getData(u32 iIdx) {
 void CIrrOdeDevice::rayCollide(CIrrOdeWorld *pWorld) {
 }
 
+void CIrrOdeDevice::checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits) {
+  dSpaceCollide(GETSPACE(pWorld->getSpace()->getSpaceId()),&aHits,&CIrrOdeDevice::rayCollisionCallback);
+}
+
+void CIrrOdeDevice::rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iGeom2) {
+  CIrrOdeSceneNode *p1=(CIrrOdeSceneNode *)dGeomGetData(iGeom1),
+                   *p2=(CIrrOdeSceneNode *)dGeomGetData(iGeom2);
+
+  if (p1==NULL || p2==NULL ||
+      (p1->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID && p2->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID)) return;
+
+  if (dGeomIsSpace(iGeom1) || dGeomIsSpace(iGeom2)) {
+    dSpaceCollide2(iGeom1,iGeom2,pData,&CIrrOdeDevice::rayCollisionCallback);
+  }
+  else {
+    dContact contact;
+    if (dCollide(iGeom1,iGeom2,1,&contact.geom,sizeof(dContact))) {
+      irr::core::array<irr::core::vector3df> *aHits=(irr::core::array<irr::core::vector3df> *)pData;
+      aHits->push_back(irr::core::vector3df(contact.geom.pos[0],contact.geom.pos[1],contact.geom.pos[2]));
+    }
+  }
+}
+
 } //namespace ode
 } //namespace irr
 #endif

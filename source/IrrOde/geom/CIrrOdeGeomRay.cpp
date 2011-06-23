@@ -139,5 +139,9 @@ CIrrOdeBody *CIrrOdeGeomRay::getAttachedBody() {
   return m_pBody;
 }
 
+void CIrrOdeGeomRay::checkWithWorld(irr::core::array<irr::core::vector3df> &aHits) {
+  m_pOdeDevice->checkRayWithWorld(this,m_pWorld,aHits);
+}
+
 } //namespace ode
 } //namespace irr

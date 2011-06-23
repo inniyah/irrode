@@ -26,6 +26,7 @@ using namespace gui;
 
 class CIrrOdeManager;
 class IIrrOdeDevice;
+class CIrrOdeWorld;
 
 /**
  * @class CIrrOdeSceneNode
@@ -41,6 +42,7 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
     s32 m_iIdent;                           /**< this node's irrODE ID */
     CIrrOdeManager *m_pOdeManager;          /**< the ODE manager */
     IIrrOdeDevice *m_pOdeDevice;            /**< the ODE device */
+    CIrrOdeWorld *m_pWorld;                 /**< world of this node */
 
     SMaterial m_cMat;                /**< the material of the node */
     ITriangleSelector *m_pSelector;

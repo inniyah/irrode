@@ -334,6 +334,10 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     COdeDataWrapper *getData(u32 iIdx);
 
     static void rayCollide(CIrrOdeWorld *pWorld);
+
+    virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits);
+
+    static void rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iGeom2);
 };
 
 } //namespace ode

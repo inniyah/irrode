@@ -6,6 +6,7 @@
 namespace irr {
   namespace ode {
     class CIrrOdeBody;
+    class CIrrOdeGeomRay;
     class CIrrOdeAeroDrag;
     class CIrrOdeTorqueMotor;
     class CIrrOdeImpulseMotor;
@@ -57,11 +58,19 @@ class CAutoPilot {
 
     void updateApDist();
 
+    irr::ode::CIrrOdeGeomRay *m_pRay;
+
   public:
     CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
-                    irr::ode::CIrrOdeAeroDrag     *pAero,
-                    irr::ode::CIrrOdeTorqueMotor  *pTorque,
-                    irr::ode::CIrrOdeImpulseMotor *pMotor);
+               irr::ode::CIrrOdeAeroDrag     *pAero,
+               irr::ode::CIrrOdeTorqueMotor  *pTorque,
+               irr::ode::CIrrOdeImpulseMotor *pMotor);
+
+    CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
+               irr::ode::CIrrOdeAeroDrag     *pAero,
+               irr::ode::CIrrOdeTorqueMotor  *pTorque,
+               irr::ode::CIrrOdeImpulseMotor *pMotor,
+               irr::ode::CIrrOdeGeomRay      *pRay);
 
     void setTarget(irr::scene::ISceneNode *pTarget);
 

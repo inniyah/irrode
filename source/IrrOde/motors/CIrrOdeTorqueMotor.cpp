@@ -66,7 +66,7 @@ void CIrrOdeTorqueMotor::step() {
     }
     else {
       //2nd case: no aero rudder (e.g. helicopters): just apply the rotational force given by the values and axes
-      vector3df vRudder=m_vPitchAxis*m_fPitch+m_vYawAxis*m_fYaw+m_vRollAxis*m_fRoll,
+      vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor,
                 vTorque=vRot.rotationToDirection(vRudder)*m_fMaxPower;
 
       m_pBody->addTorque(m_fPower*vTorque);

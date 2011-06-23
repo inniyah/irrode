@@ -308,6 +308,8 @@ class IIrrOdeDevice {
     virtual void jointGroupEmtpy(u32 iJointGroup)=0;
 
     virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv)=0;
+
+    virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits)=0;
 };
 
 } //namespace ode

@@ -52,6 +52,8 @@ class CIrrOdeGeomRay : public CIrrOdeGeom {
 
     void setBackfaceCull(bool b);
     bool getBackfaceCull();
+
+    void checkWithWorld(irr::core::array<irr::core::vector3df> &aHits);
 };
 
 } //namespace ode

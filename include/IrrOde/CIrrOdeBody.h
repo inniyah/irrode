@@ -252,7 +252,7 @@ class CIrrOdeBody : public CIrrOdeDampable {
 		 */
     list<CIrrOdeBody *> &getChildBodies();
 
-    CIrrOdeGeom *getGeomFromName(const c8 *sName);
+    CIrrOdeGeom *getGeomFromName(const   c8 *sName);
     CIrrOdeJoint *getJointFromName(const c8 *sName);
     CIrrOdeBody *getChildBodyFromName(const c8 *sName);
     IIrrOdeStepMotor *getStepMotorFromName(const c8 *sName);

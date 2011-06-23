@@ -261,6 +261,8 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void jointGroupEmtpy(u32 iJointGroup) { }
 
     virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv) { }
+
+    virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits) { }
 };
 
 } //namespace ode
