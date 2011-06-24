@@ -37,7 +37,8 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     f32 m_fYaw,m_fPitch,m_fRoll,m_iThrust,m_fThrust;
     bool m_bLeft,m_bMissileCam,m_bBackView;
 
-    IGUIStaticText *m_pInfo;
+    IGUIStaticText *m_pInfo,
+                   *m_pApInfo;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pHeliBody;

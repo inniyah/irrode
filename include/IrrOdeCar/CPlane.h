@@ -53,7 +53,8 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
          m_bThreeWheeler,
          m_bAutoPilot;
 
-    IGUIStaticText *m_pInfo;
+    IGUIStaticText *m_pInfo,
+                   *m_pApInfo;
 
     ICameraSceneNode *m_pCam;
     ITerrainSceneNode *m_pTerrain;

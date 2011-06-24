@@ -21,6 +21,11 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
 
+    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,295),true);
+    m_pApInfo->setDrawBackground(true);
+    m_pApInfo->setBackgroundColor(SColor(0x40,0xFF,0xFF,0xFF));
+    m_pApInfo->setVisible(false);
+
     m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pHeliBody->getStepMotorFromName("heli_motor" );
     m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pHeliBody->getStepMotorFromName("heli_torque");
     m_pAero  =(irr::ode::CIrrOdeAeroDrag     *)m_pHeliBody->getStepMotorFromName("heli_aero"  );
@@ -38,6 +43,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
 
     m_pAutoPilot=new CAutoPilot(m_pHeliBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
     m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
+    m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
 
     m_iNextCp=-1;
     ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
@@ -62,6 +68,7 @@ void CHeli::activate() {
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pInfo->setVisible(true);
+  m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -81,6 +88,7 @@ void CHeli::activate() {
 
 void CHeli::deactivate() {
   m_pInfo->setVisible(false);
+  m_pApInfo->setVisible(false);
   m_bActive=false;
 }
 
@@ -228,6 +236,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eHeliAutoPilot])) {
         m_pController->set(m_pCtrls[eHeliAutoPilot],0.0f);
         m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
+        m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
       }
     }
 
@@ -271,5 +280,4 @@ bool CHeli::handlesEvent(IIrrOdeEvent *pEvent) {
 }
 
 void CHeli::drawSpecifics() {
-  if (m_pAutoPilot->isEnabled()) m_pAutoPilot->drawSpecifics(m_pDevice->getVideoDriver());
 }

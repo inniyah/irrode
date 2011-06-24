@@ -18,8 +18,6 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
 
   setState(eApPlaneCruise);
 
-  m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
-
   m_bEnabled=false;
   m_bLinkYawRoll=false;
   m_pRay=NULL;
@@ -28,6 +26,8 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_fHeliDistRight=NULL;
   m_iHeliCheckCount=0;
   m_fHeliCheckMax=0.0f;
+
+  m_pAutoPilotInfo=NULL;
 }
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -45,8 +45,6 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
 
   setState(eApHeliCruise);
 
-  m_vArtificialHorizon=irr::core::vector2di(25.0f,0.0f);
-
   m_bEnabled=false;
   m_bLinkYawRoll=false;
   m_pRay=pRay;
@@ -62,6 +60,8 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
 
   m_fHeliCheckMax=5000.0f;
   m_iHeliCheckCount=5;
+
+  m_pAutoPilotInfo=NULL;
 }
 
 CAutoPilot::~CAutoPilot() {
@@ -80,7 +80,7 @@ void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
   }
 }
 
-irr::f32 CAutoPilot::getRollControl(f32 fYaw) {
+irr::f32 CAutoPilot::getRollControl(f32 fYaw, wchar_t *sInfo) {
   f32 fAngle=asin(m_vSideward2.Y)*180.0f/PI,fRoll=0.0f;
   if (m_vUpward.Y<0) fAngle=-180.0f-fAngle;
 
@@ -92,9 +92,9 @@ irr::f32 CAutoPilot::getRollControl(f32 fYaw) {
   if (fRoll> 1.0f) fRoll= 1.0f;
   if (fRoll<-1.0f) fRoll=-1.0f;
 
+  if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nRoll angle: %.2f\napplied control: %.2f\n",sInfo,fAngle,fRoll);
+
   core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
-  m_vArtificialHorizon.X=vAhf.X;
-  m_vArtificialHorizon.Y=vAhf.Y;
 
   return fRoll;
 }
@@ -106,7 +106,7 @@ void CAutoPilot::updateApDist() {
   m_fApDist=(vPlane-vPoint).getLength();
 }
 
-irr::f32 CAutoPilot::getYawControl(bool b) {
+irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
   f32 fYaw=0.0f;
 
   core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
@@ -137,6 +137,8 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
   f32 fOrient=b?(vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X):(vForew.X*m_vCpVel.Y-vForew.Y*m_vCpVel.X);
   if (fOrient>0.0f) fSteer=-fSteer;
 
+  if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nSteer to target: %.2f\n",sInfo,fSteer);
+
   m_vVATransformed=m_vInvRot.rotationToDirection(m_vVelocityAng);
 
   if (b && (m_vVATransformed.Y>0.1f || m_vVATransformed.Y<-0.1f)) {
@@ -146,6 +148,7 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
     if (fSteer>0 && fMinus>fSteer) fMinus=fSteer;
     if (fSteer<0 && fMinus<fSteer) fMinus=fSteer;
     fSteer-=fMinus;
+    swprintf(sInfo,4096,L"%sHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
   }
 
   fYaw=(b?0.1f:0.05f)*fSteer;
@@ -155,7 +158,7 @@ irr::f32 CAutoPilot::getYawControl(bool b) {
   return fYaw;
 }
 
-irr::f32 CAutoPilot::getHeliPitch() {
+irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo) {
   f32 f=asin(m_vForeward.Y)*180.0f/M_PI,fPitch=0.0f;
 
   if (m_iState==eApHeliLowAlt) {
@@ -163,7 +166,7 @@ irr::f32 CAutoPilot::getHeliPitch() {
   }
   else {
     if (f<-15.0f)
-      fPitch=0.25f;
+      fPitch=0.15f;
     else
       if (f>0.0f)
         fPitch=-0.75f;
@@ -173,6 +176,8 @@ irr::f32 CAutoPilot::getHeliPitch() {
   }
   if (fPitch> 1.0f) fPitch= 1.0f;
   if (fPitch<-1.0f) fPitch=-1.0f;
+
+  if (sInfo!=NULL) swprintf(sInfo,4096,L"%sApplied pitch: %.2f\n",sInfo,fPitch);
 
   return fPitch;
 }
@@ -199,10 +204,14 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
   updateApDist();
 
+  wchar_t sInfo[4096]=L"";
+
   if (m_pTarget!=NULL) {
     switch (m_iState) {
       case eApPlaneCruise:
         if (m_bEnabled) {
+          swprintf(sInfo,4096,L"AutoPilot active\nState: \"PlaneCruise\"\n");
+
           core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
                           vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
                           vVeloc=core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z);
@@ -219,6 +228,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fDiffY> m_vVelocityLin.getLength()/5.0f) fDiffY= m_vVelocityLin.getLength()/5.0f;
           if (fDiffY<-m_vVelocityLin.getLength()/5.0f) fDiffY=-m_vVelocityLin.getLength()/5.0f;
 
+          swprintf(sInfo,4096,L"%sDiff for pitch: %.2f\n",sInfo,fDiffY);
           fPitch=(-m_vVelocityLin.Y+fDiffY)*0.05f;
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
@@ -226,8 +236,8 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           fThrust=m_vVelocityLin.getLength()<50.0f?1.0f:1.0f-((m_vVelocityLin.getLength()-50.0f)/25.0f);
           if (fThrust<0.0f) fThrust=0.0f;
 
-          fYaw=getYawControl(false);
-          fRoll=getRollControl(fYaw);
+          fYaw=getYawControl(false,sInfo);
+          fRoll=getRollControl(fYaw,sInfo);
 
           if (m_vPosition.Y<800.0f) setState(eApPlaneLowAlt);
         }
@@ -235,9 +245,12 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
       case eApPlaneLowAlt:
         if (m_bEnabled) {
+          swprintf(sInfo,4096,L"AutoPilot active\nState:\"PlaneLowAlt\"\n");
+          swprintf(sInfo,4096,L"%saltitude: %.2f\n",sInfo,m_vPosition.Y);
+
           fThrust=1.0f;
 
-          fRoll=getRollControl(fYaw);
+          fRoll=getRollControl(fYaw,sInfo);
 
           f32 fDiffY=(950-m_vPosition.Y)/10.0f;
 
@@ -258,12 +271,18 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           else
             setState(eApHeliCruise);
 
-          fRoll=getRollControl(fYaw);
+          fRoll=getRollControl(fYaw,sInfo);
           fPitch=getHeliPitch();
+
+          swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliLowAlt\"\n");
+          swprintf(sInfo,4096,L"%saltitude: %.2f\n",sInfo,m_vPosition.Y);
         break;
 
       case eApHeliCruise:
         if (m_bEnabled) {
+          swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliCruise\"\n");
+          swprintf(sInfo,4096,L"%sAngular Velocity: %.2f, %.2f, %.2f\n",sInfo,m_vVATransformed.X,m_vVATransformed.Y,m_vVATransformed.Z);
+
           core::vector3df vRot=m_pPlane->getRotation(),
                           vDir=vRot.rotationToDirection(m_pAero->getForeward()),
                           vPos=m_pPlane->getPosition();
@@ -290,7 +309,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                             vCenter=core::vector2df(250.0f*vDir.X,250.0f*vDir.Z);
 
             for (u32 j=0; j<2; j++) {
-              f32 fDist []={ 500.0f, 500.0f, 500.0f, 500.0f, 500.0f },
+              f32 fDist[]={ 500.0f, 500.0f, 500.0f, 500.0f, 500.0f },
                   fFact=1.0f;
 
               for (u32 i=0; i<m_iHeliCheckCount; i++) {
@@ -317,12 +336,18 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
               fFact+=1.0f;
             }
 
-            fYaw=getYawControl(false);
+            swprintf(sInfo,4096,L"%sleft: %.2f\nright: %.2f\n",sInfo,fLeft,fRight);
+            fYaw=0.5f*getYawControl(false,sInfo);
             if (fLeft<m_fHeliCheckMax || fRight<m_fHeliCheckMax) {
-              if (fLeft>fRight)
+              swprintf(sInfo,4096,L"%scollision warning - ",sInfo);
+              if (fLeft>fRight) {
                 fYaw=-10.0f*(m_fHeliCheckMax-fLeft )/m_fHeliCheckMax;
-              else
+                swprintf(sInfo,4096,L"%sleft turn!\n",sInfo);
+              }
+              else {
                 fYaw= 10.0f*(m_fHeliCheckMax-fRight)/m_fHeliCheckMax;
+                swprintf(sInfo,4096,L"%sright turn!\n",sInfo);
+              }
 
               if (fYaw> 1.0f) fYaw= 1.0f;
               if (fYaw<-1.0f) fYaw=-1.0f;
@@ -340,24 +365,27 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                   if (f<fHeight) fHeight=f;
                 }
 
-                if (fHeight<175.0f) {
-                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-175.0f)/50.0f;
-                  fThrust+=fMaxAddPower+fAdd;
+                if (fHeight<200.0f) {
+                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-200.0f)/50.0f*fMaxAddPower;
+                  if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
+                  fThrust+=fAdd;
+                  swprintf(sInfo,4096,L"%sLow alt detected\nPower Plus %.2f%%\n",sInfo,100.0f*fAdd);
                 }
               }
             }
 
             if (m_vVelocityLin.Y<-10.0f) {
-              f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f;
-              if (fAdd>1.0f) fAdd=1.0f;
-              fThrust+=fMaxAddPower*fAdd;
+              f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f*fMaxAddPower;
+              if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
+              fThrust+=fAdd;
+              swprintf(sInfo,4096,L"%sHigh sink rate detected\nPower Plus: %.2f%%\n",sInfo,100.0f*fAdd);
             }
           }
 
           if (fThrust>1.0f) fThrust=1.0f;
           if (fThrust<0.0f) fThrust=0.0f;
 
-          fRoll=getRollControl(fYaw);
+          fRoll=getRollControl(fYaw,sInfo);
           fPitch=getHeliPitch();
         }
         break;
@@ -381,64 +409,13 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fPitch<-1.0f) fPitch=-1.0f;
 
           fYaw=getYawControl(true);
-          fRoll=getRollControl(fYaw);
+          fRoll=getRollControl(fYaw,NULL);
         }
         break;
     }
   }
-}
 
-void CAutoPilot::drawSpecifics(irr::video::IVideoDriver *pDrv) {
-  core::vector3df vRot=m_pPlane->getRotation(),
-                  vDir=vRot.rotationToDirection(m_pAero->getForeward()),
-                  vPos=m_pPlane->getPosition(),
-                  vVel=m_pPlane->getLinearVelocity(),
-                  vFw=vRot.rotationToDirection(m_pAero->getForeward());
-
-  if (m_pTarget!=NULL && m_bEnabled) {
-    irr::core::CMatrix4<f32> mat=irr::core::CMatrix4<f32>();
-    pDrv->setTransform(irr::video::ETS_WORLD,mat);
-    irr::video::SMaterial cMat;
-    cMat.Lighting=false;
-    pDrv->setMaterial(cMat);
-
-    switch (m_iState) {
-      case eApHeliLowAlt:
-      case eApPlaneLowAlt:
-        break;
-
-      case eApHeliCruise:
-        break;
-
-      default: {
-        vDir.normalize();
-        vDir*=25.0f;
-        vDir.Z=-vDir.Z;
-        vVel.normalize();
-
-        core::vector2di vCenter=core::vector2di(50,150);
-        core::vector2df vTarget=m_vCpVel;
-        vTarget.normalize();
-        vTarget*=25.0f;
-        vTarget.Y=-vTarget.Y;
-        pDrv->draw2DLine(vCenter,vCenter+core::vector2di(vTarget.X,vTarget.Y),video::SColor(0xFF,192,255,192));
-
-        irr::core::line3df cLine=irr::core::line3df(vPos,vPos+3000.0f*vVel);//vFw);
-        pDrv->draw3DLine(cLine.start,cLine.end,video::SColor(0xFF,0xFF,0xFF,0xFF));
-        irr::core::vector3df vNear=cLine.getClosestPoint(m_pTarget->getPosition());
-        pDrv->draw3DLine(vNear,m_pTarget->getPosition(),video::SColor(0xFF,0xFF,0,0));
-
-        core::vector2di vHead=core::vector2di(vDir.X,vDir.Z);
-        pDrv->draw2DLine(vCenter,vCenter+vHead,video::SColor(0xFF,0xFF,0,0));
-
-        vCenter=core::vector2di(50,250);
-
-        pDrv->draw2DLine(vCenter,vCenter-m_vArtificialHorizon,video::SColor(0xFF,0xFF,0,0));
-        pDrv->draw2DLine(vCenter,vCenter+m_vArtificialHorizon,video::SColor(0xFF,0,0xFF,0));
-      }
-      break;
-    }
-  }
+  if (m_pAutoPilotInfo!=NULL) m_pAutoPilotInfo->setText(sInfo);
 }
 
 void CAutoPilot::setState(eAutoPilotState iState) {
@@ -451,4 +428,8 @@ void CAutoPilot::setState(eAutoPilotState iState) {
     case eApMissile    : printf("\"eApMissile\"\n"    ); break;
   }
   m_iState=iState;
+}
+
+void CAutoPilot::setAutoPilotInfo(gui::IGUIStaticText *pInfo) {
+  m_pAutoPilotInfo=pInfo;
 }

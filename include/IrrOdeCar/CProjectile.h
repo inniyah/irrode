@@ -53,8 +53,6 @@ class CProjectile {
     bool particlesActive();
 
     void setTarget(irr::ode::CIrrOdeBody *pTarget);
-
-    void drawSpecifics(irr::video::IVideoDriver *pDrv);
 };
 
 class CProjectileManager : irr::ode::IIrrOdeEventListener {
@@ -74,8 +72,6 @@ class CProjectileManager : irr::ode::IIrrOdeEventListener {
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
     void addShot(CProjectile *p);
-
-    void drawSpecifics(irr::video::IVideoDriver *pDrv);
 
     irr::u32 getShots() { return m_iShots; }
     irr::u32 getHits () { return m_iHits ; }

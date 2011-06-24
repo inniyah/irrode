@@ -31,7 +31,6 @@ class CAutoPilot {
     irr::ode::CIrrOdeTorqueMotor  *m_pTorque;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
 
-    irr::core::vector2di m_vArtificialHorizon;
     irr::core::vector2df m_vCpVel;
 
     eAutoPilotState m_iState;
@@ -56,13 +55,15 @@ class CAutoPilot {
     bool m_bEnabled,
          m_bLinkYawRoll;
 
-    irr::f32 getRollControl(irr::f32 fYaw);
-    irr::f32 getYawControl(bool b);
-    irr::f32 getHeliPitch();
+    irr::f32 getRollControl(irr::f32 fYaw, wchar_t *sInfo=NULL);
+    irr::f32 getYawControl(bool b, wchar_t *sInfo=NULL);
+    irr::f32 getHeliPitch(wchar_t *sInfo=NULL);
 
     void updateApDist();
 
     irr::ode::CIrrOdeGeomRay *m_pRay;
+
+    irr::gui::IGUIStaticText *m_pAutoPilotInfo;
 
   public:
     CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -86,12 +87,12 @@ class CAutoPilot {
 
     void step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust);
 
-    void drawSpecifics(irr::video::IVideoDriver *pDrv);
-
     void setEnabled(bool b) { m_bEnabled=b; }
     bool isEnabled() { return m_bEnabled; }
 
     void setLinkYawRoll(bool b) { m_bLinkYawRoll=b; }
+
+    void setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo);
 };
 
 #endif

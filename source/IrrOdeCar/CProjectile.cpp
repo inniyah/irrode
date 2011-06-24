@@ -89,10 +89,6 @@ irr::s32 CProjectile::getTtl() {
   return m_iTtl;
 }
 
-void CProjectile::drawSpecifics(irr::video::IVideoDriver *pDrv) {
-  if (m_pAutoPilot) m_pAutoPilot->drawSpecifics(pDrv);
-}
-
 //this method is called on each CIrrOdeEventStep event
 void CProjectile::step() {
   //reduce the remaining lifetime
@@ -155,13 +151,6 @@ void CProjectileManager::addShot(CProjectile *p) {
   m_lShots.push_back(p);
   m_pLast=p;
   m_iShots++;
-}
-
-void CProjectileManager::drawSpecifics(irr::video::IVideoDriver *pDrv) {
-  /*irr::core::list<CProjectile *>::Iterator it;
-  for (it=m_lShots.begin(); it!=m_lShots.end(); it++) {
-    (*it)->drawSpecifics(pDrv);
-  }*/
 }
 
 bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {

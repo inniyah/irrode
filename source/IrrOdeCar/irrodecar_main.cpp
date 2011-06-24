@@ -453,7 +453,6 @@ int main(int argc, char** argv) {
     guienv->drawAll();
 
     pActive->drawSpecifics();
-    CProjectileManager::getSharedInstance()->drawSpecifics(driver);
 
     driver->endScene();
     int fps = driver->getFPS();

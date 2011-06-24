@@ -83,6 +83,13 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
+
+    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,295),true);
+    m_pApInfo->setDrawBackground(true);
+    m_pApInfo->setBackgroundColor(SColor(0x40,0xFF,0xFF,0xFF));
+    m_pApInfo->setVisible(false);
+    m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
+
     m_bLeftMissile=true;
     m_bInitialized=true;
   }
@@ -112,6 +119,7 @@ void CPlane::activate() {
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pInfo->setVisible(true);
+  m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -132,6 +140,7 @@ void CPlane::activate() {
 
 void CPlane::deactivate() {
   m_pInfo->setVisible(false);
+  m_pApInfo->setVisible(false);
   m_iThrustDir=0;
   m_bActive=false;
 }
@@ -278,6 +287,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[ePlaneAutoPilot],0.0f);
         m_bAutoPilot=!m_bAutoPilot;
         m_pAutoPilot->setEnabled(m_bAutoPilot);
+        m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
       }
 
       if (m_pController->get(m_pCtrls[ePlaneTarget])) {
@@ -355,6 +365,4 @@ void CPlane::drawSpecifics() {
 
     if (cPos.X<0 || cPos.Y<0 || cPos.X>=(s32)m_cScreen.Width || cPos.Y>=(s32)m_cScreen.Height) m_pTarget=NULL;
   }
-
-  m_pAutoPilot->drawSpecifics(m_pDevice->getVideoDriver());
 }
