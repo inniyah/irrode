@@ -86,7 +86,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
     m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,295),true);
     m_pApInfo->setDrawBackground(true);
-    m_pApInfo->setBackgroundColor(SColor(0x40,0xFF,0xFF,0xFF));
+    m_pApInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pApInfo->setVisible(false);
     m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
 
@@ -185,7 +185,7 @@ u32 CPlane::update() {
   f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
   swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
 
-  if (m_bFollowBombCam) swprintf(dummy,0xFE,L"%s\nFollow Bomb Cam",dummy);
+  if (m_bFollowBombCam) swprintf(dummy,0xFE,L"%s\nFollow Missile Cam",dummy);
   if (m_bAutoPilot) swprintf(dummy,0xFE,L"%s\nAutopilot active (%i, %.0f)",dummy,m_iNextCp,m_fApDist);
 
   m_pInfo->setText(dummy);
@@ -333,7 +333,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         s32 iNext=m_iNextCp;
         while (iNext==m_iNextCp) {
           iNext=rand()%m_aCheckPoints.size();
-          printf("next checkpoint: %i\n",iNext);
+          printf("next checkpoint (%s): %i\n",m_pPlaneBody->getName(),iNext);
         }
         m_iNextCp=iNext;
         m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);

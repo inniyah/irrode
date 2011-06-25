@@ -148,7 +148,7 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
     if (fSteer>0 && fMinus>fSteer) fMinus=fSteer;
     if (fSteer<0 && fMinus<fSteer) fMinus=fSteer;
     fSteer-=fMinus;
-    if (sInfo!=NULL) swprintf(sInfo,4096,L"%sHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
+    if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
   }
 
   fYaw=(b?0.1f:0.05f)*fSteer;
@@ -166,7 +166,7 @@ irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo) {
   }
   else {
     if (f<-15.0f)
-      fPitch=0.15f;
+      fPitch=-(f+15.0f)/15.0f;
     else
       if (f>0.0f)
         fPitch=-0.75f;
@@ -177,7 +177,7 @@ irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo) {
   if (fPitch> 1.0f) fPitch= 1.0f;
   if (fPitch<-1.0f) fPitch=-1.0f;
 
-  if (sInfo!=NULL) swprintf(sInfo,4096,L"%sApplied pitch: %.2f\n",sInfo,fPitch);
+  if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nApplied pitch: %.2f\n",sInfo,fPitch);
 
   return fPitch;
 }
@@ -228,7 +228,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fDiffY> m_vVelocityLin.getLength()/5.0f) fDiffY= m_vVelocityLin.getLength()/5.0f;
           if (fDiffY<-m_vVelocityLin.getLength()/5.0f) fDiffY=-m_vVelocityLin.getLength()/5.0f;
 
-          swprintf(sInfo,4096,L"%sDiff for pitch: %.2f\n",sInfo,fDiffY);
+          swprintf(sInfo,4096,L"%s\nDiff for pitch: %.2f\n",sInfo,fDiffY);
           fPitch=(-m_vVelocityLin.Y+fDiffY)*0.05f;
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
@@ -246,7 +246,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
       case eApPlaneLowAlt:
         if (m_bEnabled) {
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"PlaneLowAlt\"\n");
-          swprintf(sInfo,4096,L"%saltitude: %.2f\n",sInfo,m_vPosition.Y);
+          swprintf(sInfo,4096,L"%s\naltitude: %.2f\n",sInfo,m_vPosition.Y);
 
           fThrust=1.0f;
 
@@ -275,13 +275,13 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           fPitch=getHeliPitch();
 
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliLowAlt\"\n");
-          swprintf(sInfo,4096,L"%saltitude: %.2f\n",sInfo,m_vPosition.Y);
+          swprintf(sInfo,4096,L"%s\naltitude: %.2f\n",sInfo,m_vPosition.Y);
         break;
 
       case eApHeliCruise:
         if (m_bEnabled) {
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliCruise\"\n");
-          swprintf(sInfo,4096,L"%sAngular Velocity: %.2f, %.2f, %.2f\n",sInfo,m_vVATransformed.X,m_vVATransformed.Y,m_vVATransformed.Z);
+          swprintf(sInfo,4096,L"%s\nAngular Velocity: %.2f, %.2f, %.2f\n",sInfo,m_vVATransformed.X,m_vVATransformed.Y,m_vVATransformed.Z);
 
           core::vector3df vRot=m_pPlane->getRotation(),
                           vDir=vRot.rotationToDirection(m_pAero->getForeward()),
@@ -336,40 +336,45 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
               fFact+=1.0f;
             }
 
-            swprintf(sInfo,4096,L"%sleft: %.2f\nright: %.2f\n",sInfo,fLeft,fRight);
+            swprintf(sInfo,4096,L"%s\nleft: %.2f\nright: %.2f\n",sInfo,fLeft,fRight);
             fYaw=0.5f*getYawControl(false,sInfo);
             if (fLeft<m_fHeliCheckMax || fRight<m_fHeliCheckMax) {
-              swprintf(sInfo,4096,L"%scollision warning - ",sInfo);
+              swprintf(sInfo,4096,L"%s\ncollision warning - ",sInfo);
               if (fLeft>fRight) {
-                fYaw=-10.0f*(m_fHeliCheckMax-fLeft )/m_fHeliCheckMax;
-                swprintf(sInfo,4096,L"%sleft turn!\n",sInfo);
+                fYaw=-2.5f*(m_fHeliCheckMax-fRight)/m_fHeliCheckMax;
+
+                if (fYaw> 1.0f) fYaw= 1.0f;
+                if (fYaw<-1.0f) fYaw=-1.0f;
+
+                swprintf(sInfo,4096,L"%sleft turn (%.2f%%)!\n",sInfo,100.0f*fYaw);
               }
               else {
-                fYaw= 10.0f*(m_fHeliCheckMax-fRight)/m_fHeliCheckMax;
-                swprintf(sInfo,4096,L"%sright turn!\n",sInfo);
-              }
+                fYaw=2.5f*(m_fHeliCheckMax-fLeft)/m_fHeliCheckMax;
 
-              if (fYaw> 1.0f) fYaw= 1.0f;
-              if (fYaw<-1.0f) fYaw=-1.0f;
+                if (fYaw> 1.0f) fYaw= 1.0f;
+                if (fYaw<-1.0f) fYaw=-1.0f;
+
+                swprintf(sInfo,4096,L"%sright turn (%.2f%%)!\n",sInfo,100.0f*fYaw);
+              }
             }
 
             {
               core::array<core::vector3df> aHits;
-              m_pRay->set(m_vPosition-core::vector3df(0.0f,5.0f,0.0f),core::vector3df(0.0f,-1.0f,0.0f),200.0f);
+              m_pRay->set(m_vPosition-core::vector3df(0.0f,5.0f,0.0f),core::vector3df(0.0f,-1.0f,0.0f),250.0f);
               m_pRay->checkWithWorld(aHits);
               if (aHits.size()>0) {
-                f32 fHeight=200.0f;
+                f32 fHeight=250.0f;
                 for (u32 i=0; i<aHits.size(); i++) {
                   core::vector3df vDist=m_vPosition-aHits[i];
                   f32 f=vDist.getLength();
                   if (f<fHeight) fHeight=f;
                 }
 
-                if (fHeight<200.0f) {
-                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-200.0f)/50.0f*fMaxAddPower;
+                if (fHeight<250.0f) {
+                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-250.0f)/50.0f*fMaxAddPower;
                   if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
                   fThrust+=fAdd;
-                  swprintf(sInfo,4096,L"%sLow alt detected\nPower Plus %.2f%%\n",sInfo,100.0f*fAdd);
+                  swprintf(sInfo,4096,L"%s\nLow alt detected: %.2f\nPower Plus %.2f%%\n",sInfo,fHeight,100.0f*fAdd);
                 }
               }
             }
@@ -378,7 +383,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
               f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f*fMaxAddPower;
               if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
               fThrust+=fAdd;
-              swprintf(sInfo,4096,L"%sHigh sink rate detected\nPower Plus: %.2f%%\n",sInfo,100.0f*fAdd);
+              swprintf(sInfo,4096,L"%s\nHigh sink rate detected\nPower Plus: %.2f%%\n",sInfo,100.0f*fAdd);
             }
           }
 
