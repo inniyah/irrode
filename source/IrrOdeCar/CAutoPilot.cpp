@@ -148,7 +148,7 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
     if (fSteer>0 && fMinus>fSteer) fMinus=fSteer;
     if (fSteer<0 && fMinus<fSteer) fMinus=fSteer;
     fSteer-=fMinus;
-    swprintf(sInfo,4096,L"%sHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
+    if (sInfo!=NULL) swprintf(sInfo,4096,L"%sHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
   }
 
   fYaw=(b?0.1f:0.05f)*fSteer;
