@@ -182,9 +182,6 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
   CIrrOdeGeom *pGeom1=(CIrrOdeGeom *)dGeomGetData(iGeom1),
               *pGeom2=(CIrrOdeGeom *)dGeomGetData(iGeom2);
 
-  if (!pGeom1 || !pGeom2 || !pGeom1->doesCollide() || !pGeom2->doesCollide() ||
-      (pGeom1->getCollisionGroup()!=0 && pGeom2->getCollisionGroup()!=0 && pGeom1->getCollisionGroup()==pGeom2->getCollisionGroup())) return;
-
   if (dGeomIsSpace(iGeom1) || dGeomIsSpace(iGeom2)) {
     dSpaceCollide2(iGeom1,iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
 
@@ -192,6 +189,11 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
     if (dGeomIsSpace(iGeom2)) dSpaceCollide((dxSpace *)iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
   }
   else {
+    if (!pGeom1 || !pGeom2 || !pGeom1->doesCollide() || !pGeom2->doesCollide() ||
+        (pGeom1->getCollisionGroup()!=0 &&
+         pGeom2->getCollisionGroup()!=0 &&
+         pGeom1->getCollisionGroup()==pGeom2->getCollisionGroup())) return;
+
     static CIrrOdeDevice *pOdeDevice=NULL;
     if (!pOdeDevice) pOdeDevice=(CIrrOdeDevice *)CIrrOdeManager::getSharedInstance()->getOdeDevice();
     u32 i=0;
@@ -1860,6 +1862,7 @@ u32 CIrrOdeDevice::spaceCreateSimple(u32 iParent) {
   u32 iRet;
   COdeDataWrapper *wrap=new COdeDataWrapper();
   wrap->m_pSpace=dSimpleSpaceCreate(iParent?GETSPACE(iParent):0);
+  printf("%i .. %i\n",(int)wrap->m_pSpace,iParent);
   m_pOdeData.push_back(wrap);
   iRet=m_pOdeData.size();
   return iRet;
