@@ -29,6 +29,7 @@ class CIrrOdeSpace : public CIrrOdeSceneNode {
     CIrrOdeWorld *m_pWorld;
     vector3df m_cCenter,m_cExtents;
     s32 m_iDepth;
+    bool m_bSpaceCollide;           /**<! do the objects in this space collide with each other? */
 
   public:
     CIrrOdeSpace(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
