@@ -57,8 +57,23 @@ void CIrrOdeGeomSphere::initPhysics() {
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   if (m_fRadius==0.0f) {
-    IAnimatedMeshSceneNode *pParent=reinterpret_cast<IAnimatedMeshSceneNode *>(getParent());
-    IMesh *pMesh=pParent->getMesh()->getMesh(0);
+    IMesh *pMesh=NULL;
+
+    ISceneNode *pNode=getParent();
+
+    switch (pNode->getType()) {
+      case ESNT_MESH :
+        pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+        break;
+
+      case ESNT_ANIMATED_MESH:
+        pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+        break;
+
+      default:
+        printf("Non supported scene node type detected!\n");
+        return;
+    }
 
     m_fRadius=pMesh->getBoundingBox().getExtent().X*getParent()->getScale().X/2;
 
