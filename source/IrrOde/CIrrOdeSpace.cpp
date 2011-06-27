@@ -26,8 +26,6 @@ CIrrOdeSpace::CIrrOdeSpace(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_cExtents=vector3df(0,0,0);
   m_iDepth=0;
 
-  m_bSpaceCollide=true;
-
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
 	  c8 sFileName[1024];
@@ -67,8 +65,6 @@ void CIrrOdeSpace::initPhysics() {
     default:
       break;
   }
-
-  if (m_bSpaceCollide) m_pOdeDevice->spaceCollide(m_iSpaceId,true);
 }
 
 void CIrrOdeSpace::setSpaceType(_IRR_ODE_SPACE_TYPE iType) {
@@ -122,8 +118,6 @@ void CIrrOdeSpace::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
 
   out->addVector3d("Center" ,m_cCenter );
   out->addVector3d("Extents",m_cExtents);
-
-  out->addBool("CollideSpace",m_bSpaceCollide);
 }
 
 void CIrrOdeSpace::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
@@ -134,8 +128,6 @@ void CIrrOdeSpace::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
 
   m_cCenter =in->getAttributeAsVector3d("Center" );
   m_cExtents=in->getAttributeAsVector3d("Extents");
-
-  m_bSpaceCollide=in->existsAttribute("CollideSpace")?in->getAttributeAsBool("CollideSpace"):true;
 }
 
 CIrrOdeSpace *CIrrOdeSpace::getParentSpace() {

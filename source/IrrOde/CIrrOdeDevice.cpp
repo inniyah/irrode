@@ -83,14 +83,11 @@ void CIrrOdeDevice::initODE() {
 void CIrrOdeDevice::clearODE() {
   for (u32 i=0; i<m_pOdeData.size(); i++) delete m_pOdeData[i];
   m_pOdeData.clear();
-  m_lCollidingSpaces.clear();
 }
 
 void CIrrOdeDevice::closeODE() {
   for (u32 i=0; i<m_pOdeData.size(); i++) delete m_pOdeData[i];
   m_pOdeData.clear();
-
-  m_lCollidingSpaces.clear();
 
   dCleanupODEAllDataForThread();
   dCloseODE();
@@ -191,13 +188,8 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
   if (dGeomIsSpace(iGeom1) || dGeomIsSpace(iGeom2)) {
     dSpaceCollide2(iGeom1,iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
 
-    if (dGeomIsSpace(iGeom1) && pOdeDevice->doesSpaceCollide((dxSpace *)iGeom1)) {
-      dSpaceCollide((dxSpace *)iGeom1,pData,&CIrrOdeDevice::nearCollisionCallback);
-    }
-
-    if (dGeomIsSpace(iGeom2) && pOdeDevice->doesSpaceCollide((dxSpace *)iGeom2)) {
-      dSpaceCollide((dxSpace *)iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
-    }
+    if (dGeomIsSpace(iGeom1)) dSpaceCollide((dxSpace *)iGeom1,pData,&CIrrOdeDevice::nearCollisionCallback);
+    if (dGeomIsSpace(iGeom2)) dSpaceCollide((dxSpace *)iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
   }
   else {
     if (!pGeom1 || !pGeom2 || !pGeom1->doesCollide() || !pGeom2->doesCollide() ||
@@ -1962,41 +1954,19 @@ void CIrrOdeDevice::rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iG
   CIrrOdeSceneNode *p1=(CIrrOdeSceneNode *)dGeomGetData(iGeom1),
                    *p2=(CIrrOdeSceneNode *)dGeomGetData(iGeom2);
 
-  if (p1==NULL || p2==NULL ||
-      (p1->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID && p2->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID)) return;
-
   if (dGeomIsSpace(iGeom1) || dGeomIsSpace(iGeom2)) {
     dSpaceCollide2(iGeom1,iGeom2,pData,&CIrrOdeDevice::rayCollisionCallback);
   }
   else {
+    if (p1==NULL || p2==NULL ||
+        (p1->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID && p2->getType()!=irr::ode::IRR_ODE_GEOM_RAY_ID)) return;
+
     dContact contact;
     if (dCollide(iGeom1,iGeom2,1,&contact.geom,sizeof(dContact))) {
       irr::core::array<irr::core::vector3df> *aHits=(irr::core::array<irr::core::vector3df> *)pData;
       aHits->push_back(irr::core::vector3df(contact.geom.pos[0],contact.geom.pos[1],contact.geom.pos[2]));
     }
   }
-}
-
-void CIrrOdeDevice::spaceCollide(u32 iSpace, bool b) {
-  dSpaceID pSpace=GETSPACE(iSpace);
-  list<dSpaceID>::Iterator it;
-
-  for (it=m_lCollidingSpaces.begin(); it!=m_lCollidingSpaces.end(); it++) if ((*it)==pSpace) return;
-  m_lCollidingSpaces.push_back(pSpace);
-}
-
-bool CIrrOdeDevice::doesSpaceCollide(u32 iSpace) {
-  dSpaceID pSpace=GETSPACE(iSpace);
-  list<dSpaceID>::Iterator it;
-
-  for (it=m_lCollidingSpaces.begin(); it!=m_lCollidingSpaces.end(); it++) if ((*it)==pSpace) return true;
-  return false;
-}
-
-bool CIrrOdeDevice::doesSpaceCollide(dSpaceID pSpace) {
-  list<dSpaceID>::Iterator it;
-  for (it=m_lCollidingSpaces.begin(); it!=m_lCollidingSpaces.end(); it++) if ((*it)==pSpace) return true;
-  return false;
 }
 
 } //namespace ode

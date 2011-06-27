@@ -302,8 +302,6 @@ class IIrrOdeDevice {
     virtual u32 spaceCreateHash(u32 iParent)=0;
     virtual u32 spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth)=0;
     virtual void spaceDestroy(u32 iSpace)=0;
-    virtual void spaceCollide(u32 iSpace, bool b)=0;
-    virtual bool doesSpaceCollide(u32 iSpace)=0;
 
     virtual u32 jointGroupCreate(s32 iMaxSize)=0;
     virtual void jointGroupDestroy(u32 iJointGroup)=0;

@@ -263,9 +263,6 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv) { }
 
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits) { }
-
-    virtual void spaceCollide(u32 iSpace, bool b) { }
-    virtual bool doesSpaceCollide(u32 iSpace) { return true; }
 };
 
 } //namespace ode

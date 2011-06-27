@@ -70,11 +70,9 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     dBodyID getBodyId(u32 iBody);
     dJointGroupID getJGroupId(u32 iJGroup);
 
-    list<dSpaceID> m_lCollidingSpaces;
     static IIrrOdeEventQueue *m_pQueue;
 
     void handleFastCollisions();
-    bool doesSpaceCollide(dSpaceID pSpace);
     int convertToOdeJointParam(u16 iGroup, s32 &iParam);
     static void convertToSurfaceParameters(dSurfaceParameters *pOde, CIrrOdeSurfaceParameters *pIrr);
 
@@ -338,9 +336,6 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits);
 
     static void rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iGeom2);
-
-    virtual void spaceCollide(u32 iSpace, bool b);
-    virtual bool doesSpaceCollide(u32 iSpace);
 };
 
 } //namespace ode
