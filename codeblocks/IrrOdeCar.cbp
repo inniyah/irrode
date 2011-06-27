@@ -95,6 +95,7 @@
 		<Unit filename="..\include\IrrOdeCar\CRandomForestNode.h" />
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
+		<Unit filename="..\include\IrrOdeCar\CTargetSelector.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
 		<Unit filename="..\source\IrrOdeCar\CAutoPilot.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
@@ -112,6 +113,7 @@
 		<Unit filename="..\source\IrrOdeCar\CRandomForestNode.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CTargetSelector.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrodecar_main.cpp" />
 		<Extensions>

@@ -35,6 +35,7 @@ enum ePlaneControls {
   ePlaneTarget
 };
 
+class CTargetSelector;
 class CProjectile;
 class CAutoPilot;
 
@@ -60,6 +61,7 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     ITerrainSceneNode *m_pTerrain;
 
     CAutoPilot *m_pAutoPilot;
+    CTargetSelector *m_pTargetSelector;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pPlaneBody;
@@ -77,8 +79,6 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     ISceneNode *m_pRoll[2],*m_pPitch[2],*m_pYaw[2];
     const u32 *m_pCtrls;
     u32 m_iLastShot,m_iLastMissile;
-
-    irr::ode::CIrrOdeBody *m_pTarget;
 
     irr::core::list<irr::ode::CIrrOdeSceneNode *> m_lOdeNodes;
     irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator m_itTarget;

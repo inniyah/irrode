@@ -4,6 +4,7 @@
   #include <CProjectile.h>
   #include <irrCC.h>
   #include <CAutoPilot.h>
+  #include <CTargetSelector.h>
 
 CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
@@ -15,7 +16,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
   m_pColMgr=pDevice->getSceneManager()->getSceneCollisionManager();
   m_cScreen=pDevice->getVideoDriver()->getScreenSize();
-  m_pTarget=NULL;
 
   //get the plane
   m_pPlaneBody=reinterpret_cast<CIrrOdeBody *>(pNode);
@@ -49,6 +49,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_bAutoPilot=false;
     m_pAutoPilot=new CAutoPilot(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
     m_pAutoPilot->setLinkYawRoll(true);
+
+    m_pTargetSelector=new CTargetSelector(m_pPlaneBody,m_pDevice,m_pAero->getForeward());
 
     //we need the rear wheel bodies for the braking on ground
     m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
@@ -256,7 +258,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_bLeftMissile=!m_bLeftMissile;
 
         CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
-        p->setTarget(m_pTarget);
+        p->setTarget(m_pTargetSelector->getTarget());
       }
 
       if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
@@ -292,29 +294,12 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(m_pCtrls[ePlaneTarget])) {
         m_pController->set(m_pCtrls[ePlaneTarget],0.0f);
-        m_pTarget=NULL;
-        bool bDone=false,b=false;
-        while (m_pTarget==NULL && !bDone) {
-          m_itTarget++;
-          if (m_itTarget==m_lOdeNodes.end()) {
-            m_itTarget=m_lOdeNodes.begin();
-            if (b) bDone=true;
-            b=true;
-          }
-
-          if ((*m_itTarget)->getType()==irr::ode::IRR_ODE_BODY_ID) {
-            irr::scene::ISceneNode *p=*m_itTarget;
-            if (p!=m_pPlaneBody && ((irr::ode::CIrrOdeBody *)(*m_itTarget))->getParentBody()==NULL) {
-              irr::core::position2di cPos=m_pColMgr->getScreenCoordinatesFrom3DPosition(p->getAbsolutePosition());
-              if (cPos.X>=0 && cPos.Y>=0 && cPos.X<(s32)m_cScreen.Width && cPos.Y<(s32)m_cScreen.Height)
-              m_pTarget=(irr::ode::CIrrOdeBody *)(*m_itTarget);
-            }
-          }
-        }
+        m_pTargetSelector->selectOption();
       }
     }
 
     m_pAutoPilot->step(fYaw,fPitch,fRoll,m_fThrust);
+    m_pTargetSelector->update();
 
     if (m_bAutoPilot) {
       if (m_iNextCp==-1) {
@@ -358,11 +343,5 @@ bool CPlane::handlesEvent(IIrrOdeEvent *pEvent) {
 }
 
 void CPlane::drawSpecifics() {
-  if (m_pTarget!=NULL) {
-    irr::core::position2di cPos=m_pColMgr->getScreenCoordinatesFrom3DPosition(m_pTarget->getAbsolutePosition());
-    irr::core::recti cRect=irr::core::recti(cPos.X-15,cPos.Y-15,cPos.X+15,cPos.Y+15);
-    m_pDevice->getVideoDriver()->draw2DRectangleOutline(cRect,irr::video::SColor(0xFF,0xFF,0,0));
-
-    if (cPos.X<0 || cPos.Y<0 || cPos.X>=(s32)m_cScreen.Width || cPos.Y>=(s32)m_cScreen.Height) m_pTarget=NULL;
-  }
+  m_pTargetSelector->highlightTargets();
 }

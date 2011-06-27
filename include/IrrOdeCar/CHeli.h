@@ -26,9 +26,11 @@ enum eHeliControls {
   eHeliFire,
   eHeliToggleCam,
   eHeliFlip,
+  eHeliTarget,
   eHeliAutoPilot
 };
 
+class CTargetSelector;
 class CProjectile;
 class CAutoPilot;
 
@@ -52,6 +54,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     ITerrainSceneNode *m_pTerrain;
 
     CAutoPilot *m_pAutoPilot;
+    CTargetSelector *m_pTargetSelector;
 
     const u32 *m_pCtrls;
     u32 m_iLastShot;

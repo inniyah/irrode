@@ -2,6 +2,7 @@
   #include <CProjectile.h>
   #include <CAutoPilot.h>
   #include <irrCC.h>
+  #include <CTargetSelector.h>
 
 CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
@@ -44,6 +45,8 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
     m_pAutoPilot=new CAutoPilot(m_pHeliBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
     m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
     m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
+
+    m_pTargetSelector=new CTargetSelector(m_pHeliBody,m_pDevice,m_pAero->getForeward());
 
     m_iNextCp=-1;
     ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
@@ -137,58 +140,6 @@ u32 CHeli::update() {
   m_pInfo->setText(dummy);
 
   return iRet;
-  /*static u32 iLastTime=0,iStep=0;
-
-  if (!iLastTime)
-    iLastTime=m_pDevice->getTimer()->getTime();
-  else {
-    u32 iTime=m_pDevice->getTimer()->getTime();
-    iStep+=iTime-iLastTime;
-    iLastTime=iTime;
-  }
-
-  vector3df rot=m_pHeliBody->getRotation();
-
-  vector3df pos=rot.rotationToDirection(vector3df(0,5,15)),
-            up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
-
-  CProjectileManager *ppm=CProjectileManager::getSharedInstance();
-
-  if (m_bMissileCam && ppm->getLast()!=NULL) {
-    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(vector3df(0,2,10));
-    m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
-    m_pCam->setUpVector(vector3df(0,1,0));
-    m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
-  }
-  else {
-    m_pCam->setPosition(m_pHeliBody->getPosition()+pos);
-    m_pCam->setUpVector(up);
-    m_pCam->setTarget(m_pHeliBody->getPosition()+tgt);
-  }
-
-  wchar_t dummy[0xFF];
-  pos=m_pHeliBody->getAbsolutePosition();
-  rot=m_pHeliBody->getRotation();
-  vector3df v=m_pHeliBody->getLinearVelocity();
-  swprintf(dummy,0xFE,L"pos: (%.0f, %.0f, %.0f)\nvelocity: (%.0f, %.0f, %.0f)=%.2f",pos.X,pos.Y,pos.Z,v.X,v.Y,v.Z,v.getLength());
-  swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)\ncontrols: ",dummy,rot.X,rot.Y,rot.Z);
-
-  swprintf(dummy,0xFE,L"%s (T=%.0f%%",dummy,m_fThrust*100);
-
-  swprintf(dummy,0xFE,L"%s, Y=%.0f",dummy,m_fYaw);
-  swprintf(dummy,0xFE,L"%s, P=%.0f",dummy,m_fPitch);
-  swprintf(dummy,0xFE,L"%s, R=%.0f",dummy,m_fRoll);
-
-  swprintf(dummy,0xFE,L"%s)",dummy);
-  f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
-  swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
-  if (m_bMissileCam) swprintf(dummy,0xFE,L"%s\nMissile Cam active",dummy);
-  if (m_pAutoPilot->isEnabled()) swprintf(dummy,0xFE,L"%s\nAutopilot active",dummy);
-
-  m_pInfo->setText(dummy);
-
-  return iRet;*/
 }
 
 bool CHeli::OnEvent(const SEvent &event) {
@@ -220,7 +171,8 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
                   rot=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees(),
                   vel=m_pHeliBody->getLinearVelocity();
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        p->setTarget(m_pTargetSelector->getTarget());
         m_bLeft=!m_bLeft;
       }
 
@@ -237,6 +189,11 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[eHeliAutoPilot],0.0f);
         m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
         m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliTarget])) {
+        m_pController->set(m_pCtrls[eHeliTarget],0.0f);
+        m_pTargetSelector->selectOption();
       }
     }
 
@@ -258,6 +215,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
     }
 
     m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
+    m_pTargetSelector->update();
 
     if (m_pAutoPilot->isEnabled()) {
       if (m_fPitch==m_fPitch) m_pTorque->setPitch(m_fPitch);
@@ -280,4 +238,5 @@ bool CHeli::handlesEvent(IIrrOdeEvent *pEvent) {
 }
 
 void CHeli::drawSpecifics() {
+  m_pTargetSelector->highlightTargets();
 }
