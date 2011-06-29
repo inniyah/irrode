@@ -57,7 +57,7 @@ class CAutoPilot {
 
     irr::f32 getRollControl(irr::f32 fYaw, wchar_t *sInfo=NULL);
     irr::f32 getYawControl(bool b, wchar_t *sInfo=NULL);
-    irr::f32 getHeliPitch(wchar_t *sInfo=NULL);
+    irr::f32 getHeliPitch(wchar_t *sInfo, irr::f32 fPitchTarget);
 
     void updateApDist();
 

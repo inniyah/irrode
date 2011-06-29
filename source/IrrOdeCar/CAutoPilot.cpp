@@ -158,26 +158,26 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
   return fYaw;
 }
 
-irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo) {
+irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo, f32 fPitchTarget) {
   f32 f=asin(m_vForeward.Y)*180.0f/M_PI,fPitch=0.0f;
 
   if (m_iState==eApHeliLowAlt) {
     fPitch=-f/10.0f;
   }
   else {
-    if (f<-15.0f)
-      fPitch=-(f+15.0f)/15.0f;
+    if (f<fPitchTarget)
+      fPitch=-(f-fPitchTarget)/-fPitchTarget;
     else
       if (f>0.0f)
         fPitch=-0.75f;
       else
-        fPitch=(-15.0f-f)/20.0f;
+        fPitch=(fPitchTarget-f)/20.0f;
 
   }
   if (fPitch> 1.0f) fPitch= 1.0f;
   if (fPitch<-1.0f) fPitch=-1.0f;
 
-  if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nApplied pitch: %.2f\n",sInfo,fPitch);
+  if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nPitch target: %.2f\nCurrent Pitch: %.2f\nApplied pitch: %.2f\n",sInfo,fPitchTarget,f,fPitch);
 
   return fPitch;
 }
@@ -272,7 +272,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
             setState(eApHeliCruise);
 
           fRoll=getRollControl(fYaw,sInfo);
-          fPitch=getHeliPitch();
+          fPitch=getHeliPitch(sInfo,0.0f);
 
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliLowAlt\"\n");
           swprintf(sInfo,4096,L"%s\naltitude: %.2f\n",sInfo,m_vPosition.Y);
@@ -280,6 +280,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
       case eApHeliCruise:
         if (m_bEnabled) {
+          f32 fPitchTarget=-15.0f;
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliCruise\"\n");
           swprintf(sInfo,4096,L"%s\nAngular Velocity: %.2f, %.2f, %.2f\n",sInfo,m_vVATransformed.X,m_vVATransformed.Y,m_vVATransformed.Z);
 
@@ -346,6 +347,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                 if (fYaw> 1.0f) fYaw= 1.0f;
                 if (fYaw<-1.0f) fYaw=-1.0f;
 
+                fPitchTarget=-15.0f*(fRight/m_fHeliCheckMax);
                 swprintf(sInfo,4096,L"%sleft turn (%.2f%%)!\n",sInfo,100.0f*fYaw);
               }
               else {
@@ -354,6 +356,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                 if (fYaw> 1.0f) fYaw= 1.0f;
                 if (fYaw<-1.0f) fYaw=-1.0f;
 
+                fPitchTarget=-15.0f*(fLeft/m_fHeliCheckMax);
                 swprintf(sInfo,4096,L"%sright turn (%.2f%%)!\n",sInfo,100.0f*fYaw);
               }
             }
@@ -391,7 +394,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fThrust<0.0f) fThrust=0.0f;
 
           fRoll=getRollControl(fYaw,sInfo);
-          fPitch=getHeliPitch();
+          fPitch=getHeliPitch(sInfo,fPitchTarget);
         }
         break;
 

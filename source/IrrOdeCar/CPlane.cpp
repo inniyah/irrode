@@ -86,7 +86,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pInfo->setVisible(false);
 
-    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,295),true);
+    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true);
     m_pApInfo->setDrawBackground(true);
     m_pApInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pApInfo->setVisible(false);
