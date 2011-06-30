@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\gcc-win32\libIrrOde" prefix_auto="1" extension_auto="1" />
+				<Option output="..\bin\gcc-win32-debug\libIrrOde" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\debug" />
 				<Option type="2" />
