@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="IrrOdeCar" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\bin\gcc-win32-debug\IrrOdeCar" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeCar\debug" />
+				<Option external_deps="..\bin\gcc-win32\libIrrOde.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="..\bin\gcc-win32\libIrrOde.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+					<Add library="Irrlicht" />
+					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\bin\gcc-win32\IrrOdeCar" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeCar\release" />
+				<Option external_deps="..\bin\gcc-win32\libIrrOde.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="..\bin\gcc-win32\libIrrOde.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+					<Add library="Irrlicht" />
+					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
+				</Linker>
+			</Target>
+			<Target title="Linux">
+				<Option output="..\bin\Linux\IrrOdeCar" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\Linux\irrOde" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="1" />
+				<Compiler>
+					<Add directory="\home\Dev\libs\physics\ode-0.11\include" />
+					<Add directory="\home\Dev\libs\Irrlicht\include" />
+					<Add directory="..\include\IrrOde" />
+					<Add directory="\home\tecan\Desktop\irrOde\include\IrrOdes" />
+				</Compiler>
+				<Linker>
+					<Add library="Irrlicht" />
+					<Add library="ode" />
+					<Add library="Xxf86vm" />
+					<Add library="glut" />
+					<Add library="GL" />
+					<Add directory="\home\Dev\libs\physics\ode-0.11\ode\src\.libs" />
+					<Add directory="\home\Dev\libs\Irrlicht\lib\gcc" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\include\IrrOde" />
+			<Add directory="..\include\IrrOdeCar" />
+			<Add directory="CodeSnippets" />
+		</Compiler>
+		<Linker>
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="gdi32" />
+			<Add library="libAdvancedParticle.a" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+			<Add directory="..\codeblocks" />
+		</Linker>
+		<Unit filename="..\include\IrrOdeCar\CAutoPilot.h" />
+		<Unit filename="..\include\IrrOdeCar\CCar.h" />
+		<Unit filename="..\include\IrrOdeCar\CConfigFileManager.h" />
+		<Unit filename="..\include\IrrOdeCar\CController.h" />
+		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
+		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
+		<Unit filename="..\include\IrrOdeCar\CHeli.h" />
+		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarState.h" />
+		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
+		<Unit filename="..\include\IrrOdeCar\CMeshCombiner.h" />
+		<Unit filename="..\include\IrrOdeCar\CPlane.h" />
+		<Unit filename="..\include\IrrOdeCar\CProgressBar.h" />
+		<Unit filename="..\include\IrrOdeCar\CProjectile.h" />
+		<Unit filename="..\include\IrrOdeCar\CRandomForestNode.h" />
+		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
+		<Unit filename="..\include\IrrOdeCar\CTank.h" />
+		<Unit filename="..\include\IrrOdeCar\CTargetSelector.h" />
+		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
+		<Unit filename="..\source\IrrOdeCar\CAutoPilot.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CHeli.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CMeshCombiner.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CPlane.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CProgressBar.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CProjectile.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CRandomForestNode.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CTargetSelector.cpp" />
+		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
+		<Unit filename="..\source\IrrOdeCar\irrodecar_main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<search_path add="D:\myStuff\projects\libs\ode-0.11.1-gcc\include\ode" />
+			</debugger>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

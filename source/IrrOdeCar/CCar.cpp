@@ -1,0 +1,209 @@
+  #include "CCar.h"
+  #include <CCustomEventReceiver.h>
+  #include <math.h>
+
+  #include <irrCC.h>
+
+void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, array<ISceneNode *> &aNodes) {
+  list<irr::scene::ISceneNode *> children=pParent->getChildren();
+  list<irr::scene::ISceneNode *>::Iterator it;
+
+  for (it=children.begin(); it!=children.end(); it++) {
+    if ((*it)->getType()==iType) {
+      aNodes.push_back(*it);
+    }
+    findNodesOfType(*it,iType,aNodes);
+  }
+}
+
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+  //get the car body
+  m_pCarBody=reinterpret_cast<CIrrOdeBody *>(pNode);
+
+  if (m_pCarBody) {
+    CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
+    array<ISceneNode *> aNodes;
+
+    //get the two motors that are attached to the rear wheels
+    findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
+
+    if (aNodes.size()>=2) {
+      m_pMotor[0]=dynamic_cast<CIrrOdeMotor *>(aNodes[0]);
+      m_pMotor[1]=dynamic_cast<CIrrOdeMotor *>(aNodes[1]);
+    }
+
+    aNodes.clear();
+    //get the two servos that are attached to the front wheels
+    findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_SERVO_ID,aNodes);
+
+    if (aNodes.size()>=2) {
+      m_pServo[0]=dynamic_cast<CIrrOdeServo *>(aNodes[0]);
+      m_pServo[1]=dynamic_cast<CIrrOdeServo *>(aNodes[1]);
+    }
+
+    //initialize the members
+    m_bHelp=false;
+    m_bBrake=false;
+    m_bBoost=false;
+    m_bAdaptSteer=true;
+    m_iThrottle=0;
+
+    //add a camera
+    m_pCam=m_pSmgr->addCameraSceneNode();
+
+    //add a static text element that will show useful information
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true);
+    m_pInfo->setDrawBackground(true);
+    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+    m_pInfo->setVisible(false);
+    m_pCtrls=NULL;
+
+    //we are an IrrOde event listener
+    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+
+    m_bInitialized=true;
+  }
+}
+
+CCar::~CCar() {
+  CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+}
+
+//This method is called when the state is activated.
+void CCar::activate() {
+  m_pSmgr->setActiveCamera(m_pCam);
+  m_pInfo->setVisible(true);
+  m_pDevice->setEventReceiver(this);
+  m_pDevice->getCursorControl()->setVisible(false);
+  m_bSwitchToMenu=false;
+  m_bActive=true;
+
+  //get the parameters for the camera ...
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(vector3df(8,4  ,0)),
+            up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
+            tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
+
+  //... and apply them to the active camera
+  m_pCam->setPosition(m_pCarBody->getPosition()+pos);
+  m_pCam->setUpVector(up);
+  m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
+
+  loadHelpFile();
+  wchar_t s[0xFFFF];
+  swprintf(s,0xFFFE,m_pHelp->getText(),m_pController->getSettingsText(0));
+  m_pHelp->setText(s);
+}
+
+void CCar::deactivate() {
+  m_pInfo->setVisible(false);
+  m_bActive=false;
+  m_pController->reset();
+
+  for (u32 i=0; i<2; i++) {
+    m_pMotor[i]->setVelocity(0.0f);
+    m_pMotor[i]->setForce(5.0f);
+  }
+
+  for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+}
+
+//This method is called once for each rendered frame.
+u32 CCar::update() {
+  //call the superclasse's update method
+  u32 iRet=CIrrOdeCarState::update();
+
+  //the car's velocity
+  f32 v=m_pCarBody->getLinearVelocity().getLength();
+  //is the adaptive steer option is not active ...
+  if (!m_bAdaptSteer)
+    m_fActSteer=45.0f;   //... just use the default steering angle of 45 degrees, otherwise ...
+  else
+    if (v<10.0f)
+      m_fActSteer=45.0f;    //... just use this value if the velocity is low. If the velocity is higher, even ...
+    else
+      if (v>45.0f)
+        m_fActSteer=25.0f;  //... higher than 45 we use the minimum value of 25 degrees. If the speed is between 10 ...
+      else
+        //and 45 we calculate the actual steering angle
+        m_fActSteer=45.0f-(20.0f)*(v-10.0f)/35.0f;
+
+  bool b=m_pController->get(m_pCtrls[eCarBackview])!=0.0f;
+  //get the parameters for the camera ...
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(b?vector3df(-8,2,0):vector3df(8,4,0)),
+            up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
+            tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
+
+  //... and apply them to the active camera
+  m_pCam->setPosition(m_pCarBody->getPosition()+pos);
+  m_pCam->setUpVector(up);
+  m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
+
+  //now we fill the info text with useful information
+  wchar_t dummy[0xFF];
+  pos=m_pCarBody->getAbsolutePosition();
+  swprintf(dummy,0xFE,L"vel: %.2f\npos: (%.0f, %.0f, %.0f)\nsteer: %.2f",v,pos.X,pos.Y,pos.Z,m_fActSteer);
+  if (m_pController->get(m_pCtrls[eCarBoost])!=0.0f) swprintf(dummy,0xFF,L"%s\nBOOST!",dummy);
+  m_pInfo->setText(dummy);
+
+  //if the iRet value we got from CVehicle::update is more than 0 the state will be deactivated and
+  //one of the other states will get active.
+  return iRet;
+}
+
+//here we have the Irrlicht event receiver
+bool CCar::OnEvent(const SEvent &event) {
+  bool bRet=m_pController->OnEvent(event);
+  bRet|=CIrrOdeCarState::OnEvent(event);
+  return bRet;
+}
+
+bool CCar::onEvent(IIrrOdeEvent *pEvent) {
+  if (m_bActive && pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
+
+    f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]);
+
+    if (fForeward!=0.0f) {
+      f32 fForce=fForeward<0.0f?-fForeward:fForeward;
+      for (u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(-250.0*fForeward);
+        m_pMotor[i]->setForce(bBoost?40*fForce:15*fForce);
+        m_iThrottle=-1;
+      }
+    }
+    else
+      for (u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(0.0f);
+        m_pMotor[i]->setForce(5.0f);
+      }
+
+    f32 fSteer=m_pController->get(m_pCtrls[eCarLeft]);
+
+    if (fSteer!=0.0f)
+      for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer);
+    else
+      for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+
+    if (m_pController->get(m_pCtrls[eCarBrake])!=0.0f)
+      for (u32 i=0; i<2; i++) {
+          m_pMotor[i]->setVelocity(0.0f);
+          m_pMotor[i]->setForce(75);
+      }
+
+    if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
+      m_bAdaptSteer=!m_bAdaptSteer;
+      m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
+    }
+
+    //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
+    if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
+      vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
+      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,120,0));
+    }
+  }
+  return false;
+}
+
+bool CCar::handlesEvent(IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+}

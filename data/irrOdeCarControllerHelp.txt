@@ -1,0 +1,45 @@
+
+
+			Controller Setup -- Help
+
+Use this dialog to individually set up the controls of the vehicles. You can use keys (except for the F-keys) and joystick to control the vehicles.
+
+Select one of the tabs, depending on the controls of which vehicle you want to modify. Just click on one of the controls and press the key or joystick button or move the joystick you want to use. If a conflict is detected the control is marked red.
+
+When you quit the demo the controls are saved and restored when you start the program the next time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

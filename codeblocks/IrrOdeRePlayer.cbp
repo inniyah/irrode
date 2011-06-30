@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="IrrOdeRePlayer" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="nullDeviceDebug">
+				<Option output="..\bin\gcc-win32-debug\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_USE_ODE_NULL_DEVICE" />
+				</Compiler>
+			</Target>
+			<Target title="nullDeviceRelease">
+				<Option output="..\bin\gcc-win32\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\release" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\include\IrrOde" />
+			<Add directory="..\include\IrrOdeRePlayer" />
+		</Compiler>
+		<Linker>
+			<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
+			<Add library="Irrlicht" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="gdi32" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+		</Linker>
+		<Unit filename="..\include\IrrOdeRePlayer\CPluginInfo.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\CReplayerStateReplay.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\IState.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
+		<Unit filename="..\source\IrrOdeRePlayer\CPluginInfo.cpp" />
+		<Unit filename="..\source\IrrOdeRePlayer\CReplayerStateReplay.cpp" />
+		<Unit filename="..\source\IrrOdeRePlayer\IrrOdeRePlayer_main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

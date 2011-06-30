@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdEditExample", "IrrOdEditExample.vcproj", "{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libIrrOde", "libIrrOde.vcproj", "{FBB28A58-926F-4137-824A-D4EF514EFEAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}.Debug|Win32.Build.0 = Debug|Win32
+		{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}.Release|Win32.ActiveCfg = Release|Win32
+		{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}.Release|Win32.Build.0 = Release|Win32
+		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Debug|Win32.Build.0 = Debug|Win32
+		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Release|Win32.ActiveCfg = Release|Win32
+		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

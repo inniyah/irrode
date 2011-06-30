@@ -1,0 +1,35 @@
+
+
+			IrrOdeHeli -- Help
+
+Welcome to the helicopter scene of IrrODECar, a little demo application using Irrlicht, ODE and the IrrODE wrapper. You can control the helicopter with the following keys:
+ 
+toggle help screen: KEY_F1
+%sreturn to vehicle selection menu: KEY_Tab
+
+Some notes
+
+I know, I know ... this is fun but not really realistic ... but realism was not the main goal when I decided to integrate a helicopter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
