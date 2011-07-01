@@ -38,7 +38,8 @@ class CAutoPilot {
     irr::f32  m_fApDist,
              *m_fHeliDistLeft,
              *m_fHeliDistRight,
-              m_fHeliCheckMax;
+              m_fHeliCheckMax,
+              m_fHeliCheckLength;
 
     irr::core::vector3df m_vSideward,
                          m_vForeward,
