@@ -49,20 +49,17 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_bLinkYawRoll=false;
   m_pRay=pRay;
 
+  m_iHeliCheckCount=2;
+
   m_fHeliDistLeft =(f32 *)malloc(5*sizeof(f32));
   m_fHeliDistRight=(f32 *)malloc(5*sizeof(f32));
 
-  m_fHeliDistLeft[0]=60.0f; m_fHeliDistRight[0]=-60.0f;
-  m_fHeliDistLeft[1]=45.0f; m_fHeliDistRight[1]=-45.0f;
-  m_fHeliDistLeft[2]=25.0f; m_fHeliDistRight[2]=-25.0f;
-  m_fHeliDistLeft[3]= 5.0f; m_fHeliDistRight[3]= -5.0f;
-  m_fHeliDistLeft[4]= 0.0f; m_fHeliDistRight[4]=  0.0f;
+  m_fHeliDistLeft[0]=45.0f; m_fHeliDistRight[0]=-45.0f;
+  m_fHeliDistLeft[1]=10.0f; m_fHeliDistRight[1]=-10.0f;
 
-  m_fHeliCheckMax=0.0f;
-
-  m_iHeliCheckCount=5;
   m_fHeliCheckLength=500.0f;
 
+  m_fHeliCheckMax=0.0f;
   for (u32 i=0; i<m_iHeliCheckCount; i++) m_fHeliCheckMax+=(i+1)*m_fHeliCheckLength;
   m_pAutoPilotInfo=NULL;
 }
