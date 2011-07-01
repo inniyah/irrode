@@ -58,9 +58,12 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_fHeliDistLeft[3]= 5.0f; m_fHeliDistRight[3]= -5.0f;
   m_fHeliDistLeft[4]= 0.0f; m_fHeliDistRight[4]=  0.0f;
 
-  m_fHeliCheckMax=5000.0f;
-  m_iHeliCheckCount=5;
+  m_fHeliCheckMax=0.0f;
 
+  m_iHeliCheckCount=5;
+  m_fHeliCheckLength=500.0f;
+
+  for (u32 i=0; i<m_iHeliCheckCount; i++) m_fHeliCheckMax+=(i+1)*m_fHeliCheckLength;
   m_pAutoPilotInfo=NULL;
 }
 
@@ -319,7 +322,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                 core::vector3df v1=vPos+core::vector3df(vStart.X,0.0f,vStart.Y),
                                 v2=     core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
 
-                m_pRay->set(v1,v2,500.0f);
+                m_pRay->set(v1,v2,m_fHeliCheckLength);
                 m_pRay->checkWithWorld(aHits);
 
                 for (u32 k=0; k<aHits.size(); k++) {
@@ -330,11 +333,8 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
                 if (j==0) fLeft+=fFact*fDist[i]; else fRight+=fFact*fDist[i];
 
-                if (j==0) fLeft +=fFact*fDist[i];
-                if (j==1) fRight+=fFact*fDist[i];
+                fFact+=1.0f;
               }
-
-              fFact+=1.0f;
             }
 
             swprintf(sInfo,4096,L"%s\nleft: %.2f\nright: %.2f\n",sInfo,fLeft,fRight);
