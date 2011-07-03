@@ -29,6 +29,12 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
     //get the front wheel that is needed for steering the plane on ground
     m_pSteer=(CIrrOdeServo *)m_pPlaneBody->getMotorFromName("plane_wheel_steer");
 
+    for (u32 i=0; i<2; i++) {
+      c8 s[0xFF];
+      sprintf(s,"brake%i",i);
+      m_pBrakes[i]=dynamic_cast<irr::ode::CIrrOdeMotor *>(m_pPlaneBody->getMotorFromName(s));
+    }
+
     //get the visual rudders
     m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
     m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
@@ -52,9 +58,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
     m_pTargetSelector=new CTargetSelector(m_pPlaneBody,m_pDevice,m_pAero->getForeward());
 
-    //we need the rear wheel bodies for the braking on ground
-    m_pRearWheels[0]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rl");
-    m_pRearWheels[1]=m_pPlaneBody->getChildBodyFromName("plane_wheel_rr");
 
     m_pFrontWheel=m_pPlaneBody->getChildBodyFromName("frontwheel");
 
@@ -63,8 +66,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
                                                      (int)m_pPitch[0],(int)m_pPitch[1],
                                                      (int)m_pYaw  [0],(int)m_pYaw  [1]);
     printf("motors: %i, %i, %i\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero);
-    printf("rear wheels: %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1]);
-    printf("front wheel: %i\n",(int)m_pFrontWheel);
+    printf("steered wheel: %i\n",(int)m_pFrontWheel);
+    printf("brakes: %i, %i\n",(int)m_pBrakes[0],(int)m_pBrakes[1]);
 
     //let's add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
@@ -215,8 +218,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       //times per second.
       m_fThrust=m_pController->get(m_pCtrls[ePlanePowerUp]);
 
-      if (m_fThrust> 1.0f) m_fThrust=1.0f;
-      if (m_fThrust<-0.1f) m_fThrust=-0.1f;
+      if (m_fThrust>1.0f) m_fThrust=1.0f;
+      if (m_fThrust<0.1f) m_fThrust/=4.0f;
 
       if (m_pController->get(m_pCtrls[ePlanePowerZero])!=0.0f) {
         m_fThrust=0.0f;
@@ -272,8 +275,13 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       }
 
-      m_pRearWheels[0]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
-      m_pRearWheels[1]->setAngularDamping(0.8f*m_pController->get(m_pCtrls[ePlaneBrake])+0.01f);
+      if (m_pBrakes[0]!=NULL) {
+        m_pBrakes[0]->setForce(150.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
+      }
+
+      if (m_pBrakes[1]!=NULL) {
+        m_pBrakes[1]->setForce(150.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
+      }
 
       m_bBackView=m_pController->get(m_pCtrls[ePlaneBackview])!=0.0f;
 

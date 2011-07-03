@@ -50,6 +50,7 @@ void CMenu::activate() {
     m_vCamLookAt=m_pSmgr->getActiveCamera()->getTarget();
     bFirstCall=false;
   }
+  m_pSmgr->getActiveCamera()->setUpVector(core::vector3df(0,1,0));
 
   //we need to see the mouse cursor
   m_pDevice->getCursorControl()->setVisible(true);

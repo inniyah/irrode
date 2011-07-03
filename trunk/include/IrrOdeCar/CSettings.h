@@ -45,7 +45,7 @@ class CSettings : public IEventReceiver {
     array<IGUICheckBox *> m_aActiveBodies;
     array<IGUIComboBox *> m_aBodyCount;
 
-    bool m_aAct[9];
+    bool m_aAct[6];
     u32 m_iCnt[4];
 
     IGUIButton *m_pOk,            /**< the "OK" button */
