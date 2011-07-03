@@ -293,23 +293,12 @@ int main(int argc, char** argv) {
 
   printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lHelis.size(),lTanks.size());
 
-  if (!pSettings->isActive(0)) removeFromScene("bumps"       ,smgr);
-  if (!pSettings->isActive(1)) removeFromScene("targets"     ,smgr);
-  if (!pSettings->isActive(2)) removeFromScene("signs"       ,smgr);
-  if (!pSettings->isActive(3)) removeFromScene("buildings"   ,smgr);
-  if (!pSettings->isActive(4)) removeFromScene("plane_course",smgr);
-  if (!pSettings->isActive(5)) removeFromScene("pillars"     ,smgr);
-  if (!pSettings->isActive(6)) removeFromScene("car_ramps"   ,smgr);
-  if (!pSettings->isActive(7)) {
-    printf("removing terrain trimesh...\n");
-    removeFromScene("terrain_trimesh",smgr);
+  if (!pSettings->isActive(0)) removeFromScene("roads"       ,smgr);
+  if (!pSettings->isActive(1)) removeFromScene("bumps"       ,smgr);
+  if (!pSettings->isActive(2)) removeFromScene("targets"     ,smgr);
+  if (!pSettings->isActive(3)) {
+    removeFromScene("forests"     ,smgr);
   }
-  else {
-    printf("removing terrain heightfield...\n");
-    removeFromScene("terrain_heightfield",smgr);
-  }
-  if (!pSettings->isActive((8)))
-    removeFromScene("forests",smgr);
   else {
    const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
 
@@ -344,6 +333,16 @@ int main(int argc, char** argv) {
         }
       }
     }
+  }
+
+  if (!pSettings->isActive(4)) removeFromScene("plane_course",smgr);
+  if (!pSettings->isActive(5)) {
+    printf("removing terrain trimesh...\n");
+    removeFromScene("terrain_trimesh",smgr);
+  }
+  else {
+    printf("removing terrain heightfield...\n");
+    removeFromScene("terrain_heightfield",smgr);
   }
 
   delete pSettings;

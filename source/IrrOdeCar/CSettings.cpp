@@ -16,7 +16,7 @@ CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBac
 
 void CSettings::createGUI() {
   //Create a software device
-  m_pDevice=createDevice(EDT_SOFTWARE, dimension2d<u32>(230,460), 16, false, false, false, 0);
+  m_pDevice=createDevice(EDT_SOFTWARE, dimension2d<u32>(230,360), 16, false, false, false, 0);
   m_pDevice->setWindowCaption(m_sTitle);
 
   strcpy(m_sSettingsFile,m_sSettingsFile);
@@ -116,20 +116,17 @@ void CSettings::createGUI() {
   cb->setSelected(m_iCnt[3]);
   m_aBodyCount.push_back(cb);
 
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"signs"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"buildings"      ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"   ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"pillars"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"car ramps"      ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[6]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"trimesh terrain",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[7]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[8]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"roads"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"   ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);
+  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"trimesh terrain",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
 
 
   //add the "OK" and "Cancel" buttons
-  m_pOk    =m_pGuiEnv->addButton(rect<s32>( 80,440,120,455),0,1,L"Start");
-  m_pCancel=m_pGuiEnv->addButton(rect<s32>(125,440,175,455),0,2,L"Close");
+  m_pOk    =m_pGuiEnv->addButton(rect<s32>( 80,340,120,355),0,1,L"Start");
+  m_pCancel=m_pGuiEnv->addButton(rect<s32>(125,340,175,355),0,2,L"Close");
 
   //If no driver information was found in the settings file we initialize the driver list with all available drivers
   if (m_aDrvs.size()==0) {

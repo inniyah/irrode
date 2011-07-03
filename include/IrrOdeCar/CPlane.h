@@ -66,9 +66,9 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pPlaneBody;
     irr::ode::CIrrOdeServo *m_pSteer;
-    irr::ode::CIrrOdeBody *m_pRearWheels[2],
-                          *m_pFrontWheel;
+    irr::ode::CIrrOdeBody *m_pFrontWheel;
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
+    irr::ode::CIrrOdeMotor *m_pBrakes[2];
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
 
