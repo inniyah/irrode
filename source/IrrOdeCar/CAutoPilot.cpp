@@ -413,6 +413,23 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
+          core::vector3df vTgt3D=m_vCheckPos-m_vPosition;
+          core::vector2df vTgt=core::vector2df(vTgt3D.getLength(),vTgt3D.Y),
+                          vVel=core::vector2df(m_vVelocityLin.getLength(),m_vVelocityLin.Y);
+
+          f32 fTgt=vTgt.getAngle(),fVel=vVel.getAngle();
+
+          while (fTgt>180.0f) fTgt-=360.0f; while (fTgt<-180.0f) fTgt+=360.0f;
+          while (fVel>180.0f) fVel-=360.0f; while (fVel<-180.0f) fVel+=360.0f;
+
+          f32 fDir=m_vVATransformed.X>1.0f?-0.5f:0.5f,
+              fFact=fDir*(2.0f-m_vVATransformed.X);
+
+          fPitch=fFact*(fVel-fTgt)/5.0f;
+
+          if (fPitch> 1.0f) fPitch= 1.0f;
+          if (fPitch<-1.0f) fPitch=-1.0f;
+
           fYaw=getYawControl(true);
           fRoll=getRollControl(fYaw,NULL);
         }
