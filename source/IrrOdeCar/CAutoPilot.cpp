@@ -151,7 +151,7 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
     if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nHigh yaw detected\ncompenation: %.2f\n",sInfo,fMinus);
   }
 
-  fYaw=(b?0.1f:0.05f)*fSteer;
+  fYaw=(b?0.5f:0.05f)*fSteer;
   if (fYaw> 1.0f) fYaw= 1.0f;
   if (fYaw<-1.0f) fYaw=-1.0f;
 
@@ -406,25 +406,15 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           irr::core::line3df cLine=irr::core::line3df(m_pPlane->getPosition(),m_pPlane->getPosition()+3000.0f*m_vVelocityLin);
           irr::core::vector3df vNear=cLine.getClosestPoint(m_vCheckPos);
 
-          core::vector3df vTgt3D=m_vCheckPos-m_vPosition;
-          core::vector2df vTgt=core::vector2df(vTgt3D.getLength(),vTgt3D.Y),
-                          vVel=core::vector2df(m_vForeward.getLength(),m_vForeward.Y);//m_vVelocityLin.getLength(),m_vVelocityLin.Y);
-
-          f32 fTgt=vTgt.getAngle(),fVel=vVel.getAngle();
-
-          while (fTgt>180.0f) fTgt-=360.0f; while (fTgt<-180.0f) fTgt+=360.0f;
-          while (fVel>180.0f) fVel-=360.0f; while (fVel<-180.0f) fVel+=360.0f;
-
-          f32 fDir=m_vVATransformed.X>1.0f?-0.5f:0.5f,
-              fFact=fDir*(2.0f-m_vVATransformed.X);
-
-          fPitch=3.0f*fFact*(fVel-fTgt);
+          f32 f=m_pTarget->getPosition().Y-vNear.Y;
+          if ((f>0.0f && m_vVATransformed.X>0.001f) || (f<0.0f && m_vVATransformed.X<-0.001f))  f-=100.0f*m_vVATransformed.X;
+          fPitch=f;
 
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
-          fYaw=getYawControl(true);
           fRoll=getRollControl(fYaw,NULL);
+          fYaw=getYawControl(true);
         }
         break;
     }
