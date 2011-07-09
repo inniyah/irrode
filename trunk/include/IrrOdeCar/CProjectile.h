@@ -43,6 +43,7 @@ class CProjectile {
      * @param bFastCollision true for fast moving projectiles
      */
     CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision);
+    ~CProjectile();
 
     irr::ode::CIrrOdeBody *getBody();
     irr::s32 getTtl();

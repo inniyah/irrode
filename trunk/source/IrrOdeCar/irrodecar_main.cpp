@@ -296,8 +296,9 @@ int main(int argc, char** argv) {
   if (!pSettings->isActive(0)) removeFromScene("roads"       ,smgr);
   if (!pSettings->isActive(1)) removeFromScene("bumps"       ,smgr);
   if (!pSettings->isActive(2)) removeFromScene("targets"     ,smgr);
-  if (!pSettings->isActive(3)) {
-    removeFromScene("forests"     ,smgr);
+  if (!pSettings->isActive(3)) removeFromScene("plane_course",smgr);
+  if (!pSettings->isActive(4)) {
+    removeFromScene("forests",smgr);
   }
   else {
    const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
@@ -334,8 +335,6 @@ int main(int argc, char** argv) {
       }
     }
   }
-
-  if (!pSettings->isActive(4)) removeFromScene("plane_course",smgr);
   if (!pSettings->isActive(5)) {
     printf("removing terrain trimesh...\n");
     removeFromScene("terrain_trimesh",smgr);
