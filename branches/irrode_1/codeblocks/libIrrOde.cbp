@@ -9,7 +9,7 @@
 			<Target title="Debug">
 				<Option output="..\bin\gcc-win32-debug\libIrrOde" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\debug" />
+				<Option object_output="..\..\_obj_dump\irrOde_1\libIrrOde\debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option host_application="marbles2.exe" />
@@ -22,7 +22,7 @@
 			<Target title="Release">
 				<Option output="..\bin\gcc-win32\libIrrOde" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\release" />
+				<Option object_output="..\..\_obj_dump\irrOde_1\libIrrOde\release" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -37,7 +37,7 @@
 			<Target title="nullDeviceDebug">
 				<Option output="..\bin\gcc-win32\libIrrOdeNull" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\null_debug" />
+				<Option object_output="..\..\_obj_dump\irrOde_1\libIrrOde\null_debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option host_application="marbles2.exe" />
@@ -51,7 +51,7 @@
 			<Target title="nullDeviceRelease">
 				<Option output="..\bin\gcc-win32\libIrrOdeNull" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\_obj_dump\irrOde\libIrrOde\null_release" />
+				<Option object_output="..\..\_obj_dump\irrOde_1\libIrrOde\null_release" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />

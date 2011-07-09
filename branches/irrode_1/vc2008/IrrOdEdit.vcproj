@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\external\irrEdit-1.5\plugins"
-			IntermediateDirectory="..\..\_obj_dump\irrOde\irrOdEdit\VC2008_Debug"
+			IntermediateDirectory="..\..\_obj_dump\irrOde_1\irrOdEdit\VC2008_Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="D:\myStuff\external\irrEdit-1.5\plugins\IrrOdEdit.dll"
+				OutputFile="D:\myStuff\external\irrEdit-1.5\plugins\IrrOdEdit_1.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/IrrOdEdit.pdb"
@@ -98,7 +98,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\bin\vc2008"
-			IntermediateDirectory="..\..\_obj_dump\irrOde\irrOdEdit\VC2008_Release"
+			IntermediateDirectory="..\..\_obj_dump\irrOde_1\irrOdEdit\VC2008_Release"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../bin/vc2008/IrrOdEdit.dll"
+				OutputFile="../bin/vc2008/IrrOdEdit_1.dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
