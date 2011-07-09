@@ -1,0 +1,1352 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F342295B11C167F20096E651 /* CIrrOdeBody.h in Headers */ = {isa = PBXBuildFile; fileRef = F342290E11C167F20096E651 /* CIrrOdeBody.h */; };
+		F342295C11C167F20096E651 /* CIrrOdeContactParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = F342290F11C167F20096E651 /* CIrrOdeContactParameters.h */; };
+		F342295D11C167F20096E651 /* CIrrOdeDampable.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291011C167F20096E651 /* CIrrOdeDampable.h */; };
+		F342295E11C167F20096E651 /* CIrrOdeDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291111C167F20096E651 /* CIrrOdeDevice.h */; };
+		F342295F11C167F20096E651 /* CIrrOdeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291211C167F20096E651 /* CIrrOdeManager.h */; };
+		F342296011C167F20096E651 /* CIrrOdeNullDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291311C167F20096E651 /* CIrrOdeNullDevice.h */; };
+		F342296111C167F20096E651 /* CIrrOdeSceneNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291411C167F20096E651 /* CIrrOdeSceneNode.h */; };
+		F342296211C167F20096E651 /* CIrrOdeSceneNodeFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291511C167F20096E651 /* CIrrOdeSceneNodeFactory.h */; };
+		F342296311C167F20096E651 /* CIrrOdeSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291611C167F20096E651 /* CIrrOdeSpace.h */; };
+		F342296411C167F20096E651 /* CIrrOdeSurfaceParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291711C167F20096E651 /* CIrrOdeSurfaceParameters.h */; };
+		F342296511C167F20096E651 /* CIrrOdeWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291811C167F20096E651 /* CIrrOdeWorld.h */; };
+		F342296611C167F20096E651 /* CSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291911C167F20096E651 /* CSerializer.h */; };
+		F342296711C167F20096E651 /* CIrrOdeEventActivationChanged.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291B11C167F20096E651 /* CIrrOdeEventActivationChanged.h */; };
+		F342296811C167F20096E651 /* CIrrOdeEventBeforeStep.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291C11C167F20096E651 /* CIrrOdeEventBeforeStep.h */; };
+		F342296911C167F20096E651 /* CIrrOdeEventBodyCreated.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291D11C167F20096E651 /* CIrrOdeEventBodyCreated.h */; };
+		F342296A11C167F20096E651 /* CIrrOdeEventBodyMoved.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291E11C167F20096E651 /* CIrrOdeEventBodyMoved.h */; };
+		F342296B11C167F20096E651 /* CIrrOdeEventBodyRemoved.h in Headers */ = {isa = PBXBuildFile; fileRef = F342291F11C167F20096E651 /* CIrrOdeEventBodyRemoved.h */; };
+		F342296C11C167F20096E651 /* CIrrOdeEventClose.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292011C167F20096E651 /* CIrrOdeEventClose.h */; };
+		F342296D11C167F20096E651 /* CIrrOdeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292111C167F20096E651 /* CIrrOdeEventInit.h */; };
+		F342296E11C167F20096E651 /* CIrrOdeEventRayHit.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292211C167F20096E651 /* CIrrOdeEventRayHit.h */; };
+		F342296F11C167F20096E651 /* CIrrOdeEventStep.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292311C167F20096E651 /* CIrrOdeEventStep.h */; };
+		F342297011C167F20096E651 /* IIrrOdeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292411C167F20096E651 /* IIrrOdeEvent.h */; };
+		F342297111C167F20096E651 /* IIrrOdeEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292511C167F20096E651 /* IIrrOdeEventListener.h */; };
+		F342297211C167F20096E651 /* CIrrOdeGeom.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292711C167F20096E651 /* CIrrOdeGeom.h */; };
+		F342297311C167F20096E651 /* CIrrOdeGeomBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292811C167F20096E651 /* CIrrOdeGeomBox.h */; };
+		F342297411C167F20096E651 /* CIrrOdeGeomCapsule.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292911C167F20096E651 /* CIrrOdeGeomCapsule.h */; };
+		F342297511C167F20096E651 /* CIrrOdeGeomCylinder.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292A11C167F20096E651 /* CIrrOdeGeomCylinder.h */; };
+		F342297611C167F20096E651 /* CIrrOdeGeomHeightfield.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292B11C167F20096E651 /* CIrrOdeGeomHeightfield.h */; };
+		F342297711C167F20096E651 /* CIrrOdeGeomPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292C11C167F20096E651 /* CIrrOdeGeomPlane.h */; };
+		F342297811C167F20096E651 /* CIrrOdeGeomRay.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292D11C167F20096E651 /* CIrrOdeGeomRay.h */; };
+		F342297911C167F20096E651 /* CIrrOdeGeomSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292E11C167F20096E651 /* CIrrOdeGeomSphere.h */; };
+		F342297A11C167F20096E651 /* CIrrOdeGeomTrimesh.h in Headers */ = {isa = PBXBuildFile; fileRef = F342292F11C167F20096E651 /* CIrrOdeGeomTrimesh.h */; };
+		F342297B11C167F20096E651 /* IIrrOdeContactParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293011C167F20096E651 /* IIrrOdeContactParameters.h */; };
+		F342297C11C167F20096E651 /* IIrrOdeDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293111C167F20096E651 /* IIrrOdeDevice.h */; };
+		F342297D11C167F20096E651 /* IrrOde.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293211C167F20096E651 /* IrrOde.h */; };
+		F342297E11C167F20096E651 /* CIrrOdeJoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293411C167F20096E651 /* CIrrOdeJoint.h */; };
+		F342297F11C167F20096E651 /* CIrrOdeJointBallSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293511C167F20096E651 /* CIrrOdeJointBallSocket.h */; };
+		F342298011C167F20096E651 /* CIrrOdeJointFixed.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293611C167F20096E651 /* CIrrOdeJointFixed.h */; };
+		F342298111C167F20096E651 /* CIrrOdeJointHinge.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293711C167F20096E651 /* CIrrOdeJointHinge.h */; };
+		F342298211C167F20096E651 /* CIrrOdeJointHinge2.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293811C167F20096E651 /* CIrrOdeJointHinge2.h */; };
+		F342298311C167F20096E651 /* CIrrOdeJointPiston.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293911C167F20096E651 /* CIrrOdeJointPiston.h */; };
+		F342298411C167F20096E651 /* CIrrOdeJointPR.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293A11C167F20096E651 /* CIrrOdeJointPR.h */; };
+		F342298511C167F20096E651 /* CIrrOdeJointSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293B11C167F20096E651 /* CIrrOdeJointSlider.h */; };
+		F342298611C167F20096E651 /* CIrrOdeJointUniversal.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293C11C167F20096E651 /* CIrrOdeJointUniversal.h */; };
+		F342298711C167F20096E651 /* CIrrOdeAeroDrag.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293E11C167F20096E651 /* CIrrOdeAeroDrag.h */; };
+		F342298811C167F20096E651 /* CIrrOdeImpulseMotor.h in Headers */ = {isa = PBXBuildFile; fileRef = F342293F11C167F20096E651 /* CIrrOdeImpulseMotor.h */; };
+		F342298911C167F20096E651 /* CIrrOdeMotor.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294011C167F20096E651 /* CIrrOdeMotor.h */; };
+		F342298A11C167F20096E651 /* CIrrOdeServo.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294111C167F20096E651 /* CIrrOdeServo.h */; };
+		F342298B11C167F20096E651 /* CIrrOdeTorqueMotor.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294211C167F20096E651 /* CIrrOdeTorqueMotor.h */; };
+		F342298C11C167F20096E651 /* IIrrOdeStepMotor.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294311C167F20096E651 /* IIrrOdeStepMotor.h */; };
+		F342298D11C167F20096E651 /* CCar.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294511C167F20096E651 /* CCar.h */; };
+		F342298E11C167F20096E651 /* CConfigFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294611C167F20096E651 /* CConfigFileManager.h */; };
+		F342298F11C167F20096E651 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294711C167F20096E651 /* CController.h */; };
+		F342299011C167F20096E651 /* CHeli.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294811C167F20096E651 /* CHeli.h */; };
+		F342299111C167F20096E651 /* CIrrOdeCarState.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294911C167F20096E651 /* CIrrOdeCarState.h */; };
+		F342299211C167F20096E651 /* CMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294A11C167F20096E651 /* CMenu.h */; };
+		F342299311C167F20096E651 /* CPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294B11C167F20096E651 /* CPlane.h */; };
+		F342299411C167F20096E651 /* CProjectile.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294C11C167F20096E651 /* CProjectile.h */; };
+		F342299511C167F20096E651 /* CTank.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294D11C167F20096E651 /* CTank.h */; };
+		F342299611C167F20096E651 /* irrCC.h in Headers */ = {isa = PBXBuildFile; fileRef = F342294E11C167F20096E651 /* irrCC.h */; };
+		F342299711C167F20096E651 /* CAbout.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295011C167F20096E651 /* CAbout.h */; };
+		F342299811C167F20096E651 /* CHiScore.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295111C167F20096E651 /* CHiScore.h */; };
+		F342299911C167F20096E651 /* CMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295211C167F20096E651 /* CMenu.h */; };
+		F342299A11C167F20096E651 /* CPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295311C167F20096E651 /* CPlay.h */; };
+		F342299B11C167F20096E651 /* CSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295411C167F20096E651 /* CSettings.h */; };
+		F342299C11C167F20096E651 /* IState.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295511C167F20096E651 /* IState.h */; };
+		F342299D11C167F20096E651 /* myEventListeners.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295711C167F20096E651 /* myEventListeners.h */; };
+		F342299E11C167F20096E651 /* myEventReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295811C167F20096E651 /* myEventReceiver.h */; };
+		F342299F11C167F20096E651 /* CGUIFileSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = F342295A11C167F20096E651 /* CGUIFileSelector.h */; };
+		F399B9D111C049460003C785 /* libODE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F399B9D011C049460003C785 /* libODE.a */; };
+		F399BA0811C04CBB0003C785 /* myEventListeners.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C85A11B6EBCC00F22A25 /* myEventListeners.cpp */; };
+		F399BA0911C04CBC0003C785 /* myEventReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C85B11B6EBCC00F22A25 /* myEventReceiver.cpp */; };
+		F399BA0A11C04CBD0003C785 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C85911B6EBCC00F22A25 /* main.cpp */; };
+		F399BA0F11C04CDD0003C785 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */; };
+		F399BA1111C04CDF0003C785 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64D11B6EB0000F22A25 /* IOKit.framework */; };
+		F399BA1411C04CE20003C785 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */; };
+		F399BAD411C04D340003C785 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64911B6EB0000F22A25 /* Carbon.framework */; };
+		F399BB0011C0503E0003C785 /* libirrODE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64611B6EABC00F22A25 /* libirrODE.a */; };
+		F399BB1311C052720003C785 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = F399BB1211C052720003C785 /* MainMenu.nib */; };
+		F399BB1411C052720003C785 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = F399BB1211C052720003C785 /* MainMenu.nib */; };
+		F399BB3C11C0555F0003C785 /* libirrODE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64611B6EABC00F22A25 /* libirrODE.a */; };
+		F399BB3D11C055640003C785 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64D11B6EB0000F22A25 /* IOKit.framework */; };
+		F399BB3E11C055650003C785 /* libIrrlicht.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6CC1411B7091100F22A25 /* libIrrlicht.a */; };
+		F399BB4011C055660003C785 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */; };
+		F399BB4111C055750003C785 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84611B6EBCC00F22A25 /* CController.cpp */; };
+		F399BB4211C0557A0003C785 /* CCar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84411B6EBCC00F22A25 /* CCar.cpp */; };
+		F399BB4311C0557B0003C785 /* CHeli.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84711B6EBCC00F22A25 /* CHeli.cpp */; };
+		F399BB4411C0557C0003C785 /* CConfigFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84511B6EBCC00F22A25 /* CConfigFileManager.cpp */; };
+		F399BB4511C0557C0003C785 /* irrCC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84D11B6EBCC00F22A25 /* irrCC.cpp */; };
+		F399BB4611C0557D0003C785 /* CMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84911B6EBCC00F22A25 /* CMenu.cpp */; };
+		F399BB4711C0557E0003C785 /* irrodecar_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84E11B6EBCC00F22A25 /* irrodecar_main.cpp */; };
+		F399BB4811C0557F0003C785 /* CPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84A11B6EBCC00F22A25 /* CPlane.cpp */; };
+		F399BB4911C055800003C785 /* CProjectile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84B11B6EBCC00F22A25 /* CProjectile.cpp */; };
+		F399BB4A11C055800003C785 /* CIrrOdeCarState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84811B6EBCC00F22A25 /* CIrrOdeCarState.cpp */; };
+		F399BB4B11C055820003C785 /* CTank.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84C11B6EBCC00F22A25 /* CTank.cpp */; };
+		F399BB4E11C055930003C785 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = F399BB1211C052720003C785 /* MainMenu.nib */; };
+		F399BB5211C055AB0003C785 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64911B6EB0000F22A25 /* Carbon.framework */; };
+		F399BB5A11C056590003C785 /* CSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C85611B6EBCC00F22A25 /* CSettings.cpp */; };
+		F399BB5E11C056820003C785 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */; };
+		F3A6C64A11B6EB0000F22A25 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64911B6EB0000F22A25 /* Carbon.framework */; };
+		F3A6C64C11B6EB0000F22A25 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */; };
+		F3A6C64E11B6EB0000F22A25 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64D11B6EB0000F22A25 /* IOKit.framework */; };
+		F3A6C65011B6EB0000F22A25 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */; };
+		F3A6C86111B6EBCC00F22A25 /* CIrrOdeBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81511B6EBCC00F22A25 /* CIrrOdeBody.cpp */; };
+		F3A6C86211B6EBCC00F22A25 /* CIrrOdeContactParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81611B6EBCC00F22A25 /* CIrrOdeContactParameters.cpp */; };
+		F3A6C86311B6EBCC00F22A25 /* CIrrOdeDampable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81711B6EBCC00F22A25 /* CIrrOdeDampable.cpp */; };
+		F3A6C86411B6EBCC00F22A25 /* CIrrOdeDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81811B6EBCC00F22A25 /* CIrrOdeDevice.cpp */; };
+		F3A6C86511B6EBCC00F22A25 /* CIrrOdeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81911B6EBCC00F22A25 /* CIrrOdeManager.cpp */; };
+		F3A6C86611B6EBCC00F22A25 /* CIrrOdeSceneNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81A11B6EBCC00F22A25 /* CIrrOdeSceneNode.cpp */; };
+		F3A6C86711B6EBCC00F22A25 /* CIrrOdeSceneNodeFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81B11B6EBCC00F22A25 /* CIrrOdeSceneNodeFactory.cpp */; };
+		F3A6C86811B6EBCC00F22A25 /* CIrrOdeSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81C11B6EBCC00F22A25 /* CIrrOdeSpace.cpp */; };
+		F3A6C86911B6EBCC00F22A25 /* CIrrOdeSurfaceParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81D11B6EBCC00F22A25 /* CIrrOdeSurfaceParameters.cpp */; };
+		F3A6C86A11B6EBCC00F22A25 /* CIrrOdeWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81E11B6EBCC00F22A25 /* CIrrOdeWorld.cpp */; };
+		F3A6C86B11B6EBCC00F22A25 /* CIrrOdeEventActivationChanged.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82011B6EBCC00F22A25 /* CIrrOdeEventActivationChanged.cpp */; };
+		F3A6C86C11B6EBCC00F22A25 /* CIrrOdeEventBeforeStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82111B6EBCC00F22A25 /* CIrrOdeEventBeforeStep.cpp */; };
+		F3A6C86D11B6EBCC00F22A25 /* CIrrOdeEventBodyCreated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82211B6EBCC00F22A25 /* CIrrOdeEventBodyCreated.cpp */; };
+		F3A6C86E11B6EBCC00F22A25 /* CIrrOdeEventBodyMoved.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82311B6EBCC00F22A25 /* CIrrOdeEventBodyMoved.cpp */; };
+		F3A6C86F11B6EBCC00F22A25 /* CIrrOdeEventBodyRemoved.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82411B6EBCC00F22A25 /* CIrrOdeEventBodyRemoved.cpp */; };
+		F3A6C87011B6EBCC00F22A25 /* CIrrOdeEventClose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82511B6EBCC00F22A25 /* CIrrOdeEventClose.cpp */; };
+		F3A6C87111B6EBCC00F22A25 /* CIrrOdeEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82611B6EBCC00F22A25 /* CIrrOdeEventInit.cpp */; };
+		F3A6C87211B6EBCC00F22A25 /* CIrrOdeEventRayHit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82711B6EBCC00F22A25 /* CIrrOdeEventRayHit.cpp */; };
+		F3A6C87311B6EBCC00F22A25 /* CIrrOdeEventStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82811B6EBCC00F22A25 /* CIrrOdeEventStep.cpp */; };
+		F3A6C87411B6EBCC00F22A25 /* CIrrOdeGeom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82A11B6EBCC00F22A25 /* CIrrOdeGeom.cpp */; };
+		F3A6C87511B6EBCC00F22A25 /* CIrrOdeGeomBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82B11B6EBCC00F22A25 /* CIrrOdeGeomBox.cpp */; };
+		F3A6C87611B6EBCC00F22A25 /* CIrrOdeGeomCapsule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82C11B6EBCC00F22A25 /* CIrrOdeGeomCapsule.cpp */; };
+		F3A6C87711B6EBCC00F22A25 /* CIrrOdeGeomCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82D11B6EBCC00F22A25 /* CIrrOdeGeomCylinder.cpp */; };
+		F3A6C87811B6EBCC00F22A25 /* CIrrOdeGeomHeightfield.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82E11B6EBCC00F22A25 /* CIrrOdeGeomHeightfield.cpp */; };
+		F3A6C87911B6EBCC00F22A25 /* CIrrOdeGeomPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C82F11B6EBCC00F22A25 /* CIrrOdeGeomPlane.cpp */; };
+		F3A6C87A11B6EBCC00F22A25 /* CIrrOdeGeomRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83011B6EBCC00F22A25 /* CIrrOdeGeomRay.cpp */; };
+		F3A6C87B11B6EBCC00F22A25 /* CIrrOdeGeomSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83111B6EBCC00F22A25 /* CIrrOdeGeomSphere.cpp */; };
+		F3A6C87C11B6EBCC00F22A25 /* CIrrOdeGeomTrimesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83211B6EBCC00F22A25 /* CIrrOdeGeomTrimesh.cpp */; };
+		F3A6C87D11B6EBCC00F22A25 /* CIrrOdeJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83411B6EBCC00F22A25 /* CIrrOdeJoint.cpp */; };
+		F3A6C87E11B6EBCC00F22A25 /* CIrrOdeJointBallSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83511B6EBCC00F22A25 /* CIrrOdeJointBallSocket.cpp */; };
+		F3A6C87F11B6EBCC00F22A25 /* CIrrOdeJointFixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83611B6EBCC00F22A25 /* CIrrOdeJointFixed.cpp */; };
+		F3A6C88011B6EBCC00F22A25 /* CIrrOdeJointHinge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83711B6EBCC00F22A25 /* CIrrOdeJointHinge.cpp */; };
+		F3A6C88111B6EBCC00F22A25 /* CIrrOdeJointHinge2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83811B6EBCC00F22A25 /* CIrrOdeJointHinge2.cpp */; };
+		F3A6C88211B6EBCC00F22A25 /* CIrrOdeJointPiston.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83911B6EBCC00F22A25 /* CIrrOdeJointPiston.cpp */; };
+		F3A6C88311B6EBCC00F22A25 /* CIrrOdeJointPR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83A11B6EBCC00F22A25 /* CIrrOdeJointPR.cpp */; };
+		F3A6C88411B6EBCC00F22A25 /* CIrrOdeJointSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83B11B6EBCC00F22A25 /* CIrrOdeJointSlider.cpp */; };
+		F3A6C88511B6EBCC00F22A25 /* CIrrOdeJointUniversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83C11B6EBCC00F22A25 /* CIrrOdeJointUniversal.cpp */; };
+		F3A6C88611B6EBCC00F22A25 /* CIrrOdeAeroDrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83E11B6EBCC00F22A25 /* CIrrOdeAeroDrag.cpp */; };
+		F3A6C88711B6EBCC00F22A25 /* CIrrOdeImpulseMotor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C83F11B6EBCC00F22A25 /* CIrrOdeImpulseMotor.cpp */; };
+		F3A6C88811B6EBCC00F22A25 /* CIrrOdeMotor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84011B6EBCC00F22A25 /* CIrrOdeMotor.cpp */; };
+		F3A6C88911B6EBCC00F22A25 /* CIrrOdeServo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84111B6EBCC00F22A25 /* CIrrOdeServo.cpp */; };
+		F3A6C88A11B6EBCC00F22A25 /* CIrrOdeTorqueMotor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C84211B6EBCC00F22A25 /* CIrrOdeTorqueMotor.cpp */; };
+		F3A6CC1511B7091100F22A25 /* libIrrlicht.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6CC1411B7091100F22A25 /* libIrrlicht.a */; };
+		F3A6CC2511B709DF00F22A25 /* libirrODE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64611B6EABC00F22A25 /* libirrODE.a */; };
+		F3A6CC2811B70A2200F22A25 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3A6C81111B6EBCC00F22A25 /* main.cpp */; };
+		F3A6CC2E11B70A6B00F22A25 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */; };
+		F3A6CC3011B70A7600F22A25 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */; };
+		F3A6CC3411B70A8400F22A25 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64911B6EB0000F22A25 /* Carbon.framework */; };
+		F3A6CC3811B70A9100F22A25 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3A6C64D11B6EB0000F22A25 /* IOKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F342290E11C167F20096E651 /* CIrrOdeBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeBody.h; sourceTree = "<group>"; };
+		F342290F11C167F20096E651 /* CIrrOdeContactParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeContactParameters.h; sourceTree = "<group>"; };
+		F342291011C167F20096E651 /* CIrrOdeDampable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeDampable.h; sourceTree = "<group>"; };
+		F342291111C167F20096E651 /* CIrrOdeDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeDevice.h; sourceTree = "<group>"; };
+		F342291211C167F20096E651 /* CIrrOdeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeManager.h; sourceTree = "<group>"; };
+		F342291311C167F20096E651 /* CIrrOdeNullDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeNullDevice.h; sourceTree = "<group>"; };
+		F342291411C167F20096E651 /* CIrrOdeSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeSceneNode.h; sourceTree = "<group>"; };
+		F342291511C167F20096E651 /* CIrrOdeSceneNodeFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeSceneNodeFactory.h; sourceTree = "<group>"; };
+		F342291611C167F20096E651 /* CIrrOdeSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeSpace.h; sourceTree = "<group>"; };
+		F342291711C167F20096E651 /* CIrrOdeSurfaceParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeSurfaceParameters.h; sourceTree = "<group>"; };
+		F342291811C167F20096E651 /* CIrrOdeWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeWorld.h; sourceTree = "<group>"; };
+		F342291911C167F20096E651 /* CSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSerializer.h; sourceTree = "<group>"; };
+		F342291B11C167F20096E651 /* CIrrOdeEventActivationChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventActivationChanged.h; sourceTree = "<group>"; };
+		F342291C11C167F20096E651 /* CIrrOdeEventBeforeStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventBeforeStep.h; sourceTree = "<group>"; };
+		F342291D11C167F20096E651 /* CIrrOdeEventBodyCreated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventBodyCreated.h; sourceTree = "<group>"; };
+		F342291E11C167F20096E651 /* CIrrOdeEventBodyMoved.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventBodyMoved.h; sourceTree = "<group>"; };
+		F342291F11C167F20096E651 /* CIrrOdeEventBodyRemoved.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventBodyRemoved.h; sourceTree = "<group>"; };
+		F342292011C167F20096E651 /* CIrrOdeEventClose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventClose.h; sourceTree = "<group>"; };
+		F342292111C167F20096E651 /* CIrrOdeEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventInit.h; sourceTree = "<group>"; };
+		F342292211C167F20096E651 /* CIrrOdeEventRayHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventRayHit.h; sourceTree = "<group>"; };
+		F342292311C167F20096E651 /* CIrrOdeEventStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeEventStep.h; sourceTree = "<group>"; };
+		F342292411C167F20096E651 /* IIrrOdeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIrrOdeEvent.h; sourceTree = "<group>"; };
+		F342292511C167F20096E651 /* IIrrOdeEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIrrOdeEventListener.h; sourceTree = "<group>"; };
+		F342292711C167F20096E651 /* CIrrOdeGeom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeom.h; sourceTree = "<group>"; };
+		F342292811C167F20096E651 /* CIrrOdeGeomBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomBox.h; sourceTree = "<group>"; };
+		F342292911C167F20096E651 /* CIrrOdeGeomCapsule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomCapsule.h; sourceTree = "<group>"; };
+		F342292A11C167F20096E651 /* CIrrOdeGeomCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomCylinder.h; sourceTree = "<group>"; };
+		F342292B11C167F20096E651 /* CIrrOdeGeomHeightfield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomHeightfield.h; sourceTree = "<group>"; };
+		F342292C11C167F20096E651 /* CIrrOdeGeomPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomPlane.h; sourceTree = "<group>"; };
+		F342292D11C167F20096E651 /* CIrrOdeGeomRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomRay.h; sourceTree = "<group>"; };
+		F342292E11C167F20096E651 /* CIrrOdeGeomSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomSphere.h; sourceTree = "<group>"; };
+		F342292F11C167F20096E651 /* CIrrOdeGeomTrimesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeGeomTrimesh.h; sourceTree = "<group>"; };
+		F342293011C167F20096E651 /* IIrrOdeContactParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIrrOdeContactParameters.h; sourceTree = "<group>"; };
+		F342293111C167F20096E651 /* IIrrOdeDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIrrOdeDevice.h; sourceTree = "<group>"; };
+		F342293211C167F20096E651 /* IrrOde.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrrOde.h; sourceTree = "<group>"; };
+		F342293411C167F20096E651 /* CIrrOdeJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJoint.h; sourceTree = "<group>"; };
+		F342293511C167F20096E651 /* CIrrOdeJointBallSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointBallSocket.h; sourceTree = "<group>"; };
+		F342293611C167F20096E651 /* CIrrOdeJointFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointFixed.h; sourceTree = "<group>"; };
+		F342293711C167F20096E651 /* CIrrOdeJointHinge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointHinge.h; sourceTree = "<group>"; };
+		F342293811C167F20096E651 /* CIrrOdeJointHinge2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointHinge2.h; sourceTree = "<group>"; };
+		F342293911C167F20096E651 /* CIrrOdeJointPiston.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointPiston.h; sourceTree = "<group>"; };
+		F342293A11C167F20096E651 /* CIrrOdeJointPR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointPR.h; sourceTree = "<group>"; };
+		F342293B11C167F20096E651 /* CIrrOdeJointSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointSlider.h; sourceTree = "<group>"; };
+		F342293C11C167F20096E651 /* CIrrOdeJointUniversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeJointUniversal.h; sourceTree = "<group>"; };
+		F342293E11C167F20096E651 /* CIrrOdeAeroDrag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeAeroDrag.h; sourceTree = "<group>"; };
+		F342293F11C167F20096E651 /* CIrrOdeImpulseMotor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeImpulseMotor.h; sourceTree = "<group>"; };
+		F342294011C167F20096E651 /* CIrrOdeMotor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeMotor.h; sourceTree = "<group>"; };
+		F342294111C167F20096E651 /* CIrrOdeServo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeServo.h; sourceTree = "<group>"; };
+		F342294211C167F20096E651 /* CIrrOdeTorqueMotor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeTorqueMotor.h; sourceTree = "<group>"; };
+		F342294311C167F20096E651 /* IIrrOdeStepMotor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIrrOdeStepMotor.h; sourceTree = "<group>"; };
+		F342294511C167F20096E651 /* CCar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCar.h; sourceTree = "<group>"; };
+		F342294611C167F20096E651 /* CConfigFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CConfigFileManager.h; sourceTree = "<group>"; };
+		F342294711C167F20096E651 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
+		F342294811C167F20096E651 /* CHeli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHeli.h; sourceTree = "<group>"; };
+		F342294911C167F20096E651 /* CIrrOdeCarState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIrrOdeCarState.h; sourceTree = "<group>"; };
+		F342294A11C167F20096E651 /* CMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMenu.h; sourceTree = "<group>"; };
+		F342294B11C167F20096E651 /* CPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPlane.h; sourceTree = "<group>"; };
+		F342294C11C167F20096E651 /* CProjectile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CProjectile.h; sourceTree = "<group>"; };
+		F342294D11C167F20096E651 /* CTank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTank.h; sourceTree = "<group>"; };
+		F342294E11C167F20096E651 /* irrCC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = irrCC.h; sourceTree = "<group>"; };
+		F342295011C167F20096E651 /* CAbout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAbout.h; sourceTree = "<group>"; };
+		F342295111C167F20096E651 /* CHiScore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHiScore.h; sourceTree = "<group>"; };
+		F342295211C167F20096E651 /* CMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMenu.h; sourceTree = "<group>"; };
+		F342295311C167F20096E651 /* CPlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPlay.h; sourceTree = "<group>"; };
+		F342295411C167F20096E651 /* CSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSettings.h; sourceTree = "<group>"; };
+		F342295511C167F20096E651 /* IState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IState.h; sourceTree = "<group>"; };
+		F342295711C167F20096E651 /* myEventListeners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myEventListeners.h; sourceTree = "<group>"; };
+		F342295811C167F20096E651 /* myEventReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myEventReceiver.h; sourceTree = "<group>"; };
+		F342295A11C167F20096E651 /* CGUIFileSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUIFileSelector.h; sourceTree = "<group>"; };
+		F399B9D011C049460003C785 /* libODE.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libODE.a; path = "../../ode-0.11.1/MacOSX/build/Debug/libODE.a"; sourceTree = SOURCE_ROOT; };
+		F399BA0211C04CA00003C785 /* IrrOdePlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrrOdePlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F399BA0411C04CA00003C785 /* IrrOdePlayground-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IrrOdePlayground-Info.plist"; sourceTree = "<group>"; };
+		F399BB1211C052720003C785 /* MainMenu.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = MainMenu.nib; path = res/MainMenu.nib; sourceTree = "<group>"; };
+		F399BB2711C054E70003C785 /* IrrOdeCar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrrOdeCar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F399BB2911C054E70003C785 /* IrrOdeCar-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IrrOdeCar-Info.plist"; sourceTree = "<group>"; };
+		F3A6C64611B6EABC00F22A25 /* libirrODE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libirrODE.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A6C64911B6EB0000F22A25 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		F3A6C64D11B6EB0000F22A25 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		F3A6C81111B6EBCC00F22A25 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F3A6C81311B6EBCC00F22A25 /* irrOdEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irrOdEdit.cpp; sourceTree = "<group>"; };
+		F3A6C81511B6EBCC00F22A25 /* CIrrOdeBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeBody.cpp; sourceTree = "<group>"; };
+		F3A6C81611B6EBCC00F22A25 /* CIrrOdeContactParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeContactParameters.cpp; sourceTree = "<group>"; };
+		F3A6C81711B6EBCC00F22A25 /* CIrrOdeDampable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeDampable.cpp; sourceTree = "<group>"; };
+		F3A6C81811B6EBCC00F22A25 /* CIrrOdeDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeDevice.cpp; sourceTree = "<group>"; };
+		F3A6C81911B6EBCC00F22A25 /* CIrrOdeManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeManager.cpp; sourceTree = "<group>"; };
+		F3A6C81A11B6EBCC00F22A25 /* CIrrOdeSceneNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeSceneNode.cpp; sourceTree = "<group>"; };
+		F3A6C81B11B6EBCC00F22A25 /* CIrrOdeSceneNodeFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeSceneNodeFactory.cpp; sourceTree = "<group>"; };
+		F3A6C81C11B6EBCC00F22A25 /* CIrrOdeSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeSpace.cpp; sourceTree = "<group>"; };
+		F3A6C81D11B6EBCC00F22A25 /* CIrrOdeSurfaceParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeSurfaceParameters.cpp; sourceTree = "<group>"; };
+		F3A6C81E11B6EBCC00F22A25 /* CIrrOdeWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeWorld.cpp; sourceTree = "<group>"; };
+		F3A6C82011B6EBCC00F22A25 /* CIrrOdeEventActivationChanged.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventActivationChanged.cpp; sourceTree = "<group>"; };
+		F3A6C82111B6EBCC00F22A25 /* CIrrOdeEventBeforeStep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventBeforeStep.cpp; sourceTree = "<group>"; };
+		F3A6C82211B6EBCC00F22A25 /* CIrrOdeEventBodyCreated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventBodyCreated.cpp; sourceTree = "<group>"; };
+		F3A6C82311B6EBCC00F22A25 /* CIrrOdeEventBodyMoved.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventBodyMoved.cpp; sourceTree = "<group>"; };
+		F3A6C82411B6EBCC00F22A25 /* CIrrOdeEventBodyRemoved.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventBodyRemoved.cpp; sourceTree = "<group>"; };
+		F3A6C82511B6EBCC00F22A25 /* CIrrOdeEventClose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventClose.cpp; sourceTree = "<group>"; };
+		F3A6C82611B6EBCC00F22A25 /* CIrrOdeEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventInit.cpp; sourceTree = "<group>"; };
+		F3A6C82711B6EBCC00F22A25 /* CIrrOdeEventRayHit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventRayHit.cpp; sourceTree = "<group>"; };
+		F3A6C82811B6EBCC00F22A25 /* CIrrOdeEventStep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeEventStep.cpp; sourceTree = "<group>"; };
+		F3A6C82A11B6EBCC00F22A25 /* CIrrOdeGeom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeom.cpp; sourceTree = "<group>"; };
+		F3A6C82B11B6EBCC00F22A25 /* CIrrOdeGeomBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomBox.cpp; sourceTree = "<group>"; };
+		F3A6C82C11B6EBCC00F22A25 /* CIrrOdeGeomCapsule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomCapsule.cpp; sourceTree = "<group>"; };
+		F3A6C82D11B6EBCC00F22A25 /* CIrrOdeGeomCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomCylinder.cpp; sourceTree = "<group>"; };
+		F3A6C82E11B6EBCC00F22A25 /* CIrrOdeGeomHeightfield.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomHeightfield.cpp; sourceTree = "<group>"; };
+		F3A6C82F11B6EBCC00F22A25 /* CIrrOdeGeomPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomPlane.cpp; sourceTree = "<group>"; };
+		F3A6C83011B6EBCC00F22A25 /* CIrrOdeGeomRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomRay.cpp; sourceTree = "<group>"; };
+		F3A6C83111B6EBCC00F22A25 /* CIrrOdeGeomSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomSphere.cpp; sourceTree = "<group>"; };
+		F3A6C83211B6EBCC00F22A25 /* CIrrOdeGeomTrimesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeGeomTrimesh.cpp; sourceTree = "<group>"; };
+		F3A6C83411B6EBCC00F22A25 /* CIrrOdeJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJoint.cpp; sourceTree = "<group>"; };
+		F3A6C83511B6EBCC00F22A25 /* CIrrOdeJointBallSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointBallSocket.cpp; sourceTree = "<group>"; };
+		F3A6C83611B6EBCC00F22A25 /* CIrrOdeJointFixed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointFixed.cpp; sourceTree = "<group>"; };
+		F3A6C83711B6EBCC00F22A25 /* CIrrOdeJointHinge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointHinge.cpp; sourceTree = "<group>"; };
+		F3A6C83811B6EBCC00F22A25 /* CIrrOdeJointHinge2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointHinge2.cpp; sourceTree = "<group>"; };
+		F3A6C83911B6EBCC00F22A25 /* CIrrOdeJointPiston.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointPiston.cpp; sourceTree = "<group>"; };
+		F3A6C83A11B6EBCC00F22A25 /* CIrrOdeJointPR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointPR.cpp; sourceTree = "<group>"; };
+		F3A6C83B11B6EBCC00F22A25 /* CIrrOdeJointSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointSlider.cpp; sourceTree = "<group>"; };
+		F3A6C83C11B6EBCC00F22A25 /* CIrrOdeJointUniversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeJointUniversal.cpp; sourceTree = "<group>"; };
+		F3A6C83E11B6EBCC00F22A25 /* CIrrOdeAeroDrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeAeroDrag.cpp; sourceTree = "<group>"; };
+		F3A6C83F11B6EBCC00F22A25 /* CIrrOdeImpulseMotor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeImpulseMotor.cpp; sourceTree = "<group>"; };
+		F3A6C84011B6EBCC00F22A25 /* CIrrOdeMotor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeMotor.cpp; sourceTree = "<group>"; };
+		F3A6C84111B6EBCC00F22A25 /* CIrrOdeServo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeServo.cpp; sourceTree = "<group>"; };
+		F3A6C84211B6EBCC00F22A25 /* CIrrOdeTorqueMotor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeTorqueMotor.cpp; sourceTree = "<group>"; };
+		F3A6C84411B6EBCC00F22A25 /* CCar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCar.cpp; sourceTree = "<group>"; };
+		F3A6C84511B6EBCC00F22A25 /* CConfigFileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CConfigFileManager.cpp; sourceTree = "<group>"; };
+		F3A6C84611B6EBCC00F22A25 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
+		F3A6C84711B6EBCC00F22A25 /* CHeli.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CHeli.cpp; sourceTree = "<group>"; };
+		F3A6C84811B6EBCC00F22A25 /* CIrrOdeCarState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CIrrOdeCarState.cpp; sourceTree = "<group>"; };
+		F3A6C84911B6EBCC00F22A25 /* CMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CMenu.cpp; sourceTree = "<group>"; };
+		F3A6C84A11B6EBCC00F22A25 /* CPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPlane.cpp; sourceTree = "<group>"; };
+		F3A6C84B11B6EBCC00F22A25 /* CProjectile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CProjectile.cpp; sourceTree = "<group>"; };
+		F3A6C84C11B6EBCC00F22A25 /* CTank.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CTank.cpp; sourceTree = "<group>"; };
+		F3A6C84D11B6EBCC00F22A25 /* irrCC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irrCC.cpp; sourceTree = "<group>"; };
+		F3A6C84E11B6EBCC00F22A25 /* irrodecar_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irrodecar_main.cpp; sourceTree = "<group>"; };
+		F3A6C85011B6EBCC00F22A25 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F3A6C85211B6EBCC00F22A25 /* CAbout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAbout.cpp; sourceTree = "<group>"; };
+		F3A6C85311B6EBCC00F22A25 /* CHiScore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CHiScore.cpp; sourceTree = "<group>"; };
+		F3A6C85411B6EBCC00F22A25 /* CMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CMenu.cpp; sourceTree = "<group>"; };
+		F3A6C85511B6EBCC00F22A25 /* CPlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPlay.cpp; sourceTree = "<group>"; };
+		F3A6C85611B6EBCC00F22A25 /* CSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSettings.cpp; sourceTree = "<group>"; };
+		F3A6C85711B6EBCC00F22A25 /* irrOdeMarble.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = irrOdeMarble.cpp; sourceTree = "<group>"; };
+		F3A6C85911B6EBCC00F22A25 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F3A6C85A11B6EBCC00F22A25 /* myEventListeners.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myEventListeners.cpp; sourceTree = "<group>"; };
+		F3A6C85B11B6EBCC00F22A25 /* myEventReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = myEventReceiver.cpp; sourceTree = "<group>"; };
+		F3A6C85D11B6EBCC00F22A25 /* CGUIFileSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGUIFileSelector.cpp; sourceTree = "<group>"; };
+		F3A6C85E11B6EBCC00F22A25 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F3A6CC1411B7091100F22A25 /* libIrrlicht.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libIrrlicht.a; path = "../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug/libIrrlicht.a"; sourceTree = SOURCE_ROOT; };
+		F3A6CC1F11B709B900F22A25 /* IrrOdeHello.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrrOdeHello.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A6CC2111B709B900F22A25 /* IrrOdeHello-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IrrOdeHello-Info.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F399BA0011C04CA00003C785 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BA0F11C04CDD0003C785 /* OpenGL.framework in Frameworks */,
+				F399BA1111C04CDF0003C785 /* IOKit.framework in Frameworks */,
+				F399BA1411C04CE20003C785 /* Cocoa.framework in Frameworks */,
+				F399BAD411C04D340003C785 /* Carbon.framework in Frameworks */,
+				F399BB0011C0503E0003C785 /* libirrODE.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F399BB2511C054E70003C785 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BB3C11C0555F0003C785 /* libirrODE.a in Frameworks */,
+				F399BB3D11C055640003C785 /* IOKit.framework in Frameworks */,
+				F399BB3E11C055650003C785 /* libIrrlicht.a in Frameworks */,
+				F399BB4011C055660003C785 /* Cocoa.framework in Frameworks */,
+				F399BB5211C055AB0003C785 /* Carbon.framework in Frameworks */,
+				F399BB5E11C056820003C785 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A6C64411B6EABC00F22A25 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A6C64A11B6EB0000F22A25 /* Carbon.framework in Frameworks */,
+				F3A6C64C11B6EB0000F22A25 /* Cocoa.framework in Frameworks */,
+				F3A6C64E11B6EB0000F22A25 /* IOKit.framework in Frameworks */,
+				F3A6C65011B6EB0000F22A25 /* OpenGL.framework in Frameworks */,
+				F3A6CC1511B7091100F22A25 /* libIrrlicht.a in Frameworks */,
+				F399B9D111C049460003C785 /* libODE.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A6CC1D11B709B900F22A25 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A6CC2511B709DF00F22A25 /* libirrODE.a in Frameworks */,
+				F3A6CC2E11B70A6B00F22A25 /* OpenGL.framework in Frameworks */,
+				F3A6CC3011B70A7600F22A25 /* Cocoa.framework in Frameworks */,
+				F3A6CC3411B70A8400F22A25 /* Carbon.framework in Frameworks */,
+				F3A6CC3811B70A9100F22A25 /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F342290C11C167F20096E651 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F342290D11C167F20096E651 /* IrrOde */,
+				F342294411C167F20096E651 /* IrrOdeCar */,
+				F342294F11C167F20096E651 /* IrrOdeMarble */,
+				F342295611C167F20096E651 /* IrrOdePlayground */,
+				F342295911C167F20096E651 /* IrrOdeSurfaceEdit */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = SOURCE_ROOT;
+		};
+		F342290D11C167F20096E651 /* IrrOde */ = {
+			isa = PBXGroup;
+			children = (
+				F342290E11C167F20096E651 /* CIrrOdeBody.h */,
+				F342290F11C167F20096E651 /* CIrrOdeContactParameters.h */,
+				F342291011C167F20096E651 /* CIrrOdeDampable.h */,
+				F342291111C167F20096E651 /* CIrrOdeDevice.h */,
+				F342291211C167F20096E651 /* CIrrOdeManager.h */,
+				F342291311C167F20096E651 /* CIrrOdeNullDevice.h */,
+				F342291411C167F20096E651 /* CIrrOdeSceneNode.h */,
+				F342291511C167F20096E651 /* CIrrOdeSceneNodeFactory.h */,
+				F342291611C167F20096E651 /* CIrrOdeSpace.h */,
+				F342291711C167F20096E651 /* CIrrOdeSurfaceParameters.h */,
+				F342291811C167F20096E651 /* CIrrOdeWorld.h */,
+				F342291911C167F20096E651 /* CSerializer.h */,
+				F342291A11C167F20096E651 /* event */,
+				F342292611C167F20096E651 /* geom */,
+				F342293011C167F20096E651 /* IIrrOdeContactParameters.h */,
+				F342293111C167F20096E651 /* IIrrOdeDevice.h */,
+				F342293211C167F20096E651 /* IrrOde.h */,
+				F342293311C167F20096E651 /* joints */,
+				F342293D11C167F20096E651 /* motors */,
+			);
+			path = IrrOde;
+			sourceTree = "<group>";
+		};
+		F342291A11C167F20096E651 /* event */ = {
+			isa = PBXGroup;
+			children = (
+				F342291B11C167F20096E651 /* CIrrOdeEventActivationChanged.h */,
+				F342291C11C167F20096E651 /* CIrrOdeEventBeforeStep.h */,
+				F342291D11C167F20096E651 /* CIrrOdeEventBodyCreated.h */,
+				F342291E11C167F20096E651 /* CIrrOdeEventBodyMoved.h */,
+				F342291F11C167F20096E651 /* CIrrOdeEventBodyRemoved.h */,
+				F342292011C167F20096E651 /* CIrrOdeEventClose.h */,
+				F342292111C167F20096E651 /* CIrrOdeEventInit.h */,
+				F342292211C167F20096E651 /* CIrrOdeEventRayHit.h */,
+				F342292311C167F20096E651 /* CIrrOdeEventStep.h */,
+				F342292411C167F20096E651 /* IIrrOdeEvent.h */,
+				F342292511C167F20096E651 /* IIrrOdeEventListener.h */,
+			);
+			path = event;
+			sourceTree = "<group>";
+		};
+		F342292611C167F20096E651 /* geom */ = {
+			isa = PBXGroup;
+			children = (
+				F342292711C167F20096E651 /* CIrrOdeGeom.h */,
+				F342292811C167F20096E651 /* CIrrOdeGeomBox.h */,
+				F342292911C167F20096E651 /* CIrrOdeGeomCapsule.h */,
+				F342292A11C167F20096E651 /* CIrrOdeGeomCylinder.h */,
+				F342292B11C167F20096E651 /* CIrrOdeGeomHeightfield.h */,
+				F342292C11C167F20096E651 /* CIrrOdeGeomPlane.h */,
+				F342292D11C167F20096E651 /* CIrrOdeGeomRay.h */,
+				F342292E11C167F20096E651 /* CIrrOdeGeomSphere.h */,
+				F342292F11C167F20096E651 /* CIrrOdeGeomTrimesh.h */,
+			);
+			path = geom;
+			sourceTree = "<group>";
+		};
+		F342293311C167F20096E651 /* joints */ = {
+			isa = PBXGroup;
+			children = (
+				F342293411C167F20096E651 /* CIrrOdeJoint.h */,
+				F342293511C167F20096E651 /* CIrrOdeJointBallSocket.h */,
+				F342293611C167F20096E651 /* CIrrOdeJointFixed.h */,
+				F342293711C167F20096E651 /* CIrrOdeJointHinge.h */,
+				F342293811C167F20096E651 /* CIrrOdeJointHinge2.h */,
+				F342293911C167F20096E651 /* CIrrOdeJointPiston.h */,
+				F342293A11C167F20096E651 /* CIrrOdeJointPR.h */,
+				F342293B11C167F20096E651 /* CIrrOdeJointSlider.h */,
+				F342293C11C167F20096E651 /* CIrrOdeJointUniversal.h */,
+			);
+			path = joints;
+			sourceTree = "<group>";
+		};
+		F342293D11C167F20096E651 /* motors */ = {
+			isa = PBXGroup;
+			children = (
+				F342293E11C167F20096E651 /* CIrrOdeAeroDrag.h */,
+				F342293F11C167F20096E651 /* CIrrOdeImpulseMotor.h */,
+				F342294011C167F20096E651 /* CIrrOdeMotor.h */,
+				F342294111C167F20096E651 /* CIrrOdeServo.h */,
+				F342294211C167F20096E651 /* CIrrOdeTorqueMotor.h */,
+				F342294311C167F20096E651 /* IIrrOdeStepMotor.h */,
+			);
+			path = motors;
+			sourceTree = "<group>";
+		};
+		F342294411C167F20096E651 /* IrrOdeCar */ = {
+			isa = PBXGroup;
+			children = (
+				F342294511C167F20096E651 /* CCar.h */,
+				F342294611C167F20096E651 /* CConfigFileManager.h */,
+				F342294711C167F20096E651 /* CController.h */,
+				F342294811C167F20096E651 /* CHeli.h */,
+				F342294911C167F20096E651 /* CIrrOdeCarState.h */,
+				F342294A11C167F20096E651 /* CMenu.h */,
+				F342294B11C167F20096E651 /* CPlane.h */,
+				F342294C11C167F20096E651 /* CProjectile.h */,
+				F342294D11C167F20096E651 /* CTank.h */,
+				F342294E11C167F20096E651 /* irrCC.h */,
+			);
+			path = IrrOdeCar;
+			sourceTree = "<group>";
+		};
+		F342294F11C167F20096E651 /* IrrOdeMarble */ = {
+			isa = PBXGroup;
+			children = (
+				F342295011C167F20096E651 /* CAbout.h */,
+				F342295111C167F20096E651 /* CHiScore.h */,
+				F342295211C167F20096E651 /* CMenu.h */,
+				F342295311C167F20096E651 /* CPlay.h */,
+				F342295411C167F20096E651 /* CSettings.h */,
+				F342295511C167F20096E651 /* IState.h */,
+			);
+			path = IrrOdeMarble;
+			sourceTree = "<group>";
+		};
+		F342295611C167F20096E651 /* IrrOdePlayground */ = {
+			isa = PBXGroup;
+			children = (
+				F342295711C167F20096E651 /* myEventListeners.h */,
+				F342295811C167F20096E651 /* myEventReceiver.h */,
+			);
+			path = IrrOdePlayground;
+			sourceTree = "<group>";
+		};
+		F342295911C167F20096E651 /* IrrOdeSurfaceEdit */ = {
+			isa = PBXGroup;
+			children = (
+				F342295A11C167F20096E651 /* CGUIFileSelector.h */,
+			);
+			path = IrrOdeSurfaceEdit;
+			sourceTree = "<group>";
+		};
+		F399BB1111C0525A0003C785 /* res */ = {
+			isa = PBXGroup;
+			children = (
+				F399BB1211C052720003C785 /* MainMenu.nib */,
+			);
+			name = res;
+			sourceTree = "<group>";
+		};
+		F3A6C62F11B6EA5F00F22A25 = {
+			isa = PBXGroup;
+			children = (
+				F342290C11C167F20096E651 /* include */,
+				F399BB1111C0525A0003C785 /* res */,
+				F3A6C80F11B6EBCC00F22A25 /* source */,
+				F3A6C65B11B6EB0500F22A25 /* Libraries */,
+				F3A6C63E11B6EA8800F22A25 /* Products */,
+				F3A6CC2111B709B900F22A25 /* IrrOdeHello-Info.plist */,
+				F399BA0411C04CA00003C785 /* IrrOdePlayground-Info.plist */,
+				F399BB2911C054E70003C785 /* IrrOdeCar-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		F3A6C63E11B6EA8800F22A25 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C64611B6EABC00F22A25 /* libirrODE.a */,
+				F3A6CC1F11B709B900F22A25 /* IrrOdeHello.app */,
+				F399BA0211C04CA00003C785 /* IrrOdePlayground.app */,
+				F399BB2711C054E70003C785 /* IrrOdeCar.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3A6C65B11B6EB0500F22A25 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				F399B9D011C049460003C785 /* libODE.a */,
+				F3A6CC1411B7091100F22A25 /* libIrrlicht.a */,
+				F3A6C64D11B6EB0000F22A25 /* IOKit.framework */,
+				F3A6C64911B6EB0000F22A25 /* Carbon.framework */,
+				F3A6C64B11B6EB0000F22A25 /* Cocoa.framework */,
+				F3A6C64F11B6EB0000F22A25 /* OpenGL.framework */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		F3A6C80F11B6EBCC00F22A25 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C81011B6EBCC00F22A25 /* helloOdeWorld */,
+				F3A6C81211B6EBCC00F22A25 /* IrrEditPlugin */,
+				F3A6C81411B6EBCC00F22A25 /* IrrOde */,
+				F3A6C84311B6EBCC00F22A25 /* IrrOdeCar */,
+				F3A6C84F11B6EBCC00F22A25 /* IrrOdEditExample */,
+				F3A6C85111B6EBCC00F22A25 /* irrOdeMarble */,
+				F3A6C85811B6EBCC00F22A25 /* IrrOdePlayground */,
+				F3A6C85C11B6EBCC00F22A25 /* IrrOdeSurfaceEdit */,
+			);
+			name = source;
+			path = ../source;
+			sourceTree = SOURCE_ROOT;
+		};
+		F3A6C81011B6EBCC00F22A25 /* helloOdeWorld */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C81111B6EBCC00F22A25 /* main.cpp */,
+			);
+			path = helloOdeWorld;
+			sourceTree = "<group>";
+		};
+		F3A6C81211B6EBCC00F22A25 /* IrrEditPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C81311B6EBCC00F22A25 /* irrOdEdit.cpp */,
+			);
+			path = IrrEditPlugin;
+			sourceTree = "<group>";
+		};
+		F3A6C81411B6EBCC00F22A25 /* IrrOde */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C81511B6EBCC00F22A25 /* CIrrOdeBody.cpp */,
+				F3A6C81611B6EBCC00F22A25 /* CIrrOdeContactParameters.cpp */,
+				F3A6C81711B6EBCC00F22A25 /* CIrrOdeDampable.cpp */,
+				F3A6C81811B6EBCC00F22A25 /* CIrrOdeDevice.cpp */,
+				F3A6C81911B6EBCC00F22A25 /* CIrrOdeManager.cpp */,
+				F3A6C81A11B6EBCC00F22A25 /* CIrrOdeSceneNode.cpp */,
+				F3A6C81B11B6EBCC00F22A25 /* CIrrOdeSceneNodeFactory.cpp */,
+				F3A6C81C11B6EBCC00F22A25 /* CIrrOdeSpace.cpp */,
+				F3A6C81D11B6EBCC00F22A25 /* CIrrOdeSurfaceParameters.cpp */,
+				F3A6C81E11B6EBCC00F22A25 /* CIrrOdeWorld.cpp */,
+				F3A6C81F11B6EBCC00F22A25 /* event */,
+				F3A6C82911B6EBCC00F22A25 /* geom */,
+				F3A6C83311B6EBCC00F22A25 /* joints */,
+				F3A6C83D11B6EBCC00F22A25 /* motors */,
+			);
+			path = IrrOde;
+			sourceTree = "<group>";
+		};
+		F3A6C81F11B6EBCC00F22A25 /* event */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C82011B6EBCC00F22A25 /* CIrrOdeEventActivationChanged.cpp */,
+				F3A6C82111B6EBCC00F22A25 /* CIrrOdeEventBeforeStep.cpp */,
+				F3A6C82211B6EBCC00F22A25 /* CIrrOdeEventBodyCreated.cpp */,
+				F3A6C82311B6EBCC00F22A25 /* CIrrOdeEventBodyMoved.cpp */,
+				F3A6C82411B6EBCC00F22A25 /* CIrrOdeEventBodyRemoved.cpp */,
+				F3A6C82511B6EBCC00F22A25 /* CIrrOdeEventClose.cpp */,
+				F3A6C82611B6EBCC00F22A25 /* CIrrOdeEventInit.cpp */,
+				F3A6C82711B6EBCC00F22A25 /* CIrrOdeEventRayHit.cpp */,
+				F3A6C82811B6EBCC00F22A25 /* CIrrOdeEventStep.cpp */,
+			);
+			path = event;
+			sourceTree = "<group>";
+		};
+		F3A6C82911B6EBCC00F22A25 /* geom */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C82A11B6EBCC00F22A25 /* CIrrOdeGeom.cpp */,
+				F3A6C82B11B6EBCC00F22A25 /* CIrrOdeGeomBox.cpp */,
+				F3A6C82C11B6EBCC00F22A25 /* CIrrOdeGeomCapsule.cpp */,
+				F3A6C82D11B6EBCC00F22A25 /* CIrrOdeGeomCylinder.cpp */,
+				F3A6C82E11B6EBCC00F22A25 /* CIrrOdeGeomHeightfield.cpp */,
+				F3A6C82F11B6EBCC00F22A25 /* CIrrOdeGeomPlane.cpp */,
+				F3A6C83011B6EBCC00F22A25 /* CIrrOdeGeomRay.cpp */,
+				F3A6C83111B6EBCC00F22A25 /* CIrrOdeGeomSphere.cpp */,
+				F3A6C83211B6EBCC00F22A25 /* CIrrOdeGeomTrimesh.cpp */,
+			);
+			path = geom;
+			sourceTree = "<group>";
+		};
+		F3A6C83311B6EBCC00F22A25 /* joints */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C83411B6EBCC00F22A25 /* CIrrOdeJoint.cpp */,
+				F3A6C83511B6EBCC00F22A25 /* CIrrOdeJointBallSocket.cpp */,
+				F3A6C83611B6EBCC00F22A25 /* CIrrOdeJointFixed.cpp */,
+				F3A6C83711B6EBCC00F22A25 /* CIrrOdeJointHinge.cpp */,
+				F3A6C83811B6EBCC00F22A25 /* CIrrOdeJointHinge2.cpp */,
+				F3A6C83911B6EBCC00F22A25 /* CIrrOdeJointPiston.cpp */,
+				F3A6C83A11B6EBCC00F22A25 /* CIrrOdeJointPR.cpp */,
+				F3A6C83B11B6EBCC00F22A25 /* CIrrOdeJointSlider.cpp */,
+				F3A6C83C11B6EBCC00F22A25 /* CIrrOdeJointUniversal.cpp */,
+			);
+			path = joints;
+			sourceTree = "<group>";
+		};
+		F3A6C83D11B6EBCC00F22A25 /* motors */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C83E11B6EBCC00F22A25 /* CIrrOdeAeroDrag.cpp */,
+				F3A6C83F11B6EBCC00F22A25 /* CIrrOdeImpulseMotor.cpp */,
+				F3A6C84011B6EBCC00F22A25 /* CIrrOdeMotor.cpp */,
+				F3A6C84111B6EBCC00F22A25 /* CIrrOdeServo.cpp */,
+				F3A6C84211B6EBCC00F22A25 /* CIrrOdeTorqueMotor.cpp */,
+			);
+			path = motors;
+			sourceTree = "<group>";
+		};
+		F3A6C84311B6EBCC00F22A25 /* IrrOdeCar */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C84411B6EBCC00F22A25 /* CCar.cpp */,
+				F3A6C84511B6EBCC00F22A25 /* CConfigFileManager.cpp */,
+				F3A6C84611B6EBCC00F22A25 /* CController.cpp */,
+				F3A6C84711B6EBCC00F22A25 /* CHeli.cpp */,
+				F3A6C84811B6EBCC00F22A25 /* CIrrOdeCarState.cpp */,
+				F3A6C84911B6EBCC00F22A25 /* CMenu.cpp */,
+				F3A6C84A11B6EBCC00F22A25 /* CPlane.cpp */,
+				F3A6C84B11B6EBCC00F22A25 /* CProjectile.cpp */,
+				F3A6C84C11B6EBCC00F22A25 /* CTank.cpp */,
+				F3A6C84D11B6EBCC00F22A25 /* irrCC.cpp */,
+				F3A6C84E11B6EBCC00F22A25 /* irrodecar_main.cpp */,
+			);
+			path = IrrOdeCar;
+			sourceTree = "<group>";
+		};
+		F3A6C84F11B6EBCC00F22A25 /* IrrOdEditExample */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C85011B6EBCC00F22A25 /* main.cpp */,
+			);
+			path = IrrOdEditExample;
+			sourceTree = "<group>";
+		};
+		F3A6C85111B6EBCC00F22A25 /* irrOdeMarble */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C85211B6EBCC00F22A25 /* CAbout.cpp */,
+				F3A6C85311B6EBCC00F22A25 /* CHiScore.cpp */,
+				F3A6C85411B6EBCC00F22A25 /* CMenu.cpp */,
+				F3A6C85511B6EBCC00F22A25 /* CPlay.cpp */,
+				F3A6C85611B6EBCC00F22A25 /* CSettings.cpp */,
+				F3A6C85711B6EBCC00F22A25 /* irrOdeMarble.cpp */,
+			);
+			path = irrOdeMarble;
+			sourceTree = "<group>";
+		};
+		F3A6C85811B6EBCC00F22A25 /* IrrOdePlayground */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C85911B6EBCC00F22A25 /* main.cpp */,
+				F3A6C85A11B6EBCC00F22A25 /* myEventListeners.cpp */,
+				F3A6C85B11B6EBCC00F22A25 /* myEventReceiver.cpp */,
+			);
+			path = IrrOdePlayground;
+			sourceTree = "<group>";
+		};
+		F3A6C85C11B6EBCC00F22A25 /* IrrOdeSurfaceEdit */ = {
+			isa = PBXGroup;
+			children = (
+				F3A6C85D11B6EBCC00F22A25 /* CGUIFileSelector.cpp */,
+				F3A6C85E11B6EBCC00F22A25 /* main.cpp */,
+			);
+			path = IrrOdeSurfaceEdit;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F3A6C64211B6EABC00F22A25 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F342295B11C167F20096E651 /* CIrrOdeBody.h in Headers */,
+				F342295C11C167F20096E651 /* CIrrOdeContactParameters.h in Headers */,
+				F342295D11C167F20096E651 /* CIrrOdeDampable.h in Headers */,
+				F342295E11C167F20096E651 /* CIrrOdeDevice.h in Headers */,
+				F342295F11C167F20096E651 /* CIrrOdeManager.h in Headers */,
+				F342296011C167F20096E651 /* CIrrOdeNullDevice.h in Headers */,
+				F342296111C167F20096E651 /* CIrrOdeSceneNode.h in Headers */,
+				F342296211C167F20096E651 /* CIrrOdeSceneNodeFactory.h in Headers */,
+				F342296311C167F20096E651 /* CIrrOdeSpace.h in Headers */,
+				F342296411C167F20096E651 /* CIrrOdeSurfaceParameters.h in Headers */,
+				F342296511C167F20096E651 /* CIrrOdeWorld.h in Headers */,
+				F342296611C167F20096E651 /* CSerializer.h in Headers */,
+				F342296711C167F20096E651 /* CIrrOdeEventActivationChanged.h in Headers */,
+				F342296811C167F20096E651 /* CIrrOdeEventBeforeStep.h in Headers */,
+				F342296911C167F20096E651 /* CIrrOdeEventBodyCreated.h in Headers */,
+				F342296A11C167F20096E651 /* CIrrOdeEventBodyMoved.h in Headers */,
+				F342296B11C167F20096E651 /* CIrrOdeEventBodyRemoved.h in Headers */,
+				F342296C11C167F20096E651 /* CIrrOdeEventClose.h in Headers */,
+				F342296D11C167F20096E651 /* CIrrOdeEventInit.h in Headers */,
+				F342296E11C167F20096E651 /* CIrrOdeEventRayHit.h in Headers */,
+				F342296F11C167F20096E651 /* CIrrOdeEventStep.h in Headers */,
+				F342297011C167F20096E651 /* IIrrOdeEvent.h in Headers */,
+				F342297111C167F20096E651 /* IIrrOdeEventListener.h in Headers */,
+				F342297211C167F20096E651 /* CIrrOdeGeom.h in Headers */,
+				F342297311C167F20096E651 /* CIrrOdeGeomBox.h in Headers */,
+				F342297411C167F20096E651 /* CIrrOdeGeomCapsule.h in Headers */,
+				F342297511C167F20096E651 /* CIrrOdeGeomCylinder.h in Headers */,
+				F342297611C167F20096E651 /* CIrrOdeGeomHeightfield.h in Headers */,
+				F342297711C167F20096E651 /* CIrrOdeGeomPlane.h in Headers */,
+				F342297811C167F20096E651 /* CIrrOdeGeomRay.h in Headers */,
+				F342297911C167F20096E651 /* CIrrOdeGeomSphere.h in Headers */,
+				F342297A11C167F20096E651 /* CIrrOdeGeomTrimesh.h in Headers */,
+				F342297B11C167F20096E651 /* IIrrOdeContactParameters.h in Headers */,
+				F342297C11C167F20096E651 /* IIrrOdeDevice.h in Headers */,
+				F342297D11C167F20096E651 /* IrrOde.h in Headers */,
+				F342297E11C167F20096E651 /* CIrrOdeJoint.h in Headers */,
+				F342297F11C167F20096E651 /* CIrrOdeJointBallSocket.h in Headers */,
+				F342298011C167F20096E651 /* CIrrOdeJointFixed.h in Headers */,
+				F342298111C167F20096E651 /* CIrrOdeJointHinge.h in Headers */,
+				F342298211C167F20096E651 /* CIrrOdeJointHinge2.h in Headers */,
+				F342298311C167F20096E651 /* CIrrOdeJointPiston.h in Headers */,
+				F342298411C167F20096E651 /* CIrrOdeJointPR.h in Headers */,
+				F342298511C167F20096E651 /* CIrrOdeJointSlider.h in Headers */,
+				F342298611C167F20096E651 /* CIrrOdeJointUniversal.h in Headers */,
+				F342298711C167F20096E651 /* CIrrOdeAeroDrag.h in Headers */,
+				F342298811C167F20096E651 /* CIrrOdeImpulseMotor.h in Headers */,
+				F342298911C167F20096E651 /* CIrrOdeMotor.h in Headers */,
+				F342298A11C167F20096E651 /* CIrrOdeServo.h in Headers */,
+				F342298B11C167F20096E651 /* CIrrOdeTorqueMotor.h in Headers */,
+				F342298C11C167F20096E651 /* IIrrOdeStepMotor.h in Headers */,
+				F342298D11C167F20096E651 /* CCar.h in Headers */,
+				F342298E11C167F20096E651 /* CConfigFileManager.h in Headers */,
+				F342298F11C167F20096E651 /* CController.h in Headers */,
+				F342299011C167F20096E651 /* CHeli.h in Headers */,
+				F342299111C167F20096E651 /* CIrrOdeCarState.h in Headers */,
+				F342299211C167F20096E651 /* CMenu.h in Headers */,
+				F342299311C167F20096E651 /* CPlane.h in Headers */,
+				F342299411C167F20096E651 /* CProjectile.h in Headers */,
+				F342299511C167F20096E651 /* CTank.h in Headers */,
+				F342299611C167F20096E651 /* irrCC.h in Headers */,
+				F342299711C167F20096E651 /* CAbout.h in Headers */,
+				F342299811C167F20096E651 /* CHiScore.h in Headers */,
+				F342299911C167F20096E651 /* CMenu.h in Headers */,
+				F342299A11C167F20096E651 /* CPlay.h in Headers */,
+				F342299B11C167F20096E651 /* CSettings.h in Headers */,
+				F342299C11C167F20096E651 /* IState.h in Headers */,
+				F342299D11C167F20096E651 /* myEventListeners.h in Headers */,
+				F342299E11C167F20096E651 /* myEventReceiver.h in Headers */,
+				F342299F11C167F20096E651 /* CGUIFileSelector.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F399BA0111C04CA00003C785 /* IrrOdePlayground */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F399BA0711C04CA10003C785 /* Build configuration list for PBXNativeTarget "IrrOdePlayground" */;
+			buildPhases = (
+				F399B9FE11C04CA00003C785 /* Resources */,
+				F399B9FF11C04CA00003C785 /* Sources */,
+				F399BA0011C04CA00003C785 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IrrOdePlayground;
+			productName = IrrOdePlayground;
+			productReference = F399BA0211C04CA00003C785 /* IrrOdePlayground.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F399BB2611C054E70003C785 /* IrrOdeCar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F399BB2C11C054E80003C785 /* Build configuration list for PBXNativeTarget "IrrOdeCar" */;
+			buildPhases = (
+				F399BB2311C054E70003C785 /* Resources */,
+				F399BB2411C054E70003C785 /* Sources */,
+				F399BB2511C054E70003C785 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IrrOdeCar;
+			productName = IrrOdeCar;
+			productReference = F399BB2711C054E70003C785 /* IrrOdeCar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3A6C64511B6EABC00F22A25 /* libirrODE.a */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A6C65A11B6EB0000F22A25 /* Build configuration list for PBXNativeTarget "libirrODE.a" */;
+			buildPhases = (
+				F3A6C64211B6EABC00F22A25 /* Headers */,
+				F3A6C64311B6EABC00F22A25 /* Sources */,
+				F3A6C64411B6EABC00F22A25 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libirrODE.a;
+			productName = irrODE;
+			productReference = F3A6C64611B6EABC00F22A25 /* libirrODE.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F3A6CC1E11B709B900F22A25 /* IrrOdeHello */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3A6CC2411B709BA00F22A25 /* Build configuration list for PBXNativeTarget "IrrOdeHello" */;
+			buildPhases = (
+				F3A6CC1B11B709B900F22A25 /* Resources */,
+				F3A6CC1C11B709B900F22A25 /* Sources */,
+				F3A6CC1D11B709B900F22A25 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IrrOdeHello;
+			productName = IrrOdeHello;
+			productReference = F3A6CC1F11B709B900F22A25 /* IrrOdeHello.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3A6C63111B6EA5F00F22A25 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = F3A6C63411B6EA5F00F22A25 /* Build configuration list for PBXProject "MacOSX" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = F3A6C62F11B6EA5F00F22A25;
+			productRefGroup = F3A6C63E11B6EA8800F22A25 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3A6C64511B6EABC00F22A25 /* libirrODE.a */,
+				F3A6CC1E11B709B900F22A25 /* IrrOdeHello */,
+				F399BA0111C04CA00003C785 /* IrrOdePlayground */,
+				F399BB2611C054E70003C785 /* IrrOdeCar */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F399B9FE11C04CA00003C785 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BB1411C052720003C785 /* MainMenu.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F399BB2311C054E70003C785 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BB4E11C055930003C785 /* MainMenu.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A6CC1B11B709B900F22A25 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BB1311C052720003C785 /* MainMenu.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F399B9FF11C04CA00003C785 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BA0811C04CBB0003C785 /* myEventListeners.cpp in Sources */,
+				F399BA0911C04CBC0003C785 /* myEventReceiver.cpp in Sources */,
+				F399BA0A11C04CBD0003C785 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F399BB2411C054E70003C785 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F399BB4111C055750003C785 /* CController.cpp in Sources */,
+				F399BB4211C0557A0003C785 /* CCar.cpp in Sources */,
+				F399BB4311C0557B0003C785 /* CHeli.cpp in Sources */,
+				F399BB4411C0557C0003C785 /* CConfigFileManager.cpp in Sources */,
+				F399BB4511C0557C0003C785 /* irrCC.cpp in Sources */,
+				F399BB4611C0557D0003C785 /* CMenu.cpp in Sources */,
+				F399BB4711C0557E0003C785 /* irrodecar_main.cpp in Sources */,
+				F399BB4811C0557F0003C785 /* CPlane.cpp in Sources */,
+				F399BB4911C055800003C785 /* CProjectile.cpp in Sources */,
+				F399BB4A11C055800003C785 /* CIrrOdeCarState.cpp in Sources */,
+				F399BB4B11C055820003C785 /* CTank.cpp in Sources */,
+				F399BB5A11C056590003C785 /* CSettings.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A6C64311B6EABC00F22A25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A6C86111B6EBCC00F22A25 /* CIrrOdeBody.cpp in Sources */,
+				F3A6C86211B6EBCC00F22A25 /* CIrrOdeContactParameters.cpp in Sources */,
+				F3A6C86311B6EBCC00F22A25 /* CIrrOdeDampable.cpp in Sources */,
+				F3A6C86411B6EBCC00F22A25 /* CIrrOdeDevice.cpp in Sources */,
+				F3A6C86511B6EBCC00F22A25 /* CIrrOdeManager.cpp in Sources */,
+				F3A6C86611B6EBCC00F22A25 /* CIrrOdeSceneNode.cpp in Sources */,
+				F3A6C86711B6EBCC00F22A25 /* CIrrOdeSceneNodeFactory.cpp in Sources */,
+				F3A6C86811B6EBCC00F22A25 /* CIrrOdeSpace.cpp in Sources */,
+				F3A6C86911B6EBCC00F22A25 /* CIrrOdeSurfaceParameters.cpp in Sources */,
+				F3A6C86A11B6EBCC00F22A25 /* CIrrOdeWorld.cpp in Sources */,
+				F3A6C86B11B6EBCC00F22A25 /* CIrrOdeEventActivationChanged.cpp in Sources */,
+				F3A6C86C11B6EBCC00F22A25 /* CIrrOdeEventBeforeStep.cpp in Sources */,
+				F3A6C86D11B6EBCC00F22A25 /* CIrrOdeEventBodyCreated.cpp in Sources */,
+				F3A6C86E11B6EBCC00F22A25 /* CIrrOdeEventBodyMoved.cpp in Sources */,
+				F3A6C86F11B6EBCC00F22A25 /* CIrrOdeEventBodyRemoved.cpp in Sources */,
+				F3A6C87011B6EBCC00F22A25 /* CIrrOdeEventClose.cpp in Sources */,
+				F3A6C87111B6EBCC00F22A25 /* CIrrOdeEventInit.cpp in Sources */,
+				F3A6C87211B6EBCC00F22A25 /* CIrrOdeEventRayHit.cpp in Sources */,
+				F3A6C87311B6EBCC00F22A25 /* CIrrOdeEventStep.cpp in Sources */,
+				F3A6C87411B6EBCC00F22A25 /* CIrrOdeGeom.cpp in Sources */,
+				F3A6C87511B6EBCC00F22A25 /* CIrrOdeGeomBox.cpp in Sources */,
+				F3A6C87611B6EBCC00F22A25 /* CIrrOdeGeomCapsule.cpp in Sources */,
+				F3A6C87711B6EBCC00F22A25 /* CIrrOdeGeomCylinder.cpp in Sources */,
+				F3A6C87811B6EBCC00F22A25 /* CIrrOdeGeomHeightfield.cpp in Sources */,
+				F3A6C87911B6EBCC00F22A25 /* CIrrOdeGeomPlane.cpp in Sources */,
+				F3A6C87A11B6EBCC00F22A25 /* CIrrOdeGeomRay.cpp in Sources */,
+				F3A6C87B11B6EBCC00F22A25 /* CIrrOdeGeomSphere.cpp in Sources */,
+				F3A6C87C11B6EBCC00F22A25 /* CIrrOdeGeomTrimesh.cpp in Sources */,
+				F3A6C87D11B6EBCC00F22A25 /* CIrrOdeJoint.cpp in Sources */,
+				F3A6C87E11B6EBCC00F22A25 /* CIrrOdeJointBallSocket.cpp in Sources */,
+				F3A6C87F11B6EBCC00F22A25 /* CIrrOdeJointFixed.cpp in Sources */,
+				F3A6C88011B6EBCC00F22A25 /* CIrrOdeJointHinge.cpp in Sources */,
+				F3A6C88111B6EBCC00F22A25 /* CIrrOdeJointHinge2.cpp in Sources */,
+				F3A6C88211B6EBCC00F22A25 /* CIrrOdeJointPiston.cpp in Sources */,
+				F3A6C88311B6EBCC00F22A25 /* CIrrOdeJointPR.cpp in Sources */,
+				F3A6C88411B6EBCC00F22A25 /* CIrrOdeJointSlider.cpp in Sources */,
+				F3A6C88511B6EBCC00F22A25 /* CIrrOdeJointUniversal.cpp in Sources */,
+				F3A6C88611B6EBCC00F22A25 /* CIrrOdeAeroDrag.cpp in Sources */,
+				F3A6C88711B6EBCC00F22A25 /* CIrrOdeImpulseMotor.cpp in Sources */,
+				F3A6C88811B6EBCC00F22A25 /* CIrrOdeMotor.cpp in Sources */,
+				F3A6C88911B6EBCC00F22A25 /* CIrrOdeServo.cpp in Sources */,
+				F3A6C88A11B6EBCC00F22A25 /* CIrrOdeTorqueMotor.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3A6CC1C11B709B900F22A25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3A6CC2811B70A2200F22A25 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F399BA0511C04CA10003C785 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../ode-0.11.1/include\"";
+				INFOPLIST_FILE = "IrrOdePlayground-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdePlayground;
+			};
+			name = Debug;
+		};
+		F399BA0611C04CA10003C785 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../ode-0.11.1/include\"";
+				INFOPLIST_FILE = "IrrOdePlayground-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdePlayground;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		F399BB2A11C054E80003C785 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "IrrOdeCar-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdeCar;
+			};
+			name = Debug;
+		};
+		F399BB2B11C054E80003C785 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "IrrOdeCar-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdeCar;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		F3A6C63211B6EA5F00F22A25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../include\"/**";
+			};
+			name = Debug;
+		};
+		F3A6C63311B6EA5F00F22A25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../include\"/**";
+			};
+			name = Release;
+		};
+		F3A6C64711B6EABC00F22A25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../ode-0.11.1/include\"";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build\"/**";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = irrODE;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+			};
+			name = Debug;
+		};
+		F3A6C64811B6EABC00F22A25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+				);
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../include\"/**";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../ode-0.11.1/include\"";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../irrlicht-1.7.1/source/Irrlicht/MacOSX/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build\"/**";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../ode-0.11.1/MacOSX/build/Debug\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = irrODE;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		F3A6CC2211B709BA00F22A25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "IrrOdeHello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdeHello;
+			};
+			name = Debug;
+		};
+		F3A6CC2311B709BA00F22A25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "IrrOdeHello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = IrrOdeHello;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F399BA0711C04CA10003C785 /* Build configuration list for PBXNativeTarget "IrrOdePlayground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F399BA0511C04CA10003C785 /* Debug */,
+				F399BA0611C04CA10003C785 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F399BB2C11C054E80003C785 /* Build configuration list for PBXNativeTarget "IrrOdeCar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F399BB2A11C054E80003C785 /* Debug */,
+				F399BB2B11C054E80003C785 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A6C63411B6EA5F00F22A25 /* Build configuration list for PBXProject "MacOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A6C63211B6EA5F00F22A25 /* Debug */,
+				F3A6C63311B6EA5F00F22A25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A6C65A11B6EB0000F22A25 /* Build configuration list for PBXNativeTarget "libirrODE.a" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A6C64711B6EABC00F22A25 /* Debug */,
+				F3A6C64811B6EABC00F22A25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3A6CC2411B709BA00F22A25 /* Build configuration list for PBXNativeTarget "IrrOdeHello" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3A6CC2211B709BA00F22A25 /* Debug */,
+				F3A6CC2311B709BA00F22A25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3A6C63111B6EA5F00F22A25 /* Project object */;
+}

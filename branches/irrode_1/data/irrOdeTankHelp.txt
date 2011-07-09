@@ -1,0 +1,32 @@
+
+
+			IrrOdeCar -- Help
+
+Welcome to the tank scene of IrrODECar, a little demo application using Irrlicht, ODE and the IrrODE wrapper. You can control the tank, move the turrent and fire at the targets standing around.
+
+toggle help screen: KEY_F1
+%sreturn to vehicle selection menu: KEY_Tab
+
+Some notes:
+
+If you disable the fast collision detection feature you will realize that the bullets often just pass the tank's targets. This is beacause of ODE's time stepping. Whenever a timestep is done the moving bodies are sort of teleported from one position to another, so they might pass another body. As workaround I have included a ray that gets cast from the old position to the new one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
