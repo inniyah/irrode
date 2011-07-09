@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="..\..\_obj_dump\irrOde_1\IrrOdEditExample_VC\debug"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -93,7 +93,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="..\..\_obj_dump\irrOde\IrrOdEditExample\vc2008"
+			IntermediateDirectory="..\..\_obj_dump\irrOde_1\IrrOdEditExample_VC\release"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
