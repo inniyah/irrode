@@ -77,6 +77,10 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
   }
 }
 
+CProjectile::~CProjectile() {
+  if (m_pAutoPilot!=NULL) delete m_pAutoPilot;
+}
+
 //get the body of the projectile for the follow cam
 irr::ode::CIrrOdeBody *CProjectile::getBody() {
   return m_pBody;
