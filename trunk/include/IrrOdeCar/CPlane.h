@@ -36,6 +36,7 @@ enum ePlaneControls {
 };
 
 class CTargetSelector;
+class CCockpitPlane;
 class CProjectile;
 class CAutoPilot;
 
@@ -84,8 +85,11 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
     irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator m_itTarget;
 
     irr::core::dimension2du m_cScreen;
+
+    CCockpitPlane *m_pCockpit;
+
   public:
-    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
+    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit);
     virtual ~CPlane();
 
     virtual void activate();

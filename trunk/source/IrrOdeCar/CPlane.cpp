@@ -5,8 +5,12 @@
   #include <irrCC.h>
   #include <CAutoPilot.h>
   #include <CTargetSelector.h>
+  #include <CCockpitPlane.h>
+  #include <irrlicht.h>
 
-CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdePlaneHelp.txt",pCtrl) {
+using namespace irr;
+
+CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CIrrOdeCarState(pDevice,L"Airplane","../../data/irrOdePlaneHelp.txt",pCtrl) {
   //get the world node
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
 
@@ -97,6 +101,19 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrr
 
     m_bLeftMissile=true;
     m_bInitialized=true;
+
+    m_pCockpit=pCockpit;
+    scene::ISceneNode *pPlaneHi=m_pSmgr->getSceneNodeFromName("plane_hi");
+
+    if (pCockpit!=NULL && pPlaneHi!=NULL) {
+      for (u32 i=0; i<pPlaneHi->getMaterialCount(); i++) {
+        const char *s=core::stringc(pPlaneHi->getMaterial(i).getTexture(0)->getName()).c_str();
+        if (strstr(s,"instruments")) {
+          printf("--> %s\n",s);
+          pPlaneHi->getMaterial(i).setTexture(0,pCockpit->getTexture());
+        }
+      }
+    }
   }
 
   m_iNextCp=-1;
@@ -133,7 +150,7 @@ void CPlane::activate() {
             up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
             tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0  ,0));
 
-  m_pCam->setPosition(m_pPlaneBody->getPosition()+pos);
+  m_pCam->setPosition(m_pPlaneBody->getPosition()/*+pos*/);
   m_pCam->setUpVector(up);
   m_pCam->setTarget(m_pPlaneBody->getPosition()+tgt);
 
@@ -157,9 +174,9 @@ u32 CPlane::update() {
   vector3df rot=m_pPlaneBody->getRotation();
 
   //get the parameters for the camera
-  vector3df pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+  vector3df pos=rot.rotationToDirection(vector3df(0,1.5,0)),//m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
             up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
+            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,1.5,-5));//vector3df(0,5  ,0));
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
@@ -339,6 +356,27 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_fYaw=fYaw;
       m_fRoll=fRoll;
       m_fPitch=fPitch;
+    }
+
+    if (m_pCockpit!=NULL) {
+      f32 fSpeed=m_pPlaneBody->getLinearVelocity().getLength();
+
+      m_pCockpit->setAltitude(vPos.Y);
+      m_pCockpit->setSpeed(fSpeed);
+      m_pCockpit->setPower(100.0f*m_fThrust);
+
+      core::vector3df v=m_pPlaneBody->getRotation().rotationToDirection(m_pAero->getForeward());
+      core::vector2df vDir=core::vector2df(v.X,v.Z);
+
+      if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
+
+      m_pCockpit->setWarnState(0,m_pAutoPilot->isEnabled()?1:0);
+      m_pCockpit->setWarnState(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
+      m_pCockpit->setWarnState(2,m_pBrakes[0]->getForce()>20.0f?2:1);
+      m_pCockpit->setWarnState(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
+
+      m_pCockpit->setHorizon(m_pPlaneBody->getRotation());
+      m_pCockpit->update();
     }
   }
 
