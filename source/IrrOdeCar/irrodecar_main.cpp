@@ -17,6 +17,7 @@
   #include "CCustomEventReceiver.h"
   #include <CRandomForestNode.h>
   #include <CMeshCombiner.h>
+  #include <CCockpitPlane.h>
 
 using namespace irr;
 
@@ -381,8 +382,17 @@ int main(int argc, char** argv) {
     theMenu->addButtonForState(p);
   }
 
+  scene::ISceneManager *pRttManager=smgr->createNewSceneManager();
+	scene::ICameraSceneNode *pCam=pRttManager->addCameraSceneNode();
+
+	pCam->setPosition(core::vector3df(0,0,20));
+	pCam->setTarget(core::vector3df(0,0,0));
+	pRttManager->setActiveCamera(pCam);
+
+  CCockpitPlane *pCockpit=new CCockpitPlane(device,pRttManager);
+
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-    CPlane *p=new CPlane(device,*it,pController);
+    CPlane *p=new CPlane(device,*it,pController,pCockpit);
     p->setCtrl((const u32 *)iCtrls[3]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
