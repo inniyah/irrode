@@ -84,6 +84,8 @@ class CAutoPilot {
 
     void setState(eAutoPilotState iState);
 
+    eAutoPilotState getState() { return m_iState; }
+
     irr::f32 getApDist() { return m_fApDist; }
 
     void step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust);

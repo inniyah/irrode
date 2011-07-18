@@ -17,6 +17,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   m_iLastShot=0;
   m_iLastMissile=0;
   m_fApDist=0.0f;
+  m_bInternalView=false;
 
   m_pColMgr=pDevice->getSceneManager()->getSceneCollisionManager();
   m_cScreen=pDevice->getVideoDriver()->getScreenSize();
@@ -87,13 +88,15 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
     m_fPitch=0.0f;
     m_fRoll=0.0f;
 
+    m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500),NULL,-1);
+    m_pTab->setVisible(false);
+
     //finally we need a static text to display some information
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true);
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true,true,m_pTab);
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-    m_pInfo->setVisible(false);
 
-    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true);
+    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true,true,m_pTab);
     m_pApInfo->setDrawBackground(true);
     m_pApInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pApInfo->setVisible(false);
@@ -102,14 +105,15 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
     m_bLeftMissile=true;
     m_bInitialized=true;
 
+    c8 s[0xFF];
+    sprintf(s,"plane_hi_%s",m_pPlaneBody->getName());
     m_pCockpit=pCockpit;
-    scene::ISceneNode *pPlaneHi=m_pSmgr->getSceneNodeFromName("plane_hi");
+    scene::ISceneNode *pPlaneHi=m_pSmgr->getSceneNodeFromName(s);
 
     if (pCockpit!=NULL && pPlaneHi!=NULL) {
       for (u32 i=0; i<pPlaneHi->getMaterialCount(); i++) {
         const char *s=core::stringc(pPlaneHi->getMaterial(i).getTexture(0)->getName()).c_str();
         if (strstr(s,"instruments")) {
-          printf("--> %s\n",s);
           pPlaneHi->getMaterial(i).setTexture(0,pCockpit->getTexture());
         }
       }
@@ -140,7 +144,7 @@ void CPlane::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
-  m_pInfo->setVisible(true);
+  m_pTab->setVisible(true);
   m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
   m_bSwitchToMenu=false;
   m_bActive=true;
@@ -161,8 +165,7 @@ void CPlane::activate() {
 }
 
 void CPlane::deactivate() {
-  m_pInfo->setVisible(false);
-  m_pApInfo->setVisible(false);
+  m_pTab->setVisible(false);
   m_iThrustDir=0;
   m_bActive=false;
 }
@@ -174,9 +177,18 @@ u32 CPlane::update() {
   vector3df rot=m_pPlaneBody->getRotation();
 
   //get the parameters for the camera
-  vector3df pos=rot.rotationToDirection(vector3df(0,1.5,0)),//m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
-            up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,1.5,-5));//vector3df(0,5  ,0));
+  vector3df pos,tgt,up=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
+
+  if (m_bInternalView) {
+    pos=rot.rotationToDirection(vector3df(0,1.5,0)),
+    up =rot.rotationToDirection(vector3df(0,0.1,0));
+    tgt=rot.rotationToDirection(m_bBackView?vector3df(0,1.5,5):vector3df(0,1.5,-5));
+  }
+  else {
+    pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+    up =rot.rotationToDirection(vector3df(0,0.1,0));
+    tgt=rot.rotationToDirection(vector3df(0,5,0));
+  }
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
@@ -307,6 +319,12 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_bFollowBombCam=!m_bFollowBombCam;
       }
 
+      if (m_pController->get(m_pCtrls[ePlaneInternal])!=0.0f) {
+        m_pController->set(m_pCtrls[ePlaneInternal],0.0f);
+        m_bInternalView=!m_bInternalView;
+        printf("--> %s\n",m_bInternalView?"internal":"external");
+      }
+
       if (m_pController->get(m_pCtrls[ePlaneFlip])!=0.0f)
         m_pPlaneBody->addForceAtPosition(m_pPlaneBody->getPosition()+vector3df(0.0f,0.5f,0.0f),vector3df(0.0f,12.0f,0.0f));
 
@@ -358,7 +376,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_fPitch=fPitch;
     }
 
-    if (m_pCockpit!=NULL) {
+    if (m_pCockpit!=NULL && m_bActive) {
       f32 fSpeed=m_pPlaneBody->getLinearVelocity().getLength();
 
       m_pCockpit->setAltitude(vPos.Y);
@@ -370,13 +388,15 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
 
-      m_pCockpit->setWarnState(0,m_pAutoPilot->isEnabled()?1:0);
+      m_pCockpit->setWarnState(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApPlaneLowAlt?2:1:0);
       m_pCockpit->setWarnState(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
       m_pCockpit->setWarnState(2,m_pBrakes[0]->getForce()>20.0f?2:1);
       m_pCockpit->setWarnState(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
 
       m_pCockpit->setHorizon(m_pPlaneBody->getRotation());
+      m_pTab->setVisible(false);
       m_pCockpit->update();
+      m_pTab->setVisible(true);
     }
   }
 

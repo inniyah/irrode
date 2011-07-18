@@ -2,7 +2,7 @@
   #include <irrCC.h>
 
 CController::CController(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Controller Setup","../../data/irrOdeCarControllerHelp.txt",pCtrl) {
-  m_pTabCtrl=pDevice->getGUIEnvironment()->addTabControl(rect<s32>(5,5,635,475),NULL,true,true,-1);
+  m_pTabCtrl=pDevice->getGUIEnvironment()->addTabControl(rect<s32>(5,5,635,595),NULL,true,true,-1);
   IGUITab *pTab[4];
 
   pTab[0]=m_pTabCtrl->addTab(L"Car");
