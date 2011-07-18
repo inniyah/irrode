@@ -78,15 +78,22 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
 
   gui::IGUITabControl *pTab=m_pGuienv->addTabControl(core::rect<s32>(core::position2di(286,148),core::dimension2du(202,128)),m_pTab,true,true);
 
-  m_pGuienv->addStaticText(L"Target:"     ,core::rect<s32>(10,10,45,20),false,false,pTab,-1,false);
-  m_pGuienv->addStaticText(L"Distance:"   ,core::rect<s32>(10,25,45,35),false,false,pTab,-1,false);
-  m_pGuienv->addStaticText(L"Shots Fired:",core::rect<s32>(10,55,60,65),false,false,pTab,-1,false);
-  m_pGuienv->addStaticText(L"Hits Scored:",core::rect<s32>(10,70,60,80),false,false,pTab,-1,false);
+  gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
 
-  m_pLblTgtName=m_pGuienv->addStaticText(L"Target Name",core::rect<s32>(50,10,185,20),true,true,pTab,-1,true);
-  m_pLblTgtDist=m_pGuienv->addStaticText(L"Target Dist",core::rect<s32>(50,25,185,35),true,true,pTab,-1,true);
-  m_pLblShots  =m_pGuienv->addStaticText(L"Shots"      ,core::rect<s32>(65,55,185,65),true,true,pTab,-1,true);
-  m_pLblHits   =m_pGuienv->addStaticText(L"Hits"       ,core::rect<s32>(65,70,185,80),true,true,pTab,-1,true);
+  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10,10,75, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10,35,75, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10,60,75, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits:"    ,core::rect<s32>(10,85,75,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
+
+  m_pLblTgtName=m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(80,10,185, 30),true,true,pTab,-1,true);
+  m_pLblTgtDist=m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(80,35,185, 55),true,true,pTab,-1,true);
+  m_pLblShots  =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(80,60,165, 80),true,true,pTab,-1,true);
+  m_pLblHits   =m_pGuienv->addStaticText(L"Hits"   ,core::rect<s32>(80,85,165,105),true,true,pTab,-1,true);
+
+  m_pLblTgtName->setOverrideFont(pFont);
+  m_pLblTgtDist->setOverrideFont(pFont);
+  m_pLblShots  ->setOverrideFont(pFont);
+  m_pLblHits   ->setOverrideFont(pFont);
 
   m_pGuienv->addImage(m_pDrv->getTexture("../../data/dustbin.png"),core::position2di(169,96),true,pTab);
   m_pTab->setVisible(false);

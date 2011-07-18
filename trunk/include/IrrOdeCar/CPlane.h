@@ -32,7 +32,8 @@ enum ePlaneControls {
   ePlaneBrake,
   ePlaneFlip,
   ePlaneAutoPilot,
-  ePlaneTarget
+  ePlaneTarget,
+  ePlaneInternal
 };
 
 class CTargetSelector;
@@ -53,10 +54,12 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
          m_bBackView,
          m_bLeftMissile,
          m_bThreeWheeler,
-         m_bAutoPilot;
+         m_bAutoPilot,
+         m_bInternalView;
 
-    IGUIStaticText *m_pInfo,
-                   *m_pApInfo;
+    irr::gui::IGUITab        *m_pTab;
+    irr::gui::IGUIStaticText *m_pInfo,
+                             *m_pApInfo;
 
     ICameraSceneNode *m_pCam;
     ITerrainSceneNode *m_pTerrain;
