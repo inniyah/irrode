@@ -14,20 +14,21 @@ using namespace irr;
 
 class CCockpitPlane : public IRenderToTexture {
   protected:
-    gui::IGUIEnvironment *m_pGuienv;
-    video::IVideoDriver  *m_pDrv;
-    scene::ISceneManager *m_pSmgr,
-                         *m_pRttSmgr;
-    video::ITexture      *m_pTarget,
-                         *m_pElement,
-                         *m_pWarnTex[4][4];
-    gui::IGUIImage       *m_pWarnImg[4];
-    gui::IGUITab         *m_pTab;
-    gui::IGUIStaticText  *m_pLblTgtDist,
-                         *m_pLblTgtName,
-                         *m_pLblShots,
-                         *m_pLblHits;
-    scene::ISceneNode    *m_pHorizon;
+    gui::IGUIEnvironment    *m_pGuienv;
+    video::IVideoDriver     *m_pDrv;
+    scene::ISceneManager    *m_pSmgr,
+                            *m_pRttSmgr;
+    video::ITexture         *m_pTarget,
+                            *m_pElement,
+                            *m_pWarnTex[4][4];
+    gui::IGUIImage          *m_pWarnImg[4];
+    gui::IGUITab            *m_pTab;
+    gui::IGUIStaticText     *m_pLblTgtDist,
+                            *m_pLblTgtName,
+                            *m_pLblShots,
+                            *m_pLblHits;
+    scene::ISceneNode       *m_pHorizon;
+    scene::ICameraSceneNode *m_pCam;
 
     gui::CNrpNeedleIndicator *m_pInstruments[4];
 
@@ -49,7 +50,7 @@ class CCockpitPlane : public IRenderToTexture {
     void setPower   (f32 f) { m_fPower   =f; }
     void setHeading (f32 f) { m_fHeading =f; }
 
-    void setHorizon(core::vector3df vRot) { m_pHorizon->setRotation(vRot); }
+    void setHorizon(core::vector3df vRot, core::vector3df vUp);
 
     void setWarnState(u32 iWarn, u32 iState);
 };

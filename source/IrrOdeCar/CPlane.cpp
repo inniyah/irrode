@@ -322,7 +322,6 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[ePlaneInternal])!=0.0f) {
         m_pController->set(m_pCtrls[ePlaneInternal],0.0f);
         m_bInternalView=!m_bInternalView;
-        printf("--> %s\n",m_bInternalView?"internal":"external");
       }
 
       if (m_pController->get(m_pCtrls[ePlaneFlip])!=0.0f)
@@ -393,7 +392,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pCockpit->setWarnState(2,m_pBrakes[0]->getForce()>20.0f?2:1);
       m_pCockpit->setWarnState(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
 
-      m_pCockpit->setHorizon(m_pPlaneBody->getRotation());
+      v=m_pPlaneBody->getAbsoluteTransformation().getRotationDegrees();
+      m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
       m_pTab->setVisible(false);
       m_pCockpit->update();
       m_pTab->setVisible(true);
