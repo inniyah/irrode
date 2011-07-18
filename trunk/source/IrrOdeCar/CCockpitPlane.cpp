@@ -13,18 +13,20 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
   m_pElement=m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(128,128));
   m_pTarget =m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(512,512));
 
-  scene::ICameraSceneNode *pCam=pRttSmgr->addCameraSceneNode();
-  pCam->setPosition(core::vector3df(0,0,1));
-  pCam->setTarget(core::vector3df(0,0,0));
-  pRttSmgr->setActiveCamera(pCam);
+  m_pCam=m_pRttSmgr->addCameraSceneNode();
+  m_pCam->setPosition(core::vector3df(0,0,-1.75f));
+  m_pCam->setTarget(core::vector3df(0,0,0));
+  m_pCam->setAspectRatio(-1.0f);
+  m_pCam->setNearValue(0.1f);
+  m_pRttSmgr->setActiveCamera(m_pCam);
 
-  scene::IMesh *p=pRttSmgr->getMesh("../../data/horizon.obj");
+  scene::IMesh *p=m_pRttSmgr->getMesh("../../data/horizon.obj");
 
   if (p) {
-    m_pHorizon=pRttSmgr->addMeshSceneNode(p);
+    m_pHorizon=m_pRttSmgr->addMeshSceneNode(p);
     if (m_pHorizon) {
       m_pHorizon->getMaterial(0).setFlag(video::EMF_LIGHTING,false);
-      m_pHorizon->setScale(core::vector3df(14.0f,14.0f,14.0f));
+      m_pHorizon->setPosition(core::vector3df(0.0f,0.0f,0.0f));
     }
   }
 
@@ -80,15 +82,15 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
 
   gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
 
-  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10,10,75, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10,35,75, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10,60,75, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Hits:"    ,core::rect<s32>(10,85,75,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10,10,80, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10,35,80, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10,60,80, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits:"    ,core::rect<s32>(10,85,80,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
 
-  m_pLblTgtName=m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(80,10,185, 30),true,true,pTab,-1,true);
-  m_pLblTgtDist=m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(80,35,185, 55),true,true,pTab,-1,true);
-  m_pLblShots  =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(80,60,165, 80),true,true,pTab,-1,true);
-  m_pLblHits   =m_pGuienv->addStaticText(L"Hits"   ,core::rect<s32>(80,85,165,105),true,true,pTab,-1,true);
+  m_pLblTgtName=m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(85,10,185, 30),true,true,pTab,-1,true);
+  m_pLblTgtDist=m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(85,35,185, 55),true,true,pTab,-1,true);
+  m_pLblShots  =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(85,60,165, 80),true,true,pTab,-1,true);
+  m_pLblHits   =m_pGuienv->addStaticText(L"Hits"   ,core::rect<s32>(85,85,165,105),true,true,pTab,-1,true);
 
   m_pLblTgtName->setOverrideFont(pFont);
   m_pLblTgtDist->setOverrideFont(pFont);
@@ -120,10 +122,10 @@ void CCockpitPlane::update() {
   m_pInstruments[2]->SetValue(fDummy);
   m_pInstruments[3]->SetValue(m_fPower+25.0f);
 
-  m_pTab->setVisible(true);
   m_pDrv->setRenderTarget(m_pElement,true,true,video::SColor(0xFF,0xFF,0x80,0x80));
   m_pRttSmgr->drawAll();
   m_pDrv->setRenderTarget(m_pTarget,true,true,video::SColor(0xFF,0xFF,0xD0,0x80));
+  m_pTab->setVisible(true);
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
 
@@ -132,4 +134,10 @@ void CCockpitPlane::update() {
 
 void CCockpitPlane::setWarnState(u32 iWarn, u32 iState) {
   m_pWarnImg[iWarn]->setImage(m_pWarnTex[iWarn][iState]);
+}
+
+void CCockpitPlane::setHorizon(core::vector3df vRot, core::vector3df vUp) {
+  core::vector3df v=vRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.75f));
+  m_pCam->setPosition(v);
+  m_pCam->setUpVector(vUp);
 }
