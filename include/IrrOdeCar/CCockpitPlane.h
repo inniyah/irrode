@@ -30,12 +30,13 @@ class CCockpitPlane : public IRenderToTexture {
     scene::ISceneNode       *m_pHorizon;
     scene::ICameraSceneNode *m_pCam;
 
-    gui::CNrpNeedleIndicator *m_pInstruments[4];
+    gui::CNrpNeedleIndicator *m_pInstruments[5];
 
     f32 m_fAltitude,
         m_fSpeed,
         m_fPower,
-        m_fHeading;
+        m_fHeading,
+        m_fVelVert;
 
   public:
     CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRttSmgr);
@@ -49,6 +50,7 @@ class CCockpitPlane : public IRenderToTexture {
     void setSpeed   (f32 f) { m_fSpeed   =f; }
     void setPower   (f32 f) { m_fPower   =f; }
     void setHeading (f32 f) { m_fHeading =f; }
+    void setVelVert (f32 f) { m_fVelVert =f; }
 
     void setHorizon(core::vector3df vRot, core::vector3df vUp);
 
