@@ -52,15 +52,15 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
     "../../data/instruments/heading.png",
     "../../data/instruments/power.png"
   };
-  core::position2di cPos[]={
-    core::position2di( 10, 10),
-    core::position2di(148, 10),
-    core::position2di(10 ,148),
-    core::position2di(148,148)
+  core::recti cRect[]={
+    core::recti(core::position2di( 10, 10),core::dimension2di(128,128)),
+    core::recti(core::position2di(148, 10),core::dimension2di(128,128)),
+    core::recti(core::position2di(10 ,148),core::dimension2di( 64, 64)),
+    core::recti(core::position2di(148,148),core::dimension2di(128,128))
   };
 
   for (u32 i=0; i<4; i++) {
-    m_pInstruments[i]=new gui::CNrpNeedleIndicator(L"",m_pGuienv,m_pTab,-1,core::recti(cPos[i],core::dimension2di(128,128)));
+    m_pInstruments[i]=new gui::CNrpNeedleIndicator(L"",m_pGuienv,m_pTab,-1,cRect[i]);
     m_pInstruments[i]->SetMajorTicks(0);
     m_pInstruments[i]->SetMinorTicks(0);
     m_pInstruments[i]->SetAnimated(false);
