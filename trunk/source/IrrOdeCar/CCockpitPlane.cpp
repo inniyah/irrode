@@ -139,5 +139,9 @@ void CCockpitPlane::setWarnState(u32 iWarn, u32 iState) {
 void CCockpitPlane::setHorizon(core::vector3df vRot, core::vector3df vUp) {
   core::vector3df v=vRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.75f));
   m_pCam->setPosition(v);
+
+  vUp.X=-vUp.X;
+  vUp.Z=-vUp.Z;
+
   m_pCam->setUpVector(vUp);
 }
