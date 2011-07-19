@@ -77,6 +77,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
     //let's add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
+    m_pCam->setNearValue(0.1f);
 
     //we are an IrrOde event listener
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
@@ -181,9 +182,9 @@ u32 CPlane::update() {
   vector3df pos,tgt,up=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
 
   if (m_bInternalView) {
-    pos=rot.rotationToDirection(vector3df(0,1.5,0)),
+    pos=rot.rotationToDirection(vector3df(0,1.1,-0.6)),
     up =rot.rotationToDirection(vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(m_bBackView?vector3df(0,1.5,5):vector3df(0,1.5,-5));
+    tgt=rot.rotationToDirection(m_bBackView?vector3df(0,1.1,5):vector3df(0,1.1,-5));
   }
   else {
     pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
