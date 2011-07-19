@@ -2,6 +2,7 @@
   #include <geom/CIrrOdeGeom.h>
   #include <CIrrOdeBody.h>
   #include <CIrrOdeManager.h>
+  #include <CIrrOdeCarState.h>
   #include <CAdvancedParticleSystemNode.h>
   #include <CAutoPilot.h>
 
@@ -45,7 +46,7 @@ void CProjectile::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pAutoPilot->setTarget(m_pTarget);
 }
 
-CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision) {
+CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pShooter) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
   m_bActive=true;
@@ -54,6 +55,7 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
   m_pAero=NULL;
   m_pTorque=NULL;
   m_pAutoPilot=NULL;
+  m_pShooter=pShooter;
 
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
@@ -132,6 +134,7 @@ bool CProjectile::particlesActive() {
 //lifetime to zero
 void CProjectile::collide() {
   m_iTtl=0;
+  if (m_pShooter!=NULL) m_pShooter->incHits();
 }
 
 CProjectileManager::CProjectileManager() {

@@ -5,6 +5,7 @@
   #include <irrOde.h>
 
 class CAdvancedParticleSystemNode;
+class CIrrOdeCarState;
 class CAutoPilot;
 
 class CProjectile {
@@ -22,6 +23,8 @@ class CProjectile {
     CAutoPilot *m_pAutoPilot;
 
     array<CAdvancedParticleSystemNode *> m_aParticleSystems;
+
+    CIrrOdeCarState *m_pShooter;
 
     bool m_bActive;
 
@@ -42,7 +45,7 @@ class CProjectile {
      * @param fScale the scale of the meshscenenode
      * @param bFastCollision true for fast moving projectiles
      */
-    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision);
+    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pSource);
     ~CProjectile();
 
     irr::ode::CIrrOdeBody *getBody();

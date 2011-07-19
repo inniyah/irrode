@@ -181,7 +181,7 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
                 pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(vector3df(-3.0f,0,0)),
                 vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(vector3df(-350.0f,0.0f,0.0f));
 
-      new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision);
+      new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this);
     }
 
     f32 fVel[4]={ 0.0f, 0.0f, 0.0f, 0.0f },

@@ -16,6 +16,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
   m_iLastShot=0;
   m_iLastMissile=0;
+  m_iShotsFired=0;
   m_fApDist=0.0f;
   m_bInternalView=false;
 
@@ -289,8 +290,9 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
         m_bLeftMissile=!m_bLeftMissile;
 
-        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
         p->setTarget(m_pTargetSelector->getTarget());
+        m_iShotsFired++;
       }
 
       if (m_pController->get(m_pCtrls[ePlaneGun])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
@@ -300,8 +302,8 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
                   rot=m_pPlaneBody->getRotation(),
                   vel=m_pPlaneBody->getLinearVelocity().getLength()*m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pPlaneBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true);
-
+        new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
+        m_iShotsFired++;
       }
 
       if (m_pBrakes[0]!=NULL) {
@@ -394,6 +396,22 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
 
       v=m_pPlaneBody->getAbsoluteTransformation().getRotationDegrees();
       m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
+
+      ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
+
+      if (pTarget!=NULL) {
+        core::stringw s=core::stringw(pTarget->getName());
+        m_pCockpit->setTargetName(s.c_str());
+        m_pCockpit->setTargetDist((vPos-pTarget->getPosition()).getLength());
+      }
+      else {
+        m_pCockpit->setTargetName(L"<no target>");
+        m_pCockpit->setTargetDist(0.0f);
+      }
+
+      m_pCockpit->setShotsFired(m_iShotsFired);
+      m_pCockpit->setHits(m_iHits);
+
       m_pTab->setVisible(false);
       m_pCockpit->update();
       m_pTab->setVisible(true);

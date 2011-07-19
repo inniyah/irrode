@@ -171,7 +171,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
                   rot=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees(),
                   vel=m_pHeliBody->getLinearVelocity();
 
-        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true);
+        CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
         p->setTarget(m_pTargetSelector->getTarget());
         m_bLeft=!m_bLeft;
       }

@@ -53,6 +53,12 @@ class CCockpitPlane : public IRenderToTexture {
     void setHorizon(core::vector3df vRot, core::vector3df vUp);
 
     void setWarnState(u32 iWarn, u32 iState);
+
+    void setTargetName(const wchar_t *sName);
+    void setTargetDist(f32 fDist);
+
+    void setShotsFired(s32 iShots);
+    void setHits(s32 iHits);
 };
 
 #endif
