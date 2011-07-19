@@ -44,7 +44,8 @@ class CAutoPilot;
 class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
     s32 m_iThrustDir,
-        m_iNextCp;
+        m_iNextCp,
+        m_iShotsFired;
     f32 m_fThrust,
         m_fYaw,
         m_fPitch,

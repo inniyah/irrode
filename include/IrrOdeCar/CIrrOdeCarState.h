@@ -26,6 +26,8 @@ class CIrrOdeCarState {
          m_bActive,
          m_bInitialized;
 
+    s32 m_iHits;
+
     IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
     IGUIEnvironment *m_pGuiEnv;   /*!< the current Irrlicht GUI environment */
@@ -62,6 +64,8 @@ class CIrrOdeCarState {
     virtual stringc &getButtonText()=0;
 
     virtual void drawSpecifics()=0;
+
+    void incHits() { m_iHits++; }
 };
 
 #endif

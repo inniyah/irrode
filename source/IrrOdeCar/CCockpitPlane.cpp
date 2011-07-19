@@ -145,3 +145,25 @@ void CCockpitPlane::setHorizon(core::vector3df vRot, core::vector3df vUp) {
 
   m_pCam->setUpVector(vUp);
 }
+
+void CCockpitPlane::setTargetName(const wchar_t *sName) {
+  m_pLblTgtName->setText(sName);
+}
+
+void CCockpitPlane::setTargetDist(f32 fDist) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"%.2f",fDist);
+  m_pLblTgtDist->setText(s);
+}
+
+void CCockpitPlane::setShotsFired(s32 iShots) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"%i",iShots);
+  m_pLblShots->setText(s);
+}
+
+void CCockpitPlane::setHits(s32 iHits) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"%i",iHits);
+  m_pLblHits->setText(s);
+}
