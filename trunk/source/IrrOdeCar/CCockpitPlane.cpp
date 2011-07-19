@@ -31,10 +31,17 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
   }
 
   m_pTab=m_pGuienv->addTab(core::rect<s32>(0,0,512,512));
-  m_pGuienv->addImage(m_pElement,core::position2di(286,10),true,m_pTab);
-  m_pGuienv->addImage(m_pDrv->getTexture("../../data/instruments/horizon_mask.png"),core::position2di(286,10),true,m_pTab); //424
+  m_pGuienv->addImage(m_pElement,core::position2di(224,10),true,m_pTab);
+  m_pGuienv->addImage(m_pDrv->getTexture("../../data/instruments/horizon_mask.png"),core::position2di(224,10),true,m_pTab); //424
 
   char sNames[][0xFF]={ "autopilot", "alt", "brakes", "stall" };
+
+  core::position2di cWarnPos[]={
+    core::position2di(10, 74),
+    core::position2di(42, 74),
+    core::position2di(10,106),
+    core::position2di(42,106)
+  };
 
   for (u32 i=0; i<4; i++) {
     char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
@@ -43,23 +50,25 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
       sprintf(s,"../../data/warnlights/%s_%s.png",sNames[i],sExts[j]);
       m_pWarnTex[i][j]=m_pDrv->getTexture(s);
     }
-    m_pWarnImg[i]=m_pGuienv->addImage(m_pWarnTex[i][0],core::position2di(424,10+32*i),true,m_pTab);
+    m_pWarnImg[i]=m_pGuienv->addImage(m_pWarnTex[i][0],cWarnPos[i],true,m_pTab);
   }
 
   char sInstruments[][0xFF]={
     "../../data/instruments/speed.png",
     "../../data/instruments/altitude.png",
     "../../data/instruments/heading.png",
-    "../../data/instruments/power.png"
+    "../../data/instruments/power.png",
+    "../../data/instruments/vario.png"
   };
   core::recti cRect[]={
-    core::recti(core::position2di( 10, 10),core::dimension2di(128,128)),
-    core::recti(core::position2di(148, 10),core::dimension2di(128,128)),
-    core::recti(core::position2di(10 ,148),core::dimension2di( 64, 64)),
-    core::recti(core::position2di(148,148),core::dimension2di(128,128))
+    core::recti(core::position2di( 84, 10),core::dimension2di(128,128)),
+    core::recti(core::position2di(362, 10),core::dimension2di(128,128)),
+    core::recti(core::position2di(224,148),core::dimension2di(128,128)),
+    core::recti(core::position2di( 10, 10),core::dimension2di( 64, 64)),
+    core::recti(core::position2di(362,148),core::dimension2di(128,128))
   };
 
-  for (u32 i=0; i<4; i++) {
+  for (u32 i=0; i<5; i++) {
     m_pInstruments[i]=new gui::CNrpNeedleIndicator(L"",m_pGuienv,m_pTab,-1,cRect[i]);
     m_pInstruments[i]->SetMajorTicks(0);
     m_pInstruments[i]->SetMinorTicks(0);
@@ -75,10 +84,14 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
         m_pInstruments[i]->setDrawLastTick(false);
         break;
       case 3: m_pInstruments[i]->SetRange(0.0f,125.0f); m_pInstruments[i]->SetValue(25.0f); break;
+      case 4:
+        m_pInstruments[i]->SetRange(0.0f,100.0f);
+        m_pInstruments[i]->SetValue(50.0f);
+        break;
     }
   }
 
-  gui::IGUITabControl *pTab=m_pGuienv->addTabControl(core::rect<s32>(core::position2di(286,148),core::dimension2du(202,128)),m_pTab,true,true);
+  gui::IGUITabControl *pTab=m_pGuienv->addTabControl(core::rect<s32>(core::position2di(10,148),core::dimension2du(202,128)),m_pTab,true,true);
 
   gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
 
@@ -121,6 +134,7 @@ void CCockpitPlane::update() {
   m_pInstruments[1]->SetValue(m_fAltitude);
   m_pInstruments[2]->SetValue(fDummy);
   m_pInstruments[3]->SetValue(m_fPower+25.0f);
+  m_pInstruments[4]->SetValue(m_fVelVert+50.0f);
 
   m_pDrv->setRenderTarget(m_pElement,true,true,video::SColor(0xFF,0xFF,0x80,0x80));
   m_pRttSmgr->drawAll();

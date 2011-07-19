@@ -384,6 +384,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pCockpit->setAltitude(vPos.Y);
       m_pCockpit->setSpeed(fSpeed);
       m_pCockpit->setPower(100.0f*m_fThrust);
+      m_pCockpit->setVelVert(m_pPlaneBody->getLinearVelocity().Y);
 
       core::vector3df v=m_pPlaneBody->getRotation().rotationToDirection(m_pAero->getForeward());
       core::vector2df vDir=core::vector2df(v.X,v.Z);
