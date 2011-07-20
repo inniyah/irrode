@@ -2,27 +2,30 @@
   #include <CProjectile.h>
   #include <CAutoPilot.h>
   #include <irrCC.h>
+  #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
 
-CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pHeliBody=reinterpret_cast<CIrrOdeBody *>(pNode);
   if (m_pHeliBody!=NULL) {
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
     m_pCam=m_pSmgr->addCameraSceneNode();
+    m_pCam->setNearValue(0.1f);
     m_bLeft=true;
     m_bMissileCam=false;
     m_bBackView=false;
 
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true);
+    m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500));
+    m_pTab->setVisible(false);
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true,true,m_pTab);
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-    m_pInfo->setVisible(false);
 
-    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true);
+    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true,true,m_pTab);
     m_pApInfo->setDrawBackground(true);
     m_pApInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
     m_pApInfo->setVisible(false);
@@ -59,6 +62,16 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
     }
     else printf("no checkpoints for helicopter found!\n");
     m_fApDist=0.0f;
+
+    c8 s[0xFF];
+    sprintf(s,"heli_hi_%s",m_pHeliBody->getName());
+    printf("name: %s\n",s);
+    m_pCockpit=pCockpit;
+    scene::ISceneNode *pHeliHi=m_pSmgr->getSceneNodeFromName(s);
+
+    if (pCockpit!=NULL && pHeliHi!=NULL) {
+      pHeliHi->getMaterial(7).setTexture(0,pCockpit->getTexture());
+    }
   }
 }
 
@@ -70,7 +83,7 @@ void CHeli::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
-  m_pInfo->setVisible(true);
+  m_pTab->setVisible(true);
   m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
   m_bSwitchToMenu=false;
   m_bActive=true;
@@ -90,7 +103,7 @@ void CHeli::activate() {
 }
 
 void CHeli::deactivate() {
-  m_pInfo->setVisible(false);
+  m_pTab->setVisible(false);
   m_pApInfo->setVisible(false);
   m_bActive=false;
 }
@@ -101,9 +114,9 @@ u32 CHeli::update() {
   vector3df rot=m_pHeliBody->getRotation();
 
   //get the parameters for the camera
-  vector3df pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+  vector3df pos=rot.rotationToDirection(core::vector3df(0,-0.15,-1.3)),//rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
             up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
+            tgt=rot.rotationToDirection(core::vector3df(0,-0.15,-5));//m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
@@ -228,6 +241,47 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       m_pTorque->setYaw(m_fYaw);
     }
     m_pMotor->setPower(m_fThrust*f);
+
+    if (m_pCockpit!=NULL && m_bActive) {
+      core::vector3df vPos=m_pHeliBody->getPosition();
+      f32 fSpeed=m_pHeliBody->getLinearVelocity().getLength();
+
+      m_pCockpit->setAltitude(vPos.Y);
+      m_pCockpit->setSpeed(fSpeed);
+      m_pCockpit->setPower(100.0f*m_fThrust);
+      m_pCockpit->setVelVert(m_pHeliBody->getLinearVelocity().Y);
+
+      core::vector3df v=m_pHeliBody->getRotation().rotationToDirection(m_pAero->getForeward());
+      core::vector2df vDir=core::vector2df(v.X,v.Z);
+
+      if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
+
+      m_pCockpit->setWarnState(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApPlaneLowAlt?2:1:0);
+      m_pCockpit->setWarnState(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
+      m_pCockpit->setWarnState(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
+
+      v=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees();
+      m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
+
+      ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
+
+      if (pTarget!=NULL) {
+        core::stringw s=core::stringw(pTarget->getName());
+        m_pCockpit->setTargetName(s.c_str());
+        m_pCockpit->setTargetDist((vPos-pTarget->getPosition()).getLength());
+      }
+      else {
+        m_pCockpit->setTargetName(L"<no target>");
+        m_pCockpit->setTargetDist(0.0f);
+      }
+
+      //m_pCockpit->setShotsFired(m_iShotsFired);
+      m_pCockpit->setHits(m_iHits);
+
+      m_pTab->setVisible(false);
+      m_pCockpit->update();
+      m_pTab->setVisible(true);
+    }
   }
 
   return false;
