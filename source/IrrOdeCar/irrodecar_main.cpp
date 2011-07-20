@@ -407,7 +407,7 @@ int main(int argc, char** argv) {
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-    CHeli *p=new CHeli(device,*it,pController);
+    CHeli *p=new CHeli(device,*it,pController,pCockpit);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);

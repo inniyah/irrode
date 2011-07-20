@@ -31,6 +31,7 @@ enum eHeliControls {
 };
 
 class CTargetSelector;
+class CCockpitPlane;
 class CProjectile;
 class CAutoPilot;
 
@@ -41,6 +42,7 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
 
     IGUIStaticText *m_pInfo,
                    *m_pApInfo;
+    IGUITab *m_pTab;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pHeliBody;
@@ -63,8 +65,10 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
 
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
+    CCockpitPlane *m_pCockpit;
+
   public:
-    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
+    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit);
     virtual ~CHeli();
 
     virtual void activate();
