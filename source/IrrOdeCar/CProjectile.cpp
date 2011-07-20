@@ -132,9 +132,9 @@ bool CProjectile::particlesActive() {
 }
 //if a collision occured we set the remaining
 //lifetime to zero
-void CProjectile::collide() {
+void CProjectile::collide(bool bBodyHit) {
   m_iTtl=0;
-  if (m_pShooter!=NULL) m_pShooter->incHits();
+  if (m_pShooter!=NULL && bBodyHit) m_pShooter->incHits();
 }
 
 CProjectileManager::CProjectileManager() {
@@ -182,8 +182,12 @@ bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       CProjectile *p=*it;
       if (p->getBody()==pMove->getBody() && pMove->getTouched()!=NULL) {
         irr::ode::CIrrOdeGeom *g=pMove->getTouched();
-        if (g->getBody()!=NULL) m_iHits++;
-        p->collide();
+        bool bBodyHit=false;
+        if (g->getBody()!=NULL) {
+          bBodyHit=true;
+          m_iHits++;
+        }
+        p->collide(bBodyHit);
       }
     }
   }
