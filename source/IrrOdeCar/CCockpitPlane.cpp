@@ -102,7 +102,11 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
     m_pInstruments[i]->SetBackgroundTexture(m_pDrv->getTexture(sInstruments[i]));
     m_pInstruments[i]->setNeedleColor(video::SColor(0xFF,0,0,0));
     switch (i) {
-      case 0: m_pInstruments[i]->SetRange(0.0f, 200.0f); break;
+      case 0:
+      case 5:
+        m_pInstruments[i]->SetRange(0.0f, 200.0f);
+        break;
+
       case 1: m_pInstruments[i]->SetRange(0.0f,1000.0f); break;
       case 2:
         m_pInstruments[i]->SetRange(0.0f, 360.0f);
