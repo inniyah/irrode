@@ -115,9 +115,17 @@ u32 CHeli::update() {
   vector3df rot=m_pHeliBody->getRotation();
 
   //get the parameters for the camera
-  vector3df pos=rot.rotationToDirection(core::vector3df(0,-0.15,-1.3)),//rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
-            up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=rot.rotationToDirection(core::vector3df(0,-0.15,-5));//m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
+  vector3df pos,tgt,
+            up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
+
+  if (m_bInternal) {
+    pos=rot.rotationToDirection(m_bBackView?core::vector3df(1.25,-0.15,-1.3):core::vector3df(0,-0.15,-1.3));
+    tgt=rot.rotationToDirection(m_bBackView?core::vector3df(1.25,-0.15,5):core::vector3df(0,-0.15,-5));
+  }
+  else {
+    pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+    tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
+  }
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
@@ -175,8 +183,8 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       m_fRoll =m_pController->get(m_pCtrls[eHeliRollLeft]);
       m_fYaw  =m_pController->get(m_pCtrls[eHeliYawRight]);
 
-      if (m_fThrust> 1.0f) m_fThrust= 1.0f;
-      if (m_fThrust<-0.1f) m_fThrust=-0.1f;
+      if (m_fThrust> 1.0f) m_fThrust =1.0f;
+      if (m_fThrust<-0.0f) m_fThrust/=4.0f;
 
       if (m_pController->get(m_pCtrls[eHeliFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
         m_iLastShot=pStep->getStepNo();
@@ -195,10 +203,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_bMissileCam=!m_bMissileCam;
       }
 
-      if (m_pController->get(m_pCtrls[eHeliBackView])) {
-        m_pController->set(m_pCtrls[eHeliBackView],0.0f);
-        m_bBackView=!m_bBackView;
-      }
+      m_bBackView=m_pController->get(m_pCtrls[eHeliBackView])!=0.0f;
 
       if (m_pController->get(m_pCtrls[eHeliInternal])) {
         m_pController->set(m_pCtrls[eHeliInternal],0.0f);
@@ -267,9 +272,8 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
 
       if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
 
-      m_pCockpit->setWarnState(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApPlaneLowAlt?2:1:0);
-      m_pCockpit->setWarnState(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
-      m_pCockpit->setWarnState(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
+      m_pCockpit->setWarnStateHeli(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApHeliLowAlt?2:1:0);
+      m_pCockpit->setWarnStateHeli(1,vPos.Y<200.0f?3:vPos.Y<400.0f?2:1);
 
       v=m_pHeliBody->getAbsoluteTransformation().getRotationDegrees();
       m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
@@ -290,7 +294,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       m_pCockpit->setHits(m_iHits);
 
       m_pTab->setVisible(false);
-      m_pCockpit->update();
+      m_pCockpit->update(false);
       m_pTab->setVisible(true);
     }
   }

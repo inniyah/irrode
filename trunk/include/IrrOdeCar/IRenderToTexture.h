@@ -17,7 +17,7 @@ class IRenderToTexture {
     virtual ~IRenderToTexture() {
     }
 
-    virtual void update()=0;
+    virtual void update(bool bPlane)=0;
 };
 
 #endif
