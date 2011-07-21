@@ -16,6 +16,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
     m_bLeft=true;
     m_bMissileCam=false;
     m_bBackView=false;
+    m_bInternal=false;
 
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -192,6 +193,16 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eHeliToggleCam])) {
         m_pController->set(m_pCtrls[eHeliToggleCam],0.0f);
         m_bMissileCam=!m_bMissileCam;
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliBackView])) {
+        m_pController->set(m_pCtrls[eHeliBackView],0.0f);
+        m_bBackView=!m_bBackView;
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliInternal])) {
+        m_pController->set(m_pCtrls[eHeliInternal],0.0f);
+        m_bInternal=!m_bInternal;
       }
 
       if (m_pController->get(m_pCtrls[eHeliFlip])) {

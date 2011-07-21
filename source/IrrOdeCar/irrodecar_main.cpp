@@ -202,20 +202,21 @@ int main(int argc, char** argv) {
   pController->createAxis(iCtrls[1][eTankCannonLeft],iCtrls[1][eTankCannonRight]);
 
   //3rd in row: the helicopter
-  iCtrls[2][eHeliYawLeft  ]=pController->addItem(2,stringw(L"Yaw Left"     ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliYawRight ]=pController->addItem(2,stringw(L"Yaw Right"    ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliRollLeft ]=pController->addItem(2,stringw(L"Roll Left"    ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliRollRight]=pController->addItem(2,stringw(L"Roll Right"   ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPitchUp  ]=pController->addItem(2,stringw(L"Pitch Up"     ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPitchDown]=pController->addItem(2,stringw(L"Pitch Down"   ),KEY_UP    ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPowerUp  ]=pController->addItem(2,stringw(L"Power Plus"   ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-  iCtrls[2][eHeliPowerDown]=pController->addItem(2,stringw(L"Power Minus"  ),KEY_KEY_S ,CIrrCC::eCtrlFader);
-  iCtrls[2][eHeliFire     ]=pController->addItem(2,stringw(L"Fire Missile" ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliToggleCam]=pController->addItem(2,stringw(L"Toggle Cam"   ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliFlip     ]=pController->addItem(2,stringw(L"Flip"         ),KEY_RETURN,CIrrCC::eCtrlButton);
-  iCtrls[2][eHeliAutoPilot]=pController->addItem(2,stringw(L"Autopilot"    ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliTarget   ]=pController->addItem(2,stringw(L"Select Target"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-
+  iCtrls[2][eHeliYawLeft  ]=pController->addItem(2,stringw(L"Yaw Left"            ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliYawRight ]=pController->addItem(2,stringw(L"Yaw Right"           ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliRollLeft ]=pController->addItem(2,stringw(L"Roll Left"           ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliRollRight]=pController->addItem(2,stringw(L"Roll Right"          ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliPitchUp  ]=pController->addItem(2,stringw(L"Pitch Up"            ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliPitchDown]=pController->addItem(2,stringw(L"Pitch Down"          ),KEY_UP    ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eHeliPowerUp  ]=pController->addItem(2,stringw(L"Power Plus"          ),KEY_KEY_W ,CIrrCC::eCtrlFader);
+  iCtrls[2][eHeliPowerDown]=pController->addItem(2,stringw(L"Power Minus"         ),KEY_KEY_S ,CIrrCC::eCtrlFader);
+  iCtrls[2][eHeliFire     ]=pController->addItem(2,stringw(L"Fire Missile"        ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eHeliToggleCam]=pController->addItem(2,stringw(L"Toggle Cam"          ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eHeliFlip     ]=pController->addItem(2,stringw(L"Flip"                ),KEY_RETURN,CIrrCC::eCtrlButton);
+  iCtrls[2][eHeliAutoPilot]=pController->addItem(2,stringw(L"Autopilot"           ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eHeliTarget   ]=pController->addItem(2,stringw(L"Select Target"       ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eHeliBackView ]=pController->addItem(2,stringw(L"Backview"            ),KEY_KEY_B ,CIrrCC::eCtrlButton);
+  iCtrls[2][eHeliInternal ]=pController->addItem(2,stringw(L"Toggle Internal View"),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
 
   //the helicopter gets three axes: pitch, roll and yaw...
   pController->createAxis(iCtrls[2][eHeliYawLeft ],iCtrls[2][eHeliYawRight ]);
