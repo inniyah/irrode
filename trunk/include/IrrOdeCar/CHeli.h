@@ -27,7 +27,9 @@ enum eHeliControls {
   eHeliToggleCam,
   eHeliFlip,
   eHeliTarget,
-  eHeliAutoPilot
+  eHeliAutoPilot,
+  eHeliBackView,
+  eHeliInternal
 };
 
 class CTargetSelector;
@@ -38,7 +40,7 @@ class CAutoPilot;
 class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
   protected:
     f32 m_fYaw,m_fPitch,m_fRoll,m_iThrust,m_fThrust;
-    bool m_bLeft,m_bMissileCam,m_bBackView;
+    bool m_bLeft,m_bMissileCam,m_bBackView,m_bInternal;
 
     IGUIStaticText *m_pInfo,
                    *m_pApInfo;
