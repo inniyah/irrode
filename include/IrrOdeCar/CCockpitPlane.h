@@ -20,9 +20,13 @@ class CCockpitPlane : public IRenderToTexture {
                             *m_pRttSmgr;
     video::ITexture         *m_pTarget,
                             *m_pElement,
-                            *m_pWarnTex[4][4];
-    gui::IGUIImage          *m_pWarnImg[4];
-    gui::IGUITab            *m_pTab;
+                            *m_pWarnTexPlane[4][4],
+                            *m_pWarnTexHeli[2][4];
+    gui::IGUIImage          *m_pWarnImgPlane[4],
+                            *m_pWarnImgHeli[2];
+    gui::IGUITab            *m_pTab,
+                            *m_pPlaneWarnings,
+                            *m_pHeliWarnings;
     gui::IGUIStaticText     *m_pLblTgtDist,
                             *m_pLblTgtName,
                             *m_pLblShots,
@@ -44,7 +48,7 @@ class CCockpitPlane : public IRenderToTexture {
 
     video::ITexture *getTexture();
 
-    virtual void update();
+    virtual void update(bool bPlane);
 
     void setAltitude(f32 f) { m_fAltitude=f; }
     void setSpeed   (f32 f) { m_fSpeed   =f; }
@@ -54,7 +58,8 @@ class CCockpitPlane : public IRenderToTexture {
 
     void setHorizon(core::vector3df vRot, core::vector3df vUp);
 
-    void setWarnState(u32 iWarn, u32 iState);
+    void setWarnStatePlane(u32 iWarn, u32 iState);
+    void setWarnStateHeli(u32 iWarn, u32 iState);
 
     void setTargetName(const wchar_t *sName);
     void setTargetDist(f32 fDist);

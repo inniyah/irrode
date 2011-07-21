@@ -34,23 +34,47 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
   m_pGuienv->addImage(m_pElement,core::position2di(224,10),true,m_pTab);
   m_pGuienv->addImage(m_pDrv->getTexture("../../data/instruments/horizon_mask.png"),core::position2di(224,10),true,m_pTab); //424
 
-  char sNames[][0xFF]={ "autopilot", "alt", "brakes", "stall" };
+  //plane warnlights
+  {
+    char sNames[][0xFF]={ "autopilot", "alt", "brakes", "stall" };
 
-  core::position2di cWarnPos[]={
-    core::position2di(10, 74),
-    core::position2di(42, 74),
-    core::position2di(10,106),
-    core::position2di(42,106)
-  };
+    m_pPlaneWarnings=m_pGuienv->addTab(core::rect<s32>(10,74,74,136),m_pTab);
+    core::position2di cWarnPos[]={
+      core::position2di( 0, 0),
+      core::position2di(32, 0),
+      core::position2di( 0,32),
+      core::position2di(32,32)
+    };
 
-  for (u32 i=0; i<4; i++) {
-    char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
-    for (u32 j=0; j<4; j++) {
-      char s[0xFF];
-      sprintf(s,"../../data/warnlights/%s_%s.png",sNames[i],sExts[j]);
-      m_pWarnTex[i][j]=m_pDrv->getTexture(s);
+    for (u32 i=0; i<4; i++) {
+      char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
+      for (u32 j=0; j<4; j++) {
+        char s[0xFF];
+        sprintf(s,"../../data/warnlights/%s_%s.png",sNames[i],sExts[j]);
+        m_pWarnTexPlane[i][j]=m_pDrv->getTexture(s);
+      }
+      m_pWarnImgPlane[i]=m_pGuienv->addImage(m_pWarnTexPlane[i][0],cWarnPos[i],true,m_pPlaneWarnings);
     }
-    m_pWarnImg[i]=m_pGuienv->addImage(m_pWarnTex[i][0],cWarnPos[i],true,m_pTab);
+  }
+
+  //helicopter warnlights
+  {
+    char sNames[][0xFF]={ "autopilot", "alt" };
+    m_pHeliWarnings=m_pGuienv->addTab(core::rect<s32>(10,74,74,136),m_pTab);
+    core::position2di cWarnPos[]={
+      core::position2di(0, 0),
+      core::position2di(0,32)
+    };
+
+    for (u32 i=0; i<2; i++) {
+      char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
+      for (u32 j=0; j<4; j++) {
+        char s[0xFF];
+        sprintf(s,"../../data/warnlights/heli_%s_%s.png",sNames[i],sExts[j]);
+        m_pWarnTexHeli[i][j]=m_pDrv->getTexture(s);
+      }
+      m_pWarnImgHeli[i]=m_pGuienv->addImage(m_pWarnTexHeli[i][0],cWarnPos[i],true,m_pHeliWarnings);
+    }
   }
 
   char sInstruments[][0xFF]={
@@ -124,7 +148,7 @@ CCockpitPlane::~CCockpitPlane() {
 
 video::ITexture *CCockpitPlane::getTexture() { return m_pTarget; }
 
-void CCockpitPlane::update() {
+void CCockpitPlane::update(bool bPlane) {
   f32 fDummy=m_fHeading+180.0f;
 
   while (fDummy<  0.0f) fDummy+=360.0f;
@@ -136,6 +160,15 @@ void CCockpitPlane::update() {
   m_pInstruments[3]->SetValue(m_fPower+25.0f);
   m_pInstruments[4]->SetValue(m_fVelVert+50.0f);
 
+  if (bPlane) {
+    m_pPlaneWarnings->setVisible(true);
+    m_pHeliWarnings->setVisible(false);
+  }
+  else {
+    m_pPlaneWarnings->setVisible(false);
+    m_pHeliWarnings->setVisible(true);
+  }
+
   m_pDrv->setRenderTarget(m_pElement,true,true,video::SColor(0xFF,0xFF,0x80,0x80));
   m_pRttSmgr->drawAll();
   m_pDrv->setRenderTarget(m_pTarget,true,true,video::SColor(0xFF,0xFF,0xD0,0x80));
@@ -146,8 +179,12 @@ void CCockpitPlane::update() {
   m_pDrv->setRenderTarget(video::ERT_FRAME_BUFFER);
 }
 
-void CCockpitPlane::setWarnState(u32 iWarn, u32 iState) {
-  m_pWarnImg[iWarn]->setImage(m_pWarnTex[iWarn][iState]);
+void CCockpitPlane::setWarnStatePlane(u32 iWarn, u32 iState) {
+  m_pWarnImgPlane[iWarn]->setImage(m_pWarnTexPlane[iWarn][iState]);
+}
+
+void CCockpitPlane::setWarnStateHeli(u32 iWarn, u32 iState) {
+  m_pWarnImgHeli[iWarn]->setImage(m_pWarnTexHeli[iWarn][iState]);
 }
 
 void CCockpitPlane::setHorizon(core::vector3df vRot, core::vector3df vUp) {
