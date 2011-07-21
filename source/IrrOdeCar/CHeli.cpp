@@ -17,6 +17,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
     m_bMissileCam=false;
     m_bBackView=false;
     m_bInternal=false;
+    m_iShotsFired=0;
 
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -196,6 +197,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
         p->setTarget(m_pTargetSelector->getTarget());
         m_bLeft=!m_bLeft;
+        m_iShotsFired++;
       }
 
       if (m_pController->get(m_pCtrls[eHeliToggleCam])) {
@@ -260,10 +262,9 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
 
     if (m_pCockpit!=NULL && m_bActive) {
       core::vector3df vPos=m_pHeliBody->getPosition();
-      f32 fSpeed=m_pHeliBody->getLinearVelocity().getLength();
 
       m_pCockpit->setAltitude(vPos.Y);
-      m_pCockpit->setSpeed(fSpeed);
+      m_pCockpit->setSpeed(m_pAero->getForewardVel());
       m_pCockpit->setPower(100.0f*m_fThrust);
       m_pCockpit->setVelVert(m_pHeliBody->getLinearVelocity().Y);
 
@@ -290,7 +291,7 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_pCockpit->setTargetDist(0.0f);
       }
 
-      //m_pCockpit->setShotsFired(m_iShotsFired);
+      m_pCockpit->setShotsFired(m_iShotsFired);
       m_pCockpit->setHits(m_iHits);
 
       m_pTab->setVisible(false);
