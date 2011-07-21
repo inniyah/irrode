@@ -61,7 +61,8 @@ class CHeli : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEvent
     CTargetSelector *m_pTargetSelector;
 
     const u32 *m_pCtrls;
-    u32 m_iLastShot;
+    u32 m_iLastShot,
+        m_iShotsFired;
     s32 m_iNextCp;
     f32 m_fApDist;
 

@@ -34,7 +34,7 @@ class CCockpitPlane : public IRenderToTexture {
     scene::ISceneNode       *m_pHorizon;
     scene::ICameraSceneNode *m_pCam;
 
-    gui::CNrpNeedleIndicator *m_pInstruments[5];
+    gui::CNrpNeedleIndicator *m_pInstruments[6];
 
     f32 m_fAltitude,
         m_fSpeed,
