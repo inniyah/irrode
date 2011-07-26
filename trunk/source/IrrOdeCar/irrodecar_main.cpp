@@ -384,14 +384,7 @@ int main(int argc, char** argv) {
     theMenu->addButtonForState(p);
   }
 
-  scene::ISceneManager *pRttManager=smgr->createNewSceneManager();
-	scene::ICameraSceneNode *pCam=pRttManager->addCameraSceneNode();
-
-	pCam->setPosition(core::vector3df(0,0,20));
-	pCam->setTarget(core::vector3df(0,0,0));
-	pRttManager->setActiveCamera(pCam);
-
-  CCockpitPlane *pCockpit=new CCockpitPlane(device,pRttManager);
+  CCockpitPlane *pCockpit=new CCockpitPlane(device);
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit);

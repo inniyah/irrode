@@ -6,7 +6,7 @@
 
 namespace irr {
   namespace gui {
-    class CNrpNeedleIndicator;
+    class CGUINeedleIndicator;
   }
 }
 
@@ -34,7 +34,7 @@ class CCockpitPlane : public IRenderToTexture {
     scene::ISceneNode       *m_pHorizon;
     scene::ICameraSceneNode *m_pCam;
 
-    gui::CNrpNeedleIndicator *m_pInstruments[6];
+    gui::CGUINeedleIndicator *m_pInstruments[6];
 
     f32 m_fAltitude,
         m_fSpeed,
@@ -43,7 +43,7 @@ class CCockpitPlane : public IRenderToTexture {
         m_fVelVert;
 
   public:
-    CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRttSmgr);
+    CCockpitPlane(IrrlichtDevice *pDevice);
     virtual ~CCockpitPlane();
 
     video::ITexture *getTexture();
