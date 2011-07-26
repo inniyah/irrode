@@ -1,14 +1,21 @@
   #include <irrlicht.h>
   #include <CCockpitPlane.h>
-  #include <nrpneedleindicator.h>
+  #include <CGUINeedleIndicator.h>
 
 using namespace irr;
 
-CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRttSmgr) : IRenderToTexture(pDevice) {
+CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice) : IRenderToTexture(pDevice) {
   m_pGuienv =pDevice->getGUIEnvironment();
   m_pDrv    =pDevice->getVideoDriver();
   m_pSmgr   =pDevice->getSceneManager();
-  m_pRttSmgr=pRttSmgr;
+
+  m_pRttSmgr=m_pSmgr->createNewSceneManager();
+	scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
+
+	pCam->setPosition(core::vector3df(0,0,20));
+	pCam->setTarget(core::vector3df(0,0,0));
+	pCam->setFOV(10.0f);
+	m_pRttSmgr->setActiveCamera(pCam);
 
   m_pElement=m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(128,128));
   m_pTarget =m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(512,512));
@@ -95,28 +102,38 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, scene::ISceneManager *pRtt
   };
 
   for (u32 i=0; i<6; i++) {
-    m_pInstruments[i]=new gui::CNrpNeedleIndicator(L"",m_pGuienv,m_pTab,-1,cRect[i]);
-    m_pInstruments[i]->SetMajorTicks(0);
-    m_pInstruments[i]->SetMinorTicks(0);
-    m_pInstruments[i]->SetAnimated(false);
-    m_pInstruments[i]->SetBackgroundTexture(m_pDrv->getTexture(sInstruments[i]));
-    m_pInstruments[i]->setNeedleColor(video::SColor(0xFF,0,0,0));
+    m_pInstruments[i]=new gui::CGUINeedleIndicator(m_pGuienv,m_pTab,-1,cRect[i]);
+    m_pInstruments[i]->setBackground(m_pDrv->getTexture(sInstruments[i]));
+    m_pInstruments[i]->addNeedle(video::SColor(0xFF,0,0,0),0.9f,0.05f,1.0f);
+
     switch (i) {
       case 0:
       case 5:
-        m_pInstruments[i]->SetRange(0.0f, 200.0f);
+        m_pInstruments[i]->setRange(0.0f, 200.0f);
+        m_pInstruments[i]->setAngleRange(0.0f,270.0f);
+        m_pInstruments[i]->setAngleOffset(45.0f);
         break;
 
-      case 1: m_pInstruments[i]->SetRange(0.0f,1000.0f); break;
-      case 2:
-        m_pInstruments[i]->SetRange(0.0f, 360.0f);
-        m_pInstruments[i]->SetGapAngle(0.0f);
-        m_pInstruments[i]->setDrawLastTick(false);
+      case 1:
+        m_pInstruments[i]->setRange(0.0f,1000.0f);
+        m_pInstruments[i]->addNeedle(video::SColor(0xFF,0x80,0,0),0.5f,0.03f,10.0f);
         break;
-      case 3: m_pInstruments[i]->SetRange(0.0f,125.0f); m_pInstruments[i]->SetValue(25.0f); break;
+
+      case 2:
+        m_pInstruments[i]->setRange(0.0f, 360.0f);
+        m_pInstruments[i]->setAngleOffset(-90.0f);
+        break;
+
+      case 3:
+        m_pInstruments[i]->setRange(-25.0f,100.0f);
+        m_pInstruments[i]->setAngleRange(-45.0f,240.0f);
+        m_pInstruments[i]->setAngleOffset(90.0f);
+        break;
+
       case 4:
-        m_pInstruments[i]->SetRange(0.0f,100.0f);
-        m_pInstruments[i]->SetValue(50.0f);
+        m_pInstruments[i]->setRange(-50.0f,50.0f);
+        m_pInstruments[i]->setAngleRange(-135.0f,135.0f);
+        m_pInstruments[i]->setAngleOffset(90.0f);
         break;
     }
   }
@@ -160,12 +177,12 @@ void CCockpitPlane::update(bool bPlane) {
   while (fDummy<  0.0f) fDummy+=360.0f;
   while (fDummy>360.0f) fDummy-=360.0f;
 
-  m_pInstruments[0]->SetValue(m_fSpeed);
-  m_pInstruments[1]->SetValue(m_fAltitude);
-  m_pInstruments[2]->SetValue(fDummy);
-  m_pInstruments[3]->SetValue(m_fPower+25.0f);
-  m_pInstruments[4]->SetValue(m_fVelVert+50.0f);
-  m_pInstruments[5]->SetValue(m_fSpeed);
+  m_pInstruments[0]->setValue(m_fSpeed);
+  m_pInstruments[1]->setValue(m_fAltitude);
+  m_pInstruments[2]->setValue(fDummy);
+  m_pInstruments[3]->setValue(m_fPower);
+  m_pInstruments[4]->setValue(m_fVelVert);
+  m_pInstruments[5]->setValue(m_fSpeed);
 
   if (bPlane) {
     m_pPlaneWarnings->setVisible(true);

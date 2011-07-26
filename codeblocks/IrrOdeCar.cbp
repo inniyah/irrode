@@ -86,6 +86,7 @@
 		<Unit filename="..\include\IrrOdeCar\CController.h" />
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
 		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
+		<Unit filename="..\include\IrrOdeCar\CGUINeedleIndicator.h" />
 		<Unit filename="..\include\IrrOdeCar\CHeli.h" />
 		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarState.h" />
 		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
@@ -98,9 +99,7 @@
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\CTargetSelector.h" />
 		<Unit filename="..\include\IrrOdeCar\IRenderToTexture.h" />
-		<Unit filename="..\include\IrrOdeCar\NrpRotatableImage.h" />
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
-		<Unit filename="..\include\IrrOdeCar\nrpneedleindicator.h" />
 		<Unit filename="..\source\IrrOdeCar\CAutoPilot.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitPlane.cpp" />
@@ -108,6 +107,7 @@
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CGUINeedleIndicator.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CHeli.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarState.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />
@@ -119,10 +119,8 @@
 		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTargetSelector.cpp" />
-		<Unit filename="..\source\IrrOdeCar\NrpRotatableImage.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
 		<Unit filename="..\source\IrrOdeCar\irrodecar_main.cpp" />
-		<Unit filename="..\source\IrrOdeCar\nrpneedleindicator.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger>
