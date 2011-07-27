@@ -69,11 +69,6 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
     sprintf(s,"heli_hi_%s",m_pHeliBody->getName());
     printf("name: %s\n",s);
     m_pCockpit=pCockpit;
-    scene::ISceneNode *pHeliHi=m_pSmgr->getSceneNodeFromName(s);
-
-    if (pCockpit!=NULL && pHeliHi!=NULL) {
-      pHeliHi->getMaterial(7).setTexture(0,pCockpit->getTexture());
-    }
   }
 }
 

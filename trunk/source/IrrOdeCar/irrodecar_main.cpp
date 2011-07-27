@@ -384,7 +384,7 @@ int main(int argc, char** argv) {
     theMenu->addButtonForState(p);
   }
 
-  CCockpitPlane *pCockpit=new CCockpitPlane(device);
+  CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit);

@@ -106,20 +106,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
     m_bLeftMissile=true;
     m_bInitialized=true;
-
-    c8 s[0xFF];
-    sprintf(s,"plane_hi_%s",m_pPlaneBody->getName());
     m_pCockpit=pCockpit;
-    scene::ISceneNode *pPlaneHi=m_pSmgr->getSceneNodeFromName(s);
-
-    if (pCockpit!=NULL && pPlaneHi!=NULL) {
-      for (u32 i=0; i<pPlaneHi->getMaterialCount(); i++) {
-        const char *s=core::stringc(pPlaneHi->getMaterial(i).getTexture(0)->getName()).c_str();
-        if (strstr(s,"instruments")) {
-          pPlaneHi->getMaterial(i).setTexture(0,pCockpit->getTexture());
-        }
-      }
-    }
   }
 
   m_iNextCp=-1;
