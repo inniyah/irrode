@@ -14,12 +14,8 @@ using namespace irr;
 
 class CCockpitPlane : public IRenderToTexture {
   protected:
-    gui::IGUIEnvironment    *m_pGuienv;
-    video::IVideoDriver     *m_pDrv;
-    scene::ISceneManager    *m_pSmgr,
-                            *m_pRttSmgr;
-    video::ITexture         *m_pTarget,
-                            *m_pElement,
+    scene::ISceneManager    *m_pRttSmgr;
+    video::ITexture         *m_pElement,
                             *m_pWarnTexPlane[4][4],
                             *m_pWarnTexHeli[2][4];
     gui::IGUIImage          *m_pWarnImgPlane[4],
@@ -43,10 +39,8 @@ class CCockpitPlane : public IRenderToTexture {
         m_fVelVert;
 
   public:
-    CCockpitPlane(IrrlichtDevice *pDevice);
+    CCockpitPlane(IrrlichtDevice *pDevice, const char *sName);
     virtual ~CCockpitPlane();
-
-    video::ITexture *getTexture();
 
     virtual void update(bool bPlane);
 

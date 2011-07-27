@@ -4,11 +4,7 @@
 
 using namespace irr;
 
-CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice) : IRenderToTexture(pDevice) {
-  m_pGuienv =pDevice->getGUIEnvironment();
-  m_pDrv    =pDevice->getVideoDriver();
-  m_pSmgr   =pDevice->getSceneManager();
-
+CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,core::dimension2d<u32>(512,512)) {
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 	scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
 
@@ -18,7 +14,6 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice) : IRenderToTexture(pDevice
 	m_pRttSmgr->setActiveCamera(pCam);
 
   m_pElement=m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(128,128));
-  m_pTarget =m_pDrv->addRenderTargetTexture(core::dimension2d<u32>(512,512));
 
   m_pCam=m_pRttSmgr->addCameraSceneNode();
   m_pCam->setPosition(core::vector3df(0,0,-1.75f));
@@ -164,12 +159,14 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice) : IRenderToTexture(pDevice
   m_fSpeed   =0.0f;
   m_fPower   =0.0f;
   m_fHeading =0.0f;
+
+  u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
+  printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 }
 
 CCockpitPlane::~CCockpitPlane() {
+  m_pElement->drop();
 }
-
-video::ITexture *CCockpitPlane::getTexture() { return m_pTarget; }
 
 void CCockpitPlane::update(bool bPlane) {
   f32 fDummy=m_fHeading+180.0f;
@@ -199,12 +196,11 @@ void CCockpitPlane::update(bool bPlane) {
 
   m_pDrv->setRenderTarget(m_pElement,true,true,video::SColor(0xFF,0xFF,0x80,0x80));
   m_pRttSmgr->drawAll();
-  m_pDrv->setRenderTarget(m_pTarget,true,true,video::SColor(0xFF,0xFF,0xD0,0x80));
+  startRttUpdate();
   m_pTab->setVisible(true);
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
-
-  m_pDrv->setRenderTarget(video::ERT_FRAME_BUFFER);
+  endRttUpdate();
 }
 
 void CCockpitPlane::setWarnStatePlane(u32 iWarn, u32 iState) {
