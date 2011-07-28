@@ -23,7 +23,7 @@ enum _IRR_ODE_SPACE_TYPE {
 
 class CIrrOdeSpace : public CIrrOdeSceneNode {
   protected:
-    u32 m_iSpaceId;
+    s32 m_iSpaceId;
     _IRR_ODE_SPACE_TYPE m_iType;
     CIrrOdeSpace *m_pParentSpace;
     CIrrOdeWorld *m_pWorld;
