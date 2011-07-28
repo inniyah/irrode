@@ -222,8 +222,30 @@ core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
   return m_lWorlds;
 }
 
+static core::array<core::stringc> g_aParamNames;
+static core::array<const c8 *> g_aC8ParamNames;
+
+void CIrrOdeManager::updateSurfaceParameterList() {
+  g_aParamNames.clear();
+  g_aC8ParamNames.clear();
+
+  list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++) {
+    core::stringc s=((*it)->getName());
+    if (s!="") {
+      bool bAdd=true;
+      for (u32 i=0; i<g_aParamNames.size() && bAdd; i++) if (g_aParamNames[i]==s) bAdd=false;
+      if (bAdd) g_aParamNames.push_back(s);
+    }
+  }
+
+  for (u32 i=0; i<g_aParamNames.size(); i++) g_aC8ParamNames.push_back(g_aParamNames[i].c_str());
+  g_aC8ParamNames.push_back(NULL);
+}
+
 void CIrrOdeManager::addSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
   m_lParamList.push_back(pParam);
+  updateSurfaceParameterList();
 }
 
 void CIrrOdeManager::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
@@ -231,6 +253,7 @@ void CIrrOdeManager::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
   for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
     if ((*it)==pParam) {
       m_lParamList.erase(it);
+      updateSurfaceParameterList();
       return;
     }
 }
@@ -261,6 +284,10 @@ CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
     printf("not found!\n");
   #endif
 	return NULL;
+}
+
+const c8 *const *CIrrOdeManager::getSurfaceParameterList() {
+  return g_aC8ParamNames.const_pointer();
 }
 
 void CIrrOdeManager::addStepMotor(IIrrOdeStepMotor *pMotor) {

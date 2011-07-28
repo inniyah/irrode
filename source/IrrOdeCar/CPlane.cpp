@@ -381,7 +381,7 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       m_pCockpit->setWarnStatePlane(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApPlaneLowAlt?2:1:0);
       m_pCockpit->setWarnStatePlane(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
       m_pCockpit->setWarnStatePlane(2,m_pBrakes[0]->getForce()>20.0f?2:1);
-      m_pCockpit->setWarnStatePlane(3,fSpeed<5.0f?0:fSpeed<15.0f?3:fSpeed<30.0f?2:1);
+      m_pCockpit->setWarnStatePlane(3,fSpeed<5.0f?0:fSpeed<30.0f?3:fSpeed<45.0f?2:1);
 
       v=m_pPlaneBody->getAbsoluteTransformation().getRotationDegrees();
       m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
