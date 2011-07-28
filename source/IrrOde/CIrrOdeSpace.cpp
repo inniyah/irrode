@@ -6,6 +6,13 @@
 namespace irr {
 namespace ode {
 
+const c8 *const g_sSpaceTypes[]={
+  "OdeSimpleSpace",
+  "OdeHashSpace",
+  "OdeQuadtreeSpace",
+  NULL
+};
+
 CIrrOdeSpace::CIrrOdeSpace(ISceneNode *parent,ISceneManager *mgr,s32 id,
                            const vector3df &position, const vector3df &rotation, const vector3df &scale) :
                            CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale) {
@@ -51,14 +58,17 @@ void CIrrOdeSpace::initPhysics() {
 
   switch (m_iType) {
     case eIrrOdeSpaceSimple:
+      printf("**** simple space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
       m_iSpaceId=m_pOdeDevice->spaceCreateSimple(m_pParentSpace?m_pParentSpace->getSpaceId():0);
       break;
 
     case eIrrOdeSpaceHash:
+      printf("**** hash space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
       m_iSpaceId=m_pOdeDevice->spaceCreateHash(m_pParentSpace?m_pParentSpace->getSpaceId():0);
       break;
 
     case eIrrOdeSpaceQuadTree:
+      printf("**** quadtree space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
       m_iSpaceId=m_pOdeDevice->spaceCreateQuadTree(m_pParentSpace?m_pParentSpace->getSpaceId():0,m_cCenter,m_cExtents,m_iDepth);
       break;
 
@@ -113,7 +123,8 @@ _IRR_ODE_SPACE_TYPE CIrrOdeSpace::getType() {
 void CIrrOdeSpace::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
-  out->addInt("SpaceType",m_iType );
+  out->addEnum("SpaceType",m_iType,g_sSpaceTypes);
+
   out->addInt("Depth"    ,m_iDepth);
 
   out->addVector3d("Center" ,m_cCenter );
@@ -123,7 +134,7 @@ void CIrrOdeSpace::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
 void CIrrOdeSpace::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
-  m_iType =(_IRR_ODE_SPACE_TYPE)in->getAttributeAsInt("SpaceType");
+  m_iType =(_IRR_ODE_SPACE_TYPE)in->getAttributeAsEnumeration("SpaceType",g_sSpaceTypes);//in->getAttributeAsInt("SpaceType");
   m_iDepth=in->getAttributeAsInt("Depth"    );
 
   m_cCenter =in->getAttributeAsVector3d("Center" );
