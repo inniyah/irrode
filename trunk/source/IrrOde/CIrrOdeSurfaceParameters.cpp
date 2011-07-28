@@ -156,11 +156,10 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 
   if (iIdx==0) strcpy(sGroup,""); else sprintf(sGroup,"_mat%i",iIdx+1);
 
-	sprintf(sName,"name%s",sGroup); out->addString(sName,m_sName.c_str());
+	sprintf(sName,"useDefined%s",sGroup); out->addBool(sName,m_bUseOther);
 
-	sprintf(sName,"useDefined%s",sGroup); out->addBool(sName,(pOther==this || m_sName=="")?false:m_bUseOther);
-
-	if (!m_bUseOther || m_sName=="" || pOther==NULL || pOther==this) {
+  if (!m_bUseOther) {
+  	sprintf(sName,"name%s",sGroup); out->addString(sName,m_sName.c_str());
 		sprintf(sName,"mode_mu2%s"      ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2      ));
 		sprintf(sName,"mode_fdir1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1    ));
 		sprintf(sName,"mode_bounce%s"   ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce   ));
@@ -199,6 +198,10 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 		  }
 		}
 	}
+  else {  //user other surface parameters
+    sprintf(sName,"name%s",sGroup); //out->addString(sName,m_sName.c_str());
+    out->addEnum(sName,core::stringc(m_sName).c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
+  }
 }
 
 void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) {
@@ -212,10 +215,9 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 
 	sprintf(sName,"name%s",sGroup); m_sName=in->getAttributeAsString(sName);
 
-	if (pOther==this || m_sName=="") m_bUseOther=false;
 	sprintf(sName,"useDefined%s",sGroup); m_bUseOther=in->getAttributeAsBool(sName);
 
-	if (!m_bUseOther || m_sName=="" || pOther==NULL || pOther==this) {
+	if (!m_bUseOther) {
 		sprintf(sName,"mode_mu2%s"      ,sGroup); setModeMu2      (in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_fdir1%s"    ,sGroup); setModeFDir1    (in->getAttributeAsBool(sName));
 		sprintf(sName,"mode_bounce%s"   ,sGroup); setModeBounce   (in->getAttributeAsBool(sName));
@@ -255,7 +257,7 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 		}
 	}
 	else {
-		pOther->copy(this);
+		if (pOther!=NULL) pOther->copy(this);
 	}
 }
 

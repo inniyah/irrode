@@ -49,6 +49,7 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     ~CIrrOdeManager();
 
     bool isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode);
+    void updateSurfaceParameterList();
 
   public:
     static CIrrOdeManager *getSharedInstance();   /*!< get a pointer to the singleton instance of this class */
@@ -81,6 +82,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
 		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
 		CIrrOdeSurfaceParameters *getSurfaceParameter(core::stringw sName);
+
+    const c8 *const *getSurfaceParameterList();
 
 		u32 getFrameNo() { return m_iFrameNo; }
 
