@@ -160,6 +160,7 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 
   if (!m_bUseOther) {
   	sprintf(sName,"name%s",sGroup); out->addString(sName,m_sName.c_str());
+
 		sprintf(sName,"mode_mu2%s"      ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2      ));
 		sprintf(sName,"mode_fdir1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1    ));
 		sprintf(sName,"mode_bounce%s"   ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce   ));
@@ -258,6 +259,7 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 	}
 	else {
 		if (pOther!=NULL) pOther->copy(this);
+    m_bUseOther=true;
 	}
 }
 
