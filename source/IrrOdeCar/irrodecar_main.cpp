@@ -201,64 +201,32 @@ int main(int argc, char** argv) {
   pController->createAxis(iCtrls[1][eTankCannonUp  ],iCtrls[1][eTankCannonDown ]);
   pController->createAxis(iCtrls[1][eTankCannonLeft],iCtrls[1][eTankCannonRight]);
 
-  //3rd in row: the helicopter
-  iCtrls[2][eHeliYawLeft  ]=pController->addItem(2,stringw(L"Yaw Left"            ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliYawRight ]=pController->addItem(2,stringw(L"Yaw Right"           ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliRollLeft ]=pController->addItem(2,stringw(L"Roll Left"           ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliRollRight]=pController->addItem(2,stringw(L"Roll Right"          ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPitchUp  ]=pController->addItem(2,stringw(L"Pitch Up"            ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPitchDown]=pController->addItem(2,stringw(L"Pitch Down"          ),KEY_UP    ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliPowerUp  ]=pController->addItem(2,stringw(L"Power Plus"          ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-  iCtrls[2][eHeliPowerDown]=pController->addItem(2,stringw(L"Power Minus"         ),KEY_KEY_S ,CIrrCC::eCtrlFader);
-  iCtrls[2][eHeliFire     ]=pController->addItem(2,stringw(L"Fire Missile"        ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliToggleCam]=pController->addItem(2,stringw(L"Toggle Cam"          ),KEY_KEY_V ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliFlip     ]=pController->addItem(2,stringw(L"Flip"                ),KEY_RETURN,CIrrCC::eCtrlButton);
-  iCtrls[2][eHeliAutoPilot]=pController->addItem(2,stringw(L"Autopilot"           ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliTarget   ]=pController->addItem(2,stringw(L"Select Target"       ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliInternal ]=pController->addItem(2,stringw(L"Toggle Internal View"),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eHeliCamLeft  ]=pController->addItem(3,stringw(L"Camera Left"         ),KEY_KEY_Y ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliCamRight ]=pController->addItem(3,stringw(L"Camera Right"        ),KEY_KEY_C ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eHeliCamCenter]=pController->addItem(3,stringw(L"Center Camera"       ),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroPitchUp      ]=pController->addItem(2,stringw("Pitch Up"      ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroPitchDown    ]=pController->addItem(2,stringw("Pitch Down"    ),KEY_UP    ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroRollLeft     ]=pController->addItem(2,stringw("Roll Left"     ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroRollRight    ]=pController->addItem(2,stringw("Roll Right"    ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroYawLeft      ]=pController->addItem(2,stringw("Yaw Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroYawRight     ]=pController->addItem(2,stringw("Yaw Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroPowerUp      ]=pController->addItem(2,stringw("Power Up"      ),KEY_KEY_W ,CIrrCC::eCtrlFader);
+  iCtrls[2][eAeroPowerDown    ]=pController->addItem(2,stringw("Power Down"    ),KEY_KEY_S ,CIrrCC::eCtrlFader);
+  iCtrls[2][eAeroPowerZero    ]=pController->addItem(2,stringw("Power Zero"    ),KEY_KEY_Z ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroBrake        ]=pController->addItem(2,stringw("Wheel Brake"   ),KEY_KEY_B ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroFirePrimary  ]=pController->addItem(2,stringw("Fire Primary"  ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroFireSecondary]=pController->addItem(2,stringw("Fire Secondary"),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroSelectTarget ]=pController->addItem(2,stringw("Select Target" ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroAutoPilot    ]=pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroToggleCam    ]=pController->addItem(2,stringw("Missile Cam"   ),KEY_KEY_M ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroInternalView ]=pController->addItem(2,stringw("Internal View" ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroCamLeft      ]=pController->addItem(2,stringw("Camera Left"   ),KEY_KEY_Y ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroCamRight     ]=pController->addItem(2,stringw("Camera Right"  ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroCamCenter    ]=pController->addItem(2,stringw("Center Camera" ),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroFlip         ]=pController->addItem(2,stringw("Flip"          ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
 
-  //the helicopter gets three axes: pitch, roll and yaw...
-  pController->createAxis(iCtrls[2][eHeliYawLeft ],iCtrls[2][eHeliYawRight ]);
-  pController->createAxis(iCtrls[2][eHeliRollLeft],iCtrls[2][eHeliRollRight]);
-  pController->createAxis(iCtrls[2][eHeliPitchUp ],iCtrls[2][eHeliPitchDown]);
-  pController->createAxis(iCtrls[2][eHeliCamLeft ],iCtrls[2][eHeliCamRight ]);
+  pController->createAxis(iCtrls[2][eAeroYawLeft ],iCtrls[2][eAeroYawRight ]);
+  pController->createAxis(iCtrls[2][eAeroRollLeft],iCtrls[2][eAeroRollRight]);
+  pController->createAxis(iCtrls[2][eAeroPitchUp ],iCtrls[2][eAeroPitchDown]);
 
-  //...and one fader for the helicopter's thrust control
-  pController->createFader(iCtrls[2][eHeliPowerUp],iCtrls[2][eHeliPowerDown],10,0.01f);
-
-  //last but not least: the airplane. This one gets the most controls
-  iCtrls[3][ePlaneYawLeft  ]=pController->addItem(3,stringw(L"Yaw Left"            ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneYawRight ]=pController->addItem(3,stringw(L"Yaw Right"           ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneRollLeft ]=pController->addItem(3,stringw(L"Roll Left"           ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneRollRight]=pController->addItem(3,stringw(L"Roll Right"          ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePitchUp  ]=pController->addItem(3,stringw(L"Pitch Up"            ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePitchDown]=pController->addItem(3,stringw(L"Pitch Down"          ),KEY_UP    ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlanePowerUp  ]=pController->addItem(3,stringw(L"Power Plus"          ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-  iCtrls[3][ePlanePowerDown]=pController->addItem(3,stringw(L"Power Minus"         ),KEY_KEY_S ,CIrrCC::eCtrlFader);
-  iCtrls[3][ePlanePowerZero]=pController->addItem(3,stringw(L"Power Zero"          ),KEY_KEY_Z ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneFire     ]=pController->addItem(3,stringw(L"Fire Missile"        ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneGun      ]=pController->addItem(3,stringw(L"Fire Gun"            ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneToggleCam]=pController->addItem(3,stringw(L"Toggle Cam"          ),KEY_KEY_V ,CIrrCC::eCtrlToggleButton );
-  iCtrls[3][ePlaneBrake    ]=pController->addItem(3,stringw(L"Wheel Brake"         ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneFlip     ]=pController->addItem(3,stringw(L"Flip"                ),KEY_KEY_F ,CIrrCC::eCtrlButton);
-  iCtrls[3][ePlaneAutoPilot]=pController->addItem(3,stringw(L"Autopilot"           ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneTarget   ]=pController->addItem(3,stringw(L"Select Target"       ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneInternal ]=pController->addItem(3,stringw(L"Toggle internal view"),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
-  iCtrls[3][ePlaneCamLeft  ]=pController->addItem(3,stringw(L"Camera Left"         ),KEY_KEY_Y ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneCamRight ]=pController->addItem(3,stringw(L"Camera Right"        ),KEY_KEY_C ,CIrrCC::eCtrlAxis);
-  iCtrls[3][ePlaneCamCenter]=pController->addItem(3,stringw(L"Center Camera"       ),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
-
-  //just like the helicopter the plane gets three axes (pitch, roll, yaw)...
-  pController->createAxis(iCtrls[3][ePlaneYawRight],iCtrls[3][ePlaneYawLeft  ]);
-  pController->createAxis(iCtrls[3][ePlanePitchUp ],iCtrls[3][ePlanePitchDown]);
-  pController->createAxis(iCtrls[3][ePlaneRollLeft],iCtrls[3][ePlaneRollRight]);
-  pController->createAxis(iCtrls[3][ePlaneCamLeft ],iCtrls[3][ePlaneCamRight ]);
-
-  //...and one fader for the engine control
-  pController->createFader(iCtrls[3][ePlanePowerUp],iCtrls[3][ePlanePowerDown],10,0.01f);
+  pController->createFader(iCtrls[2][eAeroPowerUp],iCtrls[2][eAeroPowerDown],10,0.01f);
 
   IVideoDriver *driver = device->getVideoDriver();
   ISceneManager *smgr = device->getSceneManager();
@@ -394,7 +362,7 @@ int main(int argc, char** argv) {
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit);
-    p->setCtrl((const u32 *)iCtrls[3]); p->setFpsInfo(pFps);
+    p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
