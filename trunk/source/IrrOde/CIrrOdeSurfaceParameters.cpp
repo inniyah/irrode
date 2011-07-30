@@ -140,10 +140,6 @@ bool CIrrOdeSurfaceParameters::getModeApprox1() {
 
 void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) const {
   c8 sGroup[0xFF],sName[0xFF];
-  CIrrOdeSurfaceParameters *pOther=NULL;
-  #ifndef _IRR_ODE_SURFACE_EDIT
-    pOther=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(m_sName);
-  #endif
 
   if (iIdx==0) strcpy(sGroup,""); else sprintf(sGroup,"_mat%i",iIdx+1);
 
@@ -190,10 +186,6 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 
 void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) {
   c8 sGroup[0xFF],sName[0xFF];
-  CIrrOdeSurfaceParameters *pOther=NULL;
-  #ifndef _IRR_ODE_SURFACE_EDIT
-    pOther=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(m_sName);
-  #endif
 
   if (iIdx==0) strcpy(sGroup,""); else sprintf(sGroup,"_mat%i",iIdx+1);
 
