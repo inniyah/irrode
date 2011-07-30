@@ -19,6 +19,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   m_iShotsFired=0;
   m_fApDist=0.0f;
   m_bInternalView=false;
+  m_fLookAngle=0.0f;
 
   m_pColMgr=pDevice->getSceneManager()->getSceneCollisionManager();
   m_cScreen=pDevice->getVideoDriver()->getScreenSize();
@@ -56,7 +57,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
     //intially we don't follow the bombs and look to the front
     m_bFollowBombCam=false;
-    m_bBackView=false;
 
     m_bAutoPilot=false;
     m_pAutoPilot=new CAutoPilot(m_pPlaneBody,m_pAero,m_pTorque,m_pMotor);
@@ -139,7 +139,7 @@ void CPlane::activate() {
   m_bActive=true;
 
   //get the parameters for the camera
-  vector3df pos=m_pPlaneBody->getRotation().rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+  vector3df pos=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,5,15)),
             up =m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
             tgt=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0  ,0));
 
@@ -169,12 +169,16 @@ u32 CPlane::update() {
   vector3df pos,tgt,up=m_pPlaneBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
 
   if (m_bInternalView) {
+    core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fLookAngle);
+
     pos=rot.rotationToDirection(vector3df(0,1.1,-0.6)),
     up =rot.rotationToDirection(vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(m_bBackView?vector3df(0,1.1,5):vector3df(0,1.1,-5));
+    tgt=rot.rotationToDirection(vector3df(lookAt.X,1.1,lookAt.Y));
   }
   else {
-    pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+    core::vector2df lookAt=core::vector2df(0.0f,15.0f).rotateBy(m_fLookAngle);
+
+    pos=rot.rotationToDirection(vector3df(lookAt.X,5,lookAt.Y)),
     up =rot.rotationToDirection(vector3df(0,0.1,0));
     tgt=rot.rotationToDirection(vector3df(0,5,0));
   }
@@ -302,8 +306,6 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
         m_pBrakes[1]->setForce(100.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
       }
 
-      m_bBackView=m_pController->get(m_pCtrls[ePlaneBackview])!=0.0f;
-
       if (m_pController->get(m_pCtrls[ePlaneToggleCam])!=0.0f) {
         m_pController->set(m_pCtrls[ePlaneToggleCam],0.0f);
         m_bFollowBombCam=!m_bFollowBombCam;
@@ -327,6 +329,27 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[ePlaneTarget])) {
         m_pController->set(m_pCtrls[ePlaneTarget],0.0f);
         m_pTargetSelector->selectOption();
+      }
+
+      if (m_pController->get(m_pCtrls[ePlaneCamLeft])>0.0f) {
+        if (m_fLookAngle<190.0f) m_fLookAngle+=0.5f;
+      }
+
+      if (m_pController->get(m_pCtrls[ePlaneCamRight])>0.0f) {
+        if (m_fLookAngle>-190.0f) m_fLookAngle-=0.5f;
+      }
+
+      if (m_pController->get(m_pCtrls[ePlaneCamCenter])) {
+        if (m_fLookAngle!=0.0f) {
+          if (m_fLookAngle>0.0f) {
+            m_fLookAngle-=5.0f;
+            if (m_fLookAngle<0.0f) m_fLookAngle=0.0f;
+          }
+          else {
+            m_fLookAngle+=5.0f;
+            if (m_fLookAngle>0.0f) m_fLookAngle=0.0f;
+          }
+        }
       }
     }
 

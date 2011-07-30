@@ -28,12 +28,14 @@ enum ePlaneControls {
   ePlaneFire,
   ePlaneGun,
   ePlaneToggleCam,
-  ePlaneBackview,
   ePlaneBrake,
   ePlaneFlip,
   ePlaneAutoPilot,
   ePlaneTarget,
-  ePlaneInternal
+  ePlaneInternal,
+  ePlaneCamLeft,
+  ePlaneCamRight,
+  ePlaneCamCenter
 };
 
 class CTargetSelector;
@@ -50,9 +52,9 @@ class CPlane : public CIrrOdeCarState, public IEventReceiver, public irr::ode::I
         m_fYaw,
         m_fPitch,
         m_fRoll,
-        m_fApDist;
+        m_fApDist,
+        m_fLookAngle;
     bool m_bFollowBombCam,
-         m_bBackView,
          m_bLeftMissile,
          m_bThreeWheeler,
          m_bAutoPilot,

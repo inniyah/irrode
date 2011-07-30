@@ -111,6 +111,8 @@ class CIrrOdeSceneNode : public scene::ISceneNode {
     #endif
 
     virtual void setParent(ISceneNode *newParent);
+
+    scene::ISceneNode *getChildByName(const c8 *sName, scene::ISceneNode *pParent);
 };
 
 } //namespace ode
