@@ -659,6 +659,7 @@ int main(int argc, char** argv) {
     guienv->drawAll();
 
     driver->endScene();
+    device->sleep(5,false);
   }
 
   device->drop();

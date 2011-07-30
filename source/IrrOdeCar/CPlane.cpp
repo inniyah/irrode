@@ -295,11 +295,11 @@ bool CPlane::onEvent(IIrrOdeEvent *pEvent) {
       }
 
       if (m_pBrakes[0]!=NULL) {
-        m_pBrakes[0]->setForce(150.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
+        m_pBrakes[0]->setForce(100.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
       }
 
       if (m_pBrakes[1]!=NULL) {
-        m_pBrakes[1]->setForce(150.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
+        m_pBrakes[1]->setForce(100.0f*m_pController->get(m_pCtrls[ePlaneBrake]));
       }
 
       m_bBackView=m_pController->get(m_pCtrls[ePlaneBackview])!=0.0f;

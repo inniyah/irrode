@@ -18,17 +18,19 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32
   #endif
 
   if (parent) {
-    while (m_aParams.size()<parent->getMaterialCount()) {
-      CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
+    while (m_aParamNames.size()<parent->getMaterialCount()) {
+      /*CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
       CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
       pParams->setStatic(m_pBody==NULL);
-      m_aParams.push_back(pParams);
+      m_aParams.push_back(pParams);*/
+      m_aParamNames.push_back("DefaultSurface");
     }
 
-    while (m_aParams.size()>parent->getMaterialCount()) {
-      m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
+    while (m_aParamNames.size()>parent->getMaterialCount()) {
+      /*m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
       delete m_aParams[m_aParams.size()-1];
-      m_aParams.erase(m_aParams.size()-1);
+      m_aParams.erase(m_aParams.size()-1);*/
+      m_aParamNames.erase(m_aParamNames.size()-1);
     }
   }
 
@@ -200,23 +202,27 @@ void CIrrOdeGeomTrimesh::setParent(ISceneNode *pParent) {
 
   if (pParent) {
     if (!pBody) {
-      while (m_aParams.size()<pParent->getMaterialCount()) {
-        CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
+      while (m_aParamNames.size()<pParent->getMaterialCount()) {
+        /*CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
         CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
-        pParams->setStatic(pBody==NULL);
-        m_aParams.push_back(pParams);
+        pParams->setStatic(m_pBody==NULL);
+        m_aParams.push_back(pParams);*/
+        m_aParamNames.push_back("DefaultSurface");
       }
-      while (m_aParams.size()>pParent->getMaterialCount()) {
-        m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
+
+      while (m_aParamNames.size()>pParent->getMaterialCount()) {
+        /*m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
         delete m_aParams[m_aParams.size()-1];
-        m_aParams.erase(m_aParams.size()-1);
+        m_aParams.erase(m_aParams.size()-1);*/
+        m_aParamNames.erase(m_aParamNames.size()-1);
       }
     }
     else
-      while (m_aParams.size()>1) {
-        m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
+      while (m_aParamNames.size()>1) {
+        /*m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
         delete m_aParams[m_aParams.size()-1];
-        m_aParams.erase(m_aParams.size()-1);
+        m_aParams.erase(m_aParams.size()-1);*/
+        m_aParamNames.erase(m_aParamNames.size()-1);
       }
   }
 }

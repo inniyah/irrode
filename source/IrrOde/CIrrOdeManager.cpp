@@ -269,11 +269,11 @@ CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
 	  #ifdef _TRACE_INIT_PHYSICS
 	    printf("no search name defined!\n");
     #endif
-	  return NULL;
+	  return &m_cNullSurface;
 	}
 
 	for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
-		if (sName==stringw((*it)->getName()) && !(*it)->doesUseDefined()) {
+		if (sName==stringw((*it)->getName())) {
 		  #ifdef _TRACE_INIT_PHYSICS
 		    printf("OK\n");
       #endif
@@ -283,7 +283,7 @@ CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
   #ifdef _TRACE_INIT_PHYSICS
     printf("not found!\n");
   #endif
-	return NULL;
+	return &m_cNullSurface;
 }
 
 const c8 *const *CIrrOdeManager::getSurfaceParameterList() {
@@ -332,7 +332,7 @@ CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) 
 	for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++) {
 		if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
 			CIrrOdeBody *p=reinterpret_cast<CIrrOdeBody *>(*it);
-      if (!wcscmp(sName,p->getParamName()) && !p->doesUseDefined()) return p;
+      if (!wcscmp(sName,p->getParamName())) return p;
 		}
 	}
 

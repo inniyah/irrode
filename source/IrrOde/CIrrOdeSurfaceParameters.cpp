@@ -21,8 +21,6 @@ CIrrOdeSurfaceParameters::CIrrOdeSurfaceParameters() {
   slip1     =0;
   slip2     =0;
 
-	m_bUseOther=false;
-
   m_fLinearDamp   =0.0f;
   m_fAngularDamp  =0.0f;
   m_fMaxLinearVel =0.0f;
@@ -140,13 +138,6 @@ bool CIrrOdeSurfaceParameters::getModeApprox1() {
   return (bool)(mode&eContactApprox1);
 }
 
-void CIrrOdeSurfaceParameters::initPhysics() {
-  #ifndef _IRR_ODE_SURFACE_EDIT
-    CIrrOdeSurfaceParameters *pOther=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(m_sName);
-    if (pOther) pOther->copy(this);
-  #endif
-}
-
 void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) const {
   c8 sGroup[0xFF],sName[0xFF];
   CIrrOdeSurfaceParameters *pOther=NULL;
@@ -156,53 +147,45 @@ void CIrrOdeSurfaceParameters::serializeAttributes(irr::io::IAttributes* out, ir
 
   if (iIdx==0) strcpy(sGroup,""); else sprintf(sGroup,"_mat%i",iIdx+1);
 
-	sprintf(sName,"useDefined%s",sGroup); out->addBool(sName,m_bUseOther);
+	sprintf(sName,"name%s",sGroup); out->addString(sName,m_sName.c_str());
 
-  if (!m_bUseOther) {
-  	sprintf(sName,"name%s",sGroup); out->addString(sName,m_sName.c_str());
+	sprintf(sName,"mode_mu2%s"      ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2      ));
+	sprintf(sName,"mode_fdir1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1    ));
+	sprintf(sName,"mode_bounce%s"   ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce   ));
+	sprintf(sName,"mode_softERP%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftERP  ));
+	sprintf(sName,"mode_softCFM%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftCFM  ));
+	sprintf(sName,"mode_motion1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion1  ));
+	sprintf(sName,"mode_motion2%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion2  ));
+	sprintf(sName,"mode_motionN%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotionN  ));
+	sprintf(sName,"mode_slip1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip1    ));
+	sprintf(sName,"mode_slip2%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip2    ));
+	sprintf(sName,"mode_approx1_1%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_1));
+	sprintf(sName,"mode_approx1_2%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_2));
 
-		sprintf(sName,"mode_mu2%s"      ,sGroup); out->addBool(sName,(bool)(mode&eContactMu2      ));
-		sprintf(sName,"mode_fdir1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactFDir1    ));
-		sprintf(sName,"mode_bounce%s"   ,sGroup); out->addBool(sName,(bool)(mode&eContactBounce   ));
-		sprintf(sName,"mode_softERP%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftERP  ));
-		sprintf(sName,"mode_softCFM%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactSoftCFM  ));
-		sprintf(sName,"mode_motion1%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion1  ));
-		sprintf(sName,"mode_motion2%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotion2  ));
-		sprintf(sName,"mode_motionN%s"  ,sGroup); out->addBool(sName,(bool)(mode&eContactMotionN  ));
-		sprintf(sName,"mode_slip1%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip1    ));
-		sprintf(sName,"mode_slip2%s"    ,sGroup); out->addBool(sName,(bool)(mode&eContactSlip2    ));
-		sprintf(sName,"mode_approx1_1%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_1));
-		sprintf(sName,"mode_approx1_2%s",sGroup); out->addBool(sName,(bool)(mode&eContactApprox1_2));
+	sprintf(sName,"mu%s"        ,sGroup); out->addFloat(sName,mu        );
+	sprintf(sName,"mu2%s"       ,sGroup); out->addFloat(sName,mu2       );
+	sprintf(sName,"bounce%s"    ,sGroup); out->addFloat(sName,bounce    );
+	sprintf(sName,"bounce_vel%s",sGroup); out->addFloat(sName,bounce_vel);
+	sprintf(sName,"soft_erp%s"  ,sGroup); out->addFloat(sName,soft_erp  );
+	sprintf(sName,"soft_cfm%s"  ,sGroup); out->addFloat(sName,soft_cfm  );
+	sprintf(sName,"motion1%s"   ,sGroup); out->addFloat(sName,motion1   );
+	sprintf(sName,"motion2%s"   ,sGroup); out->addFloat(sName,motion2   );
+	sprintf(sName,"motionN%s"   ,sGroup); out->addFloat(sName,motionN   );
+	sprintf(sName,"slip1%s"     ,sGroup); out->addFloat(sName,slip1     );
+	sprintf(sName,"slip2%s"     ,sGroup); out->addFloat(sName,slip2     );
 
-		sprintf(sName,"mu%s"        ,sGroup); out->addFloat(sName,mu        );
-		sprintf(sName,"mu2%s"       ,sGroup); out->addFloat(sName,mu2       );
-		sprintf(sName,"bounce%s"    ,sGroup); out->addFloat(sName,bounce    );
-		sprintf(sName,"bounce_vel%s",sGroup); out->addFloat(sName,bounce_vel);
-		sprintf(sName,"soft_erp%s"  ,sGroup); out->addFloat(sName,soft_erp  );
-		sprintf(sName,"soft_cfm%s"  ,sGroup); out->addFloat(sName,soft_cfm  );
-		sprintf(sName,"motion1%s"   ,sGroup); out->addFloat(sName,motion1   );
-		sprintf(sName,"motion2%s"   ,sGroup); out->addFloat(sName,motion2   );
-		sprintf(sName,"motionN%s"   ,sGroup); out->addFloat(sName,motionN   );
-		sprintf(sName,"slip1%s"     ,sGroup); out->addFloat(sName,slip1     );
-		sprintf(sName,"slip2%s"     ,sGroup); out->addFloat(sName,slip2     );
+	if (m_bStatic) {
+	  sprintf(sName,"damps%s",sGroup); out->addBool(sName,m_bDamps);
+	  if (m_bDamps) {
+	    sprintf(sName,"linearDamping%s" ,sGroup); out->addFloat(sName,m_fLinearDamp   );
+	    sprintf(sName,"angularDamping%s",sGroup); out->addFloat(sName,m_fAngularDamp  );
+	    sprintf(sName,"maxLinearVel%s"  ,sGroup); out->addFloat(sName,m_fMaxLinearVel );
+	    sprintf(sName,"maxAngularVel%s" ,sGroup); out->addFloat(sName,m_fMaxAngularVel);
 
-		if (m_bStatic) {
-		  sprintf(sName,"damps%s",sGroup); out->addBool(sName,m_bDamps);
-		  if (m_bDamps) {
-		    sprintf(sName,"linearDamping%s" ,sGroup); out->addFloat(sName,m_fLinearDamp   );
-		    sprintf(sName,"angularDamping%s",sGroup); out->addFloat(sName,m_fAngularDamp  );
-		    sprintf(sName,"maxLinearVel%s"  ,sGroup); out->addFloat(sName,m_fMaxLinearVel );
-		    sprintf(sName,"maxAngularVel%s" ,sGroup); out->addFloat(sName,m_fMaxAngularVel);
-
-		    if (m_fMaxLinearVel >0.0f) { sprintf(sName,"maxLVelDamping%s",sGroup); out->addFloat(sName,m_fMaxLVelDamp); }
-		    if (m_fMaxAngularVel>0.0f) { sprintf(sName,"maxAVelDamping%s",sGroup); out->addFloat(sName,m_fMaxAVelDamp); }
-		  }
-		}
+	    if (m_fMaxLinearVel >0.0f) { sprintf(sName,"maxLVelDamping%s",sGroup); out->addFloat(sName,m_fMaxLVelDamp); }
+	    if (m_fMaxAngularVel>0.0f) { sprintf(sName,"maxAVelDamping%s",sGroup); out->addFloat(sName,m_fMaxAVelDamp); }
+	  }
 	}
-  else {  //user other surface parameters
-    sprintf(sName,"name%s",sGroup); //out->addString(sName,m_sName.c_str());
-    out->addEnum(sName,core::stringc(m_sName).c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
-  }
 }
 
 void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) {
@@ -216,55 +199,46 @@ void CIrrOdeSurfaceParameters::deserializeAttributes(irr::io::IAttributes* in, i
 
 	sprintf(sName,"name%s",sGroup); m_sName=in->getAttributeAsString(sName);
 
-	sprintf(sName,"useDefined%s",sGroup); m_bUseOther=in->getAttributeAsBool(sName);
+	sprintf(sName,"mode_mu2%s"      ,sGroup); setModeMu2      (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_fdir1%s"    ,sGroup); setModeFDir1    (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_bounce%s"   ,sGroup); setModeBounce   (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_softERP%s"  ,sGroup); setModeSoftERP  (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_softCFM%s"  ,sGroup); setModeSoftCFM  (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_motion1%s"  ,sGroup); setModeMotion1  (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_motion2%s"  ,sGroup); setModeMotion2  (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_motionN%s"  ,sGroup); setModeMotionN  (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_slip1%s"    ,sGroup); setModeSlip1    (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_slip2%s"    ,sGroup); setModeSlip2    (in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_approx1_1%s",sGroup); setModeApprox1_1(in->getAttributeAsBool(sName));
+	sprintf(sName,"mode_approx1_2%s",sGroup); setModeApprox1_2(in->getAttributeAsBool(sName));
 
-	if (!m_bUseOther) {
-		sprintf(sName,"mode_mu2%s"      ,sGroup); setModeMu2      (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_fdir1%s"    ,sGroup); setModeFDir1    (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_bounce%s"   ,sGroup); setModeBounce   (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_softERP%s"  ,sGroup); setModeSoftERP  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_softCFM%s"  ,sGroup); setModeSoftCFM  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motion1%s"  ,sGroup); setModeMotion1  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motion2%s"  ,sGroup); setModeMotion2  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_motionN%s"  ,sGroup); setModeMotionN  (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_slip1%s"    ,sGroup); setModeSlip1    (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_slip2%s"    ,sGroup); setModeSlip2    (in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_approx1_1%s",sGroup); setModeApprox1_1(in->getAttributeAsBool(sName));
-		sprintf(sName,"mode_approx1_2%s",sGroup); setModeApprox1_2(in->getAttributeAsBool(sName));
+	sprintf(sName,"mu%s"        ,sGroup); mu        =in->getAttributeAsFloat(sName);
+	sprintf(sName,"mu2%s"       ,sGroup); mu2       =in->getAttributeAsFloat(sName);
+	sprintf(sName,"bounce%s"    ,sGroup); bounce    =in->getAttributeAsFloat(sName);
+	sprintf(sName,"bounce_vel%s",sGroup); bounce_vel=in->getAttributeAsFloat(sName);
+	sprintf(sName,"soft_erp%s"  ,sGroup); soft_erp  =in->getAttributeAsFloat(sName);
+	sprintf(sName,"soft_cfm%s"  ,sGroup); soft_cfm  =in->getAttributeAsFloat(sName);
+	sprintf(sName,"motion1%s"   ,sGroup); motion1   =in->getAttributeAsFloat(sName);
+	sprintf(sName,"motion2%s "  ,sGroup); motion2   =in->getAttributeAsFloat(sName);
+	sprintf(sName,"motionN%s"   ,sGroup); motionN   =in->getAttributeAsFloat(sName);
+	sprintf(sName,"slip1%s"     ,sGroup); slip1     =in->getAttributeAsFloat(sName);
+	sprintf(sName,"slip2%s"     ,sGroup); slip2     =in->getAttributeAsFloat(sName);
 
-		sprintf(sName,"mu%s"        ,sGroup); mu        =in->getAttributeAsFloat(sName);
-		sprintf(sName,"mu2%s"       ,sGroup); mu2       =in->getAttributeAsFloat(sName);
-		sprintf(sName,"bounce%s"    ,sGroup); bounce    =in->getAttributeAsFloat(sName);
-		sprintf(sName,"bounce_vel%s",sGroup); bounce_vel=in->getAttributeAsFloat(sName);
-		sprintf(sName,"soft_erp%s"  ,sGroup); soft_erp  =in->getAttributeAsFloat(sName);
-		sprintf(sName,"soft_cfm%s"  ,sGroup); soft_cfm  =in->getAttributeAsFloat(sName);
-		sprintf(sName,"motion1%s"   ,sGroup); motion1   =in->getAttributeAsFloat(sName);
-		sprintf(sName,"motion2%s "  ,sGroup); motion2   =in->getAttributeAsFloat(sName);
-		sprintf(sName,"motionN%s"   ,sGroup); motionN   =in->getAttributeAsFloat(sName);
-		sprintf(sName,"slip1%s"     ,sGroup); slip1     =in->getAttributeAsFloat(sName);
-		sprintf(sName,"slip2%s"     ,sGroup); slip2     =in->getAttributeAsFloat(sName);
+	if (m_bStatic) {
+	  sprintf(sName,"damps%s",sGroup); m_bDamps=in->getAttributeAsBool(sName);
+	  if (m_bDamps) {
+	    sprintf(sName,"linearDamping%s" ,sGroup); m_fLinearDamp   =in->getAttributeAsFloat(sName);
+	    sprintf(sName,"angularDamping%s",sGroup); m_fAngularDamp  =in->getAttributeAsFloat(sName);
+	    sprintf(sName,"maxLinearVel%s"  ,sGroup); m_fMaxLinearVel =in->getAttributeAsFloat(sName);
+	    sprintf(sName,"maxAngularVel%s" ,sGroup); m_fMaxAngularVel=in->getAttributeAsFloat(sName);
 
-		if (m_bStatic) {
-		  sprintf(sName,"damps%s",sGroup); m_bDamps=in->getAttributeAsBool(sName);
-		  if (m_bDamps) {
-		    sprintf(sName,"linearDamping%s" ,sGroup); m_fLinearDamp   =in->getAttributeAsFloat(sName);
-		    sprintf(sName,"angularDamping%s",sGroup); m_fAngularDamp  =in->getAttributeAsFloat(sName);
-		    sprintf(sName,"maxLinearVel%s"  ,sGroup); m_fMaxLinearVel =in->getAttributeAsFloat(sName);
-		    sprintf(sName,"maxAngularVel%s" ,sGroup); m_fMaxAngularVel=in->getAttributeAsFloat(sName);
-
-		    if (m_fMaxLinearVel >0.0f) { sprintf(sName,"maxLVelDamping%s",sGroup); m_fMaxLVelDamp=in->getAttributeAsFloat(sName); }
-		    if (m_fMaxAngularVel>0.0f) { sprintf(sName,"maxAVelDamping%s",sGroup); m_fMaxAVelDamp=in->getAttributeAsFloat(sName); }
-		  }
-		}
-	}
-	else {
-		if (pOther!=NULL) pOther->copy(this);
-    m_bUseOther=true;
+	    if (m_fMaxLinearVel >0.0f) { sprintf(sName,"maxLVelDamping%s",sGroup); m_fMaxLVelDamp=in->getAttributeAsFloat(sName); }
+	    if (m_fMaxAngularVel>0.0f) { sprintf(sName,"maxAVelDamping%s",sGroup); m_fMaxAVelDamp=in->getAttributeAsFloat(sName); }
+	  }
 	}
 }
 
 void CIrrOdeSurfaceParameters::copy(CIrrOdeSurfaceParameters *pDest) {
-  pDest->setUseDefined(m_bUseOther);
   pDest->setName(getName());
   pDest->mode=mode;
   pDest->mu=mu;
@@ -294,14 +268,6 @@ const wchar_t *CIrrOdeSurfaceParameters::getName() {
 
 void CIrrOdeSurfaceParameters::setName(const wchar_t *sName) {
   m_sName=sName;
-}
-
-bool CIrrOdeSurfaceParameters::doesUseDefined() {
-  return m_bUseOther;
-}
-
-void CIrrOdeSurfaceParameters::setUseDefined(bool b) {
-  m_bUseOther=b;
 }
 
 } //namespace ode

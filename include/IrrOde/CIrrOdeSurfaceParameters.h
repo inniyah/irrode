@@ -39,8 +39,6 @@ class CIrrOdeSurfaceParameters {
   protected:
 		stringw m_sName;
 
-		bool m_bUseOther;
-
     s32 mode;
     f32 mu,mu2;
     f32 bounce,bounce_vel;
@@ -64,10 +62,7 @@ class CIrrOdeSurfaceParameters {
 		const wchar_t *getName();
 		void setName(const wchar_t *sName);
 
-		bool doesUseDefined();
-		void setUseDefined(bool b);
-
-    void setModeMu2(bool bIn);        /**!< set the "mu2" contact flag */
+		void setModeMu2(bool bIn);        /**!< set the "mu2" contact flag */
     void setModeFDir1(bool bIn);      /**!< set the "FDir1" contact flag */
     void setModeBounce(bool bIn);     /**!< set the "bounce" contact flag */
     void setModeSoftERP(bool bIn);    /**!< set the "SoftERP" contact flag */
@@ -125,8 +120,6 @@ class CIrrOdeSurfaceParameters {
 
     virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options, u32 iIdx) const;
     virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options, u32 iIdx);
-
-   	void initPhysics();
 
    	/**
    	 * set this surface to be of a static or dynamic mesh
