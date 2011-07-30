@@ -243,5 +243,19 @@ void CIrrOdeSceneNode::cloneChildren(ISceneNode *pNewParent, ISceneManager *pNew
     (*it)->clone(pNewParent,pNewManager);
 }
 
+scene::ISceneNode *CIrrOdeSceneNode::getChildByName(const c8 *sName, scene::ISceneNode *pParent) {
+  if (!strcmp(sName,pParent->getName())) return pParent;
+
+  list<ISceneNode *> children=pParent->getChildren();
+  list<ISceneNode *>::Iterator it;
+
+  for (it=children.begin(); it!=children.end(); it++) {
+    scene::ISceneNode *pRet=getChildByName(sName,*it);
+    if (pRet!=NULL) return pRet;
+  }
+
+  return NULL;
+}
+
 } //namespace ode
 } //namespace irr

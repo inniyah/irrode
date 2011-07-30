@@ -15,9 +15,9 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
     m_pCam->setNearValue(0.1f);
     m_bLeft=true;
     m_bMissileCam=false;
-    m_bBackView=false;
     m_bInternal=false;
     m_iShotsFired=0;
+    m_fLookAngle=0.0f;
 
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -115,11 +115,15 @@ u32 CHeli::update() {
             up =m_pHeliBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
 
   if (m_bInternal) {
-    pos=rot.rotationToDirection(m_bBackView?core::vector3df(1.25,-0.15,-1.3):core::vector3df(0,-0.15,-1.3));
-    tgt=rot.rotationToDirection(m_bBackView?core::vector3df(1.25,-0.15,5):core::vector3df(0,-0.15,-5));
+    core::vector2df lookAt=core::vector2df(0,-5).rotateBy(m_fLookAngle);
+
+    pos=rot.rotationToDirection(core::vector3df(0,-0.15,-1.3));
+    tgt=rot.rotationToDirection(core::vector3df(lookAt.X,-0.15,lookAt.Y));
   }
   else {
-    pos=rot.rotationToDirection(m_bBackView?vector3df(0,5,-15):vector3df(0,5,15)),
+    core::vector2df lookAt=core::vector2df(0,15).rotateBy(m_fLookAngle);
+
+    pos=rot.rotationToDirection(vector3df(lookAt.X,5,lookAt.Y)),
     tgt=m_pHeliBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
   }
 
@@ -200,8 +204,6 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
         m_bMissileCam=!m_bMissileCam;
       }
 
-      m_bBackView=m_pController->get(m_pCtrls[eHeliBackView])!=0.0f;
-
       if (m_pController->get(m_pCtrls[eHeliInternal])) {
         m_pController->set(m_pCtrls[eHeliInternal],0.0f);
         m_bInternal=!m_bInternal;
@@ -220,6 +222,27 @@ bool CHeli::onEvent(IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eHeliTarget])) {
         m_pController->set(m_pCtrls[eHeliTarget],0.0f);
         m_pTargetSelector->selectOption();
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliCamLeft])>0.0f) {
+        if (m_fLookAngle<190.0f) m_fLookAngle+=0.5f;
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliCamRight])>0.0f) {
+        if (m_fLookAngle>-190.0f) m_fLookAngle-=0.5f;
+      }
+
+      if (m_pController->get(m_pCtrls[eHeliCamCenter])) {
+        if (m_fLookAngle!=0.0f) {
+          if (m_fLookAngle>0.0f) {
+            m_fLookAngle-=5.0f;
+            if (m_fLookAngle<0.0f) m_fLookAngle=0.0f;
+          }
+          else {
+            m_fLookAngle+=5.0f;
+            if (m_fLookAngle>0.0f) m_fLookAngle=0.0f;
+          }
+        }
       }
     }
 
