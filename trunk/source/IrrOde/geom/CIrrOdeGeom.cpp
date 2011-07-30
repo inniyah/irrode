@@ -32,10 +32,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
 	m_pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
 
-  CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
-  CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
-  pParams->setStatic(m_pBody==NULL);
-  m_aParams.push_back(pParams);
+  m_aParamNames.push_back("DefaultSurface");
 
   m_bCollide=true;
 
@@ -67,11 +64,6 @@ CIrrOdeGeom::~CIrrOdeGeom() {
     m_pOdeDevice->geomSetBody(m_iGeomId,NULL);
   }
 
-  for (u32 i=0; i<m_aParams.size(); i++) {
-    m_pOdeManager->removeSurfaceParameter(m_aParams[i]);
-    delete m_aParams[i];
-  }
-
   if (m_iGeomId) m_pOdeDevice->geomDestroy(m_iGeomId);
 }
 
@@ -92,15 +84,11 @@ void CIrrOdeGeom::setBody(CIrrOdeBody *pBody) {
 }
 
 u32 CIrrOdeGeom::getSurfaceParametersCount() const {
-  return m_aParams.size();
+  return m_aParamNames.size();
 }
 
 CIrrOdeSurfaceParameters *CIrrOdeGeom::getSurfaceParameters(u32 iIdx) {
   return m_aParams[0];
-}
-
-void CIrrOdeGeom::setSurfaceParameters(CIrrOdeSurfaceParameters *pParams, u32 iIdx) {
-  m_aParams[0]=pParams;
 }
 
 CIrrOdeWorld *CIrrOdeGeom::getWorld() {
@@ -120,9 +108,12 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
 	if (!m_pBody)
-    for (u32 i=0; i<this->getSurfaceParametersCount(); i++) m_aParams[i]->serializeAttributes(out,options,i);
-	else
-		m_aParams[0]->serializeAttributes(out,options,0);
+    for (u32 i=0; i<this->getSurfaceParametersCount(); i++) {
+      c8 s[0xFF];
+      if (i==0) strcpy(s,"Surface"); else sprintf(s,"Surface_mat%i",i);
+      out->addEnum(s,m_aParamNames[i].c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
+    }
+  else out->addEnum("Surface",m_aParamNames[0].c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
 
   out->addFloat("Mass",m_fMass);
 
@@ -138,7 +129,9 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
 void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
   for (u32 i=0; i<getSurfaceParametersCount(); i++) {
-    m_aParams[i]->deserializeAttributes(in,options,i);
+    c8 s[0xFF];
+    if (i==0) strcpy(s,"Surface"); else sprintf(s,"Surface_mat%i",i);
+    m_aParamNames[i]=in->getAttributeAsEnumeration(s);
   }
 
   m_fMass=in->getAttributeAsFloat("Mass");
@@ -191,8 +184,23 @@ void CIrrOdeGeom::initPhysics() {
     m_pOdeDevice->geomSetRotation(m_iGeomId,rot);
   }
 
-  for (u32 i=0; i<m_aParams.size(); i++) m_aParams[i]->initPhysics();
+  m_aParams.clear();
+  for (u32 i=0; i<m_aParamNames.size(); i++) {
+    CIrrOdeSurfaceParameters *p=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(stringw(m_aParamNames[i]));
+    m_aParams.push_back(p);
+    if (p==NULL) printf("*ERROR* unable to find surface parameter \"%s\"!\n",m_aParamNames[i].c_str());
+  }
+
   CIrrOdeSceneNode::initPhysics();
+}
+
+const c8 *CIrrOdeGeom::getSurfaceParameterName(u32 iIdx) {
+  return iIdx<m_aParamNames.size()?m_aParamNames[iIdx].c_str():NULL;
+}
+
+void CIrrOdeGeom::setSurfaceParameterName(u32 iIdx, const c8 *s) {
+  while (iIdx>m_aParamNames.size()) m_aParamNames.push_back("");
+  m_aParamNames[iIdx]=s;
 }
 
 void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
@@ -203,11 +211,11 @@ void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setCollide(doesCollide());
 
   for (u32 i=0; i<getSurfaceParametersCount() && i<pDst->getSurfaceParametersCount(); i++)
-    m_aParams[i]->copy(pDst->getSurfaceParameters(i));
+    pDst->setSurfaceParameterName(i,m_aParamNames[i].c_str());
 
   if (getSurfaceParametersCount()<pDst->getSurfaceParametersCount())
     for (u32 i=getSurfaceParametersCount(); i<pDst->getSurfaceParametersCount(); i++)
-      m_aParams[0]->copy(pDst->getSurfaceParameters(i));
+      pDst->setSurfaceParameterName(i,m_aParamNames[i].c_str());
 
   if (m_cInertia1.getLength()>0.0f)
     pDst->setMassParameters(m_fMass,m_cCenterOfGravity,m_cInertia1,m_cInertia2);

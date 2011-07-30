@@ -4,11 +4,11 @@
   #include <irrlicht.h>
   #include <event/IIrrOdeEventListener.h>
   #include <observer/CIrrOdeEventFactory.h>
+  #include <CIrrOdeSurfaceParameters.h>
 
 namespace irr {
 namespace ode {
 
-class CIrrOdeSurfaceParameters;
 class CIrrOdeDampable;
 class CIrrOdeSceneNode;
 class IIrrOdeDevice;
@@ -42,6 +42,7 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     IrrlichtDevice *m_pDevice;
 
 		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
+		CIrrOdeSurfaceParameters m_cNullSurface;
 
 	  IIrrOdeDevice *m_pOdeDevice;
 

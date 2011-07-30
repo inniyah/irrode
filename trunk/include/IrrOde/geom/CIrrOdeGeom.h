@@ -40,6 +40,7 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
     vector3df m_cOffsetRot;
 
     array<CIrrOdeSurfaceParameters *> m_aParams;
+    array<core::stringc> m_aParamNames;
 
   public:
     /**
@@ -104,11 +105,20 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
     virtual CIrrOdeSurfaceParameters *getSurfaceParameters(u32 iIdx);
 
     /**
-     * set the geom's surface parameters
-     * @param pParams the params
-     * @param iIdx use params for this material. Only used for CIrrOdeGeomTrimesh
+     * Get the name of a surface parameter
+     * @param iIdx index of the requested parameter set
+     * @return name of the requested parameter set
      */
-    void setSurfaceParameters(CIrrOdeSurfaceParameters *pParams, u32 iIdx);
+    const c8 *getSurfaceParameterName(u32 iIdx);
+
+    /**
+     * Set the name of a surface parameter. The parameter will
+     * be taken from the list loaded by the CIrrOdeWorld object
+     * upon physics initialization
+     * @param iIdx index of the paramter to set
+     * @param s the name of the paramter set
+     */
+    void setSurfaceParameterName(u32 iIdx, const c8 *s);
 
     CIrrOdeWorld *getWorld();
 
