@@ -58,17 +58,23 @@ void CIrrOdeSpace::initPhysics() {
 
   switch (m_iType) {
     case eIrrOdeSpaceSimple:
-      printf("**** simple space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("**** simple space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #endif
       m_iSpaceId=m_pOdeDevice->spaceCreateSimple(m_pParentSpace?m_pParentSpace->getSpaceId():0);
       break;
 
     case eIrrOdeSpaceHash:
-      printf("**** hash space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("**** hash space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #endif
       m_iSpaceId=m_pOdeDevice->spaceCreateHash(m_pParentSpace?m_pParentSpace->getSpaceId():0);
       break;
 
     case eIrrOdeSpaceQuadTree:
-      printf("**** quadtree space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("**** quadtree space: \"%s\"\n",getName()!=NULL?getName():"<NULL>");
+      #endif
       m_iSpaceId=m_pOdeDevice->spaceCreateQuadTree(m_pParentSpace?m_pParentSpace->getSpaceId():0,m_cCenter,m_cExtents,m_iDepth);
       break;
 

@@ -30,15 +30,17 @@ u32 CHeli::update() {
             up =m_pBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
 
   if (m_bInternal) {
-    core::vector2df lookAt=core::vector2df(0,-5).rotateBy(m_fCamAngle);
+    core::vector2df lookAt=core::vector2df(0,-5).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(5, 0).rotateBy(m_fCamAngleV);
 
     pos=rot.rotationToDirection(core::vector3df(0,-0.15,-1.3));
-    tgt=rot.rotationToDirection(core::vector3df(lookAt.X,-0.15,lookAt.Y));
+    tgt=rot.rotationToDirection(core::vector3df(lookAt.X,-0.15+lookUp.Y,lookAt.Y));
   }
   else {
-    core::vector2df lookAt=core::vector2df(0,15).rotateBy(m_fCamAngle);
+    core::vector2df lookAt=core::vector2df(0,15).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(-15,0).rotateBy(m_fCamAngleV);
 
-    pos=rot.rotationToDirection(vector3df(lookAt.X,5,lookAt.Y)),
+    pos=rot.rotationToDirection(vector3df(lookAt.X,5+lookUp.Y,lookAt.Y)),
     tgt=m_pBody->getRotation().rotationToDirection(vector3df(0,5  ,0));
   }
 
