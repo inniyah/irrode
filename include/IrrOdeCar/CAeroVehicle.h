@@ -43,7 +43,8 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public IIrrO
         m_fCamAngle,
         m_fApDist;
 
-    s32 m_iNextCp;
+    s32 m_iNextCp,
+        m_aCtrlBuffer[0xFF];
 
     u32 m_iLastShot1,
         m_iLastShot2,
