@@ -249,10 +249,14 @@ bool CAeroVehicle::onEvent(IIrrOdeEvent *pEvent) {
     m_pTorque->setPower(fAltFact);
     m_pAero  ->setPower(fAltFact);
 
-    if (m_fPitch==m_fPitch) m_pTorque->setPitch(m_fPitch);
-    if (m_fRoll ==m_fRoll ) m_pTorque->setRoll (m_fRoll );
+    f32 fPitch=m_fPitch>0.0f?m_fPitch*m_fPitch:-m_fPitch*m_fPitch,
+        fRoll =m_fRoll >0.0f?m_fRoll *m_fRoll :-m_fRoll *m_fRoll ,
+        fYaw  =m_fYaw  >0.0f?m_fYaw  *m_fYaw  :-m_fYaw  *m_fYaw;
+
+    if (m_fPitch==m_fPitch) m_pTorque->setPitch(fPitch);
+    if (m_fRoll ==m_fRoll ) m_pTorque->setRoll (fRoll );
     if (m_fYaw  ==m_fYaw  ) {
-      m_pTorque->setYaw(m_fYaw);
+      m_pTorque->setYaw(fYaw);
 
       if (m_pSteer!=NULL) {
         if (m_bThreeWheeler)
