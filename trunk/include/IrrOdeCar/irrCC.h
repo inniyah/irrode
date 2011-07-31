@@ -6,12 +6,6 @@
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /**
  * @class CIrrCC
  * @brief The central class of IrrConfigController
@@ -364,6 +358,9 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
     virtual void readConfig(IXMLReaderUTF8 *pXml);
 
     const wchar_t *getSettingsText(u32 iSet);
+
+    void dumpState(f32 *fBuffer);
+    void restoreState(f32 *fBuffer);
 };
 
 #endif

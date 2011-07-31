@@ -1,4 +1,7 @@
+  #include <irrlicht.h>
   #include <irrCC.h>
+
+using namespace irr;
 
 CIrrCC::CIrrCCItem::CIrrCCItem(stringw sName, IrrlichtDevice *pDevice, u32 iSet) {
   m_pDevice=pDevice;
@@ -856,4 +859,17 @@ const wchar_t *CIrrCC::getSettingsText(u32 iSet) {
     }
   }
   return sSettingsText;
+}
+
+void CIrrCC::dumpState(f32 *fBuffer) {
+  for (u32 i=0; i<m_aItems.size(); i++)
+    fBuffer[i]=m_aItems[i]->m_eType==eCtrlFader?m_aItems[i]->m_fFaderValue:m_aItems[i]->get();
+}
+
+void CIrrCC::restoreState(f32 *fBuffer) {
+  for (u32 i=0; i<m_aItems.size(); i++)
+    if (m_aItems[i]->m_eType==eCtrlFader)
+      m_aItems[i]->m_fFaderValue=fBuffer[i];
+    else
+      m_aItems[i]->set(fBuffer[i]);
 }

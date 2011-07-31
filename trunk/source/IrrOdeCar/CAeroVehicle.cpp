@@ -75,6 +75,8 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_fApDist=0.0f;
     m_pCockpit=pCockpit;
   }
+
+  for (u32 i=0; i<0xFF; i++) m_aCtrlBuffer[i]=0.0f;
 }
 
 CAeroVehicle::~CAeroVehicle() {
@@ -102,9 +104,11 @@ void CAeroVehicle::activate() {
   wchar_t s[1024];
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
+  m_pController->restoreState((f32 *)m_aCtrlBuffer);
 }
 
 void CAeroVehicle::deactivate() {
+  m_pController->dumpState((f32 *)m_aCtrlBuffer);
   m_pTab->setVisible(false);
   m_pApInfo->setVisible(false);
   m_bActive=false;
