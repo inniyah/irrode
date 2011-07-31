@@ -22,6 +22,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   m_pYaw  [1]=m_pSmgr->getSceneNodeFromName("yaw2");
 
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor);
+  m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
   m_pAutoPilot->setLinkYawRoll(true);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
@@ -58,16 +59,18 @@ u32 CPlane::update() {
   vector3df pos,tgt,up=m_pBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
 
   if (m_bInternal) {
-    core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngle);
+    core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
 
     pos=rot.rotationToDirection(vector3df(0,1.1,-0.6)),
     up =rot.rotationToDirection(vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(vector3df(lookAt.X,1.1,lookAt.Y));
+    tgt=rot.rotationToDirection(vector3df(lookAt.X,1.1+lookUp.Y,lookAt.Y));
   }
   else {
-    core::vector2df lookAt=core::vector2df(0.0f,15.0f).rotateBy(m_fCamAngle);
+    core::vector2df lookAt=core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
 
-    pos=rot.rotationToDirection(vector3df(lookAt.X,5,lookAt.Y)),
+    pos=rot.rotationToDirection(vector3df(lookAt.X,5.0f+lookUp.Y,lookAt.Y)),
     up =rot.rotationToDirection(vector3df(0,0.1,0));
     tgt=rot.rotationToDirection(vector3df(0,5,0));
   }

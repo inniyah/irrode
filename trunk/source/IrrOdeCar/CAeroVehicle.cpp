@@ -16,7 +16,8 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_bWeaponCam=false;
     m_bInternal=false;
     m_iShotsFired=0;
-    m_fCamAngle=0.0f;
+    m_fCamAngleH=0.0f;
+    m_fCamAngleV=0.0f;
     m_bFirePrimary=false;
     m_bFireSecondary=false;
     m_bRudderChanged=false;
@@ -186,23 +187,40 @@ bool CAeroVehicle::onEvent(IIrrOdeEvent *pEvent) {
         m_pTargetSelector->selectOption();
       }
 
-      if (m_pController->get(m_pCtrls[eAeroCamLeft])>0.0f) {
-        if (m_fCamAngle<190.0f) m_fCamAngle+=0.5f;
+      if (m_pController->get(m_pCtrls[eAeroCamLeft])!=0.0f) {
+        m_fCamAngleH+=m_pController->get(m_pCtrls[eAeroCamLeft]);
+
+        if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
+        if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
       }
 
-      if (m_pController->get(m_pCtrls[eAeroCamRight])>0.0f) {
-        if (m_fCamAngle>-190.0f) m_fCamAngle-=0.5f;
+      if (m_pController->get(m_pCtrls[eAeroCamUp])!=0.0f) {
+        m_fCamAngleV+=m_pController->get(m_pCtrls[eAeroCamUp]);
+
+        if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
+        if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
       }
 
       if (m_pController->get(m_pCtrls[eAeroCamCenter])) {
-        if (m_fCamAngle!=0.0f) {
-          if (m_fCamAngle>0.0f) {
-            m_fCamAngle-=5.0f;
-            if (m_fCamAngle<0.0f) m_fCamAngle=0.0f;
+        if (m_fCamAngleH!=0.0f) {
+          if (m_fCamAngleH>0.0f) {
+            m_fCamAngleH-=5.0f;
+            if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
           }
           else {
-            m_fCamAngle+=5.0f;
-            if (m_fCamAngle>0.0f) m_fCamAngle=0.0f;
+            m_fCamAngleH+=5.0f;
+            if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
+          }
+        }
+
+        if (m_fCamAngleV!=0.0f) {
+          if (m_fCamAngleV>0.0f) {
+            m_fCamAngleV-=5.0f;
+            if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
+          }
+          else {
+            m_fCamAngleV+=5.0f;
+            if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
           }
         }
       }

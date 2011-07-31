@@ -72,9 +72,16 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       if (pEvent->getType()==irr::ode::eIrrOdeEventProgress) {
         irr::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<irr::ode::CIrrOdeEventProgress *>(pEvent);
         wchar_t s[0xFF];
-        swprintf(s,0xFF,L"Physics Initialization: %i / %i",pEvt->getCurrent(),pEvt->getCount());
-        m_pText->setText(s);
-        m_pBar->setProgress(100*pEvt->getCurrent()/pEvt->getCount());
+
+        if (pEvt->getCount()==0) {
+          swprintf(s,0xFF,L"Loading scene...");
+          m_pText->setText(s);
+        }
+        else {
+          swprintf(s,0xFF,L"Physics Initialization: %i / %i",pEvt->getCurrent(),pEvt->getCount());
+          m_pText->setText(s);
+          m_pBar->setProgress(100*pEvt->getCurrent()/pEvt->getCount());
+        }
 
         m_pDriver->beginScene(true, true, SColor(0,200,200,200));
         m_pGuienv->drawAll();
@@ -156,6 +163,10 @@ int main(int argc, char** argv) {
 
   CProgress *pProg=new CProgress(device);
 
+  irr::ode::CIrrOdeEventProgress *p=new irr::ode::CIrrOdeEventProgress(0,0);
+  pProg->onEvent(p);
+  delete p;
+
   CIrrCC *pController=new CIrrCC(device);
   pController->setSetsCanConflict(false);
   pController->setAllowFKeys(false);
@@ -217,14 +228,18 @@ int main(int argc, char** argv) {
   iCtrls[2][eAeroAutoPilot    ]=pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eAeroToggleCam    ]=pController->addItem(2,stringw("Missile Cam"   ),KEY_KEY_M ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eAeroInternalView ]=pController->addItem(2,stringw("Internal View" ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroCamLeft      ]=pController->addItem(2,stringw("Camera Left"   ),KEY_KEY_Y ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroCamRight     ]=pController->addItem(2,stringw("Camera Right"  ),KEY_KEY_C ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroCamLeft      ]=pController->addItem(2,stringw("Camera Left"   ),KEY_KEY_Y ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroCamRight     ]=pController->addItem(2,stringw("Camera Right"  ),KEY_KEY_C ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroCamUp        ]=pController->addItem(2,stringw("Camera Up"     ),KEY_KEY_F ,CIrrCC::eCtrlAxis);
+  iCtrls[2][eAeroCamDown      ]=pController->addItem(2,stringw("Camera Down"   ),KEY_KEY_V ,CIrrCC::eCtrlAxis);
   iCtrls[2][eAeroCamCenter    ]=pController->addItem(2,stringw("Center Camera" ),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroFlip         ]=pController->addItem(2,stringw("Flip"          ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
+  iCtrls[2][eAeroFlip         ]=pController->addItem(2,stringw("Flip"          ),KEY_KEY_L ,CIrrCC::eCtrlToggleButton);
 
   pController->createAxis(iCtrls[2][eAeroYawLeft ],iCtrls[2][eAeroYawRight ]);
   pController->createAxis(iCtrls[2][eAeroRollLeft],iCtrls[2][eAeroRollRight]);
   pController->createAxis(iCtrls[2][eAeroPitchUp ],iCtrls[2][eAeroPitchDown]);
+  pController->createAxis(iCtrls[2][eAeroCamLeft ],iCtrls[2][eAeroCamRight ]);
+  pController->createAxis(iCtrls[2][eAeroCamUp   ],iCtrls[2][eAeroCamDown  ]);
 
   pController->createFader(iCtrls[2][eAeroPowerUp],iCtrls[2][eAeroPowerDown],10,0.01f);
 

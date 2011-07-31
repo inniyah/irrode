@@ -30,6 +30,8 @@ enum eAerealControls {
   eAeroInternalView,
   eAeroCamLeft,
   eAeroCamRight,
+  eAeroCamUp,
+  eAeroCamDown,
   eAeroCamCenter,
   eAeroFlip
 };
@@ -40,7 +42,8 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public IIrrO
         m_fRoll,
         m_fYaw,
         m_fThrust,
-        m_fCamAngle,
+        m_fCamAngleH,
+        m_fCamAngleV,
         m_fApDist;
 
     s32 m_iNextCp,
