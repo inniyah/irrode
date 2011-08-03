@@ -7,14 +7,9 @@
   #include "CIrrOdeCarState.h"
 
 class CIrrCC;
+class CCockpitCar;
 
 using namespace irr;
-
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 enum eCarCtrl {
   eCarForeward,
@@ -25,7 +20,8 @@ enum eCarCtrl {
   eCarBoost,
   eCarFlip,
   eCarToggleAdaptiveSteer,
-  eCarBackview
+  eCarBackview,
+  eCarInternal
 };
 
 class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
@@ -33,11 +29,14 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
     bool m_bBrake,      /*!< is the handbrake active? */
          m_bBoost,      /*!< is the boos button pushed? */
          m_bAdaptSteer, /*!< is the adaptive steer mode active? */
-         m_bHelp;       /*!< is the help screen visible? */
+         m_bHelp,       /*!< is the help screen visible? */
+         m_bInternal;   /*!< internal view active? */
     f32 m_fActSteer;    /*!< the actual steering (-45.0, 0, +45.0) */
     s32 m_iThrottle;    /*!< position of the throttle */
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
+
+    gui::IGUITab *m_pTab;
 
     CIrrOdeMotor *m_pMotor[2];  /*!< the motors attached to the rear wheels */
     CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
@@ -45,10 +44,12 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
 
     ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
+    CCockpitCar *m_pCockpit;
+
     const u32 *m_pCtrls;
 
   public:
-    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);    /*!< the car's constructor */
+    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */

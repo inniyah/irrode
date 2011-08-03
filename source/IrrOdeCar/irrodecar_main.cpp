@@ -18,6 +18,7 @@
   #include <CRandomForestNode.h>
   #include <CMeshCombiner.h>
   #include <CCockpitPlane.h>
+  #include <CCockpitCar.h>
 
 using namespace irr;
 
@@ -186,6 +187,7 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarFlip               ]=pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarBackview           ]=pController->addItem(0,stringw(L"Backview"             ),KEY_KEY_R ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarInternal           ]=pController->addItem(0,stringw(L"Internal Camera"      ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
 
   //we need two axes for the car: acceleration and steering
   pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);
@@ -365,9 +367,11 @@ int main(int argc, char** argv) {
   CMenu       *theMenu=new CMenu      (device,pController); aStates.push_back(theMenu);
   CController *theCtrl=new CController(device,pController); aStates.push_back(theCtrl );
 
+  CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
+
   list<ISceneNode *>::Iterator it;
   for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController);
+    CCar *p=new CCar(device,*it,pController,pCarCockpit);
     p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
