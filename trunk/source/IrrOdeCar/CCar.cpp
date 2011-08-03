@@ -1,5 +1,6 @@
   #include "CCar.h"
   #include <CCustomEventReceiver.h>
+  #include <CCockpitCar.h>
   #include <math.h>
 
   #include <irrCC.h>
@@ -16,7 +17,7 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
   m_pCarBody=reinterpret_cast<CIrrOdeBody *>(pNode);
 
@@ -50,16 +51,21 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeC
 
     //add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
+    m_pCam->setNearValue(0.1f);
 
+    m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,300,300));
     //add a static text element that will show useful information
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true);
+    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true,false,m_pTab);
     m_pInfo->setDrawBackground(true);
     m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-    m_pInfo->setVisible(false);
+    m_pTab->setVisible(false);
     m_pCtrls=NULL;
 
     //we are an IrrOde event listener
     CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    m_pCockpit=pCockpit;
+
+    m_bInternal=false;
 
     m_bInitialized=true;
   }
@@ -72,7 +78,7 @@ CCar::~CCar() {
 //This method is called when the state is activated.
 void CCar::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
-  m_pInfo->setVisible(true);
+  m_pTab->setVisible(true);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
@@ -95,7 +101,7 @@ void CCar::activate() {
 }
 
 void CCar::deactivate() {
-  m_pInfo->setVisible(false);
+  m_pTab->setVisible(false);
   m_bActive=false;
   m_pController->reset();
 
@@ -129,9 +135,9 @@ u32 CCar::update() {
 
   bool b=m_pController->get(m_pCtrls[eCarBackview])!=0.0f;
   //get the parameters for the camera ...
-  vector3df pos=m_pCarBody->getRotation().rotationToDirection(b?vector3df(-8,2,0):vector3df(8,4,0)),
+  vector3df pos=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(0,1.35,0):vector3df(8,4,0)),
             up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
-            tgt=m_pCarBody->getRotation().rotationToDirection(vector3df(0,2  ,0));
+            tgt=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(-5,1.35,0):vector3df(0,2,0));
 
   //... and apply them to the active camera
   m_pCam->setPosition(m_pCarBody->getPosition()+pos);
@@ -200,6 +206,16 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
       vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
       m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,120,0));
     }
+
+    if (m_pController->get(m_pCtrls[eCarInternal])!=0.0f) {
+      m_bInternal=!m_bInternal;
+      m_pController->set(m_pCtrls[eCarInternal],0.0f);
+    }
+
+    m_pCockpit->setSpeed(m_pCarBody->getLinearVelocity().getLength());
+    m_pTab->setVisible(false);
+    m_pCockpit->update(false);
+    m_pTab->setVisible(true);
   }
   return false;
 }

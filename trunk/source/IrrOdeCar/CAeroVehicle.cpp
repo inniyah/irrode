@@ -125,7 +125,7 @@ bool CAeroVehicle::onEvent(IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     vector3df vPos=m_pBody->getAbsolutePosition();
-    f32 fMinHeight=300,
+    f32 fMinHeight=50,
         fMaxHeight=2000,
         fAltFact=vPos.Y<fMinHeight?1.0f:vPos.Y>fMaxHeight?0.0f:1-((vPos.Y-fMinHeight)/(fMaxHeight-fMinHeight));
 
