@@ -186,12 +186,18 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarBoost              ]=pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarFlip               ]=pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-  iCtrls[0][eCarBackview           ]=pController->addItem(0,stringw(L"Backview"             ),KEY_KEY_R ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarInternal           ]=pController->addItem(0,stringw(L"Internal Camera"      ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
+  iCtrls[0][eCarCamLeft            ]=pController->addItem(0,stringw(L"Camera Left"          ),KEY_KEY_Y ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarCamRight           ]=pController->addItem(0,stringw(L"Camera Right"         ),KEY_KEY_C ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarCamUp              ]=pController->addItem(0,stringw(L"Camera Up"            ),KEY_KEY_F ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarCamDown            ]=pController->addItem(0,stringw(L"Camera Down"          ),KEY_KEY_V ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarCamCenter          ]=pController->addItem(0,stringw(L"Center Camera"        ),KEY_KEY_X ,CIrrCC::eCtrlButton);
 
   //we need two axes for the car: acceleration and steering
   pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);
   pController->createAxis(iCtrls[0][eCarLeft    ],iCtrls[0][eCarRight   ]);
+  pController->createAxis(iCtrls[0][eCarCamLeft ],iCtrls[0][eCarCamRight]);
+  pController->createAxis(iCtrls[0][eCarCamDown ],iCtrls[0][eCarCamUp   ]);
 
   //next up: the tank
   iCtrls[1][eTankForeward     ]=pController->addItem(1,stringw(L"Foreward"         ),KEY_UP    ,CIrrCC::eCtrlAxis);

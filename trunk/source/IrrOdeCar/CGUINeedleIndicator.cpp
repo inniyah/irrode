@@ -66,7 +66,8 @@ namespace irr {
         m_pDrv->draw2DRectangle(AbsoluteRect,cCol,cCol,cCol,cCol);
       }
       else {
-        m_pDrv->draw2DImage(m_pTexture,AbsoluteRect,core::rect<s32>(0,0,m_pTexture->getOriginalSize().Width-1,m_pTexture->getOriginalSize().Height-1));
+        core::dimension2di cDim=core::dimension2di(m_pTexture->getOriginalSize().Width,m_pTexture->getOriginalSize().Height);
+        m_pDrv->draw2DImage(m_pTexture,AbsoluteRect,core::rect<s32>(core::position2di(0,0),cDim));
       }
 
       core::list<CNeedle *>::Iterator it;

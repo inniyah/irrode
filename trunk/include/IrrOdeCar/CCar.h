@@ -20,8 +20,12 @@ enum eCarCtrl {
   eCarBoost,
   eCarFlip,
   eCarToggleAdaptiveSteer,
-  eCarBackview,
-  eCarInternal
+  eCarInternal,
+  eCarCamLeft,
+  eCarCamRight,
+  eCarCamUp,
+  eCarCamDown,
+  eCarCamCenter
 };
 
 class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
@@ -31,7 +35,9 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
          m_bAdaptSteer, /*!< is the adaptive steer mode active? */
          m_bHelp,       /*!< is the help screen visible? */
          m_bInternal;   /*!< internal view active? */
-    f32 m_fActSteer;    /*!< the actual steering (-45.0, 0, +45.0) */
+    f32 m_fActSteer,    /*!< the actual steering (-45.0, 0, +45.0) */
+        m_fCamAngleH,   /*!< horizontal angle of camera */
+        m_fCamAngleV;   /*!< vertical angle of camera */
     s32 m_iThrottle;    /*!< position of the throttle */
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */

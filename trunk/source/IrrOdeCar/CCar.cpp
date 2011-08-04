@@ -1,9 +1,12 @@
+  #include <irrlicht.h>
   #include "CCar.h"
   #include <CCustomEventReceiver.h>
   #include <CCockpitCar.h>
   #include <math.h>
 
   #include <irrCC.h>
+
+using namespace irr;
 
 void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, array<ISceneNode *> &aNodes) {
   list<irr::scene::ISceneNode *> children=pParent->getChildren();
@@ -48,6 +51,9 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_bBoost=false;
     m_bAdaptSteer=true;
     m_iThrottle=0;
+
+    m_fCamAngleH=0.0f;
+    m_fCamAngleV=0.0f;
 
     //add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
@@ -133,11 +139,28 @@ u32 CCar::update() {
         //and 45 we calculate the actual steering angle
         m_fActSteer=45.0f-(20.0f)*(v-10.0f)/35.0f;
 
-  bool b=m_pController->get(m_pCtrls[eCarBackview])!=0.0f;
   //get the parameters for the camera ...
   vector3df pos=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(0,1.35,0):vector3df(8,4,0)),
             up =m_pCarBody->getRotation().rotationToDirection(vector3df(0,0.2,0)),
-            tgt=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(-5,1.35,0):vector3df(0,2,0));
+            tgt=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(-5,1.35,0):vector3df(0,2,0)),
+            rot=m_pCarBody->getRotation();
+
+  if (m_bInternal) {
+    core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
+
+    pos=rot.rotationToDirection(vector3df(0,1.35,0)),
+    up =rot.rotationToDirection(vector3df(0,1,0));
+    tgt=rot.rotationToDirection(vector3df(lookAt.Y,1.1+lookUp.Y,lookAt.X));
+  }
+  else {
+    core::vector2df lookAt=core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
+                    lookUp=core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
+
+    pos=rot.rotationToDirection(vector3df(lookAt.Y,5.0f+lookUp.Y,lookAt.X)),
+    up =rot.rotationToDirection(vector3df(0,1,0));
+    tgt=rot.rotationToDirection(vector3df(0,4,0));
+  }
 
   //... and apply them to the active camera
   m_pCam->setPosition(m_pCarBody->getPosition()+pos);
@@ -166,6 +189,9 @@ bool CCar::OnEvent(const SEvent &event) {
 bool CCar::onEvent(IIrrOdeEvent *pEvent) {
   if (m_bActive && pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
+
+    if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
+    m_bBoost=bBoost;
 
     f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]);
 
@@ -216,6 +242,44 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
     m_pTab->setVisible(false);
     m_pCockpit->update(false);
     m_pTab->setVisible(true);
+
+    if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
+      m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
+
+      if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
+      if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
+    }
+
+    if (m_pController->get(m_pCtrls[eCarCamUp])!=0.0f) {
+      m_fCamAngleV+=m_pController->get(m_pCtrls[eCarCamUp]);
+
+      if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
+      if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
+    }
+
+    if (m_pController->get(m_pCtrls[eCarCamCenter])) {
+      if (m_fCamAngleH!=0.0f) {
+        if (m_fCamAngleH>0.0f) {
+          m_fCamAngleH-=5.0f;
+          if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
+        }
+        else {
+          m_fCamAngleH+=5.0f;
+          if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
+        }
+      }
+
+      if (m_fCamAngleV!=0.0f) {
+        if (m_fCamAngleV>0.0f) {
+          m_fCamAngleV-=5.0f;
+          if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
+        }
+        else {
+          m_fCamAngleV+=5.0f;
+          if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
+        }
+      }
+    }
   }
   return false;
 }
