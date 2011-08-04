@@ -18,6 +18,8 @@ class CCockpitCar : public IRenderToTexture {
 
     gui::CGUINeedleIndicator *m_pMeter;
     gui::IGUITab *m_pTab;
+    gui::IGUIImage *m_pBoostRed,
+                   *m_pBoostGray;
 
   public:
     CCockpitCar(IrrlichtDevice *pDevice, const char *sName);
@@ -26,6 +28,8 @@ class CCockpitCar : public IRenderToTexture {
     virtual void update(bool b);
 
     void setSpeed(f32 fSpeed) { m_fSpeed=fSpeed; }
+
+    void setBoost(bool b);
 };
 
 #endif
