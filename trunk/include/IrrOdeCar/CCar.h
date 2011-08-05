@@ -28,7 +28,7 @@ enum eCarCtrl {
   eCarCamCenter
 };
 
-class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventListener {
+class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeEventListener {
   protected:
     bool m_bBrake,      /*!< is the handbrake active? */
          m_bBoost,      /*!< is the boos button pushed? */
@@ -44,11 +44,11 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
 
     gui::IGUITab *m_pTab;
 
-    CIrrOdeMotor *m_pMotor[2];  /*!< the motors attached to the rear wheels */
-    CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
-    CIrrOdeBody *m_pCarBody;    /*!< the car's body */
+    ode::CIrrOdeMotor *m_pMotor[2];  /*!< the motors attached to the rear wheels */
+    ode::CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
+    ode::CIrrOdeBody *m_pCarBody;    /*!< the car's body */
 
-    ICameraSceneNode *m_pCam; /*!< the camera scene node */
+    scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
     CCockpitCar *m_pCockpit;
 
@@ -64,8 +64,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public IIrrOdeEventL
 
     virtual bool OnEvent(const SEvent &event);  /*!< the Irrlicht event receiver callback */
 
-    virtual bool onEvent(IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(IIrrOdeEvent *pEvent);
+    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 

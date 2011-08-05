@@ -57,21 +57,21 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pText->setDrawBackground(true);
       m_pText->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
 
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     }
 
     virtual ~CProgress() {
       m_pImg->remove();
       m_pText->remove();
       m_pBar->remove();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
     }
 
-    virtual bool onEvent(IIrrOdeEvent *pEvent) {
+    virtual bool onEvent(ode::IIrrOdeEvent *pEvent) {
       bool bRet=false;
 
-      if (pEvent->getType()==irr::ode::eIrrOdeEventProgress) {
-        irr::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<irr::ode::CIrrOdeEventProgress *>(pEvent);
+      if (pEvent->getType()==ode::eIrrOdeEventProgress) {
+        ::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<ode::CIrrOdeEventProgress *>(pEvent);
         wchar_t s[0xFF];
 
         if (pEvt->getCount()==0) {
@@ -92,7 +92,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       return bRet;
     }
 
-    virtual bool handlesEvent(IIrrOdeEvent *pEvent) {
+    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent) {
       return pEvent->getType()==irr::ode::eIrrOdeEventProgress;
     }
 
@@ -101,22 +101,22 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
   if (pNode!=NULL) {
-    CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+    ode::CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
     s32 iNodeId=pNode->getID();
     pNode->remove();
 
-    irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
+    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
   }
 }
 
 void removeFromScene(ISceneNode *pNode) {
-  CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+  ode::CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
   s32 iNodeId=pNode->getID();
   pNode->remove();
 
   irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
 }
 
 void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax) {
@@ -157,9 +157,9 @@ int main(int argc, char** argv) {
   IrrlichtDevice *device=pSettings->createDeviceFromSettings();
   device->setWindowCaption(L"IrrODE car demo");
 
-  CIrrOdeManager::getSharedInstance()->install(device);
+  ode::CIrrOdeManager::getSharedInstance()->install(device);
   irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
-  CCustomEventReceiver::setMembers(device,CIrrOdeManager::getSharedInstance());
+  CCustomEventReceiver::setMembers(device,ode::CIrrOdeManager::getSharedInstance());
   CCustomEventReceiver::getSharedInstance()->install();
 
   CProgress *pProg=new CProgress(device);
@@ -256,7 +256,7 @@ int main(int argc, char** argv) {
   IGUIEnvironment *guienv = device->getGUIEnvironment();
 
   //register the IrrOde scene node factory
-  CIrrOdeSceneNodeFactory cFactory(smgr);
+  ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
   CRandomForestFactory fFactory(smgr);
@@ -267,10 +267,10 @@ int main(int argc, char** argv) {
   cParticleFactory->drop();
 
   //init the ODE
-  CIrrOdeManager::getSharedInstance()->initODE();
+  ode::CIrrOdeManager::getSharedInstance()->initODE();
 
   //load the scene
-  CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
+  ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
 
   for (irr::u32 i=0; i<smgr->getMeshCache()->getMeshCount(); i++) {
     irr::scene::IAnimatedMesh *p=smgr->getMeshCache()->getMeshByIndex(i);
@@ -410,7 +410,7 @@ int main(int argc, char** argv) {
   theCtrl->setFpsInfo(pFps);
 
   //phyiscs initialization
-  CIrrOdeManager::getSharedInstance()->initPhysics();
+  ode::CIrrOdeManager::getSharedInstance()->initPhysics();
 
   delete pProg;
 
@@ -422,11 +422,11 @@ int main(int argc, char** argv) {
   CConfigFileManager::getSharedInstance()->loadConfig(device,"../../data/irrOdeCarControls.xml");
   pFps->setVisible(true);
 
-  list<CIrrOdeSceneNode *> lNodes=irr::ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
-  list<CIrrOdeSceneNode *>::Iterator nit;
+  list<ode::CIrrOdeSceneNode *> lNodes=ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
+  list<ode::CIrrOdeSceneNode *>::Iterator nit;
 
   for (nit=lNodes.begin(); nit!=lNodes.end(); nit++) {
-    irr::ode::CIrrOdeSceneNode *p=*nit;
+    ode::CIrrOdeSceneNode *p=*nit;
     if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
   }
 
@@ -435,7 +435,7 @@ int main(int argc, char** argv) {
   //let's run the loop
   while(device->run()) {
     //step the simulation
-    CIrrOdeManager::getSharedInstance()->step();
+    ode::CIrrOdeManager::getSharedInstance()->step();
 
     //call the update method of the currently active state
     u32 iSwitch=pActive->update();

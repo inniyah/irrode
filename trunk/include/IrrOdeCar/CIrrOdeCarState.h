@@ -8,13 +8,6 @@ class CIrrCC;
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-using namespace ode;
-
 /**
  * This class is the base class for all states that are used in this demo. It has three virtual methods
  * that need to be overriden by the actual states, activate, deactivate and update.

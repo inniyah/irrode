@@ -22,7 +22,7 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
 
 CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
-  m_pCarBody=reinterpret_cast<CIrrOdeBody *>(pNode);
+  m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
 
   if (m_pCarBody) {
     CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
@@ -32,8 +32,8 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
 
     if (aNodes.size()>=2) {
-      m_pMotor[0]=dynamic_cast<CIrrOdeMotor *>(aNodes[0]);
-      m_pMotor[1]=dynamic_cast<CIrrOdeMotor *>(aNodes[1]);
+      m_pMotor[0]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[0]);
+      m_pMotor[1]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[1]);
     }
 
     aNodes.clear();
@@ -41,8 +41,8 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_SERVO_ID,aNodes);
 
     if (aNodes.size()>=2) {
-      m_pServo[0]=dynamic_cast<CIrrOdeServo *>(aNodes[0]);
-      m_pServo[1]=dynamic_cast<CIrrOdeServo *>(aNodes[1]);
+      m_pServo[0]=dynamic_cast<ode::CIrrOdeServo *>(aNodes[0]);
+      m_pServo[1]=dynamic_cast<ode::CIrrOdeServo *>(aNodes[1]);
     }
 
     //initialize the members
@@ -68,7 +68,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_pCtrls=NULL;
 
     //we are an IrrOde event listener
-    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     m_pCockpit=pCockpit;
 
     m_bInternal=false;
@@ -78,7 +78,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
 }
 
 CCar::~CCar() {
-  CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 //This method is called when the state is activated.
@@ -186,7 +186,7 @@ bool CCar::OnEvent(const SEvent &event) {
   return bRet;
 }
 
-bool CCar::onEvent(IIrrOdeEvent *pEvent) {
+bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (m_bActive && pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
 
@@ -284,6 +284,6 @@ bool CCar::onEvent(IIrrOdeEvent *pEvent) {
   return false;
 }
 
-bool CCar::handlesEvent(IIrrOdeEvent *pEvent) {
+bool CCar::handlesEvent(ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
