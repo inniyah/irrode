@@ -21,8 +21,8 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
 }
 
 CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
-  m_pTankBody=reinterpret_cast<CIrrOdeBody *>(pNode);
+  m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
+  m_pTankBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;
 
   if (m_pTankBody!=NULL) {
@@ -30,31 +30,31 @@ CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOd
 
     m_pTurret=m_pTankBody->getChildBodyFromName("turret");
 
-    m_pMotor[0]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRR");
-    m_pMotor[1]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFR");
-    m_pMotor[2]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRL");
-    m_pMotor[3]=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFL");
+    m_pMotor[0]=(ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRR");
+    m_pMotor[1]=(ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFR");
+    m_pMotor[2]=(ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorRL");
+    m_pMotor[3]=(ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("motorFL");
 
-    m_pTurretMotor=(CIrrOdeMotor *)m_pTankBody->getMotorFromName("turretMotor");
-    m_pCannonServo=(CIrrOdeServo *)m_pTankBody->getMotorFromName("cannonServo");
+    m_pTurretMotor=(ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("turretMotor");
+    m_pCannonServo=(ode::CIrrOdeServo *)m_pTankBody->getMotorFromName("cannonServo");
 
     printf("\t\tturret motor: %i\n\t\tcannon servo: %i\n",(int)m_pTurretMotor,(int)m_pCannonServo);
 
-    irr::ode::CIrrOdeJointHinge *pAxis=NULL;
+    ode::CIrrOdeJointHinge *pAxis=NULL;
 
-    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
-    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
-    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
-    pAxis=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFR"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisRL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
+    pAxis=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("tankAxisFL"); if (pAxis!=NULL) m_lAxes.push_back(pAxis);
 
-    m_pCannonHinge=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("cannonAxis");
-    m_pTurretHinge=(CIrrOdeJointHinge *)m_pTankBody->getJointFromName("turretAxis");
+    m_pCannonHinge=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("cannonAxis");
+    m_pTurretHinge=(ode::CIrrOdeJointHinge *)m_pTankBody->getJointFromName("turretAxis");
 
     m_pCannon=m_pTankBody->getChildBodyFromName("cannon");
 
     printf("\ntank state:\n\n");
     printf("axes: ");
-    list<CIrrOdeJointHinge *>::Iterator it;
+    list<ode::CIrrOdeJointHinge *>::Iterator it;
     for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) printf("%i  ",(int)(*it));
     printf("\n");
     printf("motors: ");
@@ -171,7 +171,7 @@ bool CTank::OnEvent(const SEvent &event) {
   return bRet;
 }
 
-bool CTank::onEvent(IIrrOdeEvent *pEvent) {
+bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep && m_bActive) {
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     if (m_pController->get(m_pCtrls[eTankFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
@@ -269,6 +269,6 @@ bool CTank::onEvent(IIrrOdeEvent *pEvent) {
   return false;
 }
 
-bool CTank::handlesEvent(IIrrOdeEvent *pEvent) {
+bool CTank::handlesEvent(ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }

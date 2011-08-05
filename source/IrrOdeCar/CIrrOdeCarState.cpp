@@ -2,7 +2,7 @@
 
 static IGUIStaticText *g_pRecording=NULL,
                       *g_pSaveFile=NULL;
-static CIrrOdeRecorder *g_pRecorder=NULL;
+static ode::CIrrOdeRecorder *g_pRecorder=NULL;
 static u32 g_iCount=0;
 
 CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
@@ -61,7 +61,7 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
         case KEY_F2:
           if (g_pRecorder==NULL) {
             printf("starting recording...\n");
-            g_pRecorder=new CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
+            g_pRecorder=new ode::CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
             g_pRecorder->startRecording();
             g_pRecording->setVisible(true);
           }

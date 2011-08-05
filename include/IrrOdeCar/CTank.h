@@ -44,13 +44,13 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     f32 m_fCannonAngle,
         m_fTurretAngle;
 
-    CIrrOdeWorld *m_pWorld;
-    CIrrOdeMotor *m_pMotor[4];
-    CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
-    CIrrOdeMotor *m_pTurretMotor;
-    CIrrOdeServo *m_pCannonServo;
+    ode::CIrrOdeWorld *m_pWorld;
+    ode::CIrrOdeMotor *m_pMotor[4];
+    ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
+    ode::CIrrOdeMotor *m_pTurretMotor;
+    ode::CIrrOdeServo *m_pCannonServo;
 
-    ICameraSceneNode *m_pCam;
+    scene::ICameraSceneNode *m_pCam;
 
     list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
     irr::ode::CIrrOdeJointHinge *m_pCannonHinge,
@@ -73,8 +73,8 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
 
     virtual bool OnEvent(const SEvent &event);
 
-    virtual bool onEvent(IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(IIrrOdeEvent *pEvent);
+    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 

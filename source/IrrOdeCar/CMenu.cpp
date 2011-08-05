@@ -133,9 +133,9 @@ bool CMenu::OnEvent(const SEvent &event) {
         while (m_fAngleV> 80.0f) m_fAngleV= 80.0f;
         while (m_fAngleV<-80.0f) m_fAngleV=-80.0f;
 
-        f32 fCamX=(irr::f32)(1.0f*sin(m_fAngleH*GRAD_PI2)*cos(m_fAngleV*GRAD_PI2)),
-        fCamY=(irr::f32)(1.0f*sin(m_fAngleV*GRAD_PI2)),
-        fCamZ=(irr::f32)(1.0f*cos(m_fAngleH*GRAD_PI2)*cos(m_fAngleV*GRAD_PI2));
+        f32 fCamX=(irr::f32)(1.0f*sin(m_fAngleH*ode::GRAD_PI2)*cos(m_fAngleV*ode::GRAD_PI2)),
+        fCamY=(irr::f32)(1.0f*sin(m_fAngleV*ode::GRAD_PI2)),
+        fCamZ=(irr::f32)(1.0f*cos(m_fAngleH*ode::GRAD_PI2)*cos(m_fAngleV*ode::GRAD_PI2));
 
         m_vCamLookAt=core::vector3df(fCamX,fCamY,fCamZ);
         pCam->setTarget(pCam->getPosition()+m_vCamLookAt);

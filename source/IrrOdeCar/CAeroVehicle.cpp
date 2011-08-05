@@ -6,8 +6,8 @@
   #include <CTargetSelector.h>
 
 CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
-  m_pBody=reinterpret_cast<CIrrOdeBody *>(pNode);
+  m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
+  m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   if (m_pBody!=NULL) {
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
@@ -22,7 +22,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_bFireSecondary=false;
     m_bRudderChanged=false;
 
-    CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
     m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500));
     m_pTab->setVisible(false);
@@ -47,7 +47,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
       m_pBrakes[i]=dynamic_cast<irr::ode::CIrrOdeMotor *>(m_pBody->getMotorFromName(s));
     }
 
-    m_pSteer=(CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
+    m_pSteer=(ode::CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
 
     m_bThreeWheeler=!strcmp(m_pBody->getName(),"plane2") || !strcmp(m_pBody->getName(),"plane4");
 
@@ -121,7 +121,7 @@ bool CAeroVehicle::OnEvent(const SEvent &event) {
   return bRet;
 }
 
-bool CAeroVehicle::onEvent(IIrrOdeEvent *pEvent) {
+bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     vector3df vPos=m_pBody->getAbsolutePosition();
@@ -273,6 +273,6 @@ bool CAeroVehicle::onEvent(IIrrOdeEvent *pEvent) {
   return false;
 }
 
-bool CAeroVehicle::handlesEvent(IIrrOdeEvent *pEvent) {
+bool CAeroVehicle::handlesEvent(ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
