@@ -127,7 +127,9 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
     vector3df vPos=m_pBody->getAbsolutePosition();
     f32 fMinHeight=50,
         fMaxHeight=2000,
-        fAltFact=vPos.Y<fMinHeight?1.0f:vPos.Y>fMaxHeight?0.0f:1-((vPos.Y-fMinHeight)/(fMaxHeight-fMinHeight));
+        fAltFact=vPos.Y<fMinHeight?1.0f:vPos.Y>fMaxHeight?0.0f:1-((vPos.Y-fMinHeight)/(fMaxHeight-fMinHeight)),
+        fVel=m_pAero->getForewardVel(),
+        fVelFact=fVel<100.0f?1.0f:fVel>180.0f?0.2f:1.0f-((fVel-100.0f)/100.0f);
 
     if (m_bActive) {
       m_fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
@@ -246,12 +248,21 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
     m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
     m_pTargetSelector->update();
 
-    m_pTorque->setPower(fAltFact);
+    m_pTorque->setPower(fAltFact*fVelFact);
     m_pAero  ->setPower(fAltFact);
 
-    f32 fPitch=m_fPitch>0.0f?m_fPitch*m_fPitch:-m_fPitch*m_fPitch,
-        fRoll =m_fRoll >0.0f?m_fRoll *m_fRoll :-m_fRoll *m_fRoll ,
-        fYaw  =m_fYaw  >0.0f?m_fYaw  *m_fYaw  :-m_fYaw  *m_fYaw;
+    f32 fPitch,fRoll,fYaw;
+
+    if (m_pAutoPilot->isEnabled()) {
+      fPitch=m_fPitch;
+      fRoll =m_fRoll ;
+      fYaw  =m_fYaw  ;
+    }
+    else {
+      fPitch=m_fPitch>0.0f?m_fPitch*m_fPitch:-m_fPitch*m_fPitch;
+      fRoll =m_fRoll >0.0f?m_fRoll *m_fRoll :-m_fRoll *m_fRoll ;
+      fYaw  =m_fYaw  >0.0f?m_fYaw  *m_fYaw  :-m_fYaw  *m_fYaw  ;
+    }
 
     if (m_fPitch==m_fPitch) m_pTorque->setPitch(fPitch);
     if (m_fRoll ==m_fRoll ) m_pTorque->setRoll (fRoll );
