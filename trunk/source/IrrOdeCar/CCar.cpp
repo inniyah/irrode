@@ -28,6 +28,10 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
     array<ISceneNode *> aNodes;
 
+    m_pAxisFL=reinterpret_cast<ode::CIrrOdeJointHinge2 *>(m_pCarBody->getChildByName("axis_fl",m_pCarBody));
+
+    printf("axis_FL=%i\n",(int)m_pAxisFL);
+
     //get the two motors that are attached to the rear wheels
     findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
 
@@ -193,13 +197,15 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
     if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
     m_bBoost=bBoost;
 
-    f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]);
+    f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
+        fSpeed=-0.8f*m_pAxisFL->getHingeAngle2Rate();
 
     if (fForeward!=0.0f) {
       f32 fForce=fForeward<0.0f?-fForeward:fForeward;
+
       for (u32 i=0; i<2; i++) {
         m_pMotor[i]->setVelocity(-250.0*fForeward);
-        m_pMotor[i]->setForce(bBoost?40*fForce:15*fForce);
+        m_pMotor[i]->setForce(bBoost?55*fForce:30*fForce);
         m_iThrottle=-1;
       }
     }
@@ -238,7 +244,7 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       m_pController->set(m_pCtrls[eCarInternal],0.0f);
     }
 
-    m_pCockpit->setSpeed(m_pCarBody->getLinearVelocity().getLength());
+    m_pCockpit->setSpeed(fSpeed);
     m_pTab->setVisible(false);
     m_pCockpit->update(false);
     m_pTab->setVisible(true);

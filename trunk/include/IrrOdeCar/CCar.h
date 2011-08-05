@@ -48,6 +48,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     ode::CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
     ode::CIrrOdeBody *m_pCarBody;    /*!< the car's body */
 
+    ode::CIrrOdeJointHinge2 *m_pAxisFL; /*!< front left axis for speed measure */
+
     scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
     CCockpitCar *m_pCockpit;
