@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarRight              ]=pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
   iCtrls[0][eCarBrake              ]=pController->addItem(0,stringw(L"Brake"                ),KEY_SPACE ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarBoost              ]=pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-  iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
+  iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarFlip               ]=pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarInternal           ]=pController->addItem(0,stringw(L"Internal Camera"      ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarCamLeft            ]=pController->addItem(0,stringw(L"Camera Left"          ),KEY_KEY_Y ,CIrrCC::eCtrlButton);

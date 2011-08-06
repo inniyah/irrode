@@ -140,10 +140,10 @@ u32 CCar::update() {
       m_fActSteer=45.0f;    //... just use this value if the velocity is low. If the velocity is higher, even ...
     else
       if (v>45.0f)
-        m_fActSteer=25.0f;  //... higher than 45 we use the minimum value of 25 degrees. If the speed is between 10 ...
+        m_fActSteer=10.0f;  //... higher than 45 we use the minimum value of 10 degrees. If the speed is between 10 ...
       else
         //and 45 we calculate the actual steering angle
-        m_fActSteer=45.0f-(20.0f)*(v-10.0f)/35.0f;
+        m_fActSteer=45.0f-(35.0f)*(v-10.0f)/35.0f;
 
   //get the parameters for the camera ...
   vector3df pos=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(0,1.35,0):vector3df(8,4,0)),
@@ -176,7 +176,7 @@ u32 CCar::update() {
   //now we fill the info text with useful information
   wchar_t dummy[0xFF];
   pos=m_pCarBody->getAbsolutePosition();
-  swprintf(dummy,0xFE,L"vel: %.2f\npos: (%.0f, %.0f, %.0f)\nsteer: %.2f",v,pos.X,pos.Y,pos.Z,m_fActSteer);
+  swprintf(dummy,0xFE,L"vel: %.2f\npos: (%.0f, %.0f, %.0f)\nsteer: %.2f %s",v,pos.X,pos.Y,pos.Z,m_fActSteer,m_bAdaptSteer?L"(adaptive)":L"");
   if (m_pController->get(m_pCtrls[eCarBoost])!=0.0f) swprintf(dummy,0xFF,L"%s\nBOOST!",dummy);
   m_pInfo->setText(dummy);
 
