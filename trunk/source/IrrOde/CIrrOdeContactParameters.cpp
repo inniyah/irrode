@@ -11,19 +11,23 @@ void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParamete
   if (pParam1->getMode()&eContactApprox1_1 || pParam2->getMode()&eContactApprox1_1) pParams->setModeApprox1_1(true);
   if (pParam1->getMode()&eContactApprox1_2 || pParam2->getMode()&eContactApprox1_2) pParams->setModeApprox1_2(true);
 
+  if (pParam1->getModeBounce() || pParam2->getModeBounce()) pParams->setModeBounce(true);
+  if (pParam1->getModeSlip1 () || pParam2->getModeSlip1 ()) pParams->setModeSlip1(true);
+  if (pParam1->getModeSlip2 () || pParam2->getModeSlip2 ()) pParams->setModeSlip2(true);
+
   pParams->setMode(iMode);
 
-  pParams->setMu       (sqrt(pParam1->getMu()       *pParam2->getMu()       ));
-  pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      ));
-  pParams->setBounce   (sqrt(pParam1->getBounce()   *pParam2->getBounce()   ));
-  pParams->setBounceVel(sqrt(pParam1->getBounceVel()*pParam2->getBounceVel()));
-  pParams->setSoftErp  (sqrt(pParam1->getSoftErp()  *pParam2->getSoftErp()  ));
-  pParams->setSoftCfm  (sqrt(pParam1->getSoftCfm()  *pParam2->getSoftCfm()  ));
-  pParams->setMotion1  (sqrt(pParam1->getMotion1()  *pParam2->getMotion1()  ));
-  pParams->setMotion2  (sqrt(pParam1->getMotion2()  *pParam2->getMotion2()  ));
-  pParams->setMotionN  (sqrt(pParam1->getMotionN()  *pParam2->getMotionN()  ));
-  pParams->setSlip1    (sqrt(pParam1->getSlip1()    *pParam2->getSlip1()    ));
-  pParams->setSlip2    (sqrt(pParam1->getSlip2()    *pParam2->getSlip2()    ));
+  pParams->setMu       (sqrt(pParam1->getMu()       *pParam2->getMu()       )     );
+  pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      )     );
+  pParams->setBounce   (    (pParam1->getBounce()   +pParam2->getBounce()   )/2.0f);
+  pParams->setBounceVel(    (pParam1->getBounceVel()+pParam2->getBounceVel())/2.0f);
+  pParams->setSoftErp  (sqrt(pParam1->getSoftErp()  *pParam2->getSoftErp()  )     );
+  pParams->setSoftCfm  (sqrt(pParam1->getSoftCfm()  *pParam2->getSoftCfm()  )     );
+  pParams->setMotion1  (sqrt(pParam1->getMotion1()  *pParam2->getMotion1()  )     );
+  pParams->setMotion2  (sqrt(pParam1->getMotion2()  *pParam2->getMotion2()  )     );
+  pParams->setMotionN  (sqrt(pParam1->getMotionN()  *pParam2->getMotionN()  )     );
+  pParams->setSlip1    (    (pParam1->getSlip1()    +pParam2->getSlip1()    )/2.0f);
+  pParams->setSlip2    (    (pParam1->getSlip2()    +pParam2->getSlip2()    )/2.0f);
 }
 
 } //namespace ode
