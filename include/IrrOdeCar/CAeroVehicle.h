@@ -5,6 +5,10 @@
   #include <CIrrOdeCarState.h>
   #include <IrrOde.h>
 
+namespace irrklang {
+  class ISound;
+};
+
 using namespace irr;
 
 class CAutoPilot;
@@ -85,9 +89,10 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
     CCockpitPlane *m_pCockpit;
+    irrklang::ISound *m_pSound;
 
   public:
-    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit);
+    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);
     virtual ~CAeroVehicle();
 
     virtual void activate();

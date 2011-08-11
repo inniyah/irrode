@@ -70,14 +70,17 @@
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
 			<Add directory="CodeSnippets" />
+			<Add directory="..\..\libs\irrKlang-1.3.0\include" />
 		</Compiler>
 		<Linker>
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
 			<Add library="libAdvancedParticle.a" />
+			<Add library="irrklang" />
 			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
 			<Add directory="..\codeblocks" />
+			<Add directory="..\..\libs\irrKlang-1.3.0\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CAeroVehicle.h" />
 		<Unit filename="..\include\IrrOdeCar\CAutoPilot.h" />

@@ -4,10 +4,13 @@
   #include <irrCC.h>
   #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
+  #include <irrklang.h>
 
-CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl,pSndEngine) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
+  m_pSound=NULL;
+
   if (m_pBody!=NULL) {
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
@@ -86,6 +89,9 @@ CAeroVehicle::~CAeroVehicle() {
 
 void CAeroVehicle::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
+
+  if (m_pSound!=NULL) m_pSound->setIsPaused(false);
+
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pTab->setVisible(true);
@@ -277,6 +283,8 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
       }
     }
     m_pMotor->setPower(m_fThrust*fAltFact);
+
+    if (m_pBody!=NULL) m_vCamVelocity=m_pBody->getLinearVelocity();
 
     odeStep(pStep->getStepNo());
   }

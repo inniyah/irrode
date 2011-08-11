@@ -2,6 +2,7 @@
   #include <IrrODE.h>
   #include <CSettings.h>
   #include <CAdvancedParticleSystemNode.h>
+  #include <irrKlang.h>
 
   #include "CCar.h"
   #include "CTank.h"
@@ -156,6 +157,8 @@ int main(int argc, char** argv) {
   //now create the Irrlicht device from the chosen options
   IrrlichtDevice *device=pSettings->createDeviceFromSettings();
   device->setWindowCaption(L"IrrODE car demo");
+
+  irrklang::ISoundEngine *pSndEngine=irrklang::createIrrKlangDevice();
 
   ode::CIrrOdeManager::getSharedInstance()->install(device);
   irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
@@ -377,7 +380,7 @@ int main(int argc, char** argv) {
 
   list<ISceneNode *>::Iterator it;
   for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController,pCarCockpit);
+    CCar *p=new CCar(device,*it,pController,pCarCockpit,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -386,21 +389,21 @@ int main(int argc, char** argv) {
   CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-    CPlane *p=new CPlane(device,*it,pController,pCockpit);
+    CPlane *p=new CPlane(device,*it,pController,pCockpit,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lTanks.begin(); it!=lTanks.end(); it++) {
-    CTank *p=new CTank(device,*it,pController);
+    CTank *p=new CTank(device,*it,pController,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[1]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-    CHeli *p=new CHeli(device,*it,pController,pCockpit);
+    CHeli *p=new CHeli(device,*it,pController,pCockpit,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -436,6 +439,21 @@ int main(int argc, char** argv) {
   while(device->run()) {
     //step the simulation
     ode::CIrrOdeManager::getSharedInstance()->step();
+
+    if (pSndEngine && pActive) {
+      scene::ICameraSceneNode *pCam=smgr->getActiveCamera();
+      core::vector3df irrPos=pCam->getPosition(),
+                      irrTgt=pCam->getTarget(),
+                      irrUp =pCam->getUpVector(),
+                      irrVel=pActive->getCameraVelocity();
+
+      irrklang::vec3df pos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                       tgt=irrklang::vec3df(irrTgt.X,irrTgt.Y,irrTgt.Z),
+                       up =irrklang::vec3df(irrUp .X,irrUp .Y,irrUp .Z),
+                       vel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+      pSndEngine->setListenerPosition(pos,tgt,vel,up);
+    }
 
     //call the update method of the currently active state
     u32 iSwitch=pActive->update();
