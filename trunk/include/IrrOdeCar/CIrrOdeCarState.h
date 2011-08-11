@@ -6,6 +6,10 @@
 
 class CIrrCC;
 
+namespace irrklang {
+  class ISoundEngine;
+};
+
 using namespace irr;
 
 /**
@@ -31,6 +35,11 @@ class CIrrOdeCarState {
     c8 m_sHelpFile[1024];
 
     CIrrCC *m_pController;
+
+    irrklang::ISoundEngine *m_pSndEngine;
+
+    core::vector3df m_vCamVelocity;
+
   public:
     /**
      * The constructor
@@ -38,7 +47,7 @@ class CIrrOdeCarState {
      * @param sVehicleName the name of the state (e.g. helicopter)
      * @param sHelpFile the help file. The content of this file is shown in the help screen
      */
-    CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl);
+    CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine);
 
     virtual ~CIrrOdeCarState() { }   /*!< destructor */
 
@@ -57,6 +66,10 @@ class CIrrOdeCarState {
     virtual stringc &getButtonText()=0;
 
     virtual void drawSpecifics()=0;
+
+    const core::vector3df &getCameraVelocity() {
+      return m_vCamVelocity;
+    }
 
     void incHits() { m_iHits++; }
 };

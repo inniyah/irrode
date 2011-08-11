@@ -6,6 +6,10 @@
 
   #include "CIrrOdeCarState.h"
 
+namespace irrklang {
+  class ISound;
+};
+
 class CIrrCC;
 class CCockpitCar;
 
@@ -49,15 +53,19 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     ode::CIrrOdeBody *m_pCarBody;    /*!< the car's body */
 
     ode::CIrrOdeJointHinge2 *m_pAxesFront[2]; /*!< front left axis for speed measure */
+    ode::CIrrOdeJointHinge *m_pAxesRear[2];
 
     scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
     CCockpitCar *m_pCockpit;
 
+    irrklang::ISound *m_pSound;
+
     const u32 *m_pCtrls;
+    f32 m_fSound;
 
   public:
-    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit);    /*!< the car's constructor */
+    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit, irrklang::ISoundEngine *pSndEngine);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */

@@ -5,7 +5,7 @@
   #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
 
-CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit) {
+CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pSndEngine) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);

@@ -3,6 +3,7 @@
   #include <CCustomEventReceiver.h>
   #include <CCockpitCar.h>
   #include <math.h>
+  #include <irrklang.h>
 
   #include <irrCC.h>
 
@@ -20,9 +21,10 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl,pSndEngine) {
   //get the car body
   m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
+  m_fSound=0.75f;
 
   if (m_pCarBody) {
     CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
@@ -33,6 +35,12 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
 
     printf("axis_FL=%i\n",(int)m_pAxesFront[0]);
     printf("axis_FR=%i\n",(int)m_pAxesFront[1]);
+
+    m_pAxesRear[0]=reinterpret_cast<ode::CIrrOdeJointHinge *>(m_pCarBody->getChildByName("axis_rl",m_pCarBody));
+    m_pAxesRear[1]=reinterpret_cast<ode::CIrrOdeJointHinge *>(m_pCarBody->getChildByName("axis_rr",m_pCarBody));
+
+    printf("axis_RL=%i\n",(int)m_pAxesRear[0]);
+    printf("axis_RR=%i\n",(int)m_pAxesRear[1]);
 
     //get the two motors that are attached to the rear wheels
     findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
@@ -81,6 +89,10 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
 
     m_bInitialized=true;
   }
+
+  m_pSound=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pSound->setMinDistance(10.0f);
+  m_pSound->setMaxDistance(100.0f);
 }
 
 CCar::~CCar() {
@@ -89,6 +101,7 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
+  if (m_pSound!=NULL) m_pSound->setIsPaused(false);
   m_pSmgr->setActiveCamera(m_pCam);
   m_pTab->setVisible(true);
   m_pDevice->setEventReceiver(this);
@@ -193,100 +206,134 @@ bool CCar::OnEvent(const SEvent &event) {
 }
 
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
-  if (m_bActive && pEvent->getType()==irr::ode::eIrrOdeEventStep) {
-    bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
+  if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    if (m_bActive) {
+      bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
 
-    if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
-    m_bBoost=bBoost;
+      if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
+      m_bBoost=bBoost;
 
-    f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
-        fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
+      f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
+          fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
-    if (fForeward!=0.0f) {
-      f32 fForce=fForeward<0.0f?-fForeward:fForeward;
+      if (fForeward!=0.0f) {
+        f32 fForce=fForeward<0.0f?-fForeward:fForeward;
 
-      for (u32 i=0; i<2; i++) {
-        m_pMotor[i]->setVelocity(-250.0*fForeward);
-        m_pMotor[i]->setForce(bBoost?55*fForce:30*fForce);
-        m_iThrottle=-1;
+        for (u32 i=0; i<2; i++) {
+          m_pMotor[i]->setVelocity(-250.0*fForeward);
+          m_pMotor[i]->setForce(bBoost?55*fForce:30*fForce);
+          m_iThrottle=-1;
+        }
       }
-    }
-    else
-      for (u32 i=0; i<2; i++) {
-        m_pMotor[i]->setVelocity(0.0f);
-        m_pMotor[i]->setForce(5.0f);
-      }
-
-    f32 fSteer=m_pController->get(m_pCtrls[eCarLeft]);
-
-    if (fSteer!=0.0f)
-      for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer);
-    else
-      for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
-
-    if (m_pController->get(m_pCtrls[eCarBrake])!=0.0f)
-      for (u32 i=0; i<2; i++) {
+      else
+        for (u32 i=0; i<2; i++) {
           m_pMotor[i]->setVelocity(0.0f);
-          m_pMotor[i]->setForce(75);
+          m_pMotor[i]->setForce(5.0f);
+        }
+
+      f32 fSteer=m_pController->get(m_pCtrls[eCarLeft]);
+
+      if (fSteer!=0.0f)
+        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer);
+      else
+        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+
+      if (m_pController->get(m_pCtrls[eCarBrake])!=0.0f)
+        for (u32 i=0; i<2; i++) {
+            m_pMotor[i]->setVelocity(0.0f);
+            m_pMotor[i]->setForce(75);
+        }
+
+      if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
+        m_bAdaptSteer=!m_bAdaptSteer;
+        m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
       }
 
-    if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
-      m_bAdaptSteer=!m_bAdaptSteer;
-      m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
-    }
-
-    //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
-    if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
-      vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
-      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,120,0));
-    }
-
-    if (m_pController->get(m_pCtrls[eCarInternal])!=0.0f) {
-      m_bInternal=!m_bInternal;
-      m_pController->set(m_pCtrls[eCarInternal],0.0f);
-    }
-
-    m_pCockpit->setSpeed(fSpeed);
-    m_pTab->setVisible(false);
-    m_pCockpit->update(false);
-    m_pTab->setVisible(true);
-
-    if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
-      m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
-
-      if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
-      if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
-    }
-
-    if (m_pController->get(m_pCtrls[eCarCamUp])!=0.0f) {
-      m_fCamAngleV+=m_pController->get(m_pCtrls[eCarCamUp]);
-
-      if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
-      if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
-    }
-
-    if (m_pController->get(m_pCtrls[eCarCamCenter])) {
-      if (m_fCamAngleH!=0.0f) {
-        if (m_fCamAngleH>0.0f) {
-          m_fCamAngleH-=5.0f;
-          if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
-        }
-        else {
-          m_fCamAngleH+=5.0f;
-          if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
-        }
+      //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
+      if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
+        vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(vector3df(0,0.3f,0));
+        m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,vector3df(0,120,0));
       }
 
-      if (m_fCamAngleV!=0.0f) {
-        if (m_fCamAngleV>0.0f) {
-          m_fCamAngleV-=5.0f;
-          if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
+      if (m_pController->get(m_pCtrls[eCarInternal])!=0.0f) {
+        m_bInternal=!m_bInternal;
+        m_pController->set(m_pCtrls[eCarInternal],0.0f);
+      }
+
+      m_pCockpit->setSpeed(fSpeed);
+      m_pTab->setVisible(false);
+      m_pCockpit->update(false);
+      m_pTab->setVisible(true);
+
+      if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
+        m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
+
+        if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
+        if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
+      }
+
+      if (m_pController->get(m_pCtrls[eCarCamUp])!=0.0f) {
+        m_fCamAngleV+=m_pController->get(m_pCtrls[eCarCamUp]);
+
+        if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
+        if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
+      }
+
+      if (m_pController->get(m_pCtrls[eCarCamCenter])) {
+        if (m_fCamAngleH!=0.0f) {
+          if (m_fCamAngleH>0.0f) {
+            m_fCamAngleH-=5.0f;
+            if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
+          }
+          else {
+            m_fCamAngleH+=5.0f;
+            if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
+          }
         }
-        else {
-          m_fCamAngleV+=5.0f;
-          if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
+
+        if (m_fCamAngleV!=0.0f) {
+          if (m_fCamAngleV>0.0f) {
+            m_fCamAngleV-=5.0f;
+            if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
+          }
+          else {
+            m_fCamAngleV+=5.0f;
+            if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
+          }
         }
       }
+    }
+
+    if (m_pSndEngine!=NULL && m_pSound!=NULL) {
+      f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
+      if (fRot<0.0f) fRot=-fRot;
+
+      if (fRot>5.0f) {
+        if (fRot>155.0f)
+          fSound=5.75f;
+        else
+          fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
+      }
+
+      if (m_fSound<fSound) {
+        m_fSound+=0.025f;
+        if (m_fSound>=fSound) m_fSound=fSound;
+      }
+
+      if (m_fSound>fSound) {
+        m_fSound-=0.025f;
+        if (m_fSound<=fSound) m_fSound=fSound;
+      }
+
+      core::vector3df irrPos=m_pCarBody->getPosition(),
+                      irrVel=m_pCarBody->getLinearVelocity();
+
+      irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                       vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+      m_pSound->setVelocity(vVel);
+      m_pSound->setPosition(vPos);
+      m_pSound->setPlaybackSpeed(m_fSound);
     }
   }
   return false;

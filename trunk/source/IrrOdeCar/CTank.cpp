@@ -20,7 +20,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
   return NULL;
 }
 
-CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
+CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl,pSndEngine) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;

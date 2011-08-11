@@ -45,7 +45,7 @@ class CHeli : public CAeroVehicle {
     bool m_bLeft;
 
   public:
-    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit);
+    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);
     virtual ~CHeli();
 
     virtual u32 update();

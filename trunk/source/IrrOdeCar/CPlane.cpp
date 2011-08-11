@@ -7,10 +7,11 @@
   #include <CTargetSelector.h>
   #include <CCockpitPlane.h>
   #include <irrlicht.h>
+  #include <irrKlang.h>
 
 using namespace irr;
 
-CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit) {
+CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pSndEngine) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -43,6 +44,10 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
     printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
   }
   else printf("no checkpoints for plane found!\n");
+
+  m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pSound->setMinDistance(10.0f);
+  m_pSound->setMaxDistance(100.0f);
 }
 
 CPlane::~CPlane() {
@@ -187,6 +192,18 @@ void CPlane::odeStep(u32 iStep) {
     CEventRudderPositions *p=new CEventRudderPositions(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
     ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
     m_bRudderChanged=false;
+  }
+
+  if (m_pSndEngine!=NULL && m_pSound!=NULL) {
+    core::vector3df irrPos=m_pBody->getPosition(),
+                    irrVel=m_pBody->getLinearVelocity();
+
+    irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                     vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+    m_pSound->setVelocity(vVel);
+    m_pSound->setPosition(vPos);
+    m_pSound->setPlaybackSpeed(0.75f+0.5*m_pMotor->getPower());
   }
 }
 

@@ -30,7 +30,7 @@ class CPlane : public CAeroVehicle {
     bool m_bLeftMissile;
 
   public:
-    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit);
+    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);
     virtual ~CPlane();
 
     virtual void odeStep(u32 iStep);

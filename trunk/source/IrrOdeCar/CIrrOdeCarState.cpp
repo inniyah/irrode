@@ -5,12 +5,16 @@ static IGUIStaticText *g_pRecording=NULL,
 static ode::CIrrOdeRecorder *g_pRecorder=NULL;
 static u32 g_iCount=0;
 
-CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
+CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine) {
   //initialize the members
   m_pDevice=pDevice;
   m_pSmgr=m_pDevice->getSceneManager();
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_bActive=false;
+
+  m_pSndEngine=pSndEngine;
+
+  m_vCamVelocity=core::vector3df(0.0f,0.0f,0.0f);
 
   m_pController=pCtrl;
 
