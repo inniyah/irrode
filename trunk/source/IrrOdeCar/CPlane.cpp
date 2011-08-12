@@ -46,8 +46,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   else printf("no checkpoints for plane found!\n");
 
   m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  m_pSound->setMinDistance(10.0f);
-  m_pSound->setMaxDistance(100.0f);
+  if (m_pSound) m_pSound->setMinDistance(100.0f);
 }
 
 CPlane::~CPlane() {
@@ -127,7 +126,7 @@ void CPlane::odeStep(u32 iStep) {
 
       m_bLeftMissile=!m_bLeftMissile;
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
+      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,m_pSndEngine);
       p->setTarget(m_pTargetSelector->getTarget());
       m_iShotsFired++;
       m_bFirePrimary=false;
@@ -140,7 +139,7 @@ void CPlane::odeStep(u32 iStep) {
                 rot=m_pBody->getRotation(),
                 vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
 
-      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
+      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this,m_pSndEngine);
       m_iShotsFired++;
       m_bFireSecondary=false;
     }

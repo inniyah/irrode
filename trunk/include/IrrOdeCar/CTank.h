@@ -6,13 +6,11 @@
 
   #include "CIrrOdeCarState.h"
 
-using namespace irr;
+namespace irrklang {
+  class ISound;
+}
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+using namespace irr;
 
 enum eTankCtrl {
   eTankForeward,
@@ -57,8 +55,11 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
                                 *m_pTurretHinge;
     irr::s8 m_aAxesAngles[4];
 
+    irrklang::ISound *m_pSound;
+
     const u32 *m_pCtrls;
     u32 m_iLastShot;
+    f32 m_fSound;
 
     int getSteer();
     int getAcc  ();

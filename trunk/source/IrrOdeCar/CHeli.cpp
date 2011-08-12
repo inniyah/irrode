@@ -4,6 +4,7 @@
   #include <irrCC.h>
   #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
+  #include <irrKlang.h>
 
 CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pSndEngine) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
@@ -14,6 +15,15 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
 
   m_bLeft=false;
+
+  if (m_pSndEngine) {
+    m_pSound=m_pSndEngine->play3D("../../data/sound/heli.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+
+    if (m_pSound) {
+      m_pSound->setMaxDistance(200.0f);
+      m_pSound->setVolume(1.0f);
+    }
+  }
 }
 
 CHeli::~CHeli() {
@@ -93,7 +103,7 @@ void CHeli::odeStep(u32 iStep) {
                 rot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
                 vel=m_pBody->getLinearVelocity();
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
+      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,m_pSndEngine);
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
       m_iShotsFired++;
@@ -137,6 +147,18 @@ void CHeli::odeStep(u32 iStep) {
       m_pCockpit->update(false);
       m_pTab->setVisible(true);
     }
+  }
+
+  if (m_pSndEngine!=NULL && m_pSound!=NULL) {
+    core::vector3df irrPos=m_pBody->getPosition(),
+                    irrVel=m_pBody->getLinearVelocity();
+
+    irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                     vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+    m_pSound->setVelocity(vVel);
+    m_pSound->setPosition(vPos);
+    m_pSound->setPlaybackSpeed(0.75f+0.5*m_pMotor->getPower());
   }
 }
 

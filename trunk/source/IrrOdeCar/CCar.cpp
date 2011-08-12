@@ -91,12 +91,13 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   }
 
   m_pSound=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  m_pSound->setMinDistance(10.0f);
-  m_pSound->setMaxDistance(100.0f);
+
+  if (m_pSound) m_pSound->setMinDistance(25.0f);
 }
 
 CCar::~CCar() {
   ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  if (m_pSound) m_pSound->drop();
 }
 
 //This method is called when the state is activated.

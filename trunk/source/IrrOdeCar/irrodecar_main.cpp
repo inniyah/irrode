@@ -453,6 +453,7 @@ int main(int argc, char** argv) {
                        vel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
 
       pSndEngine->setListenerPosition(pos,tgt,vel,up);
+      pSndEngine->setRolloffFactor(0.125f);
     }
 
     //call the update method of the currently active state
@@ -504,6 +505,8 @@ int main(int argc, char** argv) {
 
   //drop the world so it is destroyed
   device->drop();
+
+  if (pSndEngine) pSndEngine->drop();
 
   //and now some more cleanup...
   for (u32 i=0; i<aStates.size(); i++) {
