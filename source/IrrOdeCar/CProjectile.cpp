@@ -5,6 +5,8 @@
   #include <CIrrOdeCarState.h>
   #include <CAdvancedParticleSystemNode.h>
   #include <CAutoPilot.h>
+  #include <irrlicht.h>
+  #include <irrKlang.h>
 
 void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
   if (pNode->getType()==(irr::scene::ESCENE_NODE_TYPE)ADVANCED_PARTICLE_NODE_ID) {
@@ -46,7 +48,7 @@ void CProjectile::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pAutoPilot->setTarget(m_pTarget);
 }
 
-CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pShooter) {
+CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pShooter, irrklang::ISoundEngine *pSndEngine) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
   m_bActive=true;
@@ -56,6 +58,9 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
   m_pTorque=NULL;
   m_pAutoPilot=NULL;
   m_pShooter=pShooter;
+  m_pSndEngine=pSndEngine;
+  m_pSndEplo=NULL;
+  m_pSndMoto=NULL;
 
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
@@ -72,6 +77,16 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
       m_pBody->setLinearVelocity(vVel);
       m_pBody->setIsFastMoving(bFastCollision);
       m_pBody->initPhysics();
+
+      m_pSndEplo=m_pSndEngine->play3D("../../data/sound/explode.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),false,true);
+      if (strcmp(sSource,"missile"))
+        m_pSndEngine->play3D("../../data/sound/shot.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),false,false);
+      else {
+        m_pSndMoto=m_pSndEngine->play3D("../../data/sound/missile.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),true,true);
+        m_pSndMoto->setIsPaused(false);
+      }
+
+      if (!strcmp(sSource,"bullet")) m_fVolume=0.3f; else m_fVolume=1.0f;
 
       //last but not least we add the shot to our list
       CProjectileManager::getSharedInstance()->addShot(this);
@@ -100,8 +115,29 @@ void CProjectile::step() {
   //reduce the remaining lifetime
   m_iTtl--;
 
+  if (m_pSndMoto) {
+    core::vector3df v=m_pBody->getLinearVelocity(),
+                    p=m_pBody->getPosition();
+
+    m_pSndMoto->setPosition(irrklang::vec3df(p.X,p.Y,p.Z));
+    m_pSndMoto->setVelocity(irrklang::vec3df(v.X,v.Y,v.Z));
+  }
+
   //if the lifetime has reached 0 ...
   if (m_iTtl<=0 && m_bActive) {
+    if (m_pSndEplo!=NULL) {
+      core::vector3df v=m_pBody->getPosition();
+      m_pSndEplo->setPosition(irrklang::vec3df(v.X,v.Y,v.Z));
+      m_pSndEplo->setVolume(m_fVolume);
+      m_pSndEplo->setMinDistance(100.0f);
+      m_pSndEplo->setIsPaused(false);
+      m_pSndEplo->drop();
+      m_pSndEplo=NULL;
+
+      if (m_pSndMoto) {
+        m_pSndMoto->stop();
+      }
+    }
     //... we remove the body
     m_pBody->removeFromPhysics();
     m_bActive=false;

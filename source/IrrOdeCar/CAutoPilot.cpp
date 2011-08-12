@@ -239,7 +239,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           fYaw=getYawControl(false,sInfo);
           fRoll=getRollControl(fYaw,sInfo);
 
-          if (m_vPosition.Y<800.0f) setState(eApPlaneLowAlt);
+          if (m_vPosition.Y<825.0f) setState(eApPlaneLowAlt);
         }
         break;
 
@@ -261,7 +261,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
-          if (m_vPosition.Y>800.0f) setState(eApPlaneCruise);
+          if (m_vPosition.Y>825.0f) setState(eApPlaneCruise);
         }
         break;
 
