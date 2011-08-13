@@ -87,7 +87,10 @@ CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang
 
     if (m_pSndEngine) {
       m_pSound=m_pSndEngine->play3D("../../data/sound/tank.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-      if (m_pSound) m_pSound->setMinDistance(100.0f);
+      if (m_pSound) {
+        m_pSound->setVolume(0.5f);
+        m_pSound->setMinDistance(100.0f);
+      }
     }
   }
 }
