@@ -21,7 +21,7 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
 
     if (m_pSound) {
       m_pSound->setMaxDistance(200.0f);
-      m_pSound->setVolume(1.0f);
+      m_pSound->setVolume(0.5f);
     }
   }
 }

@@ -223,7 +223,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           vVeloc.normalize();
           m_vCpVel.normalize();
 
-          f32 fDiffY=(950-m_vPosition.Y)/10.0f;
+          f32 fDiffY=(1050-m_vPosition.Y)/10.0f;
 
           if (fDiffY> m_vVelocityLin.getLength()/5.0f) fDiffY= m_vVelocityLin.getLength()/5.0f;
           if (fDiffY<-m_vVelocityLin.getLength()/5.0f) fDiffY=-m_vVelocityLin.getLength()/5.0f;
@@ -239,7 +239,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           fYaw=getYawControl(false,sInfo);
           fRoll=getRollControl(fYaw,sInfo);
 
-          if (m_vPosition.Y<825.0f) setState(eApPlaneLowAlt);
+          if (m_vPosition.Y<900.0f) setState(eApPlaneLowAlt);
         }
         break;
 
@@ -261,7 +261,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           if (fPitch> 1.0f) fPitch= 1.0f;
           if (fPitch<-1.0f) fPitch=-1.0f;
 
-          if (m_vPosition.Y>825.0f) setState(eApPlaneCruise);
+          if (m_vPosition.Y>900.0f) setState(eApPlaneCruise);
         }
         break;
 
