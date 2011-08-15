@@ -28,6 +28,9 @@ class CPlane : public CAeroVehicle {
                *m_pYaw[2];
 
     bool m_bLeftMissile;
+    ode::CIrrOdeJointHinge *m_pAxes[2];
+    ode::CIrrOdeJointHinge2 *m_pSteerAxis;
+    f32 m_fAngleRate[3];
 
   public:
     CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);

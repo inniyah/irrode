@@ -47,6 +47,18 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
   m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pSound) m_pSound->setMinDistance(100.0f);
+
+  for (u32 i=0; i<2; i++) {
+    c8 s[0xFF];
+    sprintf(s,"axis%i",i+1);
+    m_pAxes[i]=(ode::CIrrOdeJointHinge *)m_pBody->getChildByName(s,m_pBody);
+    printf("%s: %i\n",s,(int)m_pAxes[i]);
+    m_fAngleRate[i]=0.0f;
+  }
+  m_fAngleRate[2]=0.0f;
+
+  m_pSteerAxis=(ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
+  printf("steer axis: %i\n",(int)m_pSteerAxis);
 }
 
 CPlane::~CPlane() {
@@ -193,16 +205,57 @@ void CPlane::odeStep(u32 iStep) {
     m_bRudderChanged=false;
   }
 
-  if (m_pSndEngine!=NULL && m_pSound!=NULL) {
-    core::vector3df irrPos=m_pBody->getPosition(),
-                    irrVel=m_pBody->getLinearVelocity();
+  if (m_pSndEngine!=NULL) {
+    if (m_pSound!=NULL) {
+      core::vector3df irrPos=m_pBody->getPosition(),
+                      irrVel=m_pBody->getLinearVelocity();
 
-    irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
-                     vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+      irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                       vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
 
-    m_pSound->setVelocity(vVel);
-    m_pSound->setPosition(vPos);
-    m_pSound->setPlaybackSpeed(0.75f+0.5*m_pMotor->getPower());
+      f32 fPitch=m_pMotor->getPower();
+      if (fPitch<0.0f) fPitch=-fPitch;
+
+      m_pSound->setVelocity(vVel);
+      m_pSound->setPosition(vPos);
+      m_pSound->setPlaybackSpeed(0.75f+0.5*fPitch);
+    }
+
+    for (u32 i=0; i<2; i++) {
+      if (m_pAxes[i]) {
+        f32 f=m_pAxes[i]->getHingeAngleRate(),fImpulse=m_fAngleRate[i]-f;
+        if (fImpulse<0.0f) fImpulse=-fImpulse;
+        if (fImpulse>15.0f) {
+          f32 fVol=(fImpulse-15.0f)/75.0f;
+          if (fVol>1.0f) fVol=1.0f;
+          core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
+          irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z);
+          irrklang::ISound *pSnd=m_pSndEngine->play3D("../../data/sound/skid.ogg",vPos,false,true);
+          pSnd->setVolume(fVol);
+          pSnd->setIsPaused(false);
+          pSnd->setMinDistance(10.0f);
+          pSnd->drop();
+        }
+        m_fAngleRate[i]=f;
+      }
+    }
+
+    if (m_pSteerAxis) {
+      f32 f=m_pSteerAxis->getHingeAngle2Rate(),fImpulse=m_fAngleRate[2]-f;;
+      if (fImpulse<0.0f) fImpulse=-fImpulse;
+      if (fImpulse>15.0f) {
+        f32 fVol=(fImpulse-15.0f)/75.0f;
+        if (fVol>1.0f) fVol=1.0f;
+        core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
+        irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z);
+        irrklang::ISound *pSnd=m_pSndEngine->play3D("../../data/sound/skid.ogg",vPos,false,true);
+        pSnd->setVolume(fVol);
+        pSnd->setIsPaused(false);
+        pSnd->setMinDistance(10.0f);
+        pSnd->drop();
+      }
+      m_fAngleRate[2]=f;
+    }
   }
 }
 

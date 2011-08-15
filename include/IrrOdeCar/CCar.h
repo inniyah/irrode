@@ -64,6 +64,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     const u32 *m_pCtrls;
     f32 m_fSound;
 
+    core::vector3df m_vOldSpeed;
+
   public:
     CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit, irrklang::ISoundEngine *pSndEngine);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
