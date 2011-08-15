@@ -93,6 +93,8 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   m_pSound=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
 
   if (m_pSound) m_pSound->setMinDistance(25.0f);
+
+  m_vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
 }
 
 CCar::~CCar() {
@@ -305,36 +307,53 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       }
     }
 
-    if (m_pSndEngine!=NULL && m_pSound!=NULL) {
-      f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
-      if (fRot<0.0f) fRot=-fRot;
-
-      if (fRot>5.0f) {
-        if (fRot>155.0f)
-          fSound=5.75f;
-        else
-          fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
-      }
-
-      if (m_fSound<fSound) {
-        m_fSound+=0.025f;
-        if (m_fSound>=fSound) m_fSound=fSound;
-      }
-
-      if (m_fSound>fSound) {
-        m_fSound-=0.025f;
-        if (m_fSound<=fSound) m_fSound=fSound;
-      }
-
+    if (m_pSndEngine!=NULL) {
       core::vector3df irrPos=m_pCarBody->getPosition(),
                       irrVel=m_pCarBody->getLinearVelocity();
 
       irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
                        vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
 
-      m_pSound->setVelocity(vVel);
-      m_pSound->setPosition(vPos);
-      m_pSound->setPlaybackSpeed(m_fSound);
+      if (m_pSound!=NULL) {
+        f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
+        if (fRot<0.0f) fRot=-fRot;
+
+        if (fRot>5.0f) {
+          if (fRot>155.0f)
+            fSound=5.75f;
+          else
+            fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
+        }
+
+        if (m_fSound<fSound) {
+          m_fSound+=0.025f;
+          if (m_fSound>=fSound) m_fSound=fSound;
+        }
+
+        if (m_fSound>fSound) {
+          m_fSound-=0.025f;
+          if (m_fSound<=fSound) m_fSound=fSound;
+        }
+
+        m_pSound->setVelocity(vVel);
+        m_pSound->setPosition(vPos);
+        m_pSound->setPlaybackSpeed(m_fSound);
+      }
+
+      f32 fImpulse=(vVel-m_vOldSpeed).getLength();
+      if (fImpulse<0.0f) fImpulse=-fImpulse;
+
+      if (fImpulse>5.0f) {
+        fImpulse-=5.0f;
+        fImpulse/=50.0f;
+        if (fImpulse>1.0f) fImpulse=1.0f;
+
+        irrklang::ISound *pSnd=m_pSndEngine->play3D("../../data/sound/crash.ogg",vPos,false,true);
+        pSnd->setVolume(fImpulse);
+        pSnd->setIsPaused(false);
+      }
+
+      m_vOldSpeed=irrVel;
     }
   }
   return false;
