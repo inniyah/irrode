@@ -20,6 +20,7 @@
   #include <CMeshCombiner.h>
   #include <CCockpitPlane.h>
   #include <CCockpitCar.h>
+  #include <CRoadMeshLoader.h>
 
 using namespace irr;
 
@@ -268,6 +269,9 @@ int main(int argc, char** argv) {
   CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(smgr);
   smgr->registerSceneNodeFactory(cParticleFactory);
   cParticleFactory->drop();
+
+  CRoadMeshLoader *pLoader=new CRoadMeshLoader(device);
+  smgr->addExternalMeshLoader(pLoader);
 
   //init the ODE
   ode::CIrrOdeManager::getSharedInstance()->initODE();
