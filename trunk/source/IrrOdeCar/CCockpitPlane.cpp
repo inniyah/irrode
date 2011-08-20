@@ -22,7 +22,7 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRend
   m_pCam->setNearValue(0.1f);
   m_pRttSmgr->setActiveCamera(m_pCam);
 
-  scene::IMesh *p=m_pRttSmgr->getMesh("../../data/horizon.obj");
+  scene::IMesh *p=m_pRttSmgr->getMesh("../../data/models/horizon.obj");
 
   if (p) {
     m_pHorizon=m_pRttSmgr->addMeshSceneNode(p);
