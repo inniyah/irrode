@@ -139,6 +139,14 @@ class CTextureParameters {
       
       m_bStretch=in->getAttributeAsBool("Stretch");
     }
+    
+    void copyTo(CTextureParameters *pDest) {
+      pDest->setTexture(m_sTexture);
+      pDest->setRotate (m_iRotate );
+      pDest->setOffset (m_fOffset );
+      pDest->setScale  (m_fScale  );
+      pDest->setStretch(m_bStretch);
+    }
 };
 
 #endif

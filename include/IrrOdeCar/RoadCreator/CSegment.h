@@ -75,8 +75,9 @@ class CSegment : public IRoadPart {
      * @param sName name of the segment
      * @param vPosition position of the segment
      * @param pDrv the Irrlicht video driver
+     * @param pInitParam the initial texture parameters
      */
-    CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv);
+    CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv, CTextureParameters *pInitParam);
     /**
      * The construtor. This one is used by the road loading routine
      * @param pDrv the Irrlicht video driver
