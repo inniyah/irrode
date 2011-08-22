@@ -10,7 +10,7 @@ using namespace irr;
  * @param vPosition position of the segment
  * @param pDrv the Irrlicht video driver
  */
-CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv) {
+CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv, CTextureParameters *pInitParam) {
   //Default values: width: 10, length: 25, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
   m_fWidth=10.0f;
   m_fLength=25.0f;
@@ -26,6 +26,7 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideo
   for (u32 i=0; i<6; i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
+    if (pInitParam!=NULL) pInitParam[i].copyTo(m_pTexParams[i]);
   }
 
   recalcMeshBuffer();
@@ -56,6 +57,9 @@ CSegment::CSegment(video::IVideoDriver *pDrv) {
   recalcMeshBuffer();
 }
 
+/**
+ * The destructor
+ */
 CSegment::~CSegment() {
   core::list<INotification *>::Iterator it;
   for (it=m_lNotify.begin(); it!=m_lNotify.end(); it++) {
@@ -68,9 +72,6 @@ CSegment::~CSegment() {
   }
 }
 
-/**
- * The destructor
- */
 void CSegment::attributeChanged() {
   recalcMeshBuffer();
 
@@ -352,6 +353,7 @@ void CSegment::delNotify(INotification *p) {
 
 void CSegment::update() {
   recalcMeshBuffer();
+  attributeChanged();
 }
 
 CTextureParameters *CSegment::getTextureParameters(u32 i) {

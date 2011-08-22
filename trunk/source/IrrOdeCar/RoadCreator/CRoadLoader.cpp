@@ -90,7 +90,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             if (iState==2) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
-              pCon=new CConnection(m_pDevice->getVideoDriver());
+              pCon=new CConnection(m_pDevice->getVideoDriver(),NULL);
               iConTex=0;
               pCon->load(pAttr);
 

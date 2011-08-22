@@ -245,7 +245,7 @@ void CConnection::recalcMeshBuffer() {
     case eBezier1: {
         //initialize the variables for the previous points
         vOld[0]=p1[0]; vOld[1]=p2[0];
-
+        
         //We start the calculation one step off so that no zero-sized
         //polygon is created at the start of the connection
         for (f32 f=1.0f/((f32)m_iSteps); f<1.0f; f+=1.0f/((f32)m_iSteps)) {
@@ -278,6 +278,11 @@ void CConnection::recalcMeshBuffer() {
         //to insert the helppoint for the Bezier2 calculation
         p1[2]=p1[1]; p1[1]=m_vHelpPoints[0];
         p2[2]=p2[1]; p2[1]=m_vHelpPoints[2];
+        
+        for (u32 i=0; i<3; i++) {
+          m_vDraw[i  ]=p1[i];
+          m_vDraw[i+3]=p2[i];
+        }
 
         //We start the calculation one step off so that no zero-sized
         //polygon is created at the start of the connection
@@ -311,6 +316,11 @@ void CConnection::recalcMeshBuffer() {
         //to insert the 2 helppoints for the Bezier3 calculation
         p1[3]=p1[1]; p1[1]=m_vHelpPoints[0]; p1[2]=m_vHelpPoints[1];
         p2[3]=p2[1]; p2[1]=m_vHelpPoints[2]; p2[2]=m_vHelpPoints[3];
+        
+        for (u32 i=0; i<4; i++) {
+          m_vDraw[i  ]=p1[i];
+          m_vDraw[i+4]=p2[i];
+        }
 
         //We start the calculation one step off so that no zero-sized
         //polygon is created at the start of the connection
@@ -477,8 +487,8 @@ void CConnection::calculateHelpPoints() {
             }
           }
 
-        m_vHelpPoints[2]=vMinDist[0];
-        m_vHelpPoints[0]=vMinDist[1];
+        m_vHelpPoints[2]=cLine[1].start+(m_fHpOff[0]*(vMinDist[0]-cLine[1].start));
+        m_vHelpPoints[0]=cLine[0].start+(m_fHpOff[2]*(vMinDist[1]-cLine[0].start));
       }
       else {
         core::vector3df vDir=v2[1]-v[2],
@@ -514,9 +524,11 @@ void CConnection::calculateHelpPoints() {
         m_pDrv->draw3DLine(v[0],vMinDist[0],video::SColor(0xFF,0,0xFF,0));
         m_pDrv->draw3DLine(v[1],vMinDist[1],video::SColor(0xFF,0,0xFF,0));
 
-        m_vHelpPoints[0]=vMinDist[0];
-        m_vHelpPoints[2]=vMinDist[1];
+        //m_vHelpPoints[0]=vMinDist[0];
+        //m_vHelpPoints[2]=vMinDist[1];
 
+        m_vHelpPoints[0]=cLine[1].start+(m_fHpOff[0]*(vMinDist[0]-cLine[1].start));
+        m_vHelpPoints[2]=cLine[0].start+(m_fHpOff[2]*(vMinDist[1]-cLine[0].start));
       }
 
       break;
@@ -528,19 +540,19 @@ void CConnection::calculateHelpPoints() {
 
         vDir.normalize();
 
-        m_vHelpPoints[0]=v[0]-fLen*vDir;
-        m_vHelpPoints[2]=v[1]-fLen*vDir;
+        m_vHelpPoints[0]=v[0]-fLen*m_fHpOff[0]*vDir;
+        m_vHelpPoints[2]=v[1]-fLen*m_fHpOff[2]*vDir;
 
         vDir=v2[1]-v[2];
         vDir.normalize();
 
         if (m_bFlipConnection) {
-          m_vHelpPoints[1]=v[3]-fLen*vDir;
-          m_vHelpPoints[3]=v[2]-fLen*vDir;
+          m_vHelpPoints[1]=v[3]-fLen*m_fHpOff[1]*vDir;
+          m_vHelpPoints[3]=v[2]-fLen*m_fHpOff[3]*vDir;
         }
         else {
-          m_vHelpPoints[1]=v[2]-fLen*vDir;
-          m_vHelpPoints[3]=v[3]-fLen*vDir;
+          m_vHelpPoints[1]=v[2]-fLen*m_fHpOff[1]*vDir;
+          m_vHelpPoints[3]=v[3]-fLen*m_fHpOff[3]*vDir;
         }
       }
       break;
@@ -587,7 +599,7 @@ core::vector3df CConnection::getBezier3(core::vector3df p[], f32 fStep) {
  * Constructor
  * @param pDrv used Irrlicht videodriver
  */
-CConnection::CConnection(video::IVideoDriver *pDrv) {
+CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTexture) {
   //initialize the segments
   m_pSegment1=NULL;
   m_pSegment2=NULL;
@@ -629,6 +641,9 @@ CConnection::CConnection(video::IVideoDriver *pDrv) {
   }
 
   m_fRoadWidth=0.0f;
+  
+  for (u32 i=0; i<4; i++) m_fHpOff[i]=1.0f;
+  if (pInitTexture) for (u32 i=0; i<4; i++) pInitTexture[i].copyTo(m_pTexParams[i]);
 }
 
 /**
@@ -714,6 +729,35 @@ bool CConnection::getFlipVertices  () { return m_bFlipVertices  ; }
 
 
 void CConnection::render() {
+  switch (m_eType) {
+    case eBezier1: break;
+    case eBezier2: {
+        video::SMaterial cMat;
+        cMat.Lighting=false;
+        m_pDrv->setMaterial(cMat);
+        
+        if (m_bSelected)
+          for (u32 i=0; i<2; i++) {
+            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],video::SColor(0xFF,0xFF,0xFF,0xFF));
+            m_pDrv->draw3DLine(m_vDraw[i+3],m_vDraw[i+4],video::SColor(0xFF,0xFF,0xFF,0xFF));
+          }
+      }
+      break;
+      
+    case eBezier3: {
+        video::SMaterial cMat;
+        cMat.Lighting=false;
+        m_pDrv->setMaterial(cMat);
+        
+        if (m_bSelected)
+          for (u32 i=0; i<3; i++) {
+            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],video::SColor(0xFF,0xFF,0xFF,0xFF));
+            m_pDrv->draw3DLine(m_vDraw[i+4],m_vDraw[i+5],video::SColor(0xFF,0xFF,0xFF,0xFF));
+          }
+      }
+      break;
+  }
+  
   //Render the meshbuffers
   for (u32 i=0; i<4; i++)
     if (m_pMeshBuffer[i]!=NULL) {
@@ -798,6 +842,11 @@ void CConnection::save(io::IAttributes *out) {
     core::stringc s="HelpPoint"; s+=i;
     out->addVector3d(s.c_str(),m_vHelpPoints[i]);
   }
+  
+  for (u32 i=0; i<4; i++) {
+    core::stringc s="HpOffset"; s+=i;
+    out->addFloat(s.c_str(),m_fHpOff[i]);
+  }
 }
 
 /**
@@ -819,6 +868,11 @@ void CConnection::load(io::IAttributes *in) {
   for (u32 i=0; i<4; i++) {
     core::stringc s="HelpPoint"; s+=i;
     m_vHelpPoints[i]=in->getAttributeAsVector3d(s.c_str());
+  }
+  
+  for (u32 i=0; i<4; i++) {
+    core::stringc s="HpOffset"; s+=i;
+    if (in->existsAttribute(s.c_str())) m_fHpOff[i]=in->getAttributeAsFloat(s.c_str());
   }
 }
 

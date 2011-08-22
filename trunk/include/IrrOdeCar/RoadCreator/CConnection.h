@@ -42,7 +42,8 @@ class CConnection : public INotification, public IRoadPart {
     s32 m_iSelectedPoint;   /**<! number of the selected point (for editing) */
     f32 m_fTex,             /**<! texture calculation buffer */
         m_fOffset,          /**<! offset (i.e. height) of the connection */
-        m_fRoadWidth;       /**<! highest road width of this connectior (for texture calculations) */
+        m_fRoadWidth,       /**<! highest road width of this connectior (for texture calculations) */
+        m_fHpOff[4];
 
     bool m_bFlipConnection, /**<! flip one of the connections. Needed from time to time to connect correctly */
          m_bFlipVertices,   /**<! flip the vertices. Sometimes it happens that we see the backface */
@@ -50,7 +51,8 @@ class CConnection : public INotification, public IRoadPart {
 
     CTextureParameters *m_pTexParams[4];  /**<! the texture parameters for the four available sides */
 
-    core::vector3df m_vHelpPoints[4]; /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
+    core::vector3df m_vHelpPoints[4], /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
+                    m_vDraw[8];
     core::aabbox3df m_cBox;
 
     video::IVideoDriver *m_pDrv;    /**<! the Irrlicht video driver */
@@ -130,8 +132,9 @@ class CConnection : public INotification, public IRoadPart {
     /**
      * Constructor
      * @param pDrv used Irrlicht videodriver
+     * @param pInitTexture initial texture paramters
      */
-    CConnection(video::IVideoDriver *pDrv);
+    CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTexture);
     
     /**
      * The destructor
@@ -245,6 +248,16 @@ class CConnection : public INotification, public IRoadPart {
      * @return the meshbuffer
      */
     virtual scene::IMeshBuffer *getMeshBuffer(u32 i);
+    
+    void setHpOffset(u32 iHp, f32 fOff) {
+      if (iHp<4) {
+        m_fHpOff[iHp]=fOff;
+        calculateHelpPoints();
+        update();
+      }
+    }
+    
+    f32 getHpOffset(u32 iHp) { return iHp<4?m_fHpOff[iHp]:0.0f; }
 };
 
 #endif
