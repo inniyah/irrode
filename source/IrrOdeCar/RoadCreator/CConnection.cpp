@@ -43,7 +43,7 @@ u16 CConnection::addToTempVertexBuffer(video::S3DVertex vtx, core::array<video::
  * @param aVerts the output array. The input vectors will be added to this array
  * @param aIdx the index output. The indices of the vertex output array are stored here
  * @param b boolean for multi-colored appearance in the editor
- * @param iIdx index of the side that the vectors are for (road, bottom, left, right)
+ * @param iIdx index of the side that the vectors are for (road, bottom, left, right, walls)
  * @see CConnection::recalcMeshBuffer
  */
 void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, u32 iIdx) {
@@ -130,7 +130,7 @@ void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex
   vt[1]=video::S3DVertex(v[1],norm,b?_RED:_BLUE,cCoord[1]);
   vt[2]=video::S3DVertex(v[2],norm,b?_RED:_BLUE,cCoord[2]);
   vt[3]=video::S3DVertex(v[3],norm,b?_RED:_BLUE,cCoord[3]);
-
+  
   //make sure the texture coordinate starts between 0 and 1
   while (m_fTex>= 1.0f) m_fTex-=1.0f;
   while (m_fTex<=-1.0f) m_fTex+=1.0f;
@@ -160,7 +160,18 @@ void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex
         iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[5]=iTmp;
       }
       break;
-
+    
+    case 4:
+    case 5: {
+        u16 iTmp;
+        
+        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[1]=iTmp;
+        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[2]=iTmp; idx[3]=iTmp;
+        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[0]=iTmp; idx[5]=iTmp;
+        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[4]=iTmp;
+      }
+      break;
+      
     default:
       if (m_bFlipVertices) {
         u16 iTmp;
@@ -191,7 +202,7 @@ void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex
  */
 void CConnection::recalcMeshBuffer() {
   //Delete all meshbuffers allocated previously
-  for (u32 i=0; i<4; i++)
+  for (u32 i=0; i<6; i++)
     if (m_pMeshBuffer[i]!=NULL) {
       m_pMeshBuffer[i]->drop();
       m_pMeshBuffer[i]=NULL;
@@ -228,8 +239,8 @@ void CConnection::recalcMeshBuffer() {
   m_pMeshBuffer[3]=new scene::SMeshBuffer();
 
   //Temp arrays for the vertices of the top and bottom of the road and for the indices
-  core::array<video::S3DVertex> aVerts,aBotVerts;
-  core::array<u16> aIdx,aBotIdx;
+  core::array<video::S3DVertex> aVerts,aBotVerts,aWallVertsLft,aWallVertsRgt;
+  core::array<u16> aIdx,aBotIdx,aWallIdx;
 
   //if the connection wants to be flipped we flip it
   if (m_bFlipConnection) {
@@ -283,7 +294,7 @@ void CConnection::recalcMeshBuffer() {
           m_vDraw[i  ]=p1[i];
           m_vDraw[i+3]=p2[i];
         }
-
+        
         //We start the calculation one step off so that no zero-sized
         //polygon is created at the start of the connection
         for (f32 f=1.0f/((f32)m_iSteps); f<1.0f; f+=1.0f/((f32)m_iSteps)) {
@@ -294,7 +305,7 @@ void CConnection::recalcMeshBuffer() {
 
           //...add it to the vertex (and index) buffers...
           addToBuffers(vToAdd,aVerts,aIdx,b,0);
-
+          
           //...and set the old vectors to the calculated positions for the next polygon
           vOld[0]=v1;
           vOld[1]=v2;
@@ -385,7 +396,7 @@ void CConnection::recalcMeshBuffer() {
   if (m_pTexParams[1]->getTexture()!="")
     m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
 
-  //Now for the last part: we need to define the side polygons of the road. We do this in a loop
+  //Now for the next part: we need to define the side polygons of the road. We do this in a loop
   //that's executed twice and just take the positions of the top and bottom vertices.
   for (u32 iBuffer=2; iBuffer<4; iBuffer++) {
     b=false;
@@ -418,10 +429,133 @@ void CConnection::recalcMeshBuffer() {
     m_pMeshBuffer[iBuffer]->append(aToAdd.const_pointer(),aToAdd.size(),aIdxToAdd.const_pointer(),aIdxToAdd.size());
     m_pMeshBuffer[iBuffer]->recalculateBoundingBox();
     m_cBox.addInternalBox(m_pMeshBuffer[iBuffer]->getBoundingBox());
-    m_fTex=m_pTexParams[3]->getOffset();
+    m_fTex=m_pTexParams[iBuffer]->getOffset();
 
     if (m_pTexParams[iBuffer]->getTexture()!="")
       m_pMeshBuffer[iBuffer]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iBuffer]->getTexture().c_str()));
+  }
+  
+  //Let's add walls (if desired)
+  if (m_bWalls[0]) {
+    core::array<core::vector3df> vWall;
+    scene::IMeshBuffer *p=m_pMeshBuffer[0];
+    
+    //core::array<core::vector3df> vWallLft;
+    vWall.push_back(p->getPosition(0));
+    vWall.push_back(p->getPosition(0)+m_fWallHeight*m_pSegment1->getWallNormal());
+    
+    b=false;
+
+    for (u32 iVert=4; iVert<p->getVertexCount()-3; iVert+=4) {
+      core::vector3df v1=p->getPosition(iVert  ),
+                      v2=p->getPosition(iVert+1)-v1,
+                      v3=p->getPosition(iVert+2)-v1,
+                      vNorm;
+                      
+      if (m_bFlipVertices)
+        vNorm=v1-(m_fWallHeight*(v2.crossProduct(v3).normalize()));
+      else
+        vNorm=v1+(m_fWallHeight*(v2.crossProduct(v3).normalize()));
+      
+      vWall.push_back(v1);
+      vWall.push_back(vNorm);
+    }
+    
+    vWall.push_back(p->getPosition(p->getVertexCount()-2));
+    vWall.push_back(p->getPosition(p->getVertexCount()-2)+m_fWallHeight*m_pSegment2->getWallNormal());
+    
+    core::array<video::S3DVertex> aToAdd;
+    core::array<u16> aIdxToAdd;
+    b=false;
+    
+    for (u32 i=0; i<vWall.size()-2; i+=2) {
+      core::vector3df vToAdd[4];
+      
+      vToAdd[0]=vWall[i  ];
+      vToAdd[1]=vWall[i+2];
+      vToAdd[2]=vWall[i+1];
+      vToAdd[3]=vWall[i+3];
+      
+      addToBuffers(vToAdd,aToAdd,aIdxToAdd,b,4);
+      
+      vToAdd[0]=vWall[i  ];
+      vToAdd[1]=vWall[i+1];
+      vToAdd[2]=vWall[i+2];
+      vToAdd[3]=vWall[i+3];
+      
+      addToBuffers(vToAdd,aToAdd,aIdxToAdd,b,4);
+      b=!b;
+    }
+    
+    m_pMeshBuffer[4]=new scene::SMeshBuffer();
+    m_pMeshBuffer[4]->append(aToAdd.const_pointer(),aToAdd.size(),aIdxToAdd.const_pointer(),aIdxToAdd.size());
+    m_pMeshBuffer[4]->recalculateBoundingBox();
+    m_cBox.addInternalBox(m_pMeshBuffer[4]->getBoundingBox());
+    m_fTex=m_pTexParams[4]->getOffset();
+
+    if (m_pTexParams[4]->getTexture()!="")
+      m_pMeshBuffer[4]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[4]->getTexture().c_str()));
+  }
+
+  if (m_bWalls[1]) {
+    core::array<core::vector3df> vWall;
+    scene::IMeshBuffer *p=m_pMeshBuffer[0];
+    
+    //core::array<core::vector3df> vWallLft;
+    vWall.push_back(p->getPosition(1));
+    vWall.push_back(p->getPosition(1)+m_fWallHeight*m_pSegment1->getWallNormal());
+    
+    b=false;
+
+    for (u32 iVert=4; iVert<p->getVertexCount()-3; iVert+=4) {
+      core::vector3df v1=p->getPosition(iVert+1),
+                      v2=p->getPosition(iVert  )-v1,
+                      v3=p->getPosition(iVert+3)-v1,
+                      vNorm;
+      
+      if (m_bFlipVertices)
+        vNorm=v1+(m_fWallHeight*(v2.crossProduct(v3).normalize()));
+      else
+        vNorm=v1-(m_fWallHeight*(v2.crossProduct(v3).normalize()));
+      
+      vWall.push_back(v1);
+      vWall.push_back(vNorm);
+    }
+    
+    vWall.push_back(p->getPosition(p->getVertexCount()-1));
+    vWall.push_back(p->getPosition(p->getVertexCount()-1)+m_fWallHeight*m_pSegment2->getWallNormal());
+    
+    core::array<video::S3DVertex> aToAdd;
+    core::array<u16> aIdxToAdd;
+    b=false;
+    
+    for (u32 i=0; i<vWall.size()-2; i+=2) {
+      core::vector3df vToAdd[4];
+      
+      vToAdd[0]=vWall[i  ];
+      vToAdd[1]=vWall[i+2];
+      vToAdd[2]=vWall[i+1];
+      vToAdd[3]=vWall[i+3];
+      
+      addToBuffers(vToAdd,aToAdd,aIdxToAdd,b,4);
+      
+      vToAdd[0]=vWall[i  ];
+      vToAdd[1]=vWall[i+1];
+      vToAdd[2]=vWall[i+2];
+      vToAdd[3]=vWall[i+3];
+      
+      addToBuffers(vToAdd,aToAdd,aIdxToAdd,b,4);
+      b=!b;
+    }
+    
+    m_pMeshBuffer[5]=new scene::SMeshBuffer();
+    m_pMeshBuffer[5]->append(aToAdd.const_pointer(),aToAdd.size(),aIdxToAdd.const_pointer(),aIdxToAdd.size());
+    m_pMeshBuffer[5]->recalculateBoundingBox();
+    m_cBox.addInternalBox(m_pMeshBuffer[5]->getBoundingBox());
+    m_fTex=m_pTexParams[5]->getOffset();
+
+    if (m_pTexParams[5]->getTexture()!="")
+      m_pMeshBuffer[5]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[5]->getTexture().c_str()));
   }
 }
 
@@ -635,7 +769,7 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
   m_pDrv=pDrv;
 
   //initialize the meshbuffer members and initialize the texture parameter objects
-  for (u32 i=0; i<4; i++) {
+  for (u32 i=0; i<6; i++) {
     m_pMeshBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
   }
@@ -644,6 +778,9 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
   
   for (u32 i=0; i<4; i++) m_fHpOff[i]=1.0f;
   if (pInitTexture) for (u32 i=0; i<4; i++) pInitTexture[i].copyTo(m_pTexParams[i]);
+  
+  m_fWallHeight=10.0f;
+  for (u32 i=0; i<2; i++) m_bWalls[i]=false;
 }
 
 /**
@@ -655,7 +792,7 @@ CConnection::~CConnection() {
   if (m_pSegment2!=NULL) m_pSegment2->delNotify(this);
 
   //Delete the texture parameters and the meshbuffers
-  for (u32 i=0; i<4; i++) {
+  for (u32 i=0; i<6; i++) {
     if (m_pMeshBuffer[i]!=NULL) m_pMeshBuffer[i]->drop();
     delete m_pTexParams[i];
   }
@@ -759,10 +896,11 @@ void CConnection::render() {
   }
   
   //Render the meshbuffers
-  for (u32 i=0; i<4; i++)
+  for (u32 i=0; i<6; i++)
     if (m_pMeshBuffer[i]!=NULL) {
       video::SMaterial cMat;
       cMat.Lighting=false;
+      //cMat.Wireframe=true;
 
       //draw the normals
       for (u32 j=0; j<m_pMeshBuffer[i]->getVertexCount(); j++) {
@@ -847,6 +985,12 @@ void CConnection::save(io::IAttributes *out) {
     core::stringc s="HpOffset"; s+=i;
     out->addFloat(s.c_str(),m_fHpOff[i]);
   }
+  
+  out->addFloat("WallHeight",m_fWallHeight);
+  for (u32 i=0; i<2; i++) {
+    core::stringc s="CreateWall"; s+=i;
+    out->addBool(s.c_str(),m_bWalls[i]);
+  }
 }
 
 /**
@@ -874,6 +1018,12 @@ void CConnection::load(io::IAttributes *in) {
     core::stringc s="HpOffset"; s+=i;
     if (in->existsAttribute(s.c_str())) m_fHpOff[i]=in->getAttributeAsFloat(s.c_str());
   }
+  
+  m_fWallHeight=in->getAttributeAsFloat("WallHeight");
+  for (u32 i=0; i<2; i++) {
+    core::stringc s="CreateWall"; s+=i;
+    m_bWalls[i]=in->getAttributeAsBool(s.c_str());
+  }
 }
 
 const core::stringc &CConnection::getSegment1Name() { return m_sSegment1; }
@@ -898,9 +1048,9 @@ void CConnection::update() {
 }
 
 CTextureParameters *CConnection::getTextureParameters(u32 i) {
-  return i<4?m_pTexParams[i]:NULL;
+  return i<6?m_pTexParams[i]:NULL;
 }
 
 scene::IMeshBuffer *CConnection::getMeshBuffer(u32 i) {
-  return i<4?m_pMeshBuffer[i]:NULL;
+  return i<6?m_pMeshBuffer[i]:NULL;
 }

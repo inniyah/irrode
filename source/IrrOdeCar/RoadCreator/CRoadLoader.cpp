@@ -107,7 +107,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load texture parameters of a segment
             if (iState==4) {
-              if (pSeg!=NULL && iSegTex<6) {
+              if (pSeg!=NULL && iSegTex<10) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pSeg->getTextureParameters(iSegTex)->load(pAttr);
@@ -118,7 +118,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load texture parameters of a connection
             if (iState==5) {
-              if (pCon!=NULL && iConTex<4) {
+              if (pCon!=NULL && iConTex<6) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pCon->getTextureParameters(iConTex)->load(pAttr);
@@ -243,7 +243,7 @@ void CRoadLoader::saveRoad() {
         pAttr->drop();
 
         //Write the segment texture parameters
-        for (u32 i=0; i<6; i++) {
+        for (u32 i=0; i<10; i++) {
           core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
@@ -275,7 +275,7 @@ void CRoadLoader::saveRoad() {
         pAttr->drop();
 
         //Write the connection's texture parameters
-        for (u32 i=0; i<4; i++) {
+        for (u32 i=0; i<6; i++) {
           core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
@@ -374,20 +374,24 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::list<CSegment *>::Iterator sit;
   for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
     CSegment *pSeg=*sit;
-    for (u32 i=0; i<6; i++) {
+    for (u32 i=0; i<10; i++) {
       scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
-      aBoxes.push_back(p->getBoundingBox());
-      addBufferToArray(p,aBuffers);
+      if (p) {
+        aBoxes.push_back(p->getBoundingBox());
+        addBufferToArray(p,aBuffers);
+      }
     }
   }
 
   core::list<CConnection *>::Iterator cit;
   for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
     CConnection *pCon=*cit;
-    for (u32 i=0; i<4; i++) {
+    for (u32 i=0; i<6; i++) {
       scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
-      aBoxes.push_back(p->getBoundingBox());
-      addBufferToArray(p,aBuffers);
+      if (p!=NULL) {
+        aBoxes.push_back(p->getBoundingBox());
+        addBufferToArray(p,aBuffers);
+      }
     }
   }
 

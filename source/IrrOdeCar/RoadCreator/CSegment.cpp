@@ -23,11 +23,14 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideo
   m_bLevelBase=true;
 
   //initialize the buffer and texture parameter members
-  for (u32 i=0; i<6; i++) {
+  for (u32 i=0; i<10; i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
     if (pInitParam!=NULL) pInitParam[i].copyTo(m_pTexParams[i]);
   }
+  
+  for (u32 i=0; i<4; i++) m_bWalls[i]=false;
+  m_fWallHeight=10.0f;
 
   recalcMeshBuffer();
 }
@@ -49,10 +52,12 @@ CSegment::CSegment(video::IVideoDriver *pDrv) {
   m_bLevelBase=true;
 
   //initialize the buffer and texture parameter members
-  for (u32 i=0; i<6; i++) {
+  for (u32 i=0; i<10; i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
   }
+  
+  for (u32 i=0; i<4; i++) m_bWalls[i]=true;
 
   recalcMeshBuffer();
 }
@@ -66,8 +71,8 @@ CSegment::~CSegment() {
     (*it)->objectDeleted(this);
   }
 
-  for (u32 i=0; i<6; i++) {
-    m_pBuffer[i]->drop();
+  for (u32 i=0; i<10; i++) {
+    if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
     delete m_pTexParams[i];
   }
 }
@@ -179,7 +184,7 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
  */
 void CSegment::recalcMeshBuffer() {
   //delete the meshbuffers
-  for (u32 i=0; i<6; i++) if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
+  for (u32 i=0; i<10; i++) if (m_pBuffer[i]!=NULL) { m_pBuffer[i]->drop(); m_pBuffer[i]=NULL; }
 
   core::vector3df pos=m_vPosition,
                   calcLength=(m_fLength/2)*m_vDirection,
@@ -231,41 +236,78 @@ void CSegment::recalcMeshBuffer() {
 
   if (m_pTexParams[1]->getTexture()!="")
     m_pBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
-
+  
+  m_vWallNorm=(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize();
+  
   //Now for the automatic part: the four sides can be calculated
   //within a loop, so we do this.
   for (u32 i=0; i<4; i++) {
-    u16 iSideIdx[]={ 0,1,2, 2,3,0 };
-    core::vector3df vSide[4];
-
+    u16 iSideIdx[]={ 0,1,2, 2,3,0 },
+        iWallId1[]={ 0,1,2, 1,3,2 },
+        iWallId2[]={ 0,2,1, 3,1,2 };
+        
+    core::vector3df vSide[4],vWall[4];
+    
     //Depending on the counter value we have to use different values so we switch a little
     switch (i) {
-      case 0:
-        vSide[0]=m_vPoints[1];
-        vSide[1]=m_vPoints[0];
-        vSide[2]=vBasePoints[3];
-        vSide[3]=vBasePoints[2];
+      case 0: {
+          vSide[0]=m_vPoints[1];
+          vSide[1]=m_vPoints[0];
+          vSide[2]=vBasePoints[3];
+          vSide[3]=vBasePoints[2];
+          
+          vWall[0]=m_vPoints[1];
+          vWall[1]=m_vPoints[0];
+          
+          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
+          vWall[2]=m_vPoints[1]+m_fWallHeight*(m_vWallNorm);
+          vWall[3]=m_vPoints[0]+m_fWallHeight*(m_vWallNorm);
+        }
         break;
 
-      case 1:
-        vSide[0]=m_vPoints[2];
-        vSide[1]=m_vPoints[1];
-        vSide[2]=vBasePoints[2];
-        vSide[3]=vBasePoints[1];
+      case 1: {
+          vSide[0]=m_vPoints[2];
+          vSide[1]=m_vPoints[1];
+          vSide[2]=vBasePoints[2];
+          vSide[3]=vBasePoints[1];
+          
+          vWall[0]=m_vPoints[2];
+          vWall[1]=m_vPoints[1];
+          
+          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
+          vWall[2]=m_vPoints[2]+m_fWallHeight*(m_vWallNorm);
+          vWall[3]=m_vPoints[1]+m_fWallHeight*(m_vWallNorm);
+        }
         break;
 
-      case 2:
-        vSide[0]=m_vPoints[3];
-        vSide[1]=m_vPoints[2];
-        vSide[2]=vBasePoints[1];
-        vSide[3]=vBasePoints[0];
+      case 2: {
+          vSide[0]=m_vPoints[3];
+          vSide[1]=m_vPoints[2];
+          vSide[2]=vBasePoints[1];
+          vSide[3]=vBasePoints[0];
+          
+          vWall[0]=m_vPoints[3];
+          vWall[1]=m_vPoints[2];
+          
+          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
+          vWall[2]=m_vPoints[3]+m_fWallHeight*(m_vWallNorm);
+          vWall[3]=m_vPoints[2]+m_fWallHeight*(m_vWallNorm);
+        }
         break;
 
-      case 3:
-        vSide[0]=m_vPoints[0];
-        vSide[1]=m_vPoints[3];
-        vSide[2]=vBasePoints[0];
-        vSide[3]=vBasePoints[3];
+      case 3: {
+          vSide[0]=m_vPoints[0];
+          vSide[1]=m_vPoints[3];
+          vSide[2]=vBasePoints[0];
+          vSide[3]=vBasePoints[3];
+          
+          vWall[0]=m_vPoints[0];
+          vWall[1]=m_vPoints[3];
+          
+          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
+          vWall[2]=m_vPoints[0]+m_fWallHeight*(m_vWallNorm);
+          vWall[3]=m_vPoints[3]+m_fWallHeight*(m_vWallNorm);
+        }
         break;
     }
 
@@ -277,6 +319,17 @@ void CSegment::recalcMeshBuffer() {
 
     if (m_pTexParams[i+2]->getTexture()!="")
       m_pBuffer[i+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str()));
+    
+    if (m_bWalls[i]) {
+      fillVertexArray(vWall,m_pTexParams[i+6],vVerts);
+      m_pBuffer[i+6]=new scene::SMeshBuffer();
+      m_pBuffer[i+6]->append(vVerts,4,iWallId1,6);
+      m_pBuffer[i+6]->append(vVerts,4,iWallId2,6);
+      m_pBuffer[i+6]->recalculateBoundingBox();
+
+      if (m_pTexParams[i+6]->getTexture()!="")
+        m_pBuffer[i+6]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str()));
+    }
   }
 }
 
@@ -284,8 +337,8 @@ void CSegment::recalcMeshBuffer() {
  * Render method. Just for the editor
  */
 void CSegment::render() {
-  //Render all 6 meshbuffers
-  for (u32 i=0; i<6; i++)
+  //Render all 10 meshbuffers
+  for (u32 i=0; i<10; i++)
     if (m_pBuffer[i]!=NULL) {
       video::SMaterial cMat;
 
@@ -315,6 +368,12 @@ void CSegment::save(io::IAttributes *out) {
   out->addVector3d("Position" ,m_vPosition );
   out->addVector3d("Direction",m_vDirection);
   out->addVector3d("Normal"   ,m_vNormal   );
+
+  out->addFloat("WallHeight",m_fWallHeight);
+  for (u32 i=0; i<4; i++) {
+    core::stringc s="CreateWall"; s+=i;
+    out->addBool(s.c_str(),m_bWalls[i]);
+  }
 }
 
 void CSegment::load(io::IAttributes *in) {
@@ -329,6 +388,12 @@ void CSegment::load(io::IAttributes *in) {
   m_vPosition =in->getAttributeAsVector3d("Position" );
   m_vDirection=in->getAttributeAsVector3d("Direction");
   m_vNormal   =in->getAttributeAsVector3d("Normal"   );
+  
+  m_fWallHeight=in->getAttributeAsFloat("WallHeight");
+  for (u32 i=0; i<4; i++) {
+    core::stringc s="CreateWall"; s+=i;
+    m_bWalls[i]=in->getAttributeAsBool(s.c_str());
+  }
 
   recalcMeshBuffer();
 }
@@ -357,9 +422,9 @@ void CSegment::update() {
 }
 
 CTextureParameters *CSegment::getTextureParameters(u32 i) {
-  return i<6?m_pTexParams[i]:NULL;
+  return i<10?m_pTexParams[i]:NULL;
 }
 
 scene::IMeshBuffer *CSegment::getMeshBuffer(u32 i) {
-  return m_pBuffer[i];
+  return i<10?m_pBuffer[i]:NULL;
 }

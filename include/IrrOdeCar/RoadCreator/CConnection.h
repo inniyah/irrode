@@ -43,21 +43,23 @@ class CConnection : public INotification, public IRoadPart {
     f32 m_fTex,             /**<! texture calculation buffer */
         m_fOffset,          /**<! offset (i.e. height) of the connection */
         m_fRoadWidth,       /**<! highest road width of this connectior (for texture calculations) */
-        m_fHpOff[4];
+        m_fHpOff[4],        /**<! offset of the helppoints */
+        m_fWallHeight;      /**<! height of the surrounding walls */
 
     bool m_bFlipConnection, /**<! flip one of the connections. Needed from time to time to connect correctly */
          m_bFlipVertices,   /**<! flip the vertices. Sometimes it happens that we see the backface */
-         m_bSelected;       /**<! is this connection selected (for editing)? */
+         m_bSelected,       /**<! is this connection selected (for editing)? */
+         m_bWalls[2];       /**<! add wall to side? */
 
-    CTextureParameters *m_pTexParams[4];  /**<! the texture parameters for the four available sides */
+    CTextureParameters *m_pTexParams[6];  /**<! the texture parameters for the four available sides */
 
     core::vector3df m_vHelpPoints[4], /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
                     m_vDraw[8];
     core::aabbox3df m_cBox;
-
+    
     video::IVideoDriver *m_pDrv;    /**<! the Irrlicht video driver */
 
-    scene::IMeshBuffer *m_pMeshBuffer[4]; /**<! the mesh buffers of the connection */
+    scene::IMeshBuffer *m_pMeshBuffer[6]; /**<! the mesh buffers of the connection */
     
     /**
      * Init the Bezier helppoints
@@ -258,6 +260,12 @@ class CConnection : public INotification, public IRoadPart {
     }
     
     f32 getHpOffset(u32 iHp) { return iHp<4?m_fHpOff[iHp]:0.0f; }
+    
+    void setWallFlag(u32 iIdx, bool b) { if (iIdx<2) { m_bWalls[iIdx]=b; update(); } }
+    void setWallHeight(f32 f) { m_fWallHeight=f; update(); }
+    
+    bool getWallFlag(u32 idx) { return idx<2?m_bWalls[idx]:false; }
+    f32 getWallHeight() { return m_fWallHeight; }
 };
 
 #endif
