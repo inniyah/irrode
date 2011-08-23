@@ -21,14 +21,17 @@ class CSegment : public IRoadPart {
   protected:
     f32 m_fWidth,       /**<! width of the road segment */
         m_fLength,      /**<! length of the road segment */
-        m_fBaseOffset;  /**<! height of the road segment */
+        m_fBaseOffset,  /**<! height of the road segment */
+        m_fWallHeight;  /**<! height of the walls */
 
-    bool m_bLevelBase;  /**<! bring all base points to the same Y-value? */
+    bool m_bLevelBase,  /**<! bring all base points to the same Y-value? */
+         m_bWalls[4];   /**<! create walls? */
 
-    core::vector3df m_vPosition,    /**<! position of the segment */
-                    m_vDirection,   /**<! direction of the segment */
-                    m_vNormal,      /**<! normal (upwards) of the segment */
-                    m_vPoints[4];   /**<! the 4 points that define the upper polygon of the segment */
+    core::vector3df m_vPosition,      /**<! position of the segment */
+                    m_vDirection,     /**<! direction of the segment */
+                    m_vNormal,        /**<! normal (upwards) of the segment */
+                    m_vPoints[4],     /**<! the 4 points that define the upper polygon of the segment */
+                    m_vWallNorm;      /**<! the wall normal */
 
 
     video::IVideoDriver *m_pDrv;    /**<! the videodriver */
@@ -36,8 +39,8 @@ class CSegment : public IRoadPart {
 
     core::list<INotification *> m_lNotify;  /**<! list of objects that get notifications on changes of the segment */
 
-    scene::IMeshBuffer *m_pBuffer[6];     /**<! meshbuffers of the segment */
-    CTextureParameters *m_pTexParams[6];  /**<! texture parameters of the segment */
+    scene::IMeshBuffer *m_pBuffer[10];    /**<! meshbuffers of the segment */
+    CTextureParameters *m_pTexParams[10]; /**<! texture parameters of the segment */
     
     /**
      * This method recalculates the meshbuffers and notifies all registered listeners of the modification
@@ -130,6 +133,14 @@ class CSegment : public IRoadPart {
     virtual u32 getTextureCount() { return 6; }
     
     virtual scene::IMeshBuffer *getMeshBuffer(u32 i);   /**<! get one of the meshbuffers */
+    
+    void setWallFlag(u32 idx, bool b) { if (idx<4) { m_bWalls[idx]=b; attributeChanged(); } }
+    void setWallHeight(f32 f) { m_fWallHeight=f; attributeChanged(); }
+    
+    bool getWallFlag(u32 idx) { return idx<4?m_bWalls[idx]:false; }
+    f32 getWallHeight() { return m_fWallHeight; }
+    
+    const core::vector3df &getWallNormal() { return m_vWallNorm; }
 };
 
 #endif
