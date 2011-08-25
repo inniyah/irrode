@@ -40,7 +40,7 @@ class CConnection : public INotification, public IRoadPart {
         m_iSegment2Border,  /**<! number of the used border of the second segment (1..4) */
         m_iSteps;           /**<! number of steps for the calculation */
     s32 m_iSelectedPoint;   /**<! number of the selected point (for editing) */
-    f32 m_fTex,             /**<! texture calculation buffer */
+    f32 m_fTexX,            /**<! texture calculation buffer */
         m_fOffset,          /**<! offset (i.e. height) of the connection */
         m_fRoadWidth,       /**<! highest road width of this connectior (for texture calculations) */
         m_fHpOff[4],        /**<! offset of the helppoints */
@@ -52,7 +52,7 @@ class CConnection : public INotification, public IRoadPart {
          m_bWalls[2];       /**<! add wall to side? */
 
     CTextureParameters *m_pTexParams[6];  /**<! the texture parameters for the four available sides */
-
+    
     core::vector3df m_vHelpPoints[4], /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
                     m_vDraw[8];
     core::aabbox3df m_cBox;
@@ -118,6 +118,8 @@ class CConnection : public INotification, public IRoadPart {
      * @see CConnection::recalcMeshBuffer
      */
     void addToBuffers(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, u32 iIdx);
+    
+    void addToBuffersWall(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, bool bRotate, bool bBasement, CTextureParameters *pTex);
     
     /**
      * Using this method you can add a single vertex to a temporarily used array of vertices. This array
