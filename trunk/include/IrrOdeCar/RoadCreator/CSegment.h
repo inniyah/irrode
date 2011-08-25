@@ -25,13 +25,15 @@ class CSegment : public IRoadPart {
         m_fWallHeight;  /**<! height of the walls */
 
     bool m_bLevelBase,  /**<! bring all base points to the same Y-value? */
+         m_bNormalBase, /**<! use normal of segment for base direction? */
          m_bWalls[4];   /**<! create walls? */
 
     core::vector3df m_vPosition,      /**<! position of the segment */
                     m_vDirection,     /**<! direction of the segment */
                     m_vNormal,        /**<! normal (upwards) of the segment */
                     m_vPoints[4],     /**<! the 4 points that define the upper polygon of the segment */
-                    m_vWallNorm;      /**<! the wall normal */
+                    m_vWallNorm,      /**<! the wall normal */
+                    m_vBaseNorm;      /**<! the basement normal */
 
 
     video::IVideoDriver *m_pDrv;    /**<! the videodriver */
@@ -71,6 +73,7 @@ class CSegment : public IRoadPart {
      * @param vert the output vertex array
      */
     void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert);
+    void fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bBasement=false);
 
   public:
     /**
@@ -103,6 +106,11 @@ class CSegment : public IRoadPart {
 
     void setLevelBase(bool b);  /**<! set the base level flag of the segment */
     bool getLevelBase();        /**<! get the base level flag of the segment */
+    
+    void setNormalBase(bool b);
+    bool getNormalBase();
+    
+    const core::vector3df &getNormalBaseVector() { return m_vBaseNorm; }
 
     void setPosition (core::vector3df v); /**<! set the position of the segment */
     void setDirection(core::vector3df v); /**<! set direction of the segment */

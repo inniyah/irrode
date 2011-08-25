@@ -17,7 +17,6 @@ bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMateria
                   s2=m2.getTexture(0)->getName().getPath();
   #endif
 
-  printf("%s .. %s\n",s1.c_str(),s2.c_str());
   return s1==s2;
 }
 
@@ -25,7 +24,10 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
   bool bAdded=false;
 
   for (u32 j=0; j<aBuffers.size(); j++) {
-    if (sameMaterial(p->getMaterial(),aBuffers[j]->getMaterial())) {
+    video::SMaterial mat1=p->getMaterial(),
+                     mat2=aBuffers[j]->getMaterial();
+
+    if (sameMaterial(mat1,mat2)) {
       scene::IMeshBuffer *pBuffer=aBuffers[j];
       pBuffer->append(p->getVertices(),p->getVertexCount(),p->getIndices(),p->getIndexCount());
       pBuffer->recalculateBoundingBox();
