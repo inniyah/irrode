@@ -439,8 +439,7 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[0]->getBoundingBox());
 
   //If we have a texture we apply it
-  if (m_pTexParams[0]->getTexture()!="")
-    m_pMeshBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
+  m_pMeshBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
 
   //initialize the texture offset for the bottom
   m_fTexX=m_pTexParams[1]->getOffsetX();
@@ -547,8 +546,7 @@ void CConnection::recalcMeshBuffer() {
       m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
       m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
 
-      if (m_pTexParams[iNum+2]->getTexture()!="")
-        m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str()));
+      m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str()));
     }
   }
 
@@ -569,8 +567,7 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[1]->getBoundingBox());
 
   //If we have a texture we apply it
-  if (m_pTexParams[1]->getTexture()!="")
-    m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
+  m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
 }
 
 /**

@@ -17,6 +17,9 @@ class CRoadLoader {
     core::list<CConnection *> m_lConnections;   /**<! list of connections */
 
     CSurface *m_pSurface;
+    
+    core::vector3df m_vOfffset;     /**<! the Offset of the node (only relevant when shrinking the node) */
+    bool m_bShrinkNode;
 
     core::stringc m_sCurrentRoad;               /**<! the currently opened road */
 
@@ -56,6 +59,10 @@ class CRoadLoader {
     bool deleteSegment(CSegment *pToDelete);
 
     CSurface *getSurface() { return m_pSurface; }
+    
+    void shrinkNode(bool b) { m_bShrinkNode=b; }
+    bool didShrinkNode() { return m_bShrinkNode; }
+    const core::vector3df &getOffset() { return m_vOfffset; }
 };
 
 #endif

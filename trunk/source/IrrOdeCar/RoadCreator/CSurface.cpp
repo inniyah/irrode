@@ -55,9 +55,7 @@ void CSurface::recalcMeshBuffer() {
 
   m_pBuffers[0]=new scene::SMeshBuffer();
   m_pBuffers[0]->append(cVert,4,idx,6);
-
-  if (m_pParams[0]->getTexture()!="")
-    m_pBuffers[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[0]->getTexture().c_str()));
+  m_pBuffers[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[0]->getTexture().c_str()));
 
   if (m_fFenceHeight>0.0f) {
     m_pBuffers[1]=new scene::SMeshBuffer();
@@ -110,9 +108,7 @@ void CSurface::recalcMeshBuffer() {
     cVert[3].Normal=core::vector3df(-1.0f,0.0f,0.f);
 
     m_pBuffers[1]->append(cVert,4,fenceIdx,6);
-
-    if (m_pParams[1]->getTexture()!="")
-      m_pBuffers[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[1]->getTexture().c_str()));
+    m_pBuffers[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[1]->getTexture().c_str()));
   }
   else m_pBuffers[1]=NULL;
 }
