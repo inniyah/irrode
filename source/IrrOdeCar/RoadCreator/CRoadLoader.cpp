@@ -46,6 +46,8 @@ CRoadLoader::CRoadLoader(IrrlichtDevice *pDevice) {
   m_pDevice=pDevice;
   m_sCurrentRoad="";
   m_pSurface=new CSurface(pDevice->getVideoDriver());
+  m_vOfffset=core::vector3df(0.0f,0.0f,0.0f);
+  m_bShrinkNode=false;
 }
 
 bool CRoadLoader::loadRoad(const core::stringc sName) {
@@ -71,6 +73,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
           if (core::stringw(pReader->getNodeName())==L"Connection") iState=2;
           if (core::stringw(pReader->getNodeName())==L"Materials" ) iState=3;
           if (core::stringw(pReader->getNodeName())==L"Surface"   ) iState=6;
+          if (core::stringw(pReader->getNodeName())==L"Parameters") iState=9;
 
           if (iState==1 && core::stringw(pReader->getNodeName())==L"TextureParams") iState=4;
           if (iState==2 && core::stringw(pReader->getNodeName())==L"TextureParams") iState=5;
@@ -146,6 +149,13 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
               m_pSurface->recalcMeshBuffer();
               pAttr->drop();
             }
+
+            if (iState==9) {
+              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              pAttr->read(pReader,true);
+              m_bShrinkNode=pAttr->getAttributeAsBool("shrinknode");
+              pAttr->drop();
+            }
           }
         }
 
@@ -198,6 +208,11 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
                 iGndTex++;
               }
               break;
+
+            case 9:
+              if (core::stringw(pReader->getNodeName())==L"Parameters") {
+                iState=0;
+              }
           }
         }
       }
@@ -231,6 +246,18 @@ void CRoadLoader::saveRoad() {
     if (pWriter) {
       pWriter->writeXMLHeader();
       pWriter->writeElement(L"BulletByteRoadCreator",false);
+      pWriter->writeLineBreak();
+
+      pWriter->writeElement(L"Parameters",false);
+      pWriter->writeLineBreak();
+
+      io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+      pAttr->addBool("shrinknode",m_bShrinkNode);
+      pAttr->write(pWriter);
+      pAttr->drop();
+
+
+      pWriter->writeClosingTag(L"Parameters");
       pWriter->writeLineBreak();
 
       //Write the segments
@@ -373,36 +400,71 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::array<core::aabbox3df> aBoxes;
   core::array<scene::IMeshBuffer *> aBuffers;
 
+  core::vector3df vCenterPos=core::vector3df(0.0f,0.0f,0.0f);
+
   core::list<CSegment *>::Iterator sit;
   for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
     CSegment *pSeg=*sit;
+    vCenterPos+=pSeg->getPosition();
     for (u32 i=0; i<10; i++) {
-      scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
-      if (p) {
-        aBoxes.push_back(p->getBoundingBox());
-        addBufferToArray(p,aBuffers);
+      bool bDoIt=true;
+      for (u32 iTex=0; iTex<pSeg->getTextureCount() && bDoIt; iTex++) {
+        if (pSeg->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
+      }
+
+      if (bDoIt) {
+        scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
+        if (p) {
+          aBoxes.push_back(p->getBoundingBox());
+          addBufferToArray(p,aBuffers);
+        }
       }
     }
   }
+
+  #ifdef _IRREDIT_PLUGIN
+    vCenterPos/=m_lSegments.getSize();
+  #else
+    vCenterPos/=m_lSegments.size();
+  #endif
+
+  vCenterPos.X=(f32)abs((s32)vCenterPos.X);
+  vCenterPos.Y=(f32)abs((s32)vCenterPos.Y);
+  vCenterPos.Z=(f32)abs((s32)vCenterPos.Z);
+
+  printf("center pos: %.2f, %.2f, %.2f\n",vCenterPos.X,vCenterPos.Y,vCenterPos.Z);
 
   core::list<CConnection *>::Iterator cit;
   for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
     CConnection *pCon=*cit;
     for (u32 i=0; i<6; i++) {
-      scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
-      if (p!=NULL) {
-        aBoxes.push_back(p->getBoundingBox());
-        addBufferToArray(p,aBuffers);
+      bool bDoIt=true;
+      for (u32 iTex=0; iTex<pCon->getTextureCount() && bDoIt; iTex++) {
+        if (pCon->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
+      }
+
+      if (bDoIt) {
+        scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
+        if (p!=NULL) {
+          addBufferToArray(p,aBuffers);
+        }
       }
     }
   }
 
   if (m_pSurface->isVisible()) {
     for (u32 i=0; i<2; i++) {
-      scene::IMeshBuffer *p=m_pSurface->getMeshBuffer(i);
-      if (p!=NULL) {
-        aBoxes.push_back(p->getBoundingBox());
-        addBufferToArray(p,aBuffers);
+      bool bDoIt=true;
+
+      for (u32 iTex=0; iTex<m_pSurface->getTextureCount() && bDoIt; iTex++) {
+        if (m_pSurface->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
+      }
+
+      if (bDoIt) {
+        scene::IMeshBuffer *p=m_pSurface->getMeshBuffer(i);
+        if (p!=NULL) {
+          addBufferToArray(p,aBuffers);
+        }
       }
     }
   }
@@ -414,9 +476,25 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
     }
   }
 
+	if (m_bShrinkNode) {
+    printf("Shrink!\n");
+    m_vOfffset=vCenterPos;
+    #ifndef _ROAD_CREATOR_TOOL
+      for (u32 i=0; i<aBuffers.size(); i++) {
+        scene::IMeshBuffer *p=aBuffers[i];
+        for (u32 j=0; j<p->getVertexCount(); j++) {
+          p->getPosition(j)=p->getPosition(j)-m_vOfffset;
+        }
+      }
+    #endif
+	}
+
   scene::SMesh *pMesh=new scene::SMesh();
-  for (u32 i=0; i<aBuffers.size(); i++) pMesh->addMeshBuffer(aBuffers[i]);
-  printf("\t\t**** aBuffers.size: %i\n",aBuffers.size());
+  for (u32 i=0; i<aBuffers.size(); i++) {
+    aBuffers[i]->recalculateBoundingBox();
+    aBoxes.push_back(aBuffers[i]->getBoundingBox());
+    pMesh->addMeshBuffer(aBuffers[i]);
+  }
 
   core::aabbox3df cBox=pMesh->getBoundingBox();
 

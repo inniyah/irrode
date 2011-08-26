@@ -188,7 +188,7 @@ void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pT
   f*=pTex->getScaleX();
   f+=fStart;
 
-  f32 fTex[4][2]={ { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
+  f32 fTex[4][2]={ { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } };
 
   switch (pTex->getRotate()) {
     case 0:
@@ -268,9 +268,7 @@ void CSegment::recalcMeshBuffer() {
   m_pBuffer[0]=new scene::SMeshBuffer();
   m_pBuffer[0]->append(vVerts,4,iIdx,6);
   m_pBuffer[0]->recalculateBoundingBox();
-
-  if (m_pTexParams[0]->getTexture()!="")
-    m_pBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
+  m_pBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
 
   //Same procedure for the bottom polygon...
   core::vector3df vBasePoints[4];
@@ -301,8 +299,7 @@ void CSegment::recalcMeshBuffer() {
   m_pBuffer[1]->append(vVerts,4,iBaseIdx,6);
   m_pBuffer[1]->recalculateBoundingBox();
 
-  if (m_pTexParams[1]->getTexture()!="")
-    m_pBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
+  m_pBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
 
   //Now for the automatic part: the four sides can be calculated
   //within a loop, so we do this.
@@ -406,9 +403,7 @@ void CSegment::recalcMeshBuffer() {
     m_pBuffer[i+2]=new scene::SMeshBuffer();
     m_pBuffer[i+2]->append(vVerts,4,iSideIdx,6);
     m_pBuffer[i+2]->recalculateBoundingBox();
-
-    if (m_pTexParams[i+2]->getTexture()!="")
-      m_pBuffer[i+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str()));
+    m_pBuffer[i+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str()));
 
     if (m_bWalls[i]) {
       m_pBuffer[i+6]=new scene::SMeshBuffer();
@@ -418,11 +413,8 @@ void CSegment::recalcMeshBuffer() {
 
       fillVertexArrayWall(vWallOut,m_pTexParams[i+6],vVerts);
       m_pBuffer[i+6]->append(vVerts,4,iWallId2,6);
-
       m_pBuffer[i+6]->recalculateBoundingBox();
-
-      if (m_pTexParams[i+6]->getTexture()!="")
-        m_pBuffer[i+6]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str()));
+      m_pBuffer[i+6]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str()));
     }
   }
 }
