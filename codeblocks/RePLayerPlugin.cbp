@@ -54,13 +54,27 @@
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
 			<Add directory="..\include\IrrOdeRePlayer" />
+			<Add directory="..\include\IrrOdeCar\RoadCreator" />
 		</Compiler>
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
 		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CConnection.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadLoader.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadMeshLoader.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CSegment.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CSurface.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CTextureParameters.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\INotification.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\IRoadPart.h" />
 		<Unit filename="..\include\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CConnection.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadLoader.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadMeshLoader.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSegment.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSurface.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.cpp" />
 		<Extensions>
 			<code_completion />
