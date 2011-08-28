@@ -10,6 +10,8 @@
   #include <SSharedManagers.h>
   #include <CCustomEventReceiver.h>
 
+  #include <CRoadMeshLoader.h>
+
 /**
  * We use the plugin to add an addition event listener to the IrrOdeRePlayer. This
  * listener must deactivate the particle systems of the missiles and shells so that
@@ -92,6 +94,9 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
   printf("registering event factory...\n");
   g_pEventFactory=new APS_EventFactory();
   pFac->registerEventFactory(g_pEventFactory);
+
+  CRoadMeshLoader *pLoader=new CRoadMeshLoader(pDevice);
+  pDevice->getSceneManager()->addExternalMeshLoader(pLoader);
 
   CCustomEventReceiver::setMembers(pDevice,pMgr);
   CCustomEventReceiver::getSharedInstance()->install();
