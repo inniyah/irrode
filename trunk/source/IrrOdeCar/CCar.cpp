@@ -95,6 +95,8 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   if (m_pSound) m_pSound->setMinDistance(25.0f);
 
   m_vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
+  m_fDiff=0.0f;
+  m_fRpm=0.0f;
 }
 
 CCar::~CCar() {
@@ -216,15 +218,53 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
       m_bBoost=bBoost;
 
+      f32 fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f;
+
+      if (m_fRpm>fRpm) {
+        m_fRpm-=1.5f;
+        if (m_fRpm<fRpm) m_fRpm=fRpm;
+      }
+
+      if (m_fRpm<fRpm) {
+        m_fRpm+=1.5f;
+        if (m_fRpm>fRpm) m_fRpm=fRpm;
+      }
+
+      m_pCockpit->setRpm(-m_fRpm);
+
       f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
           fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
+
+      //calculate the differential gear
+      f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
+          f2=m_pAxesRear[1]->getHingeAngleRate(),
+          fDiff=f1-f2,fFact[2]={ 1.0f, 1.0f };
+
+      if (fDiff>2.5f || fDiff<-2.5f) {
+        if (fDiff> 150.0f) fDiff= 150.0f;
+        if (fDiff<-150.0f) fDiff=-150.0f;
+        fFact[0]=1.0f-fDiff/150.0f;
+        fFact[1]=1.0f+fDiff/150.0f;
+      }
+
+      if (m_fDiff>fDiff) {
+        m_fDiff-=3.5f;
+        if (m_fDiff<fDiff) m_fDiff=fDiff;
+      }
+
+      if (m_fDiff<fDiff) {
+        m_fDiff+=3.5f;
+        if (m_fDiff>fDiff) m_fDiff=fDiff;
+      }
+
+      m_pCockpit->setDiff(-m_fDiff);
 
       if (fForeward!=0.0f) {
         f32 fForce=fForeward<0.0f?-fForeward:fForeward;
 
         for (u32 i=0; i<2; i++) {
           m_pMotor[i]->setVelocity(-250.0*fForeward);
-          m_pMotor[i]->setForce(bBoost?55*fForce:30*fForce);
+          m_pMotor[i]->setForce(bBoost?fFact[i]*55*fForce:fFact[i]*30*fForce);
           m_iThrottle=-1;
         }
       }

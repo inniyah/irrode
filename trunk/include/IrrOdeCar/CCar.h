@@ -62,7 +62,9 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     irrklang::ISound *m_pSound;
 
     const u32 *m_pCtrls;
-    f32 m_fSound;
+    f32 m_fSound,
+        m_fRpm,
+        m_fDiff;
 
     core::vector3df m_vOldSpeed;
 
