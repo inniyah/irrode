@@ -14,9 +14,13 @@ using namespace irr;
 
 class CCockpitCar : public IRenderToTexture {
   protected:
-    f32 m_fSpeed;
+    f32 m_fSpeed,
+        m_fDiff,
+        m_fRpm;
 
-    gui::CGUINeedleIndicator *m_pMeter;
+    gui::CGUINeedleIndicator *m_pMeter,
+                             *m_pRpm,
+                             *m_pDiff;
     gui::IGUITab *m_pTab;
     gui::IGUIImage *m_pBoostRed,
                    *m_pBoostGray;
@@ -28,6 +32,10 @@ class CCockpitCar : public IRenderToTexture {
     virtual void update(bool b);
 
     void setSpeed(f32 fSpeed) { m_fSpeed=fSpeed; }
+
+    void setDiff(f32 fDiff) { m_fDiff=fDiff; }
+
+    void setRpm(f32 fRpm) { m_fRpm=fRpm; }
 
     void setBoost(bool b);
 };
