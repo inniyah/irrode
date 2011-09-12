@@ -34,6 +34,11 @@ CCockpitCar::CCockpitCar(IrrlichtDevice *pDevice, const char *sName) : IRenderTo
   m_pBoostGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_gray.png"),core::position2di(164,328),true,m_pTab);
   m_pTab->setVisible(false);
 
+  m_stDifferential=m_pGuienv->addStaticText(L"Active",core::rect<s32>(core::position2di(160,96),core::dimension2du(64,13)),false,true,m_pTab);
+  m_stDifferential->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
+
+  m_bDifferential=true;
+
   u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
   printf("**** CCockpitCar: replaced %i texture.\n",iReplace);
 }
@@ -45,6 +50,7 @@ void CCockpitCar::update(bool b) {
   m_pMeter->setValue(m_fSpeed);
   m_pDiff->setValue(m_fDiff);
   m_pRpm->setValue(m_fRpm);
+  m_stDifferential->setBackgroundColor(m_bDifferential?video::SColor(0xFF,0,0xFF,0):video::SColor(0xFF,0xD0,0xD0,0xD0));
 
   startRttUpdate();
   m_pTab->setVisible(true);

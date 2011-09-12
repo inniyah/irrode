@@ -18,9 +18,12 @@ class CCockpitCar : public IRenderToTexture {
         m_fDiff,
         m_fRpm;
 
+    bool m_bDifferential;
+
     gui::CGUINeedleIndicator *m_pMeter,
                              *m_pRpm,
                              *m_pDiff;
+    gui::IGUIStaticText *m_stDifferential;
     gui::IGUITab *m_pTab;
     gui::IGUIImage *m_pBoostRed,
                    *m_pBoostGray;
@@ -38,6 +41,8 @@ class CCockpitCar : public IRenderToTexture {
     void setRpm(f32 fRpm) { m_fRpm=fRpm; }
 
     void setBoost(bool b);
+
+    void setDifferentialEnabled(bool b) { m_bDifferential=b; }
 };
 
 #endif
