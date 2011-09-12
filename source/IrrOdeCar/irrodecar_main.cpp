@@ -196,6 +196,7 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarCamUp              ]=pController->addItem(0,stringw(L"Camera Up"            ),KEY_KEY_F ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarCamDown            ]=pController->addItem(0,stringw(L"Camera Down"          ),KEY_KEY_V ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarCamCenter          ]=pController->addItem(0,stringw(L"Center Camera"        ),KEY_KEY_X ,CIrrCC::eCtrlButton);
+  iCtrls[0][eCarDifferential       ]=pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
 
   //we need two axes for the car: acceleration and steering
   pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);

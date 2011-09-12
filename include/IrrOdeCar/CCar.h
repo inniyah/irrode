@@ -29,16 +29,18 @@ enum eCarCtrl {
   eCarCamRight,
   eCarCamUp,
   eCarCamDown,
-  eCarCamCenter
+  eCarCamCenter,
+  eCarDifferential
 };
 
 class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeEventListener {
   protected:
-    bool m_bBrake,      /*!< is the handbrake active? */
-         m_bBoost,      /*!< is the boos button pushed? */
-         m_bAdaptSteer, /*!< is the adaptive steer mode active? */
-         m_bHelp,       /*!< is the help screen visible? */
-         m_bInternal;   /*!< internal view active? */
+    bool m_bBrake,         /*!< is the handbrake active? */
+         m_bBoost,         /*!< is the boos button pushed? */
+         m_bAdaptSteer,    /*!< is the adaptive steer mode active? */
+         m_bHelp,          /*!< is the help screen visible? */
+         m_bInternal,      /*!< internal view active? */
+         m_bDifferential;  /*!< differential gear enabled? */
     f32 m_fActSteer,    /*!< the actual steering (-45.0, 0, +45.0) */
         m_fCamAngleH,   /*!< horizontal angle of camera */
         m_fCamAngleV;   /*!< vertical angle of camera */

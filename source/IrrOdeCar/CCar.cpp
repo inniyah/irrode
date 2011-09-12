@@ -86,6 +86,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_pCockpit=pCockpit;
 
     m_bInternal=false;
+    m_bDifferential=true;
 
     m_bInitialized=true;
   }
@@ -240,21 +241,29 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
           f2=m_pAxesRear[1]->getHingeAngleRate(),
           fDiff=f1-f2,fFact[2]={ 1.0f, 1.0f };
 
-      if (fDiff>2.5f || fDiff<-2.5f) {
-        if (fDiff> 150.0f) fDiff= 150.0f;
-        if (fDiff<-150.0f) fDiff=-150.0f;
-        fFact[0]=1.0f-fDiff/150.0f;
-        fFact[1]=1.0f+fDiff/150.0f;
-      }
+      if (m_bDifferential) {
+        if (fDiff>2.5f || fDiff<-2.5f) {
+          if (fDiff> 150.0f) fDiff= 150.0f;
+          if (fDiff<-150.0f) fDiff=-150.0f;
+          fFact[0]=1.0f-fDiff/150.0f;
+          fFact[1]=1.0f+fDiff/150.0f;
+        }
 
-      if (m_fDiff>fDiff) {
-        m_fDiff-=3.5f;
-        if (m_fDiff<fDiff) m_fDiff=fDiff;
-      }
+        if (m_fDiff>fDiff) {
+          m_fDiff-=3.5f;
+          if (m_fDiff<fDiff) m_fDiff=fDiff;
+        }
 
-      if (m_fDiff<fDiff) {
-        m_fDiff+=3.5f;
-        if (m_fDiff>fDiff) m_fDiff=fDiff;
+        if (m_fDiff<fDiff) {
+          m_fDiff+=3.5f;
+          if (m_fDiff>fDiff) m_fDiff=fDiff;
+        }
+      }
+      else {
+        fDiff=0.0f;
+        m_fDiff=0.0f;
+        fFact[0]=1.0f;
+        fFact[1]=1.0f;
       }
 
       m_pCockpit->setDiff(-m_fDiff);
@@ -344,6 +353,12 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
             if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
           }
         }
+      }
+
+      if (m_pController->get(m_pCtrls[eCarDifferential])) {
+        m_pController->set(m_pCtrls[eCarDifferential],0.0f);
+        m_bDifferential=!m_bDifferential;
+        m_pCockpit->setDifferentialEnabled(m_bDifferential);
       }
     }
 
