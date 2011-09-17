@@ -5,12 +5,6 @@
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /**
  * This interface must be implemented by all classes that read from the global config file
  * @author Christian Keimel / dustbin::games
@@ -20,7 +14,7 @@ class IConfigFileReader {
 	  /**
 		 * Implement this method to read from the global config file
 		 */
-    virtual void readConfig(IXMLReaderUTF8 *pXml)=0;
+    virtual void readConfig(io::IXMLReaderUTF8 *pXml)=0;
 };
 
 /**
@@ -32,7 +26,7 @@ class IConfigFileWriter {
 	  /**
 		 * Implement this method to write your section to the global config file
 		 */
-    virtual void writeConfig(IXMLWriter *pXml)=0;
+    virtual void writeConfig(io::IXMLWriter *pXml)=0;
 };
 
 /**
@@ -41,8 +35,8 @@ class IConfigFileWriter {
  */
 class CConfigFileManager {
   protected:
-    list<IConfigFileReader *> m_lReaders;		/**< list of all config file readers */
-    list<IConfigFileWriter *> m_lWriters;		/**< list of all config file writers */
+    core::list<IConfigFileReader *> m_lReaders;		/**< list of all config file readers */
+    core::list<IConfigFileWriter *> m_lWriters;		/**< list of all config file writers */
 
   public:
 	  /**

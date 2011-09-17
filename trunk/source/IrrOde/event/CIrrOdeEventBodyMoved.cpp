@@ -17,8 +17,8 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos
   if (vPos!=pBody->getAbsolutePosition()) m_iFlags+=siIrrOdeEventPosition;
   if (vRot!=pBody->getRotation()) m_iFlags+=siIrrOdeEventRotation;
 
-  if (vLinVel!=pBody->getNodeLinearVelocity ()) m_iFlags+=siIrrOdeEventLinearVel ;
-  if (vAngVel!=pBody->getNodeAngularVelocity()) m_iFlags+=siIrrOdeEventAngularVel;
+  if (vLinVel!=pBody->getLinearVelocity ()) m_iFlags+=siIrrOdeEventLinearVel ;
+  if (vAngVel!=pBody->getAngularVelocity()) m_iFlags+=siIrrOdeEventAngularVel;
 
   if (pBody->dampingChanged()) m_iFlags+=siIrrOdeEventDamping;
 

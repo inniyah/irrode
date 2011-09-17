@@ -2,6 +2,7 @@
   #define _C_IRR_ODE_SCENENODE
 
   #include <irrlicht.h>
+  #include <event/IIrrOdeEventListener.h>
 
 /**
  * some defines to display debug data:
@@ -32,7 +33,7 @@ class CIrrOdeWorld;
  * @class CIrrOdeSceneNode
  * This class is the base class for all scene nodes provided by IrrODE
  */
-class CIrrOdeSceneNode : public scene::ISceneNode {
+class CIrrOdeSceneNode : public scene::ISceneNode, public ode::IIrrOdeEventListener {
   protected:
     aabbox3df m_cBoundingBox;               /**< the bounding box of the scene node */
     ISceneManager *m_pSceneManager;         /**< the scene manager */

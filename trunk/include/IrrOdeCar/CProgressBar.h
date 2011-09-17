@@ -3,13 +3,10 @@
 #include <irrlicht.h>
 
 using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace gui;
 
-class CProgressBar : public IGUIElement {
+class CProgressBar : public gui::IGUIElement {
   public:
-     CProgressBar(IGUIEnvironment * guienv,const core::rect<s32>& rectangle,s32 id=-1,IGUIElement * parent=0);
+     CProgressBar(gui::IGUIEnvironment * guienv,const core::rect<s32>& rectangle,s32 id=-1,gui::IGUIElement * parent=0);
 
 
      /*Set percentage in positive percentual (0~100). Please note that a call to this function with others values, will set the progress bar to 0.*/
@@ -25,13 +22,13 @@ class CProgressBar : public IGUIElement {
      virtual void draw();
 
   private:
-     IGUIEnvironment * gui; //GUI ENV. pointer
+     gui::IGUIEnvironment * gui; //GUI ENV. pointer
      irr::s32 total; //Dimension (X) of the bar, to calculate relative percentage.
-     rect<s32> bar; //Dimension of the bar
-     rect<s32> position; //Bar
-     rect<s32> border; //Border
-     rect<s32> tofill; //Percentage indicator
-     rect<s32> empty; //"Empty" indicator
+     core::rect<s32> bar; //Dimension of the bar
+     core::rect<s32> position; //Bar
+     core::rect<s32> border; //Border
+     core::rect<s32> tofill; //Percentage indicator
+     core::rect<s32> empty; //"Empty" indicator
 
      irr::video::SColor fillcolor;
      irr::video::SColor emptycolor;

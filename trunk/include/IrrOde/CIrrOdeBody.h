@@ -124,10 +124,6 @@ class CIrrOdeBody : public CIrrOdeDampable {
     void addForceAtPosition(vector3df pos, vector3df force); /**< add a force at a specific position to the body */
     void addTorque(vector3df torque);                        /**< add a torque to the body */
     void setTorque(vector3df torque);                        /**< set the body's torque */
-    void setLinearVelocity(vector3df newVelocity);           /**< set the body's linear velocity */
-    void setAngularVelocity(vector3df newVelocity);          /**< set the body's angular velocity */
-    vector3df &getLinearVelocity();                          /**< get the body's linear velocity */
-    vector3df &getAngularVelocity();                         /**< get the body's angular velocity */
 
     virtual void setPosition(const vector3df &newPos);  /**< set the body's position */
     virtual void setRotation(const vector3df &newRot);  /**< set the body's rotation */
@@ -161,13 +157,11 @@ class CIrrOdeBody : public CIrrOdeDampable {
     void setIsTouching(CIrrOdeGeom *pTouch);
     CIrrOdeGeom *getTouched();
 
-    void setNodePosition(vector3df newPos);           /**< update the node's position without affecting ODE */
-    void setNodeRotation(vector3df newRot);           /**< update the node's rotation without affecting ODE */
-    void setNodeLinearVelocity(vector3df newVel);     /**< update the node's linear velocity wihout affecing ODE */
-    void setNodeAngularVelocity(vector3df newVel);    /**< update the node's angular velocity without affecting ODE */
+    virtual void setLinearVelocity(vector3df newVel);     /**< update the node's linear velocity wihout affecing ODE */
+    virtual void setAngularVelocity(vector3df newVel);    /**< update the node's angular velocity without affecting ODE */
 
-    vector3df getNodeLinearVelocity();    /**< get the node's "linear velocity" attribute wihtout querying ODE */
-    vector3df getNodeAngularVelocity();   /**< get the node's "angular velocity" attribute wihtout querying ODE */
+    virtual vector3df getLinearVelocity();    /**< get the node's "linear velocity" attribute wihtout querying ODE */
+    virtual vector3df getAngularVelocity();   /**< get the node's "angular velocity" attribute wihtout querying ODE */
 
     void setNodeLinearDamping(f32 fScale);  /**< set the node's "linear damping" attribute without affecting ODE */
     void setNodeAngularDamping(f32 fScale); /**< set the node's "angular damping" attribute without affecting ODE */
@@ -257,6 +251,19 @@ class CIrrOdeBody : public CIrrOdeDampable {
     CIrrOdeBody *getChildBodyFromName(const c8 *sName);
     IIrrOdeStepMotor *getStepMotorFromName(const c8 *sName);
     IIrrOdeMotor *getMotorFromName(const c8 *sName);
+
+    /**
+     * This method is called when an event is posted
+     * @param pEvent the posted event
+     */
+    virtual bool onEvent(IIrrOdeEvent *pEvent);
+
+    /**
+     * This method is called to see whether or not an event is handled by this listener
+     * @param pEvent the event in question
+     * @return "true" if the listener handles the event, "false" otherwise
+     */
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 };
 
 } //namespace ode
