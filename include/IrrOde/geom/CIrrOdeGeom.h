@@ -178,6 +178,19 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 		 * @see m_iCollisionGroup
 		 */
 		u32 getCollisionGroup() { return m_iCollisionGroup; }
+
+    /**
+     * This method is called when an event is posted
+     * @param pEvent the posted event
+     */
+    virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
+
+    /**
+     * This method is called to see whether or not an event is handled by this listener
+     * @param pEvent the event in question
+     * @return "true" if the listener handles the event, "false" otherwise
+     */
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 };
 
 } //namespace ode

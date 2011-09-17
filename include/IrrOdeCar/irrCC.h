@@ -45,19 +45,19 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      */
     class CIrrCCItem {
       private:
-        stringw keyCodeToString(EKEY_CODE e); /**< helper function to convert a keycode to a string */
-        IrrlichtDevice  *m_pDevice;           /**< the Irrlicht device */
-        IGUIEnvironment *m_pGuiEnv;           /**< the Irrlicht gui environment */
-        ICursorControl  *m_pCrsCtrl;          /**< the cursor control */
-        IGUIStaticText  *m_pCtrlText;         /**< the static text that displays the control */
-        IGUITab         *m_pGuiElement;       /**< the GUI element that contains the control */
+        core::stringw keyCodeToString(EKEY_CODE e); /**< helper function to convert a keycode to a string */
+        IrrlichtDevice  *m_pDevice;                 /**< the Irrlicht device */
+        gui::IGUIEnvironment *m_pGuiEnv;            /**< the Irrlicht gui environment */
+        gui::ICursorControl  *m_pCrsCtrl;           /**< the cursor control */
+        gui::IGUIStaticText  *m_pCtrlText;          /**< the static text that displays the control */
+        gui::IGUITab         *m_pGuiElement;        /**< the GUI element that contains the control */
 
         void updateMouse();
 
       public:
         IrrConfigControlTypes m_iType;    /**< type of control, e.g. key or joystick */
 
-        stringw m_sName;                  /**< name of the control */
+        core::stringw m_sName;            /**< name of the control */
         EKEY_CODE m_eKey;                 /**< the key code of the control */
         eControllerType m_eType;          /**< type of control */
 
@@ -90,7 +90,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param pDevice irrlicht device for the item
          * @param iSet set of the item
          */
-        CIrrCCItem(stringw sName, IrrlichtDevice *pDevice, u32 iSet);
+        CIrrCCItem(core::stringw sName, IrrlichtDevice *pDevice, u32 iSet);
 
         /**
          * The item's destructor
@@ -103,7 +103,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param cPos position of the item's element
          * @param cEditPos position of the item's static text that can change
          */
-        IGUITab *getGuiElement(IGUIElement *pParent, position2di cPos, position2di cEditPos);
+        gui::IGUITab *getGuiElement(gui::IGUIElement *pParent, core::position2di cPos, core::position2di cEditPos);
 
         /**
          * Set the item to "CC_TYPE_KEY" using the given key
@@ -155,7 +155,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * Get the item's text
          * @return the item's text
          */
-        IGUIStaticText *getCtrlText();
+        gui::IGUIStaticText *getCtrlText();
 
         /**
          * Does this item have a conflict with another item?
@@ -233,22 +233,22 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
         }
     };
 
-    IrrlichtDevice *m_pDevice;            /**< the Irrlicht device */
-    u32 m_iGuiItemHeight;                 /**< the height of the items using the current font */
-    s32 m_iFocusedIndex;                  /**< index of the currently focused GUI element */
-    f32 m_fMouseSensitivity;              /**< the mouse sensitivity */
-    IGUIStaticText *m_pFocused;           /**< the focused text element */
-    ICursorControl *m_pCrsCtrl;           /**< the cursor control object */
-    position2di m_cMousePos;              /**< the position of the mouse */
-    array<CIrrCCItem *> m_aItems;         /**< the array with the control items */
-    array<stringw> m_aMaxLenText;         /**< the texts with the maximum length of all sets */
-    array<SJoystickInfo> m_aJoysticks;    /**< the joystick info array */
-    array<CJoyState *> m_aJoyState;       /**< array with the current joystick states */
-    bool m_bAllowMouse,                   /**< is mouse movement allowed for items? */
-         m_bAllowFKeys,                   /**< are "Fxx" keys allowed for items? */
-         m_bAllowJoystick,                /**< is joystick allows for items? */
-         m_bLoaded,                       /**< is the control set already loaded from the XML file? */
-         m_bSetsCanConflict;              /**< do same controls of different sets cause a conflict? */
+    IrrlichtDevice *m_pDevice;                  /**< the Irrlicht device */
+    u32 m_iGuiItemHeight;                       /**< the height of the items using the current font */
+    s32 m_iFocusedIndex;                        /**< index of the currently focused GUI element */
+    f32 m_fMouseSensitivity;                    /**< the mouse sensitivity */
+    gui::IGUIStaticText *m_pFocused;            /**< the focused text element */
+    gui::ICursorControl *m_pCrsCtrl;            /**< the cursor control object */
+    core::position2di m_cMousePos;              /**< the position of the mouse */
+    core::array<CIrrCCItem *> m_aItems;         /**< the array with the control items */
+    core::array<core::stringw> m_aMaxLenText;   /**< the texts with the maximum length of all sets */
+    core::array<SJoystickInfo> m_aJoysticks;    /**< the joystick info array */
+    core::array<CJoyState *> m_aJoyState;       /**< array with the current joystick states */
+    bool m_bAllowMouse,                         /**< is mouse movement allowed for items? */
+         m_bAllowFKeys,                         /**< are "Fxx" keys allowed for items? */
+         m_bAllowJoystick,                      /**< is joystick allows for items? */
+         m_bLoaded,                             /**< is the control set already loaded from the XML file? */
+         m_bSetsCanConflict;                    /**< do same controls of different sets cause a conflict? */
 
   public:
     /**
@@ -270,7 +270,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param bIsButton is this a button or part of an axis?
      * @return index of the item
      */
-    u32 addItem(u32 iSet, stringw sName, EKEY_CODE eDefault, eControllerType eType);
+    u32 addItem(u32 iSet, core::stringw sName, EKEY_CODE eDefault, eControllerType eType);
 
     /**
      * Create a gui to configure the control items
@@ -278,7 +278,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param pParent parent GUI element
      * @param cPos position of the newly created gui
      */
-    void addGui(u32 iSet, IGUIElement *pParent, position2di cPos);
+    void addGui(u32 iSet, gui::IGUIElement *pParent, core::position2di cPos);
 
     /**
      * Set the "allow mouse" flag
@@ -354,8 +354,8 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
 
     void createFader(u32 idx1, u32 idx2, u32 iStep, f32 iInc);
 
-    virtual void writeConfig(IXMLWriter *pXml);
-    virtual void readConfig(IXMLReaderUTF8 *pXml);
+    virtual void writeConfig(io::IXMLWriter *pXml);
+    virtual void readConfig(io::IXMLReaderUTF8 *pXml);
 
     const wchar_t *getSettingsText(u32 iSet);
 

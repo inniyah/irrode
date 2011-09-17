@@ -122,20 +122,21 @@ void CIrrOdeBody::initPhysics() {
       m_pOdeDevice->bodySetRotation(m_iBodyId,getAbsoluteTransformation().getRotationDegrees());
       m_pOdeDevice->bodySetData(m_iBodyId,this);
 
-      setLinearDamping          (m_fDampingLinear          );
-      setAngularDamping         (m_fDampingAngular         );
-      setLinearDampingThreshold (m_fDampingLinearThreshold );
-      setAngularDampingThreshold(m_fDampingAngularThreshold);
+      m_pOdeDevice->bodySetLinearDamping          (m_iBodyId,m_fDampingLinear          );
+      m_pOdeDevice->bodySetLinearDampingThreshold (m_iBodyId,m_fDampingLinearThreshold );
+      m_pOdeDevice->bodySetAngularDamping         (m_iBodyId,m_fDampingAngular         );
+      m_pOdeDevice->bodySetAngularDampingThreshold(m_iBodyId,m_fDampingAngularThreshold);
 
       if (m_iAutoDisableFlag) {
-        setAutoDisableFlag            (m_iAutoDisableFlag            );
-        setAutoDisableLinearThreshold (m_fAutoDisableLinearThreshold );
-        setAutoDisableAngularThreshold(m_fAutoDisableAngularThreshold);
-        setAutoDisableSteps           (m_iAutoDisableSteps           );
-        setAutoDisableTime            (m_fAutoDisableTime            );
+        m_pOdeDevice->bodySetAutoDisableFlag            (m_iBodyId,m_iAutoDisableFlag            );
+        m_pOdeDevice->bodySetLinearAutoDisableThreshold (m_iBodyId,m_fAutoDisableLinearThreshold );
+        m_pOdeDevice->bodySetAngularAutoDisableThreshold(m_iBodyId,m_fAutoDisableAngularThreshold);
+        m_pOdeDevice->bodySetAutoDisableSteps           (m_iBodyId,m_iAutoDisableSteps           );
+        m_pOdeDevice->bodySetAutoDisableTime            (m_iBodyId,m_fAutoDisableTime            );
       }
 
-      if (m_fMaxAngularSpeed!=_DEFAULT_MAX_ANGULAR_SPEED) setMaxAngularSpeed(m_fMaxAngularSpeed);
+      if (m_fMaxAngularSpeed!=_DEFAULT_MAX_ANGULAR_SPEED)
+        m_pOdeDevice->bodySetMaxAngularSpeed(m_iBodyId,m_fMaxAngularSpeed);
 
       if (m_iBodyId) {
         list<CIrrOdeGeom *>::Iterator i;
@@ -592,24 +593,6 @@ void CIrrOdeBody::setAngularVelocity(vector3df newVelocity) {
 }
 
 /**
- * Get the linear velocity of the body
- * @return the current linear velocity of the body
- */
-vector3df &CIrrOdeBody::getLinearVelocity() {
-  if (m_bPhysicsInitialized) m_vLinear=m_pOdeDevice->bodyGetLinearVelocity(m_iBodyId);
-  return m_vLinear;
-}
-
-/**
- * Get the angular velocity of the body
- * @return the current angular velocity of the body
- */
-vector3df &CIrrOdeBody::getAngularVelocity() {
-  if (m_bPhysicsInitialized) m_vAngular=m_pOdeDevice->bodyGetAngularVelocity(m_iBodyId);
-  return m_vAngular;
-}
-
-/**
  * Set the Irrlicht position of the body. This method will update the absolute position if initPhysics was not yet called
  * @param newPos the new position
  */
@@ -618,8 +601,6 @@ void CIrrOdeBody::setPosition(const vector3df &newPos) {
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
-  else
-    m_pOdeDevice->bodySetPosition(m_iBodyId,newPos);
 }
 
 /**
@@ -631,8 +612,6 @@ void CIrrOdeBody::setRotation(const vector3df &newRot) {
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
-  else
-    m_pOdeDevice->bodySetRotation(m_iBodyId,newRot);
 }
 
 /**
@@ -825,27 +804,11 @@ CIrrOdeGeom *CIrrOdeBody::getTouched() {
   return m_pTouching;
 }
 
-void CIrrOdeBody::setNodePosition(vector3df newPos) {
-  ISceneNode::setPosition(newPos);
-}
-
-void CIrrOdeBody::setNodeRotation(vector3df newRot) {
-  ISceneNode::setRotation(newRot);
-}
-
-void CIrrOdeBody::setNodeLinearVelocity(vector3df newVel) {
-  m_vLinear=newVel;
-}
-
-void CIrrOdeBody::setNodeAngularVelocity(vector3df newVel) {
-  m_vAngular=newVel;
-}
-
-vector3df CIrrOdeBody::getNodeLinearVelocity() {
+vector3df CIrrOdeBody::getLinearVelocity() {
   return m_vLinear;
 }
 
-vector3df CIrrOdeBody::getNodeAngularVelocity() {
+vector3df CIrrOdeBody::getAngularVelocity() {
   return m_vAngular;
 }
 
@@ -1048,6 +1011,16 @@ IIrrOdeMotor *CIrrOdeBody::getMotorFromName(const c8 *sName) {
     if (p!=NULL) return p;
   }
   return NULL;
+}
+
+bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==ode::eIrrOdeEventBodyMoved) {
+  }
+  return false;
+}
+
+bool CIrrOdeBody::handlesEvent(IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==ode::eIrrOdeEventBodyMoved;
 }
 
 } //namespace ode

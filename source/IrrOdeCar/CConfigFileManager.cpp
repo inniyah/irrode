@@ -14,12 +14,12 @@ void CConfigFileManager::addWriter(IConfigFileWriter *pWriter) {
 }
 
 void CConfigFileManager::removeReader(IConfigFileReader *pReader) {
-  list<IConfigFileReader *>::Iterator it;
+  core::list<IConfigFileReader *>::Iterator it;
   for (it=m_lReaders.begin(); it!=m_lReaders.end(); it++) if ((*it)==pReader) { m_lReaders.erase(it); return; }
 }
 
 void CConfigFileManager::removeWriter(IConfigFileWriter *pWriter) {
-  list<IConfigFileWriter *>::Iterator it;
+  core::list<IConfigFileWriter *>::Iterator it;
   for (it=m_lWriters.begin(); it!=m_lWriters.end(); it++) if ((*it)==pWriter) { m_lWriters.erase(it); return; }
 }
 
@@ -30,14 +30,14 @@ void CConfigFileManager::clearReadersWriters() {
 }
 
 void CConfigFileManager::loadConfig(IrrlichtDevice *pDevice, const c8 *sFileName) {
-  IXMLReaderUTF8 *pXml=pDevice->getFileSystem()->createXMLReaderUTF8(sFileName);
+  io::IXMLReaderUTF8 *pXml=pDevice->getFileSystem()->createXMLReaderUTF8(sFileName);
   bool bSettings=false;
 
   if (pXml) {
     while (pXml->read()) {
-      bSettings=bSettings || (!strcmp(pXml->getNodeName(),"settings") && pXml->getNodeType()==EXN_ELEMENT);
+      bSettings=bSettings || (!strcmp(pXml->getNodeName(),"settings") && pXml->getNodeType()==io::EXN_ELEMENT);
       if (bSettings) {
-        list<IConfigFileReader *>::Iterator it;
+        core::list<IConfigFileReader *>::Iterator it;
         for (it=m_lReaders.begin(); it!=m_lReaders.end(); it++) {
           (*it)->readConfig(pXml);
         }
@@ -49,14 +49,14 @@ void CConfigFileManager::loadConfig(IrrlichtDevice *pDevice, const c8 *sFileName
 }
 
 void CConfigFileManager::writeConfig(IrrlichtDevice *pDevice, const c8 *sFileName) {
-  IXMLWriter *pXml=pDevice->getFileSystem()->createXMLWriter(sFileName);
+  io::IXMLWriter *pXml=pDevice->getFileSystem()->createXMLWriter(sFileName);
 
   if (pXml) {
     pXml->writeXMLHeader();
     pXml->writeElement(L"settings");
     pXml->writeLineBreak();
 
-    list<IConfigFileWriter *>::Iterator it;
+    core::list<IConfigFileWriter *>::Iterator it;
     for (it=m_lWriters.begin(); it!=m_lWriters.end(); it++) {
       (*it)->writeConfig(pXml);
     }

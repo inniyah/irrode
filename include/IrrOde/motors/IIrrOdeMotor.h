@@ -17,6 +17,19 @@ class IIrrOdeMotor : public CIrrOdeSceneNode {
       CIrrOdeBody *pBody=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
       if (pBody!=NULL) pBody->addMotor(this);
     }
+
+    /**
+     * This method is called when an event is posted
+     * @param pEvent the posted event
+     */
+    virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
+
+    /**
+     * This method is called to see whether or not an event is handled by this listener
+     * @param pEvent the event in question
+     * @return "true" if the listener handles the event, "false" otherwise
+     */
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 };
 
 } }

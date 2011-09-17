@@ -8,12 +8,6 @@
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 class CMenu : public CIrrOdeCarState, public IEventReceiver {
   protected:
     list<IGUIButton *> m_aButtons;  /*!< a list of buttons */

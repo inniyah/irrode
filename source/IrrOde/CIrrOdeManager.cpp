@@ -407,10 +407,10 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
     }
 
     if (pBody!=NULL) {
-      if (pEvent->positionChanged  ()) pBody->setNodePosition(pEvent->getNewPosition());
-      if (pEvent->rotationChanged  ()) pBody->setNodeRotation(pEvent->getNewRotation());
-      if (pEvent->linearVelChanged ()) pBody->setNodeLinearVelocity(pEvent->getNewLinearVelocity());
-      if (pEvent->angularVelChanged()) pBody->setNodeAngularVelocity(pEvent->getNewAngularVelocity());
+      if (pEvent->positionChanged  ()) pBody->setPosition(pEvent->getNewPosition());
+      if (pEvent->rotationChanged  ()) pBody->setRotation(pEvent->getNewRotation());
+      if (pEvent->linearVelChanged ()) pBody->setLinearVelocity(pEvent->getNewLinearVelocity());
+      if (pEvent->angularVelChanged()) pBody->setAngularVelocity(pEvent->getNewAngularVelocity());
       if (pEvent->dampingChanged   ()) {
         pBody->setNodeAngularDamping(pEvent->getAngularDamping());
         pBody->setNodeLinearDamping (pEvent->getLinearDamping ());

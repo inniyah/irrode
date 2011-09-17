@@ -24,12 +24,6 @@
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 class CProgress : public irr::ode::IIrrOdeEventListener {
   protected:
     IrrlichtDevice *m_pDevice;
@@ -97,8 +91,19 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
     virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent) {
       return pEvent->getType()==irr::ode::eIrrOdeEventProgress;
     }
-
 };
+
+void enableFog(scene::ISceneNode *pNode) {
+  if (pNode->getType()!=scene::ESNT_SKY_BOX)
+    for (u32 i=0; i<pNode->getMaterialCount(); i++) {
+      pNode->getMaterial(i).setFlag(video::EMF_FOG_ENABLE,true);
+    }
+
+  core::list<ISceneNode *> lChildList=pNode->getChildren();
+  core::list<ISceneNode *>::Iterator it;
+
+  for (it=lChildList.begin(); it!=lChildList.end(); it++) enableFog(*it);
+}
 
 void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
@@ -438,6 +443,9 @@ int main(int argc, char** argv) {
     if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
   }
 
+  driver->setFog(video::SColor(0xFF,0xA0,0xA0,0xC0),video::EFT_FOG_LINEAR,1750.0f,2100.0f,0.00001f,true,false);
+  enableFog(smgr->getRootSceneNode());
+
   u32 iFrames=0,iTotalFps=0;
 
   //let's run the loop
@@ -474,7 +482,7 @@ int main(int argc, char** argv) {
     }
 
     //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
-    driver->beginScene(true, true, SColor(0,200,200,200));
+    driver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
 
     smgr->drawAll();
     guienv->drawAll();

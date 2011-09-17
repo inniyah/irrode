@@ -67,6 +67,19 @@ class CIrrOdeSpace : public CIrrOdeSceneNode {
     virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
+
+    /**
+     * This method is called when an event is posted
+     * @param pEvent the posted event
+     */
+    virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
+
+    /**
+     * This method is called to see whether or not an event is handled by this listener
+     * @param pEvent the event in question
+     * @return "true" if the listener handles the event, "false" otherwise
+     */
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 };
 
 } //namespace ode

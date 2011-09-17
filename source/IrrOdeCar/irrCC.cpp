@@ -3,7 +3,7 @@
 
 using namespace irr;
 
-CIrrCC::CIrrCCItem::CIrrCCItem(stringw sName, IrrlichtDevice *pDevice, u32 iSet) {
+CIrrCC::CIrrCCItem::CIrrCCItem(core::stringw sName, IrrlichtDevice *pDevice, u32 iSet) {
   m_pDevice=pDevice;
   m_sName=sName;
   m_iSet=iSet;
@@ -32,162 +32,162 @@ bool CIrrCC::CIrrCCItem::isButton() {
   return m_eType==CIrrCC::eCtrlButton || m_eType==CIrrCC::eCtrlToggleButton;
 }
 
-stringw CIrrCC::CIrrCCItem::keyCodeToString(EKEY_CODE e) {
-  if (e == KEY_LBUTTON)    return stringw(L"KEY_LBUTTON");
-  if (e == KEY_RBUTTON)    return stringw(L"KEY_RBUTTON");
-  if (e == KEY_CANCEL)     return stringw(L"KEY_CANCEL");
-  if (e == KEY_MBUTTON)    return stringw(L"KEY_MBUTTON");
-  if (e == KEY_XBUTTON1)   return stringw(L"KEY_XBUTTON1");
-  if (e == KEY_XBUTTON2)   return stringw(L"KEY_XBUTTON2");
-  if (e == KEY_BACK)       return stringw(L"KEY_BACK");
-  if (e == KEY_TAB)        return stringw(L"KEY_TAB");
-  if (e == KEY_CLEAR)      return stringw(L"KEY_CLEAR");
-  if (e == KEY_RETURN)     return stringw(L"KEY_RETURN");
-  if (e == KEY_SHIFT)      return stringw(L"KEY_SHIFT");
-  if (e == KEY_CONTROL)    return stringw(L"KEY_CONTROL");
-  if (e == KEY_MENU)       return stringw(L"KEY_MENU");
-  if (e == KEY_PAUSE)      return stringw(L"KEY_PAUSE");
-  if (e == KEY_CAPITAL)    return stringw(L"KEY_CAPITAL");
-  if (e == KEY_KANA)       return stringw(L"KEY_KANA");
-  if (e == KEY_HANGUEL)    return stringw(L"KEY_HANGUEL");
-  if (e == KEY_HANGUL)     return stringw(L"KEY_HANGUL");
-  if (e == KEY_JUNJA)      return stringw(L"KEY_JUNJA");
-  if (e == KEY_FINAL)      return stringw(L"KEY_FINAL");
-  if (e == KEY_HANJA)      return stringw(L"KEY_HANJA");
-  if (e == KEY_KANJI)      return stringw(L"KEY_KANJI");
-  if (e == KEY_ESCAPE)     return stringw(L"KEY_ESCAPE");
-  if (e == KEY_CONVERT)    return stringw(L"KEY_CONVERT");
-  if (e == KEY_NONCONVERT) return stringw(L"KEY_NONCONVERT");
-  if (e == KEY_ACCEPT)     return stringw(L"KEY_ACCEPT");
-  if (e == KEY_MODECHANGE) return stringw(L"KEY_MODECHANGE");
-  if (e == KEY_SPACE)      return stringw(L"KEY_SPACE");
-  if (e == KEY_PRIOR)      return stringw(L"KEY_PRIOR");
-  if (e == KEY_NEXT)       return stringw(L"KEY_NEXT");
-  if (e == KEY_END)        return stringw(L"KEY_END");
-  if (e == KEY_HOME)       return stringw(L"KEY_HOME");
-  if (e == KEY_LEFT)       return stringw(L"KEY_LEFT");
-  if (e == KEY_UP)         return stringw(L"KEY_UP");
-  if (e == KEY_RIGHT)      return stringw(L"KEY_RIGHT");
-  if (e == KEY_DOWN)       return stringw(L"KEY_DOWN");
-  if (e == KEY_SELECT)     return stringw(L"KEY_SELECT");
-  if (e == KEY_PRINT)      return stringw(L"KEY_PRINT");
-  if (e == KEY_EXECUT)     return stringw(L"KEY_EXECUT");
-  if (e == KEY_SNAPSHOT)   return stringw(L"KEY_SNAPSHOT");
-  if (e == KEY_INSERT)     return stringw(L"KEY_INSERT");
-  if (e == KEY_DELETE)     return stringw(L"KEY_DELETE");
-  if (e == KEY_HELP)       return stringw(L"KEY_HELP");
-  if (e == KEY_KEY_0)      return stringw(L"KEY_KEY_0");
-  if (e == KEY_KEY_1)      return stringw(L"KEY_KEY_1");
-  if (e == KEY_KEY_2)      return stringw(L"KEY_KEY_2");
-  if (e == KEY_KEY_3)      return stringw(L"KEY_KEY_3");
-  if (e == KEY_KEY_4)      return stringw(L"KEY_KEY_4");
-  if (e == KEY_KEY_5)      return stringw(L"KEY_KEY_5");
-  if (e == KEY_KEY_6)      return stringw(L"KEY_KEY_6");
-  if (e == KEY_KEY_7)      return stringw(L"KEY_KEY_7");
-  if (e == KEY_KEY_8)      return stringw(L"KEY_KEY_8");
-  if (e == KEY_KEY_9)      return stringw(L"KEY_KEY_9");
-  if (e == KEY_KEY_A)      return stringw(L"KEY_KEY_A");
-  if (e == KEY_KEY_B)      return stringw(L"KEY_KEY_B");
-  if (e == KEY_KEY_C)      return stringw(L"KEY_KEY_C");
-  if (e == KEY_KEY_D)      return stringw(L"KEY_KEY_D");
-  if (e == KEY_KEY_E)      return stringw(L"KEY_KEY_E");
-  if (e == KEY_KEY_F)      return stringw(L"KEY_KEY_F");
-  if (e == KEY_KEY_G)      return stringw(L"KEY_KEY_G");
-  if (e == KEY_KEY_H)      return stringw(L"KEY_KEY_H");
-  if (e == KEY_KEY_I)      return stringw(L"KEY_KEY_I");
-  if (e == KEY_KEY_J)      return stringw(L"KEY_KEY_J");
-  if (e == KEY_KEY_K)      return stringw(L"KEY_KEY_K");
-  if (e == KEY_KEY_L)      return stringw(L"KEY_KEY_L");
-  if (e == KEY_KEY_M)      return stringw(L"KEY_KEY_M");
-  if (e == KEY_KEY_N)      return stringw(L"KEY_KEY_N");
-  if (e == KEY_KEY_O)      return stringw(L"KEY_KEY_O");
-  if (e == KEY_KEY_P)      return stringw(L"KEY_KEY_P");
-  if (e == KEY_KEY_Q)      return stringw(L"KEY_KEY_Q");
-  if (e == KEY_KEY_R)      return stringw(L"KEY_KEY_R");
-  if (e == KEY_KEY_S)      return stringw(L"KEY_KEY_S");
-  if (e == KEY_KEY_T)      return stringw(L"KEY_KEY_T");
-  if (e == KEY_KEY_U)      return stringw(L"KEY_KEY_U");
-  if (e == KEY_KEY_V)      return stringw(L"KEY_KEY_V");
-  if (e == KEY_KEY_W)      return stringw(L"KEY_KEY_W");
-  if (e == KEY_KEY_X)      return stringw(L"KEY_KEY_X");
-  if (e == KEY_KEY_Y)      return stringw(L"KEY_KEY_Y");
-  if (e == KEY_KEY_Z)      return stringw(L"KEY_KEY_Z");
-  if (e == KEY_LWIN)       return stringw(L"KEY_LWIN");
-  if (e == KEY_RWIN)       return stringw(L"KEY_RWIN");
-  if (e == KEY_APPS)       return stringw(L"KEY_APPS");
-  if (e == KEY_SLEEP)      return stringw(L"KEY_SLEEP");
-  if (e == KEY_NUMPAD0)    return stringw(L"KEY_NUMPAD0");
-  if (e == KEY_NUMPAD1)    return stringw(L"KEY_NUMPAD1");
-  if (e == KEY_NUMPAD2)    return stringw(L"KEY_NUMPAD2");
-  if (e == KEY_NUMPAD3)    return stringw(L"KEY_NUMPAD3");
-  if (e == KEY_NUMPAD4)    return stringw(L"KEY_NUMPAD4");
-  if (e == KEY_NUMPAD5)    return stringw(L"KEY_NUMPAD5");
-  if (e == KEY_NUMPAD6)    return stringw(L"KEY_NUMPAD6");
-  if (e == KEY_NUMPAD7)    return stringw(L"KEY_NUMPAD7");
-  if (e == KEY_NUMPAD8)    return stringw(L"KEY_NUMPAD8");
-  if (e == KEY_NUMPAD9)    return stringw(L"KEY_NUMPAD9");
-  if (e == KEY_MULTIPLY)   return stringw(L"KEY_MULTIPLY");
-  if (e == KEY_ADD)        return stringw(L"KEY_ADD");
-  if (e == KEY_SEPARATOR)  return stringw(L"KEY_SEPARATOR");
-  if (e == KEY_SUBTRACT)   return stringw(L"KEY_SUBTRACT");
-  if (e == KEY_DECIMAL)    return stringw(L"KEY_DECIMAL");
-  if (e == KEY_DIVIDE)     return stringw(L"KEY_DIVIDE");
-  if (e == KEY_F1)         return stringw(L"KEY_F1");
-  if (e == KEY_F2)         return stringw(L"KEY_F2");
-  if (e == KEY_F3)         return stringw(L"KEY_F3");
-  if (e == KEY_F4)         return stringw(L"KEY_F4");
-  if (e == KEY_F5)         return stringw(L"KEY_F5");
-  if (e == KEY_F6)         return stringw(L"KEY_F6");
-  if (e == KEY_F7)         return stringw(L"KEY_F7");
-  if (e == KEY_F8)         return stringw(L"KEY_F8");
-  if (e == KEY_F9)         return stringw(L"KEY_F9");
-  if (e == KEY_F10)        return stringw(L"KEY_F10");
-  if (e == KEY_F11)        return stringw(L"KEY_F11");
-  if (e == KEY_F12)        return stringw(L"KEY_F12");
-  if (e == KEY_F13)        return stringw(L"KEY_F13");
-  if (e == KEY_F14)        return stringw(L"KEY_F14");
-  if (e == KEY_F15)        return stringw(L"KEY_F15");
-  if (e == KEY_F16)        return stringw(L"KEY_F16");
-  if (e == KEY_F17)        return stringw(L"KEY_F17");
-  if (e == KEY_F18)        return stringw(L"KEY_F18");
-  if (e == KEY_F19)        return stringw(L"KEY_F19");
-  if (e == KEY_F20)        return stringw(L"KEY_F20");
-  if (e == KEY_F21)        return stringw(L"KEY_F21");
-  if (e == KEY_F22)        return stringw(L"KEY_F22");
-  if (e == KEY_F23)        return stringw(L"KEY_F23");
-  if (e == KEY_F24)        return stringw(L"KEY_F24");
-  if (e == KEY_NUMLOCK)    return stringw(L"KEY_NUMLOCK");
-  if (e == KEY_SCROLL)     return stringw(L"KEY_SCROLL");
-  if (e == KEY_LSHIFT)     return stringw(L"KEY_LSHIFT");
-  if (e == KEY_RSHIFT)     return stringw(L"KEY_RSHIFT");
-  if (e == KEY_LCONTROL)   return stringw(L"KEY_LCONTROL");
-  if (e == KEY_RCONTROL)   return stringw(L"KEY_RCONTROL");
-  if (e == KEY_LMENU)      return stringw(L"KEY_LMENU");
-  if (e == KEY_RMENU)      return stringw(L"KEY_RMENU");
-  if (e == KEY_PLUS)       return stringw(L"KEY_PLUS");
-  if (e == KEY_COMMA)      return stringw(L"KEY_COMMA");
-  if (e == KEY_MINUS)      return stringw(L"KEY_MINUS");
-  if (e == KEY_PERIOD)     return stringw(L"KEY_PERIOD");
-  if (e == KEY_ATTN)       return stringw(L"KEY_ATTN");
-  if (e == KEY_CRSEL)      return stringw(L"KEY_CRSEL");
-  if (e == KEY_EXSEL)      return stringw(L"KEY_EXSEL");
-  if (e == KEY_EREOF)      return stringw(L"KEY_EREOF");
-  if (e == KEY_PLAY)       return stringw(L"KEY_PLAY");
-  if (e == KEY_ZOOM)       return stringw(L"KEY_ZOOM");
-  if (e == KEY_PA1)        return stringw(L"KEY_PA1");
-  if (e == KEY_OEM_CLEAR)  return stringw(L"KEY_OEM_CLEAR");
-  return stringw(L"UNKNOWN");
+core::stringw CIrrCC::CIrrCCItem::keyCodeToString(EKEY_CODE e) {
+  if (e == KEY_LBUTTON)    return core::stringw(L"KEY_LBUTTON");
+  if (e == KEY_RBUTTON)    return core::stringw(L"KEY_RBUTTON");
+  if (e == KEY_CANCEL)     return core::stringw(L"KEY_CANCEL");
+  if (e == KEY_MBUTTON)    return core::stringw(L"KEY_MBUTTON");
+  if (e == KEY_XBUTTON1)   return core::stringw(L"KEY_XBUTTON1");
+  if (e == KEY_XBUTTON2)   return core::stringw(L"KEY_XBUTTON2");
+  if (e == KEY_BACK)       return core::stringw(L"KEY_BACK");
+  if (e == KEY_TAB)        return core::stringw(L"KEY_TAB");
+  if (e == KEY_CLEAR)      return core::stringw(L"KEY_CLEAR");
+  if (e == KEY_RETURN)     return core::stringw(L"KEY_RETURN");
+  if (e == KEY_SHIFT)      return core::stringw(L"KEY_SHIFT");
+  if (e == KEY_CONTROL)    return core::stringw(L"KEY_CONTROL");
+  if (e == KEY_MENU)       return core::stringw(L"KEY_MENU");
+  if (e == KEY_PAUSE)      return core::stringw(L"KEY_PAUSE");
+  if (e == KEY_CAPITAL)    return core::stringw(L"KEY_CAPITAL");
+  if (e == KEY_KANA)       return core::stringw(L"KEY_KANA");
+  if (e == KEY_HANGUEL)    return core::stringw(L"KEY_HANGUEL");
+  if (e == KEY_HANGUL)     return core::stringw(L"KEY_HANGUL");
+  if (e == KEY_JUNJA)      return core::stringw(L"KEY_JUNJA");
+  if (e == KEY_FINAL)      return core::stringw(L"KEY_FINAL");
+  if (e == KEY_HANJA)      return core::stringw(L"KEY_HANJA");
+  if (e == KEY_KANJI)      return core::stringw(L"KEY_KANJI");
+  if (e == KEY_ESCAPE)     return core::stringw(L"KEY_ESCAPE");
+  if (e == KEY_CONVERT)    return core::stringw(L"KEY_CONVERT");
+  if (e == KEY_NONCONVERT) return core::stringw(L"KEY_NONCONVERT");
+  if (e == KEY_ACCEPT)     return core::stringw(L"KEY_ACCEPT");
+  if (e == KEY_MODECHANGE) return core::stringw(L"KEY_MODECHANGE");
+  if (e == KEY_SPACE)      return core::stringw(L"KEY_SPACE");
+  if (e == KEY_PRIOR)      return core::stringw(L"KEY_PRIOR");
+  if (e == KEY_NEXT)       return core::stringw(L"KEY_NEXT");
+  if (e == KEY_END)        return core::stringw(L"KEY_END");
+  if (e == KEY_HOME)       return core::stringw(L"KEY_HOME");
+  if (e == KEY_LEFT)       return core::stringw(L"KEY_LEFT");
+  if (e == KEY_UP)         return core::stringw(L"KEY_UP");
+  if (e == KEY_RIGHT)      return core::stringw(L"KEY_RIGHT");
+  if (e == KEY_DOWN)       return core::stringw(L"KEY_DOWN");
+  if (e == KEY_SELECT)     return core::stringw(L"KEY_SELECT");
+  if (e == KEY_PRINT)      return core::stringw(L"KEY_PRINT");
+  if (e == KEY_EXECUT)     return core::stringw(L"KEY_EXECUT");
+  if (e == KEY_SNAPSHOT)   return core::stringw(L"KEY_SNAPSHOT");
+  if (e == KEY_INSERT)     return core::stringw(L"KEY_INSERT");
+  if (e == KEY_DELETE)     return core::stringw(L"KEY_DELETE");
+  if (e == KEY_HELP)       return core::stringw(L"KEY_HELP");
+  if (e == KEY_KEY_0)      return core::stringw(L"KEY_KEY_0");
+  if (e == KEY_KEY_1)      return core::stringw(L"KEY_KEY_1");
+  if (e == KEY_KEY_2)      return core::stringw(L"KEY_KEY_2");
+  if (e == KEY_KEY_3)      return core::stringw(L"KEY_KEY_3");
+  if (e == KEY_KEY_4)      return core::stringw(L"KEY_KEY_4");
+  if (e == KEY_KEY_6)      return core::stringw(L"KEY_KEY_6");
+  if (e == KEY_KEY_5)      return core::stringw(L"KEY_KEY_5");
+  if (e == KEY_KEY_7)      return core::stringw(L"KEY_KEY_7");
+  if (e == KEY_KEY_8)      return core::stringw(L"KEY_KEY_8");
+  if (e == KEY_KEY_9)      return core::stringw(L"KEY_KEY_9");
+  if (e == KEY_KEY_A)      return core::stringw(L"KEY_KEY_A");
+  if (e == KEY_KEY_B)      return core::stringw(L"KEY_KEY_B");
+  if (e == KEY_KEY_C)      return core::stringw(L"KEY_KEY_C");
+  if (e == KEY_KEY_D)      return core::stringw(L"KEY_KEY_D");
+  if (e == KEY_KEY_E)      return core::stringw(L"KEY_KEY_E");
+  if (e == KEY_KEY_F)      return core::stringw(L"KEY_KEY_F");
+  if (e == KEY_KEY_G)      return core::stringw(L"KEY_KEY_G");
+  if (e == KEY_KEY_H)      return core::stringw(L"KEY_KEY_H");
+  if (e == KEY_KEY_I)      return core::stringw(L"KEY_KEY_I");
+  if (e == KEY_KEY_J)      return core::stringw(L"KEY_KEY_J");
+  if (e == KEY_KEY_K)      return core::stringw(L"KEY_KEY_K");
+  if (e == KEY_KEY_L)      return core::stringw(L"KEY_KEY_L");
+  if (e == KEY_KEY_M)      return core::stringw(L"KEY_KEY_M");
+  if (e == KEY_KEY_N)      return core::stringw(L"KEY_KEY_N");
+  if (e == KEY_KEY_O)      return core::stringw(L"KEY_KEY_O");
+  if (e == KEY_KEY_P)      return core::stringw(L"KEY_KEY_P");
+  if (e == KEY_KEY_Q)      return core::stringw(L"KEY_KEY_Q");
+  if (e == KEY_KEY_R)      return core::stringw(L"KEY_KEY_R");
+  if (e == KEY_KEY_S)      return core::stringw(L"KEY_KEY_S");
+  if (e == KEY_KEY_T)      return core::stringw(L"KEY_KEY_T");
+  if (e == KEY_KEY_U)      return core::stringw(L"KEY_KEY_U");
+  if (e == KEY_KEY_V)      return core::stringw(L"KEY_KEY_V");
+  if (e == KEY_KEY_W)      return core::stringw(L"KEY_KEY_W");
+  if (e == KEY_KEY_X)      return core::stringw(L"KEY_KEY_X");
+  if (e == KEY_KEY_Y)      return core::stringw(L"KEY_KEY_Y");
+  if (e == KEY_KEY_Z)      return core::stringw(L"KEY_KEY_Z");
+  if (e == KEY_LWIN)       return core::stringw(L"KEY_LWIN");
+  if (e == KEY_RWIN)       return core::stringw(L"KEY_RWIN");
+  if (e == KEY_APPS)       return core::stringw(L"KEY_APPS");
+  if (e == KEY_SLEEP)      return core::stringw(L"KEY_SLEEP");
+  if (e == KEY_NUMPAD0)    return core::stringw(L"KEY_NUMPAD0");
+  if (e == KEY_NUMPAD1)    return core::stringw(L"KEY_NUMPAD1");
+  if (e == KEY_NUMPAD2)    return core::stringw(L"KEY_NUMPAD2");
+  if (e == KEY_NUMPAD3)    return core::stringw(L"KEY_NUMPAD3");
+  if (e == KEY_NUMPAD4)    return core::stringw(L"KEY_NUMPAD4");
+  if (e == KEY_NUMPAD5)    return core::stringw(L"KEY_NUMPAD5");
+  if (e == KEY_NUMPAD6)    return core::stringw(L"KEY_NUMPAD6");
+  if (e == KEY_NUMPAD7)    return core::stringw(L"KEY_NUMPAD7");
+  if (e == KEY_NUMPAD8)    return core::stringw(L"KEY_NUMPAD8");
+  if (e == KEY_NUMPAD9)    return core::stringw(L"KEY_NUMPAD9");
+  if (e == KEY_MULTIPLY)   return core::stringw(L"KEY_MULTIPLY");
+  if (e == KEY_ADD)        return core::stringw(L"KEY_ADD");
+  if (e == KEY_SEPARATOR)  return core::stringw(L"KEY_SEPARATOR");
+  if (e == KEY_SUBTRACT)   return core::stringw(L"KEY_SUBTRACT");
+  if (e == KEY_DECIMAL)    return core::stringw(L"KEY_DECIMAL");
+  if (e == KEY_DIVIDE)     return core::stringw(L"KEY_DIVIDE");
+  if (e == KEY_F1)         return core::stringw(L"KEY_F1");
+  if (e == KEY_F2)         return core::stringw(L"KEY_F2");
+  if (e == KEY_F3)         return core::stringw(L"KEY_F3");
+  if (e == KEY_F4)         return core::stringw(L"KEY_F4");
+  if (e == KEY_F5)         return core::stringw(L"KEY_F5");
+  if (e == KEY_F6)         return core::stringw(L"KEY_F6");
+  if (e == KEY_F7)         return core::stringw(L"KEY_F7");
+  if (e == KEY_F8)         return core::stringw(L"KEY_F8");
+  if (e == KEY_F9)         return core::stringw(L"KEY_F9");
+  if (e == KEY_F10)        return core::stringw(L"KEY_F10");
+  if (e == KEY_F11)        return core::stringw(L"KEY_F11");
+  if (e == KEY_F12)        return core::stringw(L"KEY_F12");
+  if (e == KEY_F13)        return core::stringw(L"KEY_F13");
+  if (e == KEY_F14)        return core::stringw(L"KEY_F14");
+  if (e == KEY_F15)        return core::stringw(L"KEY_F15");
+  if (e == KEY_F16)        return core::stringw(L"KEY_F16");
+  if (e == KEY_F17)        return core::stringw(L"KEY_F17");
+  if (e == KEY_F18)        return core::stringw(L"KEY_F18");
+  if (e == KEY_F19)        return core::stringw(L"KEY_F19");
+  if (e == KEY_F20)        return core::stringw(L"KEY_F20");
+  if (e == KEY_F21)        return core::stringw(L"KEY_F21");
+  if (e == KEY_F22)        return core::stringw(L"KEY_F22");
+  if (e == KEY_F23)        return core::stringw(L"KEY_F23");
+  if (e == KEY_F24)        return core::stringw(L"KEY_F24");
+  if (e == KEY_NUMLOCK)    return core::stringw(L"KEY_NUMLOCK");
+  if (e == KEY_SCROLL)     return core::stringw(L"KEY_SCROLL");
+  if (e == KEY_LSHIFT)     return core::stringw(L"KEY_LSHIFT");
+  if (e == KEY_RSHIFT)     return core::stringw(L"KEY_RSHIFT");
+  if (e == KEY_LCONTROL)   return core::stringw(L"KEY_LCONTROL");
+  if (e == KEY_RCONTROL)   return core::stringw(L"KEY_RCONTROL");
+  if (e == KEY_LMENU)      return core::stringw(L"KEY_LMENU");
+  if (e == KEY_RMENU)      return core::stringw(L"KEY_RMENU");
+  if (e == KEY_PLUS)       return core::stringw(L"KEY_PLUS");
+  if (e == KEY_COMMA)      return core::stringw(L"KEY_COMMA");
+  if (e == KEY_MINUS)      return core::stringw(L"KEY_MINUS");
+  if (e == KEY_PERIOD)     return core::stringw(L"KEY_PERIOD");
+  if (e == KEY_ATTN)       return core::stringw(L"KEY_ATTN");
+  if (e == KEY_CRSEL)      return core::stringw(L"KEY_CRSEL");
+  if (e == KEY_EXSEL)      return core::stringw(L"KEY_EXSEL");
+  if (e == KEY_EREOF)      return core::stringw(L"KEY_EREOF");
+  if (e == KEY_PLAY)       return core::stringw(L"KEY_PLAY");
+  if (e == KEY_ZOOM)       return core::stringw(L"KEY_ZOOM");
+  if (e == KEY_PA1)        return core::stringw(L"KEY_PA1");
+  if (e == KEY_OEM_CLEAR)  return core::stringw(L"KEY_OEM_CLEAR");
+  return core::stringw(L"UNKNOWN");
 }
 
-IGUITab *CIrrCC::CIrrCCItem::getGuiElement(IGUIElement *pParent, position2di cPos, position2di cEditPos) {
-  IGUIFont *pFont=m_pGuiEnv->getSkin()->getFont();
-  dimension2du dim=pFont->getDimension(m_sName.c_str());
+gui::IGUITab *CIrrCC::CIrrCCItem::getGuiElement(gui::IGUIElement *pParent, core::position2di cPos, core::position2di cEditPos) {
+  gui::IGUIFont *pFont=m_pGuiEnv->getSkin()->getFont();
+  core::dimension2du dim=pFont->getDimension(m_sName.c_str());
 
-  position2di ulc(cPos.X,cPos.Y),lrc(cPos.Y+dim.Width+cEditPos.X+250,cPos.Y+dim.Height+10);
+  core::position2di ulc(cPos.X,cPos.Y),lrc(cPos.Y+dim.Width+cEditPos.X+250,cPos.Y+dim.Height+10);
 
-  m_pGuiElement=m_pGuiEnv->addTab(rect<s32>(ulc.X,ulc.Y,lrc.X,lrc.Y),pParent,-1);
-  m_pGuiEnv->addStaticText(m_sName.c_str(),rect<s32>(0,0,dim.Width+10,dim.Height+10),false,true,m_pGuiElement);
-  m_pCtrlText=m_pGuiEnv->addStaticText(L"Not set",rect<s32>(cEditPos.X,cEditPos.Y,cEditPos.X+200,cEditPos.Y+dim.Height+2),true,true,m_pGuiElement,65536+m_iIdx);
+  m_pGuiElement=m_pGuiEnv->addTab(core::rect<s32>(ulc.X,ulc.Y,lrc.X,lrc.Y),pParent,-1);
+  m_pGuiEnv->addStaticText(m_sName.c_str(),core::rect<s32>(0,0,dim.Width+10,dim.Height+10),false,true,m_pGuiElement);
+  m_pCtrlText=m_pGuiEnv->addStaticText(L"Not set",core::rect<s32>(cEditPos.X,cEditPos.Y,cEditPos.X+200,cEditPos.Y+dim.Height+2),true,true,m_pGuiElement,65536+m_iIdx);
   this->updateCtrlText();
   return m_pGuiElement;
 }
@@ -227,7 +227,7 @@ void CIrrCC::CIrrCCItem::setPov(u8 id, u16 iPov) {
   m_iType=CC_TYPE_POV;
 }
 
-IGUIStaticText *CIrrCC::CIrrCCItem::getCtrlText() {
+gui::IGUIStaticText *CIrrCC::CIrrCCItem::getCtrlText() {
   return m_pCtrlText;
 }
 
@@ -321,7 +321,7 @@ void CIrrCC::CIrrCCItem::setMouseSensitivity(f32 f) {
 
 void CIrrCC::CIrrCCItem::updateMouse() {
   m_fValue=0.0f;
-  position2di pos=m_pCrsCtrl->getPosition();
+  core::position2di pos=m_pCrsCtrl->getPosition();
   if (m_iMouseAxis==0) {
     if (m_iMouseDirection>0 && pos.X>320) {
       m_fValue=((f32)pos.X-320)/m_fMouseSensitivity;
@@ -401,7 +401,7 @@ CIrrCC::~CIrrCC() {
   m_bSetsCanConflict=true;
 }
 
-u32 CIrrCC::addItem(u32 iSet,stringw sName, EKEY_CODE eDefault, eControllerType eType) {
+u32 CIrrCC::addItem(u32 iSet, core::stringw sName, EKEY_CODE eDefault, eControllerType eType) {
   u32 iRet=0;
 
   if (m_aMaxLenText.size()<=iSet)
@@ -422,28 +422,28 @@ u32 CIrrCC::addItem(u32 iSet,stringw sName, EKEY_CODE eDefault, eControllerType 
   return iRet;
 }
 
-void CIrrCC::addGui(u32 iSet, IGUIElement *pParent, position2di cPos) {
+void CIrrCC::addGui(u32 iSet, gui::IGUIElement *pParent, core::position2di cPos) {
   u32 editX=m_pDevice->getGUIEnvironment()->getSkin()->getFont()->getDimension(m_aMaxLenText[iSet].c_str()).Width+10;
 
   for (u32 i=0; i<m_aItems.size(); i++)
     if (m_aItems[i]->m_iSet==iSet) {
-      m_aItems[i]->getGuiElement(pParent,cPos,position2di(editX,0));
+      m_aItems[i]->getGuiElement(pParent,cPos,core::position2di(editX,0));
       cPos.Y+=(s32)(2.5f*m_iGuiItemHeight);
     }
 }
 
 bool CIrrCC::ConfigEvent (const SEvent &event) {
   bool bRet=false;
-  stringw s;
+  core::stringw s;
   u32 iItem=m_iFocusedIndex-65536;
 
-  if (event.EventType==EET_GUI_EVENT && event.GUIEvent.EventType==EGET_ELEMENT_FOCUSED) {
+  if (event.EventType==EET_GUI_EVENT && event.GUIEvent.EventType==gui::EGET_ELEMENT_FOCUSED) {
     m_cMousePos=m_pDevice->getCursorControl()->getPosition();
 		if (event.GUIEvent.Caller->getID()>=65536) {
-      if (m_pFocused) m_pFocused->setBackgroundColor(SColor(128,192,192,192));
-      s=stringw(event.GUIEvent.Caller->getText());
-      m_pFocused=(IGUIStaticText *)event.GUIEvent.Caller;
-      m_pFocused->setBackgroundColor(SColor(128,0,255,0));
+      if (m_pFocused) m_pFocused->setBackgroundColor(video::SColor(128,192,192,192));
+      s=core::stringw(event.GUIEvent.Caller->getText());
+      m_pFocused=(gui::IGUIStaticText *)event.GUIEvent.Caller;
+      m_pFocused->setBackgroundColor(video::SColor(128,0,255,0));
       m_iFocusedIndex=m_pFocused->getID();
     }
   }
@@ -461,12 +461,12 @@ bool CIrrCC::ConfigEvent (const SEvent &event) {
 
       for (u32 i=0; i<m_aItems.size(); i++) {
         m_aItems[i]->setConflict(false);
-        m_aItems[i]->getCtrlText()->setBackgroundColor(SColor(128,192,192,192));
+        m_aItems[i]->getCtrlText()->setBackgroundColor(video::SColor(128,192,192,192));
       }
     }
 
     if (event.EventType==EET_MOUSE_INPUT_EVENT && m_bAllowMouse) {
-      position2di mPos=m_pDevice->getCursorControl()->getPosition();
+      core::position2di mPos=m_pDevice->getCursorControl()->getPosition();
       if ((mPos.X>m_cMousePos.X+50 || mPos.X<m_cMousePos.X-50) && !pItem->isButton()) {
         s32 iDirection=mPos.X>m_cMousePos.X+50?1:-1;
         pItem->setMouseMove(0,iDirection);
@@ -541,10 +541,10 @@ bool CIrrCC::ConfigEvent (const SEvent &event) {
       if (pBrother!=NULL) {
         pBrother->updateCtrlText();
         pBrother->setConflict(false);
-        pBrother->getCtrlText()->setBackgroundColor(SColor(128,192,192,192));
+        pBrother->getCtrlText()->setBackgroundColor(video::SColor(128,192,192,192));
       }
 
-      m_pFocused->setBackgroundColor(SColor(128,192,192,192));
+      m_pFocused->setBackgroundColor(video::SColor(128,192,192,192));
       m_pFocused=NULL;
       m_iFocusedIndex=-1;
       m_pDevice->getGUIEnvironment()->setFocus(NULL);
@@ -554,8 +554,8 @@ bool CIrrCC::ConfigEvent (const SEvent &event) {
   for (u32 i=0; i<m_aItems.size(); i++) {
     for (u32 j=i+1; j<m_aItems.size(); j++) {
       if (m_aItems[i]->conflicts(m_aItems[j]) && (m_aItems[i]->m_iSet==m_aItems[j]->m_iSet || m_bSetsCanConflict)) {
-        m_aItems[j]->getCtrlText()->setBackgroundColor(SColor(128,255,0,0)); m_aItems[j]->setConflict(true);
-        m_aItems[i]->getCtrlText()->setBackgroundColor(SColor(128,255,0,0)); m_aItems[i]->setConflict(true);
+        m_aItems[j]->getCtrlText()->setBackgroundColor(video::SColor(128,255,0,0)); m_aItems[j]->setConflict(true);
+        m_aItems[i]->getCtrlText()->setBackgroundColor(video::SColor(128,255,0,0)); m_aItems[i]->setConflict(true);
       }
     }
   }
@@ -713,48 +713,48 @@ void CIrrCC::setMouseSensitivity(f32 f) {
   for (u32 i=0; i<m_aItems.size(); i++) m_aItems[i]->setMouseSensitivity(f);
 }
 
-void CIrrCC::writeConfig(IXMLWriter *pXml) {
+void CIrrCC::writeConfig(io::IXMLWriter *pXml) {
   pXml->writeElement(L"IrrConfigControl");
   pXml->writeLineBreak();
 
   for (u32 i=0; i<m_aItems.size(); i++) {
     CIrrCCItem *p=m_aItems[i];
 
-    array<stringw> names,values;
+    core::array<core::stringw> names,values;
     wchar_t s[0xFF];
 
-                                       names.push_back(stringw(L"name")); values.push_back(p->m_sName.c_str());
-    swprintf(s,0xFF,L"%u",p->m_iSet ); names.push_back(stringw(L"set" )); values.push_back(s                 );
-    swprintf(s,0xFF,L"%u",p->m_iType); names.push_back(stringw(L"type")); values.push_back(s                 );
+                                       names.push_back(core::stringw(L"name")); values.push_back(p->m_sName.c_str());
+    swprintf(s,0xFF,L"%u",p->m_iType); names.push_back(core::stringw(L"type")); values.push_back(s                 );
+    swprintf(s,0xFF,L"%u",p->m_iSet ); names.push_back(core::stringw(L"set" )); values.push_back(s                 );
 
     switch (p->m_iType) {
       case CC_TYPE_KEY:
-        names.push_back(stringw(L"key")); swprintf(s,0xFF,L"%u",(u32)p->m_eKey); values.push_back(s);
+        names.push_back(core::stringw(L"key")); swprintf(s,0xFF,L"%u",(u32)p->m_eKey); values.push_back(s);
         break;
 
       case CC_TYPE_MOU:
-        names.push_back(stringw(L"m_axis")); swprintf(s,0xFF,L"%u",p->m_iMouseAxis     ); values.push_back(s);
-        names.push_back(stringw(L"m_dir" )); swprintf(s,0xFF,L"%i",p->m_iMouseDirection); values.push_back(s);
+        names.push_back(core::stringw(L"m_axis")); swprintf(s,0xFF,L"%u",p->m_iMouseAxis     ); values.push_back(s);
+        names.push_back(core::stringw(L"m_dir" )); swprintf(s,0xFF,L"%i",p->m_iMouseDirection); values.push_back(s);
         break;
 
       case CC_TYPE_MBT:
-        names.push_back(stringw(L"m_btn")); swprintf(s,0xFF,L"%u",p->m_iMouseBtn); values.push_back(s);
+        names.push_back(core::stringw(L"m_btn")); swprintf(s,0xFF,L"%u",p->m_iMouseBtn); values.push_back(s);
         break;
 
       case CC_TYPE_JOY:
-        names.push_back(stringw(L"joy"   )); swprintf(s,0xFF,L"%u",p->m_iJoyId       ); values.push_back(s);
-        names.push_back(stringw(L"j_axis")); swprintf(s,0xFF,L"%u",p->m_iJoyAxis     ); values.push_back(s);
-        names.push_back(stringw(L"j_dir" )); swprintf(s,0xFF,L"%i",p->m_iJoyDirection); values.push_back(s);
+        names.push_back(core::stringw(L"joy"   )); swprintf(s,0xFF,L"%u",p->m_iJoyId       ); values.push_back(s);
+        names.push_back(core::stringw(L"j_axis")); swprintf(s,0xFF,L"%u",p->m_iJoyAxis     ); values.push_back(s);
+        names.push_back(core::stringw(L"j_dir" )); swprintf(s,0xFF,L"%i",p->m_iJoyDirection); values.push_back(s);
         break;
 
       case CC_TYPE_JBT:
-        names.push_back(stringw(L"joy"  )); swprintf(s,0xFF,L"%u",p->m_iJoyId    ); values.push_back(s);
-        names.push_back(stringw(L"j_btn")); swprintf(s,0xFF,L"%u",p->m_iJoyButton); values.push_back(s);
+        names.push_back(core::stringw(L"joy"  )); swprintf(s,0xFF,L"%u",p->m_iJoyId    ); values.push_back(s);
+        names.push_back(core::stringw(L"j_btn")); swprintf(s,0xFF,L"%u",p->m_iJoyButton); values.push_back(s);
         break;
 
       case CC_TYPE_POV:
-        names.push_back(stringw(L"joy")); swprintf(s,0xFF,L"%u",p->m_iJoyId); values.push_back(s);
-        names.push_back(stringw(L"pov")); swprintf(s,0xFF,L"%u",p->m_iPov  ); values.push_back(s);
+        names.push_back(core::stringw(L"joy")); swprintf(s,0xFF,L"%u",p->m_iJoyId); values.push_back(s);
+        names.push_back(core::stringw(L"pov")); swprintf(s,0xFF,L"%u",p->m_iPov  ); values.push_back(s);
         break;
 
       default:
@@ -769,9 +769,9 @@ void CIrrCC::writeConfig(IXMLWriter *pXml) {
   pXml->writeLineBreak();
 }
 
-void CIrrCC::readConfig(IXMLReaderUTF8 *pXml) {
+void CIrrCC::readConfig(io::IXMLReaderUTF8 *pXml) {
   u32 iNum=0;
-  if (pXml && !strcmp(pXml->getNodeName(),"IrrConfigControl") && pXml->getNodeType()==EXN_ELEMENT)
+  if (pXml && !strcmp(pXml->getNodeName(),"IrrConfigControl") && pXml->getNodeType()==io::EXN_ELEMENT)
     while (pXml->read() && iNum<m_aItems.size() && strcmp(pXml->getNodeName(),"IrrConfigControl"))
       if (!strcmp(pXml->getNodeName(),"control")) {
         CIrrCCItem *p=m_aItems[iNum];
@@ -854,7 +854,7 @@ const wchar_t *CIrrCC::getSettingsText(u32 iSet) {
   for (u32 i=0; i<m_aItems.size(); i++) {
     CIrrCCItem *p=m_aItems[i];
     if (p->m_iSet==iSet) {
-      IGUIStaticText *t=p->getCtrlText();
+      gui::IGUIStaticText *t=p->getCtrlText();
       swprintf(sSettingsText,1023,L"%s%s:\t%s\n",sSettingsText,p->m_sName.c_str(),t->getText());
     }
   }

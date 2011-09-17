@@ -1,7 +1,6 @@
   #include "CProgressBar.h"
 
-CProgressBar::CProgressBar(IGUIEnvironment * guienv,const core::rect<s32>& rectangle,s32 id,IGUIElement * parent) : IGUIElement(EGUIET_ELEMENT,guienv,parent,id,rectangle)
-{
+CProgressBar::CProgressBar(gui::IGUIEnvironment * guienv,const core::rect<s32>& rectangle,s32 id,gui::IGUIElement * parent) : gui::IGUIElement(gui::EGUIET_ELEMENT,guienv,parent,id,rectangle){
    total = rectangle.LowerRightCorner.X - rectangle.UpperLeftCorner.X;
    gui = guienv;
    bar = rectangle;
