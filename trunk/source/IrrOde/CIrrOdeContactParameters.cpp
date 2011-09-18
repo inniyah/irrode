@@ -21,8 +21,8 @@ void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParamete
   pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      )     );
   pParams->setBounce   (    (pParam1->getBounce()   +pParam2->getBounce()   )/2.0f);
   pParams->setBounceVel(    (pParam1->getBounceVel()+pParam2->getBounceVel())/2.0f);
-  pParams->setSoftErp  (sqrt(pParam1->getSoftErp()  *pParam2->getSoftErp()  )     );
-  pParams->setSoftCfm  (sqrt(pParam1->getSoftCfm()  *pParam2->getSoftCfm()  )     );
+  pParams->setSoftErp  (    (pParam1->getSoftErp()  +pParam2->getSoftErp()  )/2.0f);
+  pParams->setSoftCfm  (    (pParam1->getSoftCfm()  +pParam2->getSoftCfm()  )/2.0f);
   pParams->setMotion1  (sqrt(pParam1->getMotion1()  *pParam2->getMotion1()  )     );
   pParams->setMotion2  (sqrt(pParam1->getMotion2()  *pParam2->getMotion2()  )     );
   pParams->setMotionN  (sqrt(pParam1->getMotionN()  *pParam2->getMotionN()  )     );
