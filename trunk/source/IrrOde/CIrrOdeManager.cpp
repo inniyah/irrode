@@ -407,25 +407,7 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
     }
 
     if (pBody!=NULL) {
-      if (pEvent->positionChanged  ()) pBody->setPosition(pEvent->getNewPosition());
-      if (pEvent->rotationChanged  ()) pBody->setRotation(pEvent->getNewRotation());
-      if (pEvent->linearVelChanged ()) pBody->setLinearVelocity(pEvent->getNewLinearVelocity());
-      if (pEvent->angularVelChanged()) pBody->setAngularVelocity(pEvent->getNewAngularVelocity());
-      if (pEvent->dampingChanged   ()) {
-        pBody->setNodeAngularDamping(pEvent->getAngularDamping());
-        pBody->setNodeLinearDamping (pEvent->getLinearDamping ());
-      }
-
-      if (pEvent->getTouchId()) {
-        if (pEvent->getTouched())
-          pBody->setIsTouching(pEvent->getTouched());
-        else {
-          ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pEvent->getTouchId());
-          CIrrOdeGeom *pGeom=reinterpret_cast<CIrrOdeGeom *>(pNode);
-          pBody->setIsTouching(pGeom);
-        }
-      }
-      else pBody->setIsTouching(NULL);
+      pBody->onEvent(pEvt);
     }
     return true;
   }
