@@ -7,6 +7,8 @@ namespace ode {
 void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParameters *pParam1, CIrrOdeSurfaceParameters *pParam2, CIrrOdeSurfaceParameters *pParams) {
   s32 iMode=pParam1->getMode()&pParam2->getMode();
 
+  pParams->setMode(iMode);
+
   if (pParam1->getMode()&eContactApprox1 || pParam2->getMode()&eContactApprox1) pParams->setModeApprox1(true);
   if (pParam1->getMode()&eContactApprox1_1 || pParam2->getMode()&eContactApprox1_1) pParams->setModeApprox1_1(true);
   if (pParam1->getMode()&eContactApprox1_2 || pParam2->getMode()&eContactApprox1_2) pParams->setModeApprox1_2(true);
@@ -15,7 +17,8 @@ void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParamete
   if (pParam1->getModeSlip1 () || pParam2->getModeSlip1 ()) pParams->setModeSlip1(true);
   if (pParam1->getModeSlip2 () || pParam2->getModeSlip2 ()) pParams->setModeSlip2(true);
 
-  pParams->setMode(iMode);
+  if (pParam1->getModeSoftCFM() || pParam2->getModeSoftCFM()) pParams->setModeSoftCFM(true);
+  if (pParam1->getModeSoftERP() || pParam2->getModeSoftERP()) pParams->setModeSoftERP(true);
 
   pParams->setMu       (sqrt(pParam1->getMu()       *pParam2->getMu()       )     );
   pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      )     );
