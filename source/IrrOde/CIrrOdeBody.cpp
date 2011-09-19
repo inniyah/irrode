@@ -5,6 +5,7 @@
   #include <joints/CIrrOdeJoint.h>
   #include <geom/CIrrOdeGeomRay.h>
   #include <event/IIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventBodyMoved.h>
   #include <event/CIrrOdeEventBodyCreated.h>
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventActivationChanged.h>
@@ -1013,8 +1014,29 @@ IIrrOdeMotor *CIrrOdeBody::getMotorFromName(const c8 *sName) {
   return NULL;
 }
 
-bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvent) {
-  if (pEvent->getType()==ode::eIrrOdeEventBodyMoved) {
+bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
+  if (pEvt->getType()==ode::eIrrOdeEventBodyMoved) {
+    CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
+
+    if (pEvent->positionChanged  ()) setPosition(pEvent->getNewPosition());
+    if (pEvent->rotationChanged  ()) setRotation(pEvent->getNewRotation());
+    if (pEvent->linearVelChanged ()) setLinearVelocity(pEvent->getNewLinearVelocity());
+    if (pEvent->angularVelChanged()) setAngularVelocity(pEvent->getNewAngularVelocity());
+    if (pEvent->dampingChanged   ()) {
+      setNodeAngularDamping(pEvent->getAngularDamping());
+      setNodeLinearDamping (pEvent->getLinearDamping ());
+    }
+
+    if (pEvent->getTouchId()) {
+      if (pEvent->getTouched())
+        setIsTouching(pEvent->getTouched());
+      else {
+        ISceneNode *pNode=m_pSceneManager->getSceneNodeFromId(pEvent->getTouchId());
+        CIrrOdeGeom *pGeom=reinterpret_cast<CIrrOdeGeom *>(pNode);
+        setIsTouching(pGeom);
+      }
+    }
+    else setIsTouching(NULL);
   }
   return false;
 }
