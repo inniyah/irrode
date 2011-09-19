@@ -1038,11 +1038,16 @@ bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
     }
     else setIsTouching(NULL);
   }
+
+  if (pEvt->getType()==ode::eIrrOdeEventBodyRemoved) {
+    doRemoveFromPhysics();
+  }
+
   return false;
 }
 
 bool CIrrOdeBody::handlesEvent(IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==ode::eIrrOdeEventBodyMoved;
+  return pEvent->getType()==ode::eIrrOdeEventBodyMoved || pEvent->getType()==ode::eIrrOdeEventBodyRemoved;
 }
 
 } //namespace ode
