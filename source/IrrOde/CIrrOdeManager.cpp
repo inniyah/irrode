@@ -414,17 +414,10 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
 
   if (pEvt->getType()==eIrrOdeEventBodyRemoved) {
     CIrrOdeEventBodyRemoved *pBr=(CIrrOdeEventBodyRemoved *)pEvt;
-    if (pBr->getBody()!=NULL)
-      pBr->getBody()->doRemoveFromPhysics();
-    else {
-      ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pBr->getBodyId());
-      if (pNode!=NULL) {
-        if (pNode->getType()==(ESCENE_NODE_TYPE)IRR_ODE_BODY_ID) {
-          CIrrOdeBody *pBody=(CIrrOdeBody *)pNode;
-          pBody->doRemoveFromPhysics();
-        }
-      }
-    }
+    CIrrOdeBody *pBody=pBr->getBody();
+
+    if (pBody==NULL) pBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(pBr->getBodyId()));
+    if (pBody!=NULL) pBody->onEvent(pEvt);
   }
 
   if (pEvt->getType()==eIrrOdeEventNodeRemoved) {
