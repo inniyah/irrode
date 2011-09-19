@@ -1037,10 +1037,14 @@ bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
       }
     }
     else setIsTouching(NULL);
+
+    return true;
   }
 
   if (pEvt->getType()==ode::eIrrOdeEventBodyRemoved) {
     doRemoveFromPhysics();
+
+    return true;
   }
 
   return false;
