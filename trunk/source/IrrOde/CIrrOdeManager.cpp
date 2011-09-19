@@ -402,13 +402,9 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
   if (pEvt->getType()==eIrrOdeEventBodyMoved) {
     CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
     CIrrOdeBody *pBody=pEvent->getBody();
-    if (pBody==NULL) {
-      pBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(pEvent->getBodyId()));
-    }
+    if (pBody==NULL) pBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(pEvent->getBodyId()));
+    if (pBody!=NULL) pBody->onEvent(pEvt);
 
-    if (pBody!=NULL) {
-      pBody->onEvent(pEvt);
-    }
     return true;
   }
 
@@ -418,6 +414,8 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
 
     if (pBody==NULL) pBody=reinterpret_cast<CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(pBr->getBodyId()));
     if (pBody!=NULL) pBody->onEvent(pEvt);
+
+    return true;
   }
 
   if (pEvt->getType()==eIrrOdeEventNodeRemoved) {
