@@ -443,7 +443,7 @@ int main(int argc, char** argv) {
     if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
   }
 
-  driver->setFog(video::SColor(0xFF,0xA0,0xA0,0xC0),video::EFT_FOG_LINEAR,1750.0f,2100.0f,0.00001f,true,false);
+  driver->setFog(video::SColor(0xFF,0x3A,0x34,0x00),video::EFT_FOG_LINEAR,1750.0f,2100.0f,0.00001f,true,false);
   enableFog(smgr->getRootSceneNode());
 
   u32 iFrames=0,iTotalFps=0;
