@@ -12,6 +12,8 @@
   #include <event/CIrrOdeEventLoadScene.h>
   #include <event/CIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventNodeRemoved.h>
+  #include <event/IIrrOdeEventWriter.h>
+  #include <event/CIrrOdeEventJoint.h>
   #include <IIrrOdeDevice.h>
   #include <motors/IIrrOdeStepMotor.h>
 
@@ -142,6 +144,13 @@ void CIrrOdeManager::step() {
 
   list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->step(fStep);
+
+  core::list<IIrrOdeEventWriter *>::Iterator cit;
+  for (cit=m_lChanged.begin(); cit!=m_lChanged.end(); cit++) {
+    IIrrOdeEvent *p=m_pOdeDevice->writeEventFor(*cit);
+    if (p==NULL) p=(*cit)->writeEvent();
+    if (p) getQueue()->postEvent(p);
+  }
 
   m_iLastStep=thisStep;
 }
@@ -427,13 +436,27 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
 
     if (pNode!=NULL) m_pSmgr->addToDeletionQueue(pNode);
   }
+
+  if (pEvt->getType()==eIrrOdeEventJoint) {
+    CIrrOdeEventJoint *p=(CIrrOdeEventJoint *)pEvt;
+    CIrrOdeJoint *pJoint=p->getJoint();
+    pJoint->onEvent(p);
+  }
+
   return false;
 }
 
 bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
   return pEvent->getType()==eIrrOdeEventBodyMoved   ||
          pEvent->getType()==eIrrOdeEventBodyRemoved ||
-         pEvent->getType()==eIrrOdeEventNodeRemoved;
+         pEvent->getType()==eIrrOdeEventNodeRemoved ||
+         pEvent->getType()==eIrrOdeEventJoint;
+}
+
+void CIrrOdeManager::objectChanged(IIrrOdeEventWriter *p) {
+  core::list<IIrrOdeEventWriter *>::Iterator it;
+  for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++) if (*it==p) return;
+  m_lChanged.push_back(p);
 }
 
 } //namespace ode

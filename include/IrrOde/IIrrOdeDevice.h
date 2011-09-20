@@ -12,6 +12,8 @@ namespace ode {
 class CIrrOdeWorld;
 class CIrrOdeBody;
 class CIrrOdeGeom;
+class IIrrOdeEvent;
+class IIrrOdeEventWriter;
 
 /**
  * @class IIrrOdeDevice
@@ -310,6 +312,8 @@ class IIrrOdeDevice {
     virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv)=0;
 
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits)=0;
+
+    virtual IIrrOdeEvent *writeEventFor(IIrrOdeEventWriter *p)=0;
 };
 
 } //namespace ode

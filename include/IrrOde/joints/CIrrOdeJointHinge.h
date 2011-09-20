@@ -19,6 +19,9 @@ class CIrrOdeJointHinge : public CIrrOdeJoint {
               m_pAnchor1, /**< the joint anchor on body 1 */
               m_pAnchor2; /**< the joint anchor on body 2 */
 
+    f32 m_fAngle,
+        m_fAngleRate;
+
   public:
     /** standard constructor */
     CIrrOdeJointHinge(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
@@ -55,6 +58,23 @@ class CIrrOdeJointHinge : public CIrrOdeJoint {
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
     virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+
+    virtual eEventWriterType getEventWriterType() {
+      return eIrrOdeEventWriterJointHinge;
+    }
+
+    /**
+     * This method is called when an event is posted
+     * @param pEvent the posted event
+     */
+    virtual bool onEvent(IIrrOdeEvent *pEvent);
+
+    /**
+     * This method is called to see whether or not an event is handled by this listener
+     * @param pEvent the event in question
+     * @return "true" if the listener handles the event, "false" otherwise
+     */
+    virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 };
 
 } //namespace ode

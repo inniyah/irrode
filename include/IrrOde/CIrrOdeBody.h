@@ -2,6 +2,7 @@
   #define _C_IRR_ODE_BODY
 
   #include <CIrrOdeDampable.h>
+  #include <event/IIrrOdeEventWriter.h>
 
 namespace irr {
 namespace ode {
@@ -22,7 +23,7 @@ class IIrrOdeMotor;       /**< foreward declaration of IIrrOdeMotor      */
  * @class CIrrOdeBody
  * This class encapsulates the ODE body. Bodies are dynamic objects in ODE.
  */
-class CIrrOdeBody : public CIrrOdeDampable {
+class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
   protected:
     u32 m_iBodyId;                          /**< this body's ODE dBodyID */
     u32 m_iMass;                            /**< this body's ODE dMass */
@@ -264,6 +265,21 @@ class CIrrOdeBody : public CIrrOdeDampable {
      * @return "true" if the listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
+
+    /**
+     * The implementation of the "writeEvent" method of the "IIrrOdeEventWriter" interface.
+     * @return NULL, because the ODE object's events will be writter by the IrrOdeDevice.
+     * @see IIrrOdeEventWriter::writeEvent
+     */
+    virtual IIrrOdeEvent *writeEvent() { return NULL; }
+
+    /**
+     * This implementation shows that we are a body to the IrrOdeDevice's
+     * event creation method
+     */
+    virtual eEventWriterType getEventWriterType() {
+      return eIrrOdeEventWriterBody;
+    }
 };
 
 } //namespace ode

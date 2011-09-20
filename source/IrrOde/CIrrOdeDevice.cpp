@@ -3,6 +3,7 @@
   #include <CIrrOdeDevice.h>
   #include <CIrrOdeContactParameters.h>
   #include <joints/CIrrOdeJoint.h>
+  #include <joints/CIrrOdeJointHinge.h>
   #include <CIrrOdeManager.h>
   #include <CIrrOdeSpace.h>
   #include <geom/CIrrOdeGeom.h>
@@ -14,6 +15,7 @@
   #include <event/CIrrOdeEventStep.h>
   #include <event/CIrrOdeEventBeforeStep.h>
   #include <event/IIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventJointHinge.h>
 
   #define GETWORLD(i) m_pOdeData[i-1]->m_pWorld
   #define GETJOINT(i) m_pOdeData[i-1]->m_pJoint
@@ -381,6 +383,10 @@ dBodyID CIrrOdeDevice::getBodyId(u32 iBody) {
   return GETBODY(iBody);
 }
 
+dJointID CIrrOdeDevice::getJointId(u32 iJoint) {
+  return GETJOINT(iJoint);
+}
+
 dJointGroupID CIrrOdeDevice::getJGroupId(u32 iJGroup) {
   return GETJGROUP(iJGroup);
 }
@@ -396,45 +402,8 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
 
   if (iMovedBody) {
     CIrrOdeBody *theBody=(CIrrOdeBody *)dBodyGetData(iMovedBody);
-
     if (!theBody->updateGraphics()) return;
-
-    const dReal *pOdeRot=dBodyGetQuaternion(pOdeDevice->getBodyId(theBody->getBodyId())),
-                *pOdePos=dBodyGetPosition(pOdeDevice->getBodyId(theBody->getBodyId()));
-
-    irr::core::vector3df pos;
-    irr::core::vector3df rot;
-
-    quaternionToEuler(pOdeRot,rot);
-    VEC2IRR(pOdePos,pos);
-
-    if (!(rot.X==rot.X && rot.Y==rot.Y && rot.Z==rot.Z)) {
-      rot=theBody->getAbsoluteTransformation().getRotationDegrees();
-      #ifdef _TRACE_FAILED_CONVERT
-        static int s_iRotFailed=0;
-        printf("converting ODE rotation to Irrlicht rotation failed (%i).\n",s_iRotFailed++);
-      #endif
-    }
-
-    if (!(pos.X==pos.X && pos.Y==pos.Y && pos.Z==pos.Z)) {
-      pos=theBody->getAbsolutePosition();
-      #ifdef _TRACE_FAILED_CONVERT
-        static int s_iPosFailed=0;
-        printf("converting ODE position to Irrlicht position failed (%i).\n",s_iPosFailed++);
-      #endif
-    }
-
-    theBody->updateAbsolutePosition();
-    theBody->bodyMoved(pos);
-
-    const dReal *vLin=dBodyGetLinearVel (iMovedBody);
-    const dReal *vAng=dBodyGetAngularVel(iMovedBody);
-
-    vector3df vl=vector3df(vLin[0],vLin[1],vLin[2]);
-    vector3df va=vector3df(vAng[0],vAng[1],vAng[2]);
-
-    CIrrOdeEventBodyMoved *pEvent=new CIrrOdeEventBodyMoved (theBody,pos,rot,vl,va);
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
+    theBody->dataChanged();
   }
 }
 
@@ -1967,6 +1936,70 @@ void CIrrOdeDevice::rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iG
       aHits->push_back(irr::core::vector3df(contact.geom.pos[0],contact.geom.pos[1],contact.geom.pos[2]));
     }
   }
+}
+
+IIrrOdeEvent *CIrrOdeDevice::writeEventFor(IIrrOdeEventWriter *p) {
+  static CIrrOdeDevice *pOdeDevice=NULL;
+  if (!pOdeDevice) pOdeDevice=(CIrrOdeDevice *)CIrrOdeManager::getSharedInstance()->getOdeDevice();
+
+  switch (p->getEventWriterType()) {
+    case eIrrOdeEventWriterBody: {
+        CIrrOdeBody *theBody=(CIrrOdeBody *)p;
+
+        const dReal *pOdeRot=dBodyGetQuaternion(pOdeDevice->getBodyId(theBody->getBodyId())),
+                    *pOdePos=dBodyGetPosition(pOdeDevice->getBodyId(theBody->getBodyId()));
+
+        irr::core::vector3df pos;
+        irr::core::vector3df rot;
+
+        quaternionToEuler(pOdeRot,rot);
+        VEC2IRR(pOdePos,pos);
+
+        if (!(rot.X==rot.X && rot.Y==rot.Y && rot.Z==rot.Z)) {
+          rot=theBody->getAbsoluteTransformation().getRotationDegrees();
+          #ifdef _TRACE_FAILED_CONVERT
+            static int s_iRotFailed=0;
+            printf("converting ODE rotation to Irrlicht rotation failed (%i).\n",s_iRotFailed++);
+          #endif
+        }
+
+        if (!(pos.X==pos.X && pos.Y==pos.Y && pos.Z==pos.Z)) {
+          pos=theBody->getAbsolutePosition();
+          #ifdef _TRACE_FAILED_CONVERT
+            static int s_iPosFailed=0;
+            printf("converting ODE position to Irrlicht position failed (%i).\n",s_iPosFailed++);
+          #endif
+        }
+
+        theBody->updateAbsolutePosition();
+        theBody->bodyMoved(pos);
+
+        const dReal *vLin=dBodyGetLinearVel (pOdeDevice->getBodyId(theBody->getBodyId()));
+        const dReal *vAng=dBodyGetAngularVel(pOdeDevice->getBodyId(theBody->getBodyId()));
+
+        vector3df vl=vector3df(vLin[0],vLin[1],vLin[2]);
+        vector3df va=vector3df(vAng[0],vAng[1],vAng[2]);
+
+        CIrrOdeEventBodyMoved *pEvent=new CIrrOdeEventBodyMoved (theBody,pos,rot,vl,va);
+        return pEvent;
+      }
+      break;
+
+    case eIrrOdeEventWriterJointHinge: {
+        CIrrOdeJointHinge *pJoint=(CIrrOdeJointHinge *)p;
+        f32 fAngle    =jointGetHingeAngle(pJoint->getJointId()),
+            fAngleRate=jointGetHingeAngleRate(pJoint->getJointId());
+
+        CIrrOdeEventJointHinge *pEvt=new CIrrOdeEventJointHinge(pJoint,fAngle,fAngleRate);
+        return pEvt;
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return NULL;
 }
 
 } //namespace ode
