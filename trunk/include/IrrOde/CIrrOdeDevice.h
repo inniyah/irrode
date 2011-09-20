@@ -68,6 +68,7 @@ class CIrrOdeDevice : public IIrrOdeDevice {
 
     dGeomID getGeomId(u32 iGeom);
     dBodyID getBodyId(u32 iBody);
+    dJointID getJointId(u32 iJoint);
     dJointGroupID getJGroupId(u32 iJGroup);
 
     static IIrrOdeEventQueue *m_pQueue;
@@ -336,6 +337,8 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits);
 
     static void rayCollisionCallback(void *pData, dGeomID iGeom1, dGeomID iGeom2);
+
+    virtual IIrrOdeEvent *writeEventFor(IIrrOdeEventWriter *p);
 };
 
 } //namespace ode

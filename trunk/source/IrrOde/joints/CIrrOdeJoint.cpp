@@ -9,7 +9,7 @@ namespace ode {
 
 CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
                            const vector3df &position,const vector3df &rotation,const vector3df &scale) :
-                           CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale) {
+                           CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale), IIrrOdeEventWriter() {
 
   m_iJointId=0;
   m_pBody1=NULL;

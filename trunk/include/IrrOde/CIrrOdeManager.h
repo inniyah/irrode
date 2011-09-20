@@ -16,6 +16,7 @@ class IIrrOdeEvent;
 class CIrrOdeWorld;
 class IIrrOdeStepMotor;
 class IIrrOdeEventQueue;
+class IIrrOdeEventWriter;
 
 /**
  * @class CIrrOdeManager
@@ -33,6 +34,12 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
     core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
     core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
+
+    /**
+     * This is a list of all objects that want to post events
+     * about their state change after the step has been done.
+     */
+    core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
 
     IIrrOdeEventQueue *m_pQueue;
 
@@ -153,6 +160,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     ITimer *getTimer() { return m_pTimer; }
 
     CIrrOdeEventFactory *getEventFactory() { return CIrrOdeEventFactory::getSharedEventFactory(); }
+
+    void objectChanged(IIrrOdeEventWriter *p);
 };
 
 } //namespace ode

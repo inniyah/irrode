@@ -1,6 +1,7 @@
 #ifndef _IRR_ODE_JOINT
   #define _IRR_ODE_JOINT
 
+  #include <event/IIrrOdeEventWriter.h>
   #include <CIrrOdeSceneNode.h>
   #include <CIrrOdeBody.h>
 
@@ -12,7 +13,7 @@ const wchar_t IRR_ODE_PARAM_NAMES[12][0xFF]= {
   L"Stop ERP", L"Stop CFM", L"Suspension ERP", L"Suspension CFM"
 };
 
-class CIrrOdeJoint : public CIrrOdeSceneNode {
+class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
   public:
     enum eJointParameter {
       eHiStop,
@@ -84,6 +85,24 @@ class CIrrOdeJoint : public CIrrOdeSceneNode {
      * @return "true" if the listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
+
+    /**
+     * The implementation of the "writeEvent" method of the "IIrrOdeEventWriter" interface.
+     * @return NULL, because the ODE object's events will be writter by the IrrOdeDevice.
+     * @see IIrrOdeEventWriter::writeEvent
+     */
+    virtual IIrrOdeEvent *writeEvent() { return NULL; }
+
+    /**
+     * This implementation shows that we are unknown to the IrrOdeDevice's
+     * event creation method. Has to be overridden by all joints that are
+     * handled by the IrrOdeDevice.
+     */
+    virtual eEventWriterType getEventWriterType() {
+      return eIrrOdeEventWriterUnknown;
+    }
+
+    u32 getJointId() { return m_iJointId; }
 };
 
 } //namespace ode

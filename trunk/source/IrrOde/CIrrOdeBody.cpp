@@ -20,7 +20,7 @@ namespace ode {
  */
 CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
                          const vector3df &position, const vector3df &rotation, const vector3df &scale) :
-                         CIrrOdeDampable(parent, mgr, id, position, rotation, scale) {
+                         CIrrOdeDampable(parent, mgr, id, position, rotation, scale), IIrrOdeEventWriter() {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeBody contructor\n");
@@ -893,6 +893,11 @@ void CIrrOdeBody::bodyMoved(vector3df newPos) {
   if (m_bFiniteRotationMode && m_vFiniteRotationAxis.getLength()!=0) {
     vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
     m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,axis);
+  }
+
+  core::list<CIrrOdeJoint *>::Iterator it;
+  for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
+    m_pOdeManager->objectChanged(*it);
   }
 }
 

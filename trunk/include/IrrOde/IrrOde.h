@@ -26,11 +26,14 @@
 #include <event/IIrrOdeEventQueue.h>
 #include <event/CIrrOdeEventQueue.h>
 #include <event/CIrrOdeEventClose.h>
+#include <event/CIrrOdeEventJoint.h>
+#include <event/IIrrOdeEventWriter.h>
 #include <event/CIrrOdeEventRayHit.h>
 #include <event/CIrrOdeEventProgress.h>
 #include <event/CIrrOdeEventIdentify.h>
 #include <event/CIrrOdeEventLoadScene.h>
 #include <event/CIrrOdeEventBodyMoved.h>
+#include <event/CIrrOdeEventJointHinge.h>
 #include <event/CIrrOdeEventBeforeStep.h>
 #include <event/CIrrOdeEventNodeCloned.h>
 #include <event/CIrrOdeEventNodeRemoved.h>
