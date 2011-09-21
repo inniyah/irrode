@@ -1,6 +1,8 @@
   #include <joints/CIrrOdeJointHinge2.h>
   #include <CIrrOdeWorld.h>
   #include <IIrrOdeDevice.h>
+  #include <event/CIrrOdeEventJoint.h>
+  #include <event/CIrrOdeEventJointHinge2.h>
 
 namespace irr {
 namespace ode {
@@ -17,6 +19,10 @@ CIrrOdeJointHinge2::CIrrOdeJointHinge2(ISceneNode *parent,ISceneManager *mgr,s32
       m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
     }
   #endif
+
+  m_fAngle1=0.0f;
+  m_fAngleRate1=0.0f;
+  m_fAngleRate2=0.0f;
 }
 
 
@@ -127,15 +133,18 @@ vector3df CIrrOdeJointHinge2::getAnchor2() {
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle1() {
-  return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1(m_iJointId):0.0f;
+  return m_fAngle1;
+  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1(m_iJointId):0.0f;
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle1Rate() {
-  return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1Rate(m_iJointId):0.0f;
+  return m_fAngleRate1;
+  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1Rate(m_iJointId):0.0f;
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle2Rate() {
-  return m_iJointId?m_pOdeDevice->jointGetHinge2Angle2Rate(m_iJointId):0.0f;
+  return m_fAngleRate2;
+  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle2Rate(m_iJointId):0.0f;
 }
 
 u16 CIrrOdeJointHinge2::numParamGroups() const {
@@ -180,6 +189,25 @@ void CIrrOdeJointHinge2::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setHingeAxis1(m_pAxis1);
   pDst->setHingeAxis2(m_pAxis2);
 }
+
+bool CIrrOdeJointHinge2::onEvent(IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==eIrrOdeEventJoint) {
+    CIrrOdeEventJoint *p=(CIrrOdeEventJoint *)pEvent;
+    if (p->getJointEventType()==eIrrOdeEventJointHinge2) {
+      CIrrOdeEventJointHinge2 *pEvt=(CIrrOdeEventJointHinge2 *)p;
+      m_fAngle1=pEvt->getAngle1();
+      m_fAngleRate1=pEvt->getAngleRate1();
+      m_fAngleRate2=pEvt->getAngleRate2();
+    }
+  }
+
+  return false;
+}
+
+bool CIrrOdeJointHinge2::handlesEvent(IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==eIrrOdeEventJoint;
+}
+
 
 } //namespace ode
 } //namespace irr

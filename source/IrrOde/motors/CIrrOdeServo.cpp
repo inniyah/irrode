@@ -35,7 +35,6 @@ void CIrrOdeServo::setAxis(int iAxis) {
 void CIrrOdeServo::setServoPos(f32 fPos) {
   while (fPos> 180) fPos-=180;
   while (fPos<-180) fPos+=180;
-  //printf("setServoPos: %.2f -- %i\n",fPos,(int)m_bPhysicsInitialized);
 
   m_fServoPos=fPos;
 

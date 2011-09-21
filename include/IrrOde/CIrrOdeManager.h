@@ -135,6 +135,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
      */
     void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
 
+    void removeEventWriter(IIrrOdeEventWriter *p);
+
     /**
      * Remove a node from the scene. This method sends a CIrrOdeEventNodeRemoved event
      * @param pNode node to remove

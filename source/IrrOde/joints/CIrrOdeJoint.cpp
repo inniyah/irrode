@@ -118,6 +118,7 @@ void CIrrOdeJoint::setParameter(u16 iGroup, eJointParameter iParam, f32 fValue) 
   #endif
   m_bParamUsed[iParam][iGroup]=true;
   m_fParam[iParam][iGroup]=fValue;
+  dataChanged();
 }
 
 f32 CIrrOdeJoint::getParameter(u16 iGroup, eJointParameter iParam) {

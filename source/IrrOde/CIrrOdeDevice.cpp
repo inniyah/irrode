@@ -4,6 +4,7 @@
   #include <CIrrOdeContactParameters.h>
   #include <joints/CIrrOdeJoint.h>
   #include <joints/CIrrOdeJointHinge.h>
+  #include <joints/CIrrOdeJointHinge2.h>
   #include <CIrrOdeManager.h>
   #include <CIrrOdeSpace.h>
   #include <geom/CIrrOdeGeom.h>
@@ -16,6 +17,7 @@
   #include <event/CIrrOdeEventBeforeStep.h>
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventJointHinge.h>
+  #include <event/CIrrOdeEventJointHinge2.h>
 
   #define GETWORLD(i) m_pOdeData[i-1]->m_pWorld
   #define GETJOINT(i) m_pOdeData[i-1]->m_pJoint
@@ -1991,6 +1993,17 @@ IIrrOdeEvent *CIrrOdeDevice::writeEventFor(IIrrOdeEventWriter *p) {
             fAngleRate=jointGetHingeAngleRate(pJoint->getJointId());
 
         CIrrOdeEventJointHinge *pEvt=new CIrrOdeEventJointHinge(pJoint,fAngle,fAngleRate);
+        return pEvt;
+      }
+      break;
+
+    case eIrrOdeEventWriterJointHinge2: {
+        CIrrOdeJointHinge2 *pJoint=(CIrrOdeJointHinge2 *)p;
+        f32 fAngle1    =jointGetHinge2Angle1(pJoint->getJointId()),
+            fAngleRate1=jointGetHinge2Angle1Rate(pJoint->getJointId()),
+            fAngleRate2=jointGetHinge2Angle2Rate(pJoint->getJointId());
+
+        CIrrOdeEventJointHinge2 *pEvt=new CIrrOdeEventJointHinge2(pJoint,fAngle1,fAngleRate1,fAngleRate2);
         return pEvt;
       }
       break;

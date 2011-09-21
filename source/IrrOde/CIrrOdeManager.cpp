@@ -190,6 +190,15 @@ void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
     }
 }
 
+void CIrrOdeManager::removeEventWriter(IIrrOdeEventWriter *p) {
+  core::list<IIrrOdeEventWriter *>::Iterator it;
+  for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++)
+    if (*it==p) {
+      m_lChanged.erase(it);
+      return;
+    }
+}
+
 /**
  * Retrieve the used ODE device
  */
