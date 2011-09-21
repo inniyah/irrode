@@ -10,7 +10,8 @@ namespace irr {
   namespace ode {
     enum eIrrOdeEventJointType {
       eIrrOdeEventJointUnknown,
-      eIrrOdeEventJointHinge
+      eIrrOdeEventJointHinge,
+      eIrrOdeEventJointHinge2
     };
 
     class CIrrOdeEventJoint : public IIrrOdeEvent {

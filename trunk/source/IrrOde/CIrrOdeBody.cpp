@@ -767,6 +767,7 @@ void CIrrOdeBody::doRemoveFromPhysics() {
     if (m_pWorld) m_pWorld->removeBody(this);
     m_pOdeManager->removeTreeFromPhysics(this);
     m_pOdeManager->removeOdeSceneNode(this);
+    m_pOdeManager->removeEventWriter(this);
 
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
@@ -883,13 +884,6 @@ bool CIrrOdeBody::isFastMoving() {
 }
 
 void CIrrOdeBody::bodyMoved(vector3df newPos) {
-  if (m_bFastMoving && m_pRay) {
-    updateAbsolutePosition();
-    vector3df dir=newPos-getAbsolutePosition();
-    f32 fVel=dir.getLength();
-    m_pRay->set(getAbsolutePosition(),dir.normalize(),fVel);
-  }
-
   if (m_bFiniteRotationMode && m_vFiniteRotationAxis.getLength()!=0) {
     vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
     m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,axis);
@@ -1023,7 +1017,17 @@ bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
   if (pEvt->getType()==ode::eIrrOdeEventBodyMoved) {
     CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
 
-    if (pEvent->positionChanged  ()) setPosition(pEvent->getNewPosition());
+    if (pEvent->positionChanged  ()) {
+      core::vector3df newPos=pEvent->getNewPosition();
+      if (m_bFastMoving && m_pRay) {
+        updateAbsolutePosition();
+        vector3df dir=newPos-getAbsolutePosition();
+        f32 fVel=dir.getLength();
+        dir.normalize();
+        m_pRay->set(getAbsolutePosition(),dir,fVel);
+      }
+      setPosition(newPos);
+    }
     if (pEvent->rotationChanged  ()) setRotation(pEvent->getNewRotation());
     if (pEvent->linearVelChanged ()) setLinearVelocity(pEvent->getNewLinearVelocity());
     if (pEvent->angularVelChanged()) setAngularVelocity(pEvent->getNewAngularVelocity());

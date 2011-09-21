@@ -33,9 +33,10 @@
 #include <event/CIrrOdeEventIdentify.h>
 #include <event/CIrrOdeEventLoadScene.h>
 #include <event/CIrrOdeEventBodyMoved.h>
-#include <event/CIrrOdeEventJointHinge.h>
 #include <event/CIrrOdeEventBeforeStep.h>
 #include <event/CIrrOdeEventNodeCloned.h>
+#include <event/CIrrOdeEventJointHinge.h>
+#include <event/CIrrOdeEventJointHinge2.h>
 #include <event/CIrrOdeEventNodeRemoved.h>
 #include <event/CIrrOdeEventBodyCreated.h>
 #include <event/CIrrOdeEventBodyRemoved.h>

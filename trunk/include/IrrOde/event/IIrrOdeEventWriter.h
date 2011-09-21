@@ -8,7 +8,8 @@ namespace irr {
     enum eEventWriterType {
       eIrrOdeEventWriterUnknown,    /**<! use this for all event writers that are not handles by the IrrOdeDevice */
       eIrrOdeEventWriterBody,
-      eIrrOdeEventWriterJointHinge
+      eIrrOdeEventWriterJointHinge,
+      eIrrOdeEventWriterJointHinge2
     };
 
     class IIrrOdeEvent;
@@ -18,13 +19,18 @@ namespace irr {
         CIrrOdeManager *m_pOdeEventManager;
 
       public:
-        IIrrOdeEventWriter();
+        IIrrOdeEventWriter() {
+          m_pOdeEventManager=CIrrOdeManager::getSharedInstance();
+        }
 
-        virtual ~IIrrOdeEventWriter();
+        virtual ~IIrrOdeEventWriter() {
+        }
 
         virtual IIrrOdeEvent *writeEvent()=0;
 
-        void dataChanged();
+        void dataChanged() {
+          m_pOdeEventManager->objectChanged(this);
+        }
 
         virtual eEventWriterType getEventWriterType()=0;
     };
