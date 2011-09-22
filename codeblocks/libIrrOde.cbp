@@ -96,6 +96,7 @@
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventJoint.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventJointHinge.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventJointHinge2.h" />
+		<Unit filename="..\include\IrrOde\event\CIrrOdeEventJointSlider.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventLoadScene.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventNodeRemoved.h" />
@@ -157,6 +158,7 @@
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventInit.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventJointHinge.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventJointHinge2.cpp" />
+		<Unit filename="..\source\IrrOde\event\CIrrOdeEventJointSlider.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp" />
 		<Unit filename="..\source\IrrOde\event\CIrrOdeEventNodeRemoved.cpp" />
