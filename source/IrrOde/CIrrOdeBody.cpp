@@ -891,7 +891,7 @@ void CIrrOdeBody::bodyMoved(vector3df newPos) {
 
   core::list<CIrrOdeJoint *>::Iterator it;
   for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
-    m_pOdeManager->objectChanged(*it);
+    if ((*it)->doesUpdateVariables()) m_pOdeManager->objectChanged(*it);
   }
 }
 

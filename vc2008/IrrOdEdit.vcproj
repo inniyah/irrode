@@ -263,10 +263,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\IrrOde\joints\CIrrOdeJointBallSocket.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\source\IrrOde\joints\CIrrOdeJointFixed.cpp"
 					>
 				</File>
@@ -279,19 +275,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\source\IrrOde\joints\CIrrOdeJointPiston.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\source\IrrOde\joints\CIrrOdeJointPR.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\source\IrrOde\joints\CIrrOdeJointSlider.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\source\IrrOde\joints\CIrrOdeJointUniversal.cpp"
 					>
 				</File>
 			</Filter>
@@ -491,10 +475,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\IrrOde\joints\CIrrOdeJointBallSocket.h"
-					>
-				</File>
-				<File
 					RelativePath="..\include\IrrOde\joints\CIrrOdeJointFixed.h"
 					>
 				</File>
@@ -507,19 +487,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\IrrOde\joints\CIrrOdeJointPiston.h"
-					>
-				</File>
-				<File
-					RelativePath="..\include\IrrOde\joints\CIrrOdeJointPR.h"
-					>
-				</File>
-				<File
 					RelativePath="..\include\IrrOde\joints\CIrrOdeJointSlider.h"
-					>
-				</File>
-				<File
-					RelativePath="..\include\IrrOde\joints\CIrrOdeJointUniversal.h"
 					>
 				</File>
 			</Filter>
