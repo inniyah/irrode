@@ -104,7 +104,8 @@ void CIrrOdeAeroDrag::step() {
 
       if (fSideward>=0.01f || fSideward<=-0.01f) {
         vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
-        vPushForeward+=vForeward+(m_fSideToForeward*vSideDamp.getLength());
+        if (m_fForewardVel>2.0f || m_fForewardVel<-2.0f)
+          vPushForeward+=vForeward+(m_fSideToForeward*vSideDamp.getLength());
       }
     }
 
@@ -116,7 +117,8 @@ void CIrrOdeAeroDrag::step() {
 
       if (fUpward>=0.1f || fUpward<=-0.1f) {
         vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
-        vPushForeward+=vForeward*(m_fUpDampToForeward*vUpDamp.getLength());
+        if (m_fForewardVel>2.0f || m_fForewardVel<-2.0f)
+          vPushForeward+=vForeward*(m_fUpDampToForeward*vUpDamp.getLength());
       }
     }
 
