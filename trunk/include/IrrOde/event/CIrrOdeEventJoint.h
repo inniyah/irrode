@@ -11,7 +11,8 @@ namespace irr {
     enum eIrrOdeEventJointType {
       eIrrOdeEventJointUnknown,
       eIrrOdeEventJointHinge,
-      eIrrOdeEventJointHinge2
+      eIrrOdeEventJointHinge2,
+      eIrrOdeEventJointSlider
     };
 
     class CIrrOdeEventJoint : public IIrrOdeEvent {

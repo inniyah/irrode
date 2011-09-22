@@ -1,6 +1,7 @@
   #include <joints/CIrrOdeJointSlider.h>
   #include <CIrrOdeWorld.h>
   #include <IIrrOdeDevice.h>
+  #include <event/CIrrOdeEventJointSlider.h>
 
 namespace irr {
 namespace ode {
@@ -9,6 +10,8 @@ CIrrOdeJointSlider::CIrrOdeJointSlider(ISceneNode *parent,ISceneManager *mgr,s32
                                      const vector3df &position,const vector3df &rotation,const vector3df &scale) :
                                      CIrrOdeJoint(parent, mgr, id, position, rotation, scale) {
   m_pAxis=vector3df(0,0,0);
+  m_fSliderPosition=0.0f;
+  m_fSliderPositionRate=0.0f;
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
 	  c8 sFileName[1024];
@@ -109,11 +112,13 @@ vector3df CIrrOdeJointSlider::getAxis() {
 }
 
 f32 CIrrOdeJointSlider::getSliderPosition() {
-  return m_iJointId?m_pOdeDevice->jointGetSliderPosition(m_iJointId):0.0f;
+  return m_fSliderPosition;
+  //return m_iJointId?m_pOdeDevice->jointGetSliderPosition(m_iJointId):0.0f;
 }
 
 f32 CIrrOdeJointSlider::getSliderPositionRate() {
-  return m_iJointId?m_pOdeDevice->jointGetSliderPositionRate(m_iJointId):0.0f;
+  return m_fSliderPositionRate;
+  //return m_iJointId?m_pOdeDevice->jointGetSliderPositionRate(m_iJointId):0.0f;
 }
 
 u16 CIrrOdeJointSlider::numParamGroups() const {
@@ -156,6 +161,23 @@ void CIrrOdeJointSlider::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeJoint::copyParams(pDest);
   CIrrOdeJointSlider *pDst=(CIrrOdeJointSlider *)pDest;
   pDst->setAxis(m_pAxis);
+}
+
+bool CIrrOdeJointSlider::onEvent(IIrrOdeEvent *pEvent) {
+  if (pEvent->getType()==eIrrOdeEventJoint) {
+    CIrrOdeEventJoint *p=(CIrrOdeEventJoint *)pEvent;
+    if (p->getJointEventType()==eIrrOdeEventJointSlider) {
+      CIrrOdeEventJointSlider *pSl=(CIrrOdeEventJointSlider *)p;
+      m_fSliderPosition=pSl->getSliderPosition();
+      m_fSliderPositionRate=pSl->getSliderPositionRate();
+    }
+  }
+
+  return false;
+}
+
+bool CIrrOdeJointSlider::handlesEvent(IIrrOdeEvent *pEvent) {
+  return pEvent->getType()==eIrrOdeEventJoint;
 }
 
 } //namespace ode

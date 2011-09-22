@@ -5,6 +5,7 @@
   #include <joints/CIrrOdeJoint.h>
   #include <joints/CIrrOdeJointHinge.h>
   #include <joints/CIrrOdeJointHinge2.h>
+  #include <joints/CIrrOdeJointSlider.h>
   #include <CIrrOdeManager.h>
   #include <CIrrOdeSpace.h>
   #include <geom/CIrrOdeGeom.h>
@@ -17,6 +18,7 @@
   #include <event/CIrrOdeEventBeforeStep.h>
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventJointHinge.h>
+  #include <event/CIrrOdeEventJointSlider.h>
   #include <event/CIrrOdeEventJointHinge2.h>
 
   #define GETWORLD(i) m_pOdeData[i-1]->m_pWorld
@@ -2004,6 +2006,16 @@ IIrrOdeEvent *CIrrOdeDevice::writeEventFor(IIrrOdeEventWriter *p) {
             fAngleRate2=jointGetHinge2Angle2Rate(pJoint->getJointId());
 
         CIrrOdeEventJointHinge2 *pEvt=new CIrrOdeEventJointHinge2(pJoint,fAngle1,fAngleRate1,fAngleRate2);
+        return pEvt;
+      }
+      break;
+
+    case eIrrOdeEventWriterJointSlider: {
+        CIrrOdeJointSlider *pJoint=(CIrrOdeJointSlider *)p;
+        f32 fSliderPosition    =jointGetSliderPosition    (pJoint->getJointId()),
+            fSliderPositionRate=jointGetSliderPositionRate(pJoint->getJointId());
+
+        CIrrOdeEventJointSlider *pEvt=new CIrrOdeEventJointSlider(pJoint,fSliderPosition,fSliderPositionRate);
         return pEvt;
       }
       break;

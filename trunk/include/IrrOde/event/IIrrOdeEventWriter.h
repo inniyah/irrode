@@ -9,7 +9,8 @@ namespace irr {
       eIrrOdeEventWriterUnknown,    /**<! use this for all event writers that are not handles by the IrrOdeDevice */
       eIrrOdeEventWriterBody,
       eIrrOdeEventWriterJointHinge,
-      eIrrOdeEventWriterJointHinge2
+      eIrrOdeEventWriterJointHinge2,
+      eIrrOdeEventWriterJointSlider
     };
 
     class IIrrOdeEvent;

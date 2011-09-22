@@ -134,17 +134,14 @@ vector3df CIrrOdeJointHinge2::getAnchor2() {
 
 f32 CIrrOdeJointHinge2::getHingeAngle1() {
   return m_fAngle1;
-  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1(m_iJointId):0.0f;
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle1Rate() {
   return m_fAngleRate1;
-  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle1Rate(m_iJointId):0.0f;
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle2Rate() {
   return m_fAngleRate2;
-  //return m_iJointId?m_pOdeDevice->jointGetHinge2Angle2Rate(m_iJointId):0.0f;
 }
 
 u16 CIrrOdeJointHinge2::numParamGroups() const {
