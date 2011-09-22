@@ -47,9 +47,6 @@
 #include <joints/CIrrOdeJointHinge.h>
 #include <joints/CIrrOdeJointHinge2.h>
 #include <joints/CIrrOdeJointSlider.h>
-#include <joints/CIrrOdeJointPiston.h>
-#include <joints/CIrrOdeJointBallSocket.h>
-#include <joints/CIrrOdeJointUniversal.h>
 
 #include <IIrrOdeContactParameters.h>
 

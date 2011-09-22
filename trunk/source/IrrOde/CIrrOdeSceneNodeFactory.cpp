@@ -11,13 +11,10 @@
   #include <geom/CIrrOdeGeomRay.h>
   #include <geom/CIrrOdeGeomBox.h>
 
-  #include <joints/CIrrOdeJointBallSocket.h>
   #include <joints/CIrrOdeJointHinge2.h>
-  #include <joints/CIrrOdeJointPiston.h>
   #include <joints/CIrrOdeJointSlider.h>
   #include <joints/CIrrOdeJointFixed.h>
   #include <joints/CIrrOdeJointHinge.h>
-  #include <joints/CIrrOdeJointPR.h>
 
   #include <motors/CIrrOdeMotor.h>
   #include <motors/CIrrOdeServo.h>
@@ -50,11 +47,9 @@ CIrrOdeSceneNodeFactory::CIrrOdeSceneNodeFactory(ISceneManager *pManager) {
   m_cNames.push_back(stringc(IRR_ODE_GEOM_RAY_NAME         )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_RAY_ID         );
   m_cNames.push_back(stringc(IRR_ODE_GEOM_SPHERE_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_SPHERE_ID      );
   m_cNames.push_back(stringc(IRR_ODE_GEOM_TRIMESH_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_TRIMESH_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_BALL_SOCKET_NAME)); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_BALL_SOCKET_ID);
   m_cNames.push_back(stringc(IRR_ODE_JOINT_FIXED_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_FIXED_ID      );
   m_cNames.push_back(stringc(IRR_ODE_JOINT_HINGE_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE_ID      );
   m_cNames.push_back(stringc(IRR_ODE_JOINT_HINGE2_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE2_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_PISTON_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_PISTON_ID     );
   m_cNames.push_back(stringc(IRR_ODE_JOINT_SLIDER_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_SLIDER_ID     );
   m_cNames.push_back(stringc(IRR_ODE_SPACE_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID            );
   m_cNames.push_back(stringc(IRR_ODE_WORLD_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID            );
@@ -63,7 +58,6 @@ CIrrOdeSceneNodeFactory::CIrrOdeSceneNodeFactory(ISceneManager *pManager) {
   m_cNames.push_back(stringc(IRR_ODE_IMPULSE_MOTOR_NAME    )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_IMPULSE_MOTOR_ID    );
   m_cNames.push_back(stringc(IRR_ODE_TORQUE_MOTOR_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_TORQUE_MOTOR_ID     );
   m_cNames.push_back(stringc(IRR_ODE_AERO_DRAG_NAME        )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_AERO_DRAG_ID        );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_PR_NAME         )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_PR_ID         );
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     for (u32 i=0; i<m_cNames.size(); i++)
@@ -84,11 +78,9 @@ ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (ESCENE_NODE_TYPE type, IScene
     case IRR_ODE_GEOM_RAY_ID         : pRet=new CIrrOdeGeomRay        (parent,m_pManager); break;
     case IRR_ODE_GEOM_SPHERE_ID      : pRet=new CIrrOdeGeomSphere     (parent,m_pManager); break;
     case IRR_ODE_GEOM_TRIMESH_ID     : pRet=new CIrrOdeGeomTrimesh    (parent,m_pManager); break;
-    case IRR_ODE_JOINT_BALL_SOCKET_ID: pRet=new CIrrOdeJointBallSocket(parent,m_pManager); break;
     case IRR_ODE_JOINT_FIXED_ID      : pRet=new CIrrOdeJointFixed     (parent,m_pManager); break;
     case IRR_ODE_JOINT_HINGE_ID      : pRet=new CIrrOdeJointHinge     (parent,m_pManager); break;
     case IRR_ODE_JOINT_HINGE2_ID     : pRet=new CIrrOdeJointHinge2    (parent,m_pManager); break;
-    case IRR_ODE_JOINT_PISTON_ID     : pRet=new CIrrOdeJointPiston    (parent,m_pManager); break;
     case IRR_ODE_JOINT_SLIDER_ID     : pRet=new CIrrOdeJointSlider    (parent,m_pManager); break;
     case IRR_ODE_SPACE_ID            : pRet=new CIrrOdeSpace          (parent,m_pManager); break;
     case IRR_ODE_WORLD_ID            : pRet=new CIrrOdeWorld          (parent,m_pManager); break;
@@ -97,7 +89,6 @@ ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (ESCENE_NODE_TYPE type, IScene
     case IRR_ODE_IMPULSE_MOTOR_ID    : pRet=new CIrrOdeImpulseMotor   (parent,m_pManager); break;
     case IRR_ODE_TORQUE_MOTOR_ID     : pRet=new CIrrOdeTorqueMotor    (parent,m_pManager); break;
     case IRR_ODE_AERO_DRAG_ID        : pRet=new CIrrOdeAeroDrag       (parent,m_pManager); break;
-    case IRR_ODE_JOINT_PR_ID         : pRet=new CIrrOdeJointPR        (parent,m_pManager); break;
 
     default: break;
   }
