@@ -39,7 +39,8 @@ class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
     CIrrOdeWorld *m_pWorld;  /**< the IrrOde world the joint is in */
 
     f32 m_fParam[eParamEnd][3];
-    bool m_bParamUsed[eParamEnd][3];
+    bool m_bParamUsed[eParamEnd][3],
+         m_bUpdateVariables;
 
   public:
     CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
@@ -103,6 +104,8 @@ class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
     }
 
     u32 getJointId() { return m_iJointId; }
+
+    bool doesUpdateVariables() { return m_bUpdateVariables; }
 };
 
 } //namespace ode

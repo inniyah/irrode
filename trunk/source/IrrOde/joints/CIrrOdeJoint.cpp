@@ -14,6 +14,7 @@ CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_iJointId=0;
   m_pBody1=NULL;
   m_pBody2=NULL;
+  m_bUpdateVariables=true;
 
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
 
@@ -134,6 +135,8 @@ void CIrrOdeJoint::setPosition(const vector3df &newPos) {
 void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
+  out->addBool("updateVariables",m_bUpdateVariables);
+
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
@@ -149,6 +152,11 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
 
 void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
+
+  if (in->existsAttribute("updateVariables"))
+    m_bUpdateVariables=in->getAttributeAsBool("updateVariables");
+  else
+    m_bUpdateVariables=true;
 
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {

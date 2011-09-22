@@ -1,9 +1,11 @@
 Hello and welcome to "IrrODE", an ODE wrapper for Irrlicht. Here are some general information for you:
 
-- the wrapper is compiled against Irrlicht 1.7.1 (the release version) and ODE 0.11
+- the wrapper is compiled against Irrlicht 1.7.2 (the release version) and ODE 0.11
 - all binaries of the release (except for the IrrOdEdit plugin) are compiled using Code::Blocks with gcc, so you have to replace the ODE and Irrlicht DLL by VisualC++ versions if you want to use these
 - the wrapper is licensed under the Irrlicht license, so you can do whatever you want to with it
 - the complete project is still work-in-progress, so API changes might appear (though I hope I can avoid it)
+
+The binaries and the mingw version of the lib can be found in the folder "bin/gcc-win32", the plugin for IrrEdit and the VC2008 version of the lib are located in "bin/vc2008".
 
 The directory layout:
 
