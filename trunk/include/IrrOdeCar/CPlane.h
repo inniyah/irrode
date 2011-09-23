@@ -15,7 +15,7 @@ class CCockpitPlane;
 class CProjectile;
 class CAutoPilot;
 
-class CPlane : public CAeroVehicle {
+class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
   protected:
     ISceneNode *m_pRoll[2],
                *m_pPitch[2],
@@ -36,6 +36,9 @@ class CPlane : public CAeroVehicle {
 
     virtual stringc &getButtonText() { static stringc s=stringc("select airplane"); return s; }
     virtual void drawSpecifics();
+
+    virtual ode::IIrrOdeEvent *writeEvent();
+    virtual ode::eEventWriterType getEventWriterType();
 };
 
 #endif
