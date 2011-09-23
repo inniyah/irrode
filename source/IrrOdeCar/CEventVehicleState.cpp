@@ -70,9 +70,10 @@ CEventTankState::CEventTankState(irr::ode::CSerializer *pData) {
   if (iCode==EVENT_TANK_STATE_ID) {
     m_iNodeId=pData->getS32();
     for (irr::u32 i=0; i<4; i++) m_aAngles[i]=pData->getS8();
+
+    m_fCannonAngle=pData->getF32();
+    m_fTurretAngle=pData->getF32();
   }
-  m_fCannonAngle=pData->getF32();
-  m_fTurretAngle=pData->getF32();
 }
 
 irr::ode::CSerializer *CEventTankState::serialize() {

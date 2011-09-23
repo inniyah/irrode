@@ -274,10 +274,7 @@ bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
         m_fTurretAngle=m_pTurretHinge->getHingeAngle();
       }
 
-      if (bMoved) {
-        CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles,m_fCannonAngle,m_fTurretAngle);
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-      }
+      if (bMoved) dataChanged();
     }
 
     if (m_pSndEngine!=NULL && m_pSound!=NULL) {
@@ -327,4 +324,13 @@ bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
 
 bool CTank::handlesEvent(ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+}
+
+ode::IIrrOdeEvent *CTank::writeEvent() {
+  CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles,m_fCannonAngle,m_fTurretAngle);
+  return p;
+}
+
+ode::eEventWriterType CTank::getEventWriterType() {
+  return ode::eIrrOdeEventWriterUnknown;
 }

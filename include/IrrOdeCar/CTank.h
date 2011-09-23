@@ -30,7 +30,7 @@ enum eTankCtrl {
 
 class CProjectile;
 
-class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener {
+class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener, public ode::IIrrOdeEventWriter {
   protected:
     bool m_bBrake,
          m_bFollowTurret,
@@ -82,6 +82,9 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     virtual stringc &getButtonText() { static stringc s=stringc("select tank"); return s; }
 
     virtual void drawSpecifics() { }
+
+    virtual ode::IIrrOdeEvent *writeEvent();
+    virtual ode::eEventWriterType getEventWriterType();
 };
 
 #endif

@@ -200,8 +200,7 @@ void CPlane::odeStep(u32 iStep) {
   }
 
   if (m_bRudderChanged) {
-    CEventRudderPositions *p=new CEventRudderPositions(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
-    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    dataChanged();
     m_bRudderChanged=false;
   }
 
@@ -261,4 +260,13 @@ void CPlane::odeStep(u32 iStep) {
 
 void CPlane::drawSpecifics() {
   m_pTargetSelector->highlightTargets();
+}
+
+ode::IIrrOdeEvent *CPlane::writeEvent() {
+  CEventRudderPositions *p=new CEventRudderPositions(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
+  return p;
+}
+
+ode::eEventWriterType CPlane::getEventWriterType() {
+  return ode::eIrrOdeEventWriterUnknown;
 }
