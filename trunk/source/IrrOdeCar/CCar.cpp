@@ -27,6 +27,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   m_fSound=0.75f;
 
   if (m_pCarBody) {
+    m_pCarBody->setUserData(this);
     CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
     array<ISceneNode *> aNodes;
 

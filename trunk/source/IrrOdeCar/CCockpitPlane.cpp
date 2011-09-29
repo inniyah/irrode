@@ -137,20 +137,23 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRend
 
   gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
 
-  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10,10,80, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10,35,80, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10,60,80, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Hits:"    ,core::rect<s32>(10,85,80,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10, 10,80, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10, 35,80, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10, 60,80, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits Sc:" ,core::rect<s32>(10, 85,80,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits Tk:" ,core::rect<s32>(10,110,80,125),false,false,pTab,-1,false)->setOverrideFont(pFont);
 
-  m_pLblTgtName=m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(85,10,185, 30),true,true,pTab,-1,true);
-  m_pLblTgtDist=m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(85,35,185, 55),true,true,pTab,-1,true);
-  m_pLblShots  =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(85,60,165, 80),true,true,pTab,-1,true);
-  m_pLblHits   =m_pGuienv->addStaticText(L"Hits"   ,core::rect<s32>(85,85,165,105),true,true,pTab,-1,true);
+  m_pLblTgtName   =m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(85, 10,185, 30),true,true,pTab,-1,true);
+  m_pLblTgtDist   =m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(85, 35,185, 55),true,true,pTab,-1,true);
+  m_pLblShots     =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(85, 60,165, 80),true,true,pTab,-1,true);
+  m_pLblHitsScored=m_pGuienv->addStaticText(L"Hits Sc",core::rect<s32>(85, 85,165,105),true,true,pTab,-1,true);
+  m_pLblHitsTaken =m_pGuienv->addStaticText(L"Hits Tk",core::rect<s32>(85,110,165,125),true,true,pTab,-1,true);
 
-  m_pLblTgtName->setOverrideFont(pFont);
-  m_pLblTgtDist->setOverrideFont(pFont);
-  m_pLblShots  ->setOverrideFont(pFont);
-  m_pLblHits   ->setOverrideFont(pFont);
+  m_pLblTgtName   ->setOverrideFont(pFont);
+  m_pLblTgtDist   ->setOverrideFont(pFont);
+  m_pLblShots     ->setOverrideFont(pFont);
+  m_pLblHitsScored->setOverrideFont(pFont);
+  m_pLblHitsTaken ->setOverrideFont(pFont);
 
   m_pGuienv->addImage(m_pDrv->getTexture("../../data/dustbin.png"),core::position2di(169,96),true,pTab);
   m_pTab->setVisible(false);
@@ -237,8 +240,14 @@ void CCockpitPlane::setShotsFired(s32 iShots) {
   m_pLblShots->setText(s);
 }
 
-void CCockpitPlane::setHits(s32 iHits) {
+void CCockpitPlane::setHitsScored(s32 iHits) {
   wchar_t s[0xFF];
   swprintf(s,0xFF,L"%i",iHits);
-  m_pLblHits->setText(s);
+  m_pLblHitsScored->setText(s);
+}
+
+void CCockpitPlane::setHitsTaken(s32 iHits) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"%i",iHits);
+  m_pLblHitsTaken->setText(s);
 }

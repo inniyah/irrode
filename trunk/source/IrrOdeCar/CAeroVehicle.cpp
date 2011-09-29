@@ -12,6 +12,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
   m_pSound=NULL;
 
   if (m_pBody!=NULL) {
+    m_pBody->setUserData(this);
     m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
     m_pCam=m_pSmgr->addCameraSceneNode();

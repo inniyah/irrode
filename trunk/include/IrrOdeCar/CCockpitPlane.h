@@ -26,7 +26,8 @@ class CCockpitPlane : public IRenderToTexture {
     gui::IGUIStaticText     *m_pLblTgtDist,
                             *m_pLblTgtName,
                             *m_pLblShots,
-                            *m_pLblHits;
+                            *m_pLblHitsScored,
+                            *m_pLblHitsTaken;
     scene::ISceneNode       *m_pHorizon;
     scene::ICameraSceneNode *m_pCam;
 
@@ -59,7 +60,8 @@ class CCockpitPlane : public IRenderToTexture {
     void setTargetDist(f32 fDist);
 
     void setShotsFired(s32 iShots);
-    void setHits(s32 iHits);
+    void setHitsScored(s32 iHits);
+    void setHitsTaken(s32 iHits);
 };
 
 #endif
