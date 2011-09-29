@@ -23,7 +23,8 @@ class CIrrOdeCarState {
          m_bActive,
          m_bInitialized;
 
-    s32 m_iHits;
+    s32 m_iHitsScored,
+        m_iHitsTaken;
 
     IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
@@ -71,7 +72,9 @@ class CIrrOdeCarState {
       return m_vCamVelocity;
     }
 
-    void incHits() { m_iHits++; }
+    void incHitsScored() { m_iHitsScored++; }
+
+    void incHitsTaken() { m_iHitsTaken++; }
 };
 
 #endif

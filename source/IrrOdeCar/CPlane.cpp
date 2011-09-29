@@ -191,7 +191,8 @@ void CPlane::odeStep(u32 iStep) {
       }
 
       m_pCockpit->setShotsFired(m_iShotsFired);
-      m_pCockpit->setHits(m_iHits);
+      m_pCockpit->setHitsScored(m_iHitsScored);
+      m_pCockpit->setHitsTaken (m_iHitsTaken );
 
       m_pTab->setVisible(false);
       m_pCockpit->update(true);

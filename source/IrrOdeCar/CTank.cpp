@@ -28,6 +28,7 @@ CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang
   m_fSound=0.5f;
 
   if (m_pTankBody!=NULL) {
+    m_pTankBody->setUserData(this);
     CCustomEventReceiver::getSharedInstance()->addTank(m_pTankBody);
 
     m_pTurret=m_pTankBody->getChildBodyFromName("turret");

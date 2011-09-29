@@ -168,9 +168,13 @@ bool CProjectile::particlesActive() {
 }
 //if a collision occured we set the remaining
 //lifetime to zero
-void CProjectile::collide(bool bBodyHit) {
+void CProjectile::collide(CIrrOdeCarState *pStateHit) {
   m_iTtl=0;
-  if (m_pShooter!=NULL && bBodyHit) m_pShooter->incHits();
+  if (m_pShooter!=NULL && pStateHit!=NULL) {
+    if (m_pShooter!=pStateHit) m_pShooter->incHitsScored();
+    pStateHit->incHitsTaken();
+    m_pShooter=NULL;
+  }
 }
 
 CProjectileManager::CProjectileManager() {
@@ -218,12 +222,18 @@ bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       CProjectile *p=*it;
       if (p->getBody()==pMove->getBody() && pMove->getTouched()!=NULL) {
         irr::ode::CIrrOdeGeom *g=pMove->getTouched();
-        bool bBodyHit=false;
+        CIrrOdeCarState *pStateHit=NULL;
         if (g->getBody()!=NULL) {
-          bBodyHit=true;
           m_iHits++;
+
+          irr::ode::CIrrOdeBody *pBodyHit=g->getBody();
+          while (pBodyHit->getParentBody()!=NULL) pBodyHit=pBodyHit->getParentBody();
+          void *pUserData=pBodyHit->getUserData();
+          if (pUserData!=NULL) {
+            pStateHit=reinterpret_cast<CIrrOdeCarState *>(pUserData);
+          }
         }
-        p->collide(bBodyHit);
+        p->collide(pStateHit);
       }
     }
   }

@@ -48,7 +48,8 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
     g_pSaveFile->setVisible(false);
   }
 
-  m_iHits=0;
+  m_iHitsScored=0;
+  m_iHitsTaken=0;
   m_bInitialized=false;
 }
 

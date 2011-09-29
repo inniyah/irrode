@@ -62,7 +62,7 @@ class CProjectile {
     irr::s32 getTtl();
 
     void step();
-    void collide(bool bBodyHit);
+    void collide(CIrrOdeCarState *pStateHit);
 
     bool particlesActive();
 
