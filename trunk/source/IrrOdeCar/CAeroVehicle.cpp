@@ -255,7 +255,7 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
     m_pAutoPilot->step(m_fYaw,m_fPitch,m_fRoll,m_fThrust);
     m_pTargetSelector->update();
 
-    m_pTorque->setPower(fAltFact*fVelFact);
+    m_pTorque->setPower(fVelFact);
     m_pAero  ->setPower(fAltFact);
 
     f32 fPitch,fRoll,fYaw;
