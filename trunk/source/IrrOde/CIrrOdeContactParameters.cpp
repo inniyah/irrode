@@ -20,8 +20,15 @@ void CIrrOdeContactParameters::calculateContactParameters(CIrrOdeSurfaceParamete
   if (pParam1->getModeSoftCFM() || pParam2->getModeSoftCFM()) pParams->setModeSoftCFM(true);
   if (pParam1->getModeSoftERP() || pParam2->getModeSoftERP()) pParams->setModeSoftERP(true);
 
+  if (pParam1->getModeMu2() || pParam2->getModeMu2()) {
+    f32 f1=pParam1->getModeMu2()?pParam1->getMu2():pParam1->getMu(),
+        f2=pParam2->getModeMu2()?pParam2->getMu2():pParam2->getMu();
+
+    pParams->setMu2(sqrt(f1*f2));
+    pParams->setModeMu2(true);
+  }
+
   pParams->setMu       (sqrt(pParam1->getMu()       *pParam2->getMu()       )     );
-  pParams->setMu2      (sqrt(pParam1->getMu2()      *pParam2->getMu2()      )     );
   pParams->setBounce   (    (pParam1->getBounce()   +pParam2->getBounce()   )/2.0f);
   pParams->setBounceVel(    (pParam1->getBounceVel()+pParam2->getBounceVel())/2.0f);
   pParams->setSoftErp  (    (pParam1->getSoftErp()  +pParam2->getSoftErp()  )/2.0f);
