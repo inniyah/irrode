@@ -44,12 +44,25 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("axis_RR=%i\n",(int)m_pAxesRear[1]);
 
     //get the two motors that are attached to the rear wheels
-    findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
+    /*findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
 
     if (aNodes.size()>=2) {
       m_pMotor[0]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[0]);
       m_pMotor[1]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[1]);
+    }*/
+    for (u32 i=0; i<2; i++) {
+      c8 s[0xFF];
+      sprintf(s,"sc_motor%i",i+1);
+      m_pMotor[i]=reinterpret_cast<ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
+      sprintf(s,"brk_fr_%i",i+1);
+      m_pBrkFr[i]=reinterpret_cast<ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
+      sprintf(s,"brk_re_%i",i+1);
+      m_pBrkRe[i]=reinterpret_cast<ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
     }
+
+    printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
+    printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
+    printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
 
     aNodes.clear();
     //get the two servos that are attached to the front wheels
@@ -291,11 +304,12 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       else
         for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
-      if (m_pController->get(m_pCtrls[eCarBrake])!=0.0f)
+      if (m_pController->get(eCarBrake)!=0.0f) {
         for (u32 i=0; i<2; i++) {
-            m_pMotor[i]->setVelocity(0.0f);
-            m_pMotor[i]->setForce(75);
+          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(350.0f);
+          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(150.0f);
         }
+      }
 
       if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
         m_bAdaptSteer=!m_bAdaptSteer;

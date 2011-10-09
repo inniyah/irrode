@@ -50,7 +50,9 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     gui::IGUITab *m_pTab;
 
-    ode::CIrrOdeMotor *m_pMotor[2];  /*!< the motors attached to the rear wheels */
+    ode::CIrrOdeMotor *m_pMotor[2],  /*!< the motors attached to the rear wheels */
+                      *m_pBrkFr[2],  /*!< front wheel brakes */
+                      *m_pBrkRe[2];  /*!< rear wheel brakes */
     ode::CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
     ode::CIrrOdeBody *m_pCarBody;    /*!< the car's body */
 
