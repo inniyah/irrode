@@ -24,6 +24,49 @@
 
 using namespace irr;
 
+class CShaderCallBack : public video::IShaderConstantSetCallBack {
+  protected:
+    IrrlichtDevice *m_pDevice;
+
+  public:
+    CShaderCallBack(IrrlichtDevice *pDevice) {
+      m_pDevice=pDevice;
+    }
+
+    virtual void OnSetConstants(video::IMaterialRendererServices* services,s32 userData) {
+      video::IVideoDriver* driver = services->getVideoDriver();
+
+      // set inverted world matrix
+      // if we are using highlevel shaders (the user can select this when
+      // starting the program), we must set the constants by name.
+
+      core::matrix4 invWorld = driver->getTransform(video::ETS_WORLD);
+      invWorld.makeInverse();
+
+      services->setVertexShaderConstant("mInvWorld", invWorld.pointer(), 16);
+
+      // set clip matrix
+
+      core::matrix4 worldViewProj;
+      worldViewProj = driver->getTransform(video::ETS_PROJECTION);
+      worldViewProj *= driver->getTransform(video::ETS_VIEW);
+      worldViewProj *= driver->getTransform(video::ETS_WORLD);
+
+      services->setVertexShaderConstant("mWorldViewProj", worldViewProj.pointer(), 16);
+
+      // set camera position
+
+      core::vector3df pos=m_pDevice->getSceneManager()->getActiveCamera()->getAbsolutePosition();
+
+      // set transposed world matrix
+
+      core::matrix4 world = driver->getTransform(video::ETS_WORLD);
+      world = world.getTransposed();
+
+      services->setVertexShaderConstant("mTransWorld", world.pointer(), 16);
+    }
+};
+
 class CProgress : public irr::ode::IIrrOdeEventListener {
   protected:
     IrrlichtDevice *m_pDevice;
@@ -103,6 +146,22 @@ void enableFog(scene::ISceneNode *pNode) {
   core::list<ISceneNode *>::Iterator it;
 
   for (it=lChildList.begin(); it!=lChildList.end(); it++) enableFog(*it);
+}
+
+void replaceMaterials(scene::ISceneNode *pNode, s32 iNewMaterial) {
+  if (pNode->getType()==scene::ESNT_SKY_BOX) return;
+
+  for (u32 i=0; i<pNode->getMaterialCount(); i++) {
+    if (pNode->getMaterial(i).MaterialType==video::EMT_SOLID)
+      pNode->getMaterial(i).MaterialType=(video::E_MATERIAL_TYPE)iNewMaterial;
+  }
+
+  core::list<scene::ISceneNode *> lChildren=pNode->getChildren();
+  core::list<scene::ISceneNode *>::Iterator it;
+
+  for (it=lChildren.begin(); it!=lChildren.end(); it++) {
+    replaceMaterials(*it,iNewMaterial);
+  }
 }
 
 void removeFromScene(const c8 *sName, ISceneManager *smgr) {
@@ -355,6 +414,35 @@ int main(int argc, char** argv) {
   else {
     printf("removing terrain heightfield...\n");
     removeFromScene("terrain_heightfield",smgr);
+  }
+
+  bool bUseShader=pSettings->getSelectedDriver()==video::EDT_OPENGL;
+
+  if (bUseShader) {
+    if (!driver->queryFeature(video::EVDF_PIXEL_SHADER_1_1)) {
+      printf("Pixel shader disabled!\n");
+      bUseShader=false;
+    }
+
+    if (!driver->queryFeature(video::EVDF_VERTEX_SHADER_1_1)) {
+      printf("Vertex shader disabled!\n");
+      bUseShader=false;
+    }
+  }
+
+  //I can only add shaders for OpenGL
+  if (bUseShader) {
+    video::IGPUProgrammingServices *pGpu=driver->getGPUProgrammingServices();
+    if (pGpu) {
+      CShaderCallBack *pCallback=new CShaderCallBack(device);
+      s32 iNewMaterial=pGpu->addHighLevelShaderMaterialFromFiles(
+          "../../data/shaders/opengl.vert","vertexMain", video::EVST_VS_1_1,
+          "../../data/shaders/opengl.frag", "pixelMain", video::EPST_PS_1_1,
+          pCallback,video::EMT_SOLID);
+
+      replaceMaterials(smgr->getRootSceneNode(),iNewMaterial);
+      pCallback->drop();
+    }
   }
 
   delete pSettings;
