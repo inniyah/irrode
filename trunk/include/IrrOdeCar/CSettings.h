@@ -5,12 +5,6 @@
 
 using namespace irr;
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /**
  * @class CSettings
  * This class provides the "select graphics options" dialog that is displayed at program start
@@ -34,23 +28,23 @@ class CSettings : public IEventReceiver {
      */
     class _DRV {
       public:
-        wchar_t sName[0xFF];    /**< name of the driver */
-        E_DRIVER_TYPE iDriver;  /**< ID of the driver */
+        wchar_t sName[0xFF];           /**< name of the driver */
+        video::E_DRIVER_TYPE iDriver;  /**< ID of the driver */
     };
 
-    IGUIComboBox *m_pDrivers,     /**< combobox to pick the video driver */
-                 *m_pResolution;  /**< combobox to pick the screen mode */
-    IGUICheckBox *m_pFullscreen;  /**< checkbox to choose whether or not fullscreen is wanted */
+    gui::IGUIComboBox *m_pDrivers,     /**< combobox to pick the video driver */
+                      *m_pResolution;  /**< combobox to pick the screen mode */
+    gui::IGUICheckBox *m_pFullscreen;  /**< checkbox to choose whether or not fullscreen is wanted */
 
-    array<IGUICheckBox *> m_aActiveBodies;
-    array<IGUIComboBox *> m_aBodyCount;
+    core::array<gui::IGUICheckBox *> m_aActiveBodies;
+    core::array<gui::IGUIComboBox *> m_aBodyCount;
 
     bool m_aAct[6];
     u32 m_iCnt[4];
 
-    IGUIButton *m_pOk,            /**< the "OK" button */
-               *m_pCancel;        /**< the "Cancel" button */
-    SColor m_cBackground;         /**< the background color */
+    gui::IGUIButton *m_pOk,            /**< the "OK" button */
+                    *m_pCancel;        /**< the "Cancel" button */
+    video::SColor m_cBackground;       /**< the background color */
 
     c8 m_sSettingsFile[1024]; /**< the settings file */
     u32 m_iClose,             /**< is the "OK" or the "Cancel" button (or "ENTER" or "ESCAPE") pressed? */
@@ -59,23 +53,25 @@ class CSettings : public IEventReceiver {
     bool m_bFullscreen,       /**< is fullscreen wanted? */
          m_bSettingsChanged;  /**< have the settings changed and need to be saved? */
 
-    dimension2du m_iMinResolution;
+    core::dimension2du m_iMinResolution;
 
-    IrrlichtDevice  *m_pDevice;       /**< the irrlicht device to be used */
-    IGUIEnvironment *m_pGuiEnv;       /**< the GUI environment */
-    IVideoDriver    *m_pDriver;       /**< the driver */
-    ISceneManager   *m_pSceneManager; /**< the scene manager */
+    IrrlichtDevice       *m_pDevice;       /**< the irrlicht device to be used */
+    gui::IGUIEnvironment *m_pGuiEnv;       /**< the GUI environment */
+    video::IVideoDriver  *m_pDriver;       /**< the driver */
+    scene::ISceneManager *m_pSceneManager; /**< the scene manager */
 
-    IVideoModeList *m_pVModes;    /**< list of the available video modes from the Irrlicht device */
-    array<_VRES *> m_aVModes;     /**< list of the video modes that are available in the combobox */
-    array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
+    video::IVideoModeList *m_pVModes;    /**< list of the available video modes from the Irrlicht device */
+    core::array<_VRES *> m_aVModes;     /**< list of the video modes that are available in the combobox */
+    core::array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
 
     c8 m_sScene[0xFF];
 
     wchar_t m_sTitle[0xFF];
 
+    video::E_DRIVER_TYPE m_eDriver;
+
   public:
-    CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground);
+    CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, video::SColor cBackground);
     ~CSettings();
 
     void createGUI();
@@ -99,13 +95,15 @@ class CSettings : public IEventReceiver {
      */
     IrrlichtDevice *createDeviceFromSettings();
 
-		void addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver);
+		void addValidDriver(const wchar_t *sName, video::E_DRIVER_TYPE iDriver);
 
-		void setMinResolution(dimension2du iMin) { m_iMinResolution=iMin; }
+		void setMinResolution(core::dimension2du iMin) { m_iMinResolution=iMin; }
 
 		bool isActive(u32 i) { return m_aAct[i]; }
 
 		u32 getCountOf(u32 i) { return m_iCnt[i]; }
+
+		video::E_DRIVER_TYPE getSelectedDriver() { return m_eDriver; }
 };
 
 #endif

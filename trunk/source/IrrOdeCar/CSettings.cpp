@@ -7,22 +7,23 @@
  * @param title of the window
  * @param background color of the window
  */
-CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, SColor cBackground) {
+CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, video::SColor cBackground) {
   strcpy(m_sSettingsFile,sSettingsFile);
   wcscpy(m_sTitle,sTitle);
   m_cBackground=cBackground;
-  m_iMinResolution=dimension2di(320,200);
+  m_iMinResolution=core::dimension2di(320,200);
+  m_eDriver=video::EDT_NULL;
 }
 
 void CSettings::createGUI() {
   //Create a software device
-  m_pDevice=createDevice(EDT_SOFTWARE, dimension2d<u32>(230,360), 16, false, false, false, 0);
+  m_pDevice=createDevice(video::EDT_SOFTWARE,core::dimension2d<u32>(230,360),16,false,false,false,0);
   m_pDevice->setWindowCaption(m_sTitle);
 
   strcpy(m_sSettingsFile,m_sSettingsFile);
 
   //read the settings from the settings file
-  IXMLReaderUTF8 *pXml=m_pDevice->getFileSystem()->createXMLReaderUTF8(m_sSettingsFile);
+  io::IXMLReaderUTF8 *pXml=m_pDevice->getFileSystem()->createXMLReaderUTF8(m_sSettingsFile);
 
   m_iResolution=0;
   m_iDriver    =0;
@@ -38,14 +39,14 @@ void CSettings::createGUI() {
       if (bFillDriverList)
         if (!strcmp(pXml->getNodeName(),"videodriver")) {
           _DRV *drv=new _DRV();
-          wcscpy(drv->sName,stringw(pXml->getAttributeValue("name")).c_str());
-          drv->iDriver=(E_DRIVER_TYPE)atoi(pXml->getAttributeValue("id"  ));
+          wcscpy(drv->sName,core::stringw(pXml->getAttributeValue("name")).c_str());
+          drv->iDriver=(video::E_DRIVER_TYPE)atoi(pXml->getAttributeValue("id"  ));
           m_aDrvs.push_back(drv);
         }
 
       if (!strcmp(pXml->getNodeName(),"resolution")) m_iResolution=atoi(pXml->getAttributeValue("value"));
       if (!strcmp(pXml->getNodeName(),"fullscreen")) m_bFullscreen=atoi(pXml->getAttributeValue("value"));
-      if (!strcmp(pXml->getNodeName(),"driver"    )) m_iDriver    =(E_DRIVER_TYPE)atoi(pXml->getAttributeValue("value"));
+      if (!strcmp(pXml->getNodeName(),"driver"    )) m_iDriver=(video::E_DRIVER_TYPE)atoi(pXml->getAttributeValue("value"));
 
       if (!strcmp(pXml->getNodeName(),"active")) {
         int iIdx=atoi(pXml->getAttributeValue("num"));
@@ -70,72 +71,72 @@ void CSettings::createGUI() {
   m_iClose=0;
 
   //add the static textfields
-  m_pGuiEnv->addStaticText(m_sTitle,rect<s32>(5,5,125,18),true,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"graphics driver",rect<s32>(5,40,75, 52),false,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"resolution"     ,rect<s32>(5,65,75, 77),false,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"fullscreen"     ,rect<s32>(5,90,75,102),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(m_sTitle,core::rect<s32>(5,5,125,18),true,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"graphics driver",core::rect<s32>(5,40,75, 52),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"resolution"     ,core::rect<s32>(5,65,75, 77),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"fullscreen"     ,core::rect<s32>(5,90,75,102),false,true,0,-1,true);
 
   //add the "driver" and "resolution" comboboxes
-  m_pDrivers   =m_pGuiEnv->addComboBox(rect<s32>(80,39,180,53),0,3);
-  m_pResolution=m_pGuiEnv->addComboBox(rect<s32>(80,64,180,78),0,4);
+  m_pDrivers   =m_pGuiEnv->addComboBox(core::rect<s32>(80,39,180,53),0,3);
+  m_pResolution=m_pGuiEnv->addComboBox(core::rect<s32>(80,64,180,78),0,4);
 
   //add the "fullscreen" checkboxes
-  m_pFullscreen=m_pGuiEnv->addCheckBox(false,rect<s32>(80,88,94,102),0,5);
+  m_pFullscreen=m_pGuiEnv->addCheckBox(false,core::rect<s32>(80,88,94,102),0,5);
 
-  position2di pos=position2di(5,130),pos2=position2di(35,130),pos3=position2di(45,130);
-  dimension2di dim=dimension2di(14,14),dim2=dimension2di(150,14),dim3=dimension2di(30,14);
+  core::position2di  pos=core::position2di ( 5,130),pos2=core::position2di ( 35,130),pos3=core::position2di (45,130);
+  core::dimension2di dim=core::dimension2di(14, 14),dim2=core::dimension2di(150, 14),dim3=core::dimension2di(30, 14);
 
-  IGUICheckBox *p=NULL;
-  IGUIComboBox *cb=NULL;
+  gui::IGUICheckBox *p=NULL;
+  gui::IGUIComboBox *cb=NULL;
 
-  cb=m_pGuiEnv->addComboBox(rect<s32>(pos,dim3));
+  cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
   cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2"); cb->addItem(L"3"); cb->addItem(L"4");
-  m_pGuiEnv->addStaticText(L"cars",rect<s32>(pos3,dim2),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"cars",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[0]);
   m_aBodyCount.push_back(cb);
 
-  cb=m_pGuiEnv->addComboBox(rect<s32>(pos,dim3));
+  cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
   cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2"); cb->addItem(L"3"); cb->addItem(L"4");
-  m_pGuiEnv->addStaticText(L"planes",rect<s32>(pos3,dim2),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"planes",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[1]);
   m_aBodyCount.push_back(cb);
 
-  cb=m_pGuiEnv->addComboBox(rect<s32>(pos,dim3));
+  cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
   cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2");
-  m_pGuiEnv->addStaticText(L"tanks",rect<s32>(pos3,dim2),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"tanks",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[2]);
   m_aBodyCount.push_back(cb);
 
-  cb=m_pGuiEnv->addComboBox(rect<s32>(pos,dim3));
+  cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
   cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2");
-  m_pGuiEnv->addStaticText(L"helicopters",rect<s32>(pos3,dim2),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"helicopters",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[3]);
   m_aBodyCount.push_back(cb);
 
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"roads"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"          ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"   ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"        ,rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);
-  p=m_pGuiEnv->addCheckBox(false,rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"trimesh terrain",rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"roads"          ,core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"          ,core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"        ,core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"   ,core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"        ,core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);
+  p=m_pGuiEnv->addCheckBox(false,core::rect<s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"trimesh terrain",core::rect<s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[5]);
 
 
   //add the "OK" and "Cancel" buttons
-  m_pOk    =m_pGuiEnv->addButton(rect<s32>( 80,340,120,355),0,1,L"Start");
-  m_pCancel=m_pGuiEnv->addButton(rect<s32>(125,340,175,355),0,2,L"Close");
+  m_pOk    =m_pGuiEnv->addButton(core::rect<s32>( 80,340,120,355),0,1,L"Start");
+  m_pCancel=m_pGuiEnv->addButton(core::rect<s32>(125,340,175,355),0,2,L"Close");
 
   //If no driver information was found in the settings file we initialize the driver list with all available drivers
   if (m_aDrvs.size()==0) {
     _DRV *drv;
-    drv=new _DRV(); drv->iDriver=EDT_SOFTWARE     ; wcscpy(drv->sName,L"Software"     ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=EDT_BURNINGSVIDEO; wcscpy(drv->sName,L"BurningsVideo"); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=EDT_DIRECT3D8    ; wcscpy(drv->sName,L"Direct3D8"    ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=EDT_DIRECT3D9    ; wcscpy(drv->sName,L"Direct3D9"    ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=EDT_OPENGL       ; wcscpy(drv->sName,L"OpenGL"       ); m_aDrvs.push_back(drv);
+    drv=new _DRV(); drv->iDriver=video::EDT_SOFTWARE     ; wcscpy(drv->sName,L"Software"     ); m_aDrvs.push_back(drv);
+    drv=new _DRV(); drv->iDriver=video::EDT_BURNINGSVIDEO; wcscpy(drv->sName,L"BurningsVideo"); m_aDrvs.push_back(drv);
+    drv=new _DRV(); drv->iDriver=video::EDT_DIRECT3D8    ; wcscpy(drv->sName,L"Direct3D8"    ); m_aDrvs.push_back(drv);
+    drv=new _DRV(); drv->iDriver=video::EDT_DIRECT3D9    ; wcscpy(drv->sName,L"Direct3D9"    ); m_aDrvs.push_back(drv);
+    drv=new _DRV(); drv->iDriver=video::EDT_OPENGL       ; wcscpy(drv->sName,L"OpenGL"       ); m_aDrvs.push_back(drv);
   }
 
   //If driver information were found we just add the drivers from the XML file
@@ -145,7 +146,7 @@ void CSettings::createGUI() {
   m_pVModes=m_pDevice->getVideoModeList();
   for (s32 i=0; i<m_pVModes->getVideoModeCount(); i++)
     if (m_pVModes->getVideoModeDepth(i)>=16) {
-      dimension2du res=m_pVModes->getVideoModeResolution(i);
+      core::dimension2du res=m_pVModes->getVideoModeResolution(i);
 
       if (res.Width>=m_iMinResolution.Width && res.Height>=m_iMinResolution.Height) {
         _VRES *vRes=new _VRES();
@@ -186,18 +187,18 @@ CSettings::~CSettings() {
     wchar_t res[0xFF],drv[0xFF];
 
     //Write settings to the settings file
-    IXMLWriter *pXml=m_pDevice->getFileSystem()->createXMLWriter(m_sSettingsFile);
+    io::IXMLWriter *pXml=m_pDevice->getFileSystem()->createXMLWriter(m_sSettingsFile);
 
     swprintf(res,0xFE,L"%i",m_iResolution);
     swprintf(drv,0xFE,L"%i",m_iDriver);
 
-    array<stringw> aResN; aResN.push_back(stringw(L"value"));
-    array<stringw> aResV; aResV.push_back(stringw(res));
-    array<stringw> aDrvN; aDrvN.push_back(stringw(L"value"));
-    array<stringw> aDrvV; aDrvV.push_back(stringw(drv));
-    array<stringw> aFlsN; aFlsN.push_back(stringw(L"value"));
-    array<stringw> aFlsV; aFlsV.push_back(stringw(m_bFullscreen?L"1":L"0"));
-    array<stringw> aShdN; aShdN.push_back(stringw(L"value"));
+    core::array<core::stringw> aResN; aResN.push_back(core::stringw(L"value"));
+    core::array<core::stringw> aResV; aResV.push_back(core::stringw(res));
+    core::array<core::stringw> aDrvN; aDrvN.push_back(core::stringw(L"value"));
+    core::array<core::stringw> aDrvV; aDrvV.push_back(core::stringw(drv));
+    core::array<core::stringw> aFlsN; aFlsN.push_back(core::stringw(L"value"));
+    core::array<core::stringw> aFlsV; aFlsV.push_back(core::stringw(m_bFullscreen?L"1":L"0"));
+    core::array<core::stringw> aShdN; aShdN.push_back(core::stringw(L"value"));
 
     pXml->writeXMLHeader();
     pXml->writeElement(L"settings"); pXml->writeLineBreak();
@@ -255,11 +256,11 @@ u32 CSettings::run() {
  */
 bool CSettings::OnEvent(const SEvent &event) {
   if (event.EventType==EET_GUI_EVENT) {
-    if (event.GUIEvent.EventType==EGET_BUTTON_CLICKED) {
+    if (event.GUIEvent.EventType==gui::EGET_BUTTON_CLICKED) {
       m_iClose=event.GUIEvent.Caller->getID();
     }
 
-    if (event.GUIEvent.EventType==EGET_COMBO_BOX_CHANGED) {
+    if (event.GUIEvent.EventType==gui::EGET_COMBO_BOX_CHANGED) {
       m_bSettingsChanged=true;
       switch (event.GUIEvent.Caller->getID()) {
         case 3: m_iDriver=m_pDrivers->getSelected(); break;
@@ -267,7 +268,7 @@ bool CSettings::OnEvent(const SEvent &event) {
       }
     }
 
-    if (event.GUIEvent.EventType==EGET_CHECKBOX_CHANGED) {
+    if (event.GUIEvent.EventType==gui::EGET_CHECKBOX_CHANGED) {
       m_bSettingsChanged=true;
       switch (event.GUIEvent.Caller->getID()) {
         case 5: m_bFullscreen=m_pFullscreen->isChecked(); break;
@@ -279,7 +280,7 @@ bool CSettings::OnEvent(const SEvent &event) {
         }
     }
 
-    if (event.GUIEvent.EventType==irr::gui::EGET_COMBO_BOX_CHANGED) {
+    if (event.GUIEvent.EventType==gui::EGET_COMBO_BOX_CHANGED) {
       m_bSettingsChanged=true;
       for (u32 i=0; i<m_aBodyCount.size(); i++)
         if (event.GUIEvent.Caller==m_aBodyCount[i])
@@ -317,11 +318,12 @@ IrrlichtDevice *CSettings::createDeviceFromSettings() {
   m_pDevice->drop();
   _VRES *res=m_aVModes[m_iResolution];
   printf("\n\tcreating device with settings:\n\ndriver: %i\nresolution: (%i, %i)\n%i bits per pixel\nfullscreen: %s\n",m_iDriver,res->iWidth,res->iHeight,res->iBpp,m_bFullscreen?"YES":"NO");
-  m_pDevice=createDevice(m_aDrvs[m_iDriver]->iDriver,dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,false,false,0);
+  m_eDriver=m_aDrvs[m_iDriver]->iDriver;
+  m_pDevice=createDevice(m_eDriver,core::dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,false,false,0);
   return m_pDevice;
 }
 
-void CSettings::addValidDriver(const wchar_t *sName, E_DRIVER_TYPE iDriver) {
+void CSettings::addValidDriver(const wchar_t *sName, video::E_DRIVER_TYPE iDriver) {
   _DRV *drv=new _DRV();
   wcscpy(drv->sName,sName);
   drv->iDriver=iDriver;
