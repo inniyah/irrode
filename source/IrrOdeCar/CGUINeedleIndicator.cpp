@@ -30,6 +30,7 @@ namespace irr {
       };
 
       for (u32 i=0; i<3; i++) {
+        m_pDrv->setMaterial(m_pDrv->getMaterial2D());
         m_pDrv->draw2DLine(m_vCenter+v[i],m_vCenter+v[i<2?i+1:0],m_cColor);
       }
     }
@@ -63,10 +64,12 @@ namespace irr {
 
       if (m_pTexture==NULL) {
         video::SColor cCol=video::SColor(0xFF,0,0,0xFF);
+        m_pDrv->setMaterial(m_pDrv->getMaterial2D());
         m_pDrv->draw2DRectangle(AbsoluteRect,cCol,cCol,cCol,cCol);
       }
       else {
         core::dimension2di cDim=core::dimension2di(m_pTexture->getOriginalSize().Width,m_pTexture->getOriginalSize().Height);
+        m_pDrv->setMaterial(m_pDrv->getMaterial2D());
         m_pDrv->draw2DImage(m_pTexture,AbsoluteRect,core::rect<s32>(core::position2di(0,0),cDim));
       }
 
