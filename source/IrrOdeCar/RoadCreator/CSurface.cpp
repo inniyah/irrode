@@ -1,8 +1,16 @@
   #include <CTextureParameters.h>
   #include <CSurface.h>
 
+using namespace irr;
+
+static video::ITexture *g_pEmptyTex=NULL;
+
 CSurface::CSurface(video::IVideoDriver *pDrv) {
   m_pDrv=pDrv;
+
+  if (g_pEmptyTex==NULL) {
+    g_pEmptyTex=m_pDrv->getTexture("");
+  }
 
   m_cMinPos=core::vector3df(-100.0f,0.0f,-100.0f);
   m_cMaxPos=core::vector3df( 100.0f,0.0f, 100.0f);
@@ -16,7 +24,7 @@ CSurface::CSurface(video::IVideoDriver *pDrv) {
   for (u32 i=0; i<2; i++) {
     m_pBuffers[i]=NULL;
     m_pParams[i]=new CTextureParameters();
-  }
+  }  
 }
 
 CSurface::~CSurface() {
@@ -55,8 +63,12 @@ void CSurface::recalcMeshBuffer() {
 
   m_pBuffers[0]=new scene::SMeshBuffer();
   m_pBuffers[0]->append(cVert,4,idx,6);
-  m_pBuffers[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[0]->getTexture().c_str()));
-
+  
+  if (!strcmp(m_pParams[0]->getTexture().c_str(),""))
+    m_pBuffers[0]->getMaterial().setTexture(0,g_pEmptyTex);
+  else
+    m_pBuffers[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[0]->getTexture().c_str()));
+    
   if (m_fFenceHeight>0.0f) {
     m_pBuffers[1]=new scene::SMeshBuffer();
     cVert[0].Pos=core::vector3df(m_cMinPos.X,y               ,m_cMinPos.Z);
@@ -108,7 +120,10 @@ void CSurface::recalcMeshBuffer() {
     cVert[3].Normal=core::vector3df(-1.0f,0.0f,0.f);
 
     m_pBuffers[1]->append(cVert,4,fenceIdx,6);
-    m_pBuffers[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[1]->getTexture().c_str()));
+    if (!strcmp(m_pParams[1]->getTexture().c_str(),""))
+      m_pBuffers[1]->getMaterial().setTexture(0,g_pEmptyTex);
+    else
+      m_pBuffers[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pParams[1]->getTexture().c_str()));
   }
   else m_pBuffers[1]=NULL;
 }

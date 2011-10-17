@@ -23,6 +23,8 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_fUpToForeward    =0.0f;
   m_fUpDampToForeward=0.0f;
   m_fSideToForeward  =0.0f;
+  m_fDampMaxVel      =0.0f;
+  m_fDampMinVel      =0.0f;
 
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -44,7 +46,8 @@ void CIrrOdeAeroDrag::step() {
     vNormVel.normalize();
 
     vector3df vForeward=vRot.rotationToDirection(m_vForeward);
-    f32 fForeward=vForeward.dotProduct(vNormVel.normalize());
+    f32 fForeward=vForeward.dotProduct(vNormVel.normalize()),
+        fSideUpDampFactor=1.0f;
 
     if (m_fPitchTrimPwr!=0.0f && m_fPitchTrim!=0.0f) {
       f32 v=vUp.dotProduct(vNormVel);
@@ -59,7 +62,16 @@ void CIrrOdeAeroDrag::step() {
     }
 
     m_fForewardVel=fForeward*vVel.getLength();
+
     if (m_fForewardVel<0.0f) return;
+
+    if (m_fDampMaxVel>m_fDampMinVel) {
+      if (m_fForewardVel<m_fDampMinVel)
+        fSideUpDampFactor=0.0f;
+      else
+        if (m_fForewardVel<m_fDampMaxVel)
+          fSideUpDampFactor=(m_fForewardVel-m_fDampMinVel)/(m_fDampMaxVel-m_fDampMinVel);
+    }
 
     //OK, if this aero drag provides a lifting force...
     if (m_fUpFactor!=0.0f) {
@@ -103,7 +115,7 @@ void CIrrOdeAeroDrag::step() {
       f32 fSideward=vSideward.dotProduct(vNormVel.normalize());
 
       if (fSideward>=0.01f || fSideward<=-0.01f) {
-        vSideDamp=vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
+        vSideDamp=fSideUpDampFactor*vSideward*m_fForewardVel*fSideward*m_fSidewardDamp;
         if (m_fForewardVel>2.0f || m_fForewardVel<-2.0f)
           vPushForeward+=vForeward+(m_fSideToForeward*vSideDamp.getLength());
       }
@@ -116,7 +128,7 @@ void CIrrOdeAeroDrag::step() {
       f32 fUpward=vUpward.dotProduct(vNormVel.normalize());
 
       if (fUpward>=0.1f || fUpward<=-0.1f) {
-        vUpDamp=vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
+        vUpDamp=fSideUpDampFactor*vUpward*m_fForewardVel*fUpward*m_fUpwardDamp;
         if (m_fForewardVel>2.0f || m_fForewardVel<-2.0f)
           vPushForeward+=vForeward*(m_fUpDampToForeward*vUpDamp.getLength());
       }
@@ -160,6 +172,8 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
   out->addFloat("up_to_foreward"     ,m_fUpToForeward    );
   out->addFloat("up_damp_to_foreward",m_fUpDampToForeward);
   out->addFloat("side_to_foreward"   ,m_fSideToForeward  );
+  out->addFloat("min_damp_velocity"  ,m_fDampMinVel      );
+  out->addFloat("max_damp_velocity"  ,m_fDampMaxVel      );
 }
 
 void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
@@ -181,6 +195,8 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
   m_fUpToForeward    =in->getAttributeAsFloat("up_to_foreward"  );
   m_fUpDampToForeward=in->getAttributeAsFloat("up_damp_to_foreward");
   m_fSideToForeward  =in->getAttributeAsFloat("side_to_foreward");
+  m_fDampMinVel      =in->getAttributeAsFloat("min_damp_velocity");
+  m_fDampMaxVel      =in->getAttributeAsFloat("max_damp_velocity");
 }
 
 ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {

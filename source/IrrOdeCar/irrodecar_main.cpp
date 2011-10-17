@@ -24,6 +24,10 @@
 
 using namespace irr;
 
+video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
+f32 g_fMinFog=1750.0f,
+    g_fMaxFog=2100.0f;
+
 class CShaderCallBack : public video::IShaderConstantSetCallBack {
   protected:
     IrrlichtDevice *m_pDevice;
@@ -64,6 +68,9 @@ class CShaderCallBack : public video::IShaderConstantSetCallBack {
       world = world.getTransposed();
 
       services->setVertexShaderConstant("mTransWorld", world.pointer(), 16);
+
+      services->setVertexShaderConstant("mMinFog",&g_fMinFog,1);
+      services->setVertexShaderConstant("mMaxFog",&g_fMaxFog,1);
     }
 };
 
@@ -531,7 +538,7 @@ int main(int argc, char** argv) {
     if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
   }
 
-  driver->setFog(video::SColor(0xFF,0x3A,0x34,0x00),video::EFT_FOG_LINEAR,1750.0f,2100.0f,0.00001f,true,false);
+  driver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
   enableFog(smgr->getRootSceneNode());
 
   u32 iFrames=0,iTotalFps=0;

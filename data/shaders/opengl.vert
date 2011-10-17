@@ -2,8 +2,11 @@
 uniform mat4 mWorldViewProj;
 uniform mat4 mInvWorld;
 uniform mat4 mTransWorld;
+uniform float mMinFog;
+uniform float mMaxFog;
 
 varying vec3 normalVec;
+varying float vFog;
 
 void main(void)
 {
@@ -20,4 +23,15 @@ void main(void)
 	vec4 worldpos = gl_Vertex * mTransWorld;
 	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
+	
+	float fog_coord; // distance for fog calculation...
+	// This function is generally faster and is guaranteed
+	// to produce the same result on each run...
+	// gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	//gl_Position = ftransform();
+	vec4 thePos=gl_ModelViewProjectionMatrix*gl_Vertex;
+	fog_coord = abs(thePos.z);
+	fog_coord = clamp( fog_coord, mMinFog, mMaxFog);
+	vFog = (mMaxFog-fog_coord-mMinFog)/(mMaxFog-mMinFog);
+	vFog = clamp( vFog, 0.0, 1.0);
 }

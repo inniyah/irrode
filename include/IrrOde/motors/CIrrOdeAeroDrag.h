@@ -30,7 +30,9 @@ class CIrrOdeAeroDrag : public IIrrOdeStepMotor {
         m_fPitchTrimPwr,    /*!< pitch trim power */
         m_fUpToForeward,    /*!< factor for upward force pushing foreward */
         m_fUpDampToForeward,/*!< factor for upward damp force pushing foreward */
-        m_fSideToForeward;  /*!< factor for sideward force pushing foreward */
+        m_fSideToForeward,  /*!< factor for sideward force pushing foreward */
+        m_fDampMinVel,      /*!< the minimum velocity for sideward/upward damping */
+        m_fDampMaxVel;      /*!< the velocity where the maximum side/up damping is reached */
 
   public:
     CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
