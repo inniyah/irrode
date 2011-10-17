@@ -8,6 +8,8 @@
 
 using namespace irr;
 
+static video::ITexture *g_pEmptyTex=NULL;
+
 /**
  * Using this method you can add a single vertex to a temporarily used array of vertices. This array
  * is searched to see if the position of any vertex inside mathes the new vertex, and if this is true
@@ -439,8 +441,11 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[0]->getBoundingBox());
 
   //If we have a texture we apply it
-  m_pMeshBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
-
+  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),""))
+    m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
+  else
+    m_pMeshBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
+  
   //initialize the texture offset for the bottom
   m_fTexX=m_pTexParams[1]->getOffsetX();
 
@@ -546,7 +551,10 @@ void CConnection::recalcMeshBuffer() {
       m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
       m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
 
-      m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str()));
+      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),""))
+        m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
+      else
+        m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str()));
     }
   }
 
@@ -567,7 +575,10 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[1]->getBoundingBox());
 
   //If we have a texture we apply it
-  m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
+  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),""))
+    m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
+  else
+    m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
 }
 
 /**
@@ -779,6 +790,10 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
   //Store the driver for later use
   m_pDrv=pDrv;
 
+  if (g_pEmptyTex==NULL) {
+    g_pEmptyTex=m_pDrv->getTexture("");
+  }
+  
   //initialize the meshbuffer members and initialize the texture parameter objects
   for (u32 i=0; i<6; i++) {
     m_pMeshBuffer[i]=NULL;
