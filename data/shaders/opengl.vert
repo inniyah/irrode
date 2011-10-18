@@ -6,7 +6,6 @@ uniform float mMinFog;
 uniform float mMaxFog;
 
 varying vec3 normalVec;
-varying float vFog;
 
 void main(void)
 {
@@ -32,6 +31,4 @@ void main(void)
 	vec4 thePos=gl_ModelViewProjectionMatrix*gl_Vertex;
 	fog_coord = abs(thePos.z);
 	fog_coord = clamp( fog_coord, mMinFog, mMaxFog);
-	vFog = (mMaxFog-fog_coord-mMinFog)/(mMaxFog-mMinFog);
-	vFog = clamp( vFog, 0.0, 1.0);
 }
