@@ -95,7 +95,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
 
       m_pImg=m_pGuienv->addImage(rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
       m_pImg->setScaleImage(true);
-      m_pImg->setImage(m_pDriver->getTexture("../../data/standby.png"));
+      m_pImg->setImage(m_pDriver->getTexture("../../data/textures/standby.png"));
 
       m_pBar=new CProgressBar(m_pGuienv,rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),-1,NULL);
       m_pText=m_pGuienv->addStaticText(L"",rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),true);
