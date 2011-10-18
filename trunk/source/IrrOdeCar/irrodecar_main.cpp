@@ -441,6 +441,7 @@ int main(int argc, char** argv) {
   if (bUseShader) {
     video::IGPUProgrammingServices *pGpu=driver->getGPUProgrammingServices();
     if (pGpu) {
+      printf("\n**** compiling GLSL shader ... \n\n");
       CShaderCallBack *pCallback=new CShaderCallBack(device);
       s32 iNewMaterial=pGpu->addHighLevelShaderMaterialFromFiles(
           "../../data/shaders/opengl.vert","vertexMain", video::EVST_VS_1_1,
@@ -449,6 +450,7 @@ int main(int argc, char** argv) {
 
       replaceMaterials(smgr->getRootSceneNode(),iNewMaterial);
       pCallback->drop();
+      printf("Ready.\n\n");
     }
   }
 
