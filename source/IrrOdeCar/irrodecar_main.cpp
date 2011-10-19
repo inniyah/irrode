@@ -483,21 +483,22 @@ int main(int argc, char** argv) {
   CMenu       *theMenu=new CMenu      (device,pController); aStates.push_back(theMenu);
   CController *theCtrl=new CController(device,pController); aStates.push_back(theCtrl );
 
-  CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
-
   list<ISceneNode *>::Iterator it;
-  for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController,pCarCockpit,pSndEngine);
-    p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
-    aStates.push_back(p);
-    theMenu->addButtonForState(p);
-  }
 
   CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
+    aStates.push_back(p);
+    theMenu->addButtonForState(p);
+  }
+
+  CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
+
+  for (it=lCars.begin(); it!=lCars.end(); it++) {
+    CCar *p=new CCar(device,*it,pController,pCarCockpit,pSndEngine);
+    p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
