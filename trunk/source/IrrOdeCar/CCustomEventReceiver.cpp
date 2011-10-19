@@ -161,7 +161,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         for(i=0; i<nodes->aPitch.size(); i++)
           nodes->aPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));
 
-        if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0,tw?10.0f*fYaw:-10.0f*fYaw, 0));
+        if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0,tw?90+10.0f*fYaw:90-10.0f*fYaw, 0));
         if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
 
         return true;
