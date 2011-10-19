@@ -52,7 +52,7 @@ class IRenderToTexture {
       m_sName=sName;
       m_sName.make_lower();
 
-      m_pTarget=m_pDrv->addRenderTargetTexture(cSize);
+      m_pTarget=m_pDrv->addRenderTargetTexture(cSize,"rt",video::ECF_A8R8G8B8);
     }
 
     virtual ~IRenderToTexture() {
