@@ -149,6 +149,10 @@ class CSegment : public IRoadPart {
     f32 getWallHeight() { return m_fWallHeight; }
     
     const core::vector3df &getWallNormal() { return m_vWallNorm; }
+    
+    virtual s32 getNumberOfMeshBuffers() {
+      return 10;
+    }
 };
 
 #endif

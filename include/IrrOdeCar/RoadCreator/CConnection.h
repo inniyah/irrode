@@ -268,6 +268,10 @@ class CConnection : public INotification, public IRoadPart {
     
     bool getWallFlag(u32 idx) { return idx<2?m_bWalls[idx]:false; }
     f32 getWallHeight() { return m_fWallHeight; }
+    
+    virtual s32 getNumberOfMeshBuffers() {
+      return 6;
+    }
 };
 
 #endif

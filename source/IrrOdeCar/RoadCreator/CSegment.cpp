@@ -133,9 +133,9 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
   core::vector3df calcLength=(m_fLength/2)*m_vDirection,
                   calcWidth =(m_fWidth /2)*(m_vNormal.crossProduct(m_vDirection)),
                   vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
-  
+
   vNormal.normalize();
-  
+
   //Some locals for texture creation
   f32 f=calcWidth.getLength()!=0 && !pTex->getStretch()?calcLength.getLength()/calcWidth.getLength():1.0f,
       fStartX=pTex->getOffsetX(),fStartY=pTex->getOffsetY();
@@ -191,10 +191,10 @@ void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pT
   f32 fWidth =(vec[0]-vec[1]).getLength(),
       fHeight=m_fWallHeight,
       f=1.0f,fStart=0.0f;
-      
+
   core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
   vNormal.normalize();
-  
+
   f*=pTex->getScaleX();
   f+=fStart;
 
@@ -276,11 +276,16 @@ void CSegment::recalcMeshBuffer() {
   m_pBuffer[0]=new scene::SMeshBuffer();
   m_pBuffer[0]->append(vVerts,4,iIdx,6);
   m_pBuffer[0]->recalculateBoundingBox();
-  
+
   if (!strcmp(m_pTexParams[0]->getTexture().c_str(),""))
     m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  else
-    m_pBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
+  else {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
+    if (pTex)
+      m_pBuffer[0]->getMaterial().setTexture(0,pTex);
+    else
+      m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
+  }
 
   //Same procedure for the bottom polygon...
   core::vector3df vBasePoints[4];
@@ -313,8 +318,13 @@ void CSegment::recalcMeshBuffer() {
 
   if (!strcmp(m_pTexParams[1]->getTexture().c_str(),""))
     m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  else
-    m_pBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
+  else {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
+    if (pTex)
+      m_pBuffer[1]->getMaterial().setTexture(0,pTex);
+    else
+      m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
+  }
 
   //Now for the automatic part: the four sides can be calculated
   //within a loop, so we do this.
@@ -421,9 +431,14 @@ void CSegment::recalcMeshBuffer() {
 
     if (!strcmp(m_pTexParams[i+2]->getTexture().c_str(),""))
       m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
-    else
-      m_pBuffer[i+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str()));
-      
+    else {
+      video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str());
+      if (pTex)
+        m_pBuffer[i+2]->getMaterial().setTexture(0,pTex);
+      else
+        m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
+    }
+
     if (m_bWalls[i]) {
       m_pBuffer[i+6]=new scene::SMeshBuffer();
 
@@ -436,8 +451,13 @@ void CSegment::recalcMeshBuffer() {
 
       if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),""))
         m_pBuffer[i+6]->getMaterial().setTexture(0,g_pEmptyTex);
-      else
-        m_pBuffer[i+6]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str()));
+      else {
+        video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str());
+        if (pTex)
+          m_pBuffer[i+6]->getMaterial().setTexture(0,pTex);
+        else
+          m_pBuffer[i+6]->getMaterial().setTexture(0,g_pEmptyTex);
+      }
     }
   }
 }
