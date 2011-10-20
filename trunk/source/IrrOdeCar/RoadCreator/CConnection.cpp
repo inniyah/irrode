@@ -22,16 +22,6 @@ static video::ITexture *g_pEmptyTex=NULL;
 u16 CConnection::addToTempVertexBuffer(video::S3DVertex vtx, core::array<video::S3DVertex> &aTmp) {
   u16 iRet=0;
 
-  //iterate through the array of already added vertices ...
-  for (u16 i=0; i<aTmp.size(); i++) {
-    //... compare the position and if one matches ...
-    if (vtx.Pos.equals(aTmp[i].Pos)) {
-      //... calculate the new normal value and set it.
-      aTmp[i].Normal=(aTmp[i].Normal+vtx.Normal)/2;
-      vtx.Normal=aTmp[i].Normal;
-    }
-  }
-
   iRet=aTmp.size();
   aTmp.push_back(vtx);
 
@@ -443,9 +433,14 @@ void CConnection::recalcMeshBuffer() {
   //If we have a texture we apply it
   if (!strcmp(m_pTexParams[0]->getTexture().c_str(),""))
     m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  else
-    m_pMeshBuffer[0]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str()));
-  
+  else {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
+    if (pTex)
+      m_pMeshBuffer[0]->getMaterial().setTexture(0,pTex);
+    else
+      m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
+  }
+
   //initialize the texture offset for the bottom
   m_fTexX=m_pTexParams[1]->getOffsetX();
 
@@ -553,8 +548,13 @@ void CConnection::recalcMeshBuffer() {
 
       if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),""))
         m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
-      else
-        m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str()));
+      else {
+        video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str());
+        if (pTex)
+          m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,pTex);
+        else
+          m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
+      }
     }
   }
 
@@ -577,8 +577,13 @@ void CConnection::recalcMeshBuffer() {
   //If we have a texture we apply it
   if (!strcmp(m_pTexParams[1]->getTexture().c_str(),""))
     m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  else
-    m_pMeshBuffer[1]->getMaterial().setTexture(0,m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str()));
+  else {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
+    if (pTex)
+      m_pMeshBuffer[1]->getMaterial().setTexture(0,pTex);
+    else
+      m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
+  }
 }
 
 /**
@@ -793,7 +798,7 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
   if (g_pEmptyTex==NULL) {
     g_pEmptyTex=m_pDrv->getTexture("");
   }
-  
+
   //initialize the meshbuffer members and initialize the texture parameter objects
   for (u32 i=0; i<6; i++) {
     m_pMeshBuffer[i]=NULL;
