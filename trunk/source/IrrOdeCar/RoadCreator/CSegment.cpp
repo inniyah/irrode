@@ -186,13 +186,14 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
   }
 }
 
-void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bBasement) {
+void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert) {
   //Some locals for texture creation
   f32 fWidth =(vec[0]-vec[1]).getLength(),
       fHeight=m_fWallHeight,
       f=1.0f,fStart=0.0f;
 
-  core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
+  core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);;
+
   vNormal.normalize();
 
   f*=pTex->getScaleX();
