@@ -30,7 +30,7 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideo
   }
 
   //initialize the buffer and texture parameter members
-  for (u32 i=0; i<10; i++) {
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
     if (pInitParam!=NULL) pInitParam[i].copyTo(m_pTexParams[i]);
@@ -59,7 +59,7 @@ CSegment::CSegment(video::IVideoDriver *pDrv) {
   m_bLevelBase=true;
 
   //initialize the buffer and texture parameter members
-  for (u32 i=0; i<10; i++) {
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
   }
@@ -78,7 +78,7 @@ CSegment::~CSegment() {
     (*it)->objectDeleted(this);
   }
 
-  for (u32 i=0; i<10; i++) {
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
     if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
     delete m_pTexParams[i];
   }
@@ -186,14 +186,13 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
   }
 }
 
-void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert) {
+void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bBasement) {
   //Some locals for texture creation
   f32 fWidth =(vec[0]-vec[1]).getLength(),
       fHeight=m_fWallHeight,
       f=1.0f,fStart=0.0f;
 
-  core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);;
-
+  core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
   vNormal.normalize();
 
   f*=pTex->getScaleX();
@@ -256,7 +255,7 @@ void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pT
  */
 void CSegment::recalcMeshBuffer() {
   //delete the meshbuffers
-  for (u32 i=0; i<10; i++) if (m_pBuffer[i]!=NULL) { m_pBuffer[i]->drop(); m_pBuffer[i]=NULL; }
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) if (m_pBuffer[i]!=NULL) { m_pBuffer[i]->drop(); m_pBuffer[i]=NULL; }
 
   core::vector3df pos=m_vPosition,
                   calcLength=(m_fLength/2)*m_vDirection,
@@ -441,23 +440,31 @@ void CSegment::recalcMeshBuffer() {
     }
 
     if (m_bWalls[i]) {
-      m_pBuffer[i+6]=new scene::SMeshBuffer();
+      m_pBuffer[i+ 6]=new scene::SMeshBuffer();
+      m_pBuffer[i+10]=new scene::SMeshBuffer();
 
       fillVertexArrayWall(vWallIn,m_pTexParams[i+6],vVerts);
       m_pBuffer[i+6]->append(vVerts,4,iWallId1,6);
-
-      fillVertexArrayWall(vWallOut,m_pTexParams[i+6],vVerts);
-      m_pBuffer[i+6]->append(vVerts,4,iWallId2,6);
       m_pBuffer[i+6]->recalculateBoundingBox();
 
-      if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),""))
-        m_pBuffer[i+6]->getMaterial().setTexture(0,g_pEmptyTex);
+      fillVertexArrayWall(vWallOut,m_pTexParams[i+6],vVerts);
+      m_pBuffer[i+10]->append(vVerts,4,iWallId2,6);
+      m_pBuffer[i+10]->recalculateBoundingBox();
+
+      if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),"")) {
+        m_pBuffer[i+ 6]->getMaterial().setTexture(0,g_pEmptyTex);
+        m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
+      }
       else {
         video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str());
-        if (pTex)
-          m_pBuffer[i+6]->getMaterial().setTexture(0,pTex);
-        else
-          m_pBuffer[i+6]->getMaterial().setTexture(0,g_pEmptyTex);
+        if (pTex) {
+          m_pBuffer[i+ 6]->getMaterial().setTexture(0,pTex);
+          m_pBuffer[i+10]->getMaterial().setTexture(0,pTex);
+        }
+        else {
+          m_pBuffer[i+ 6]->getMaterial().setTexture(0,g_pEmptyTex);
+          m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
+        }
       }
     }
   }
@@ -467,11 +474,11 @@ void CSegment::recalcMeshBuffer() {
  * Render method. Just for the editor
  */
 void CSegment::render() {
-  //Render all 10 meshbuffers
-  for (u32 i=0; i<10; i++)
-    if (m_pBuffer[i]!=NULL) {
+  //Render all meshbuffers
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++)
+    if (m_pBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
       video::SMaterial cMat;
-
+      
       cMat.Lighting=false;
       cMat.setTexture(0,m_pBuffer[i]->getMaterial().getTexture(0));
 
@@ -570,5 +577,5 @@ CTextureParameters *CSegment::getTextureParameters(u32 i) {
 }
 
 scene::IMeshBuffer *CSegment::getMeshBuffer(u32 i) {
-  return i<10?m_pBuffer[i]:NULL;
+  return i<(u32)getNumberOfMeshBuffers()?m_pBuffer[i]:NULL;
 }

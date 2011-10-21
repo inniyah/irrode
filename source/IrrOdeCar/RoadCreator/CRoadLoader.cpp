@@ -405,8 +405,9 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::list<CSegment *>::Iterator sit;
   for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
     CSegment *pSeg=*sit;
+    pSeg->update();
     vCenterPos+=pSeg->getPosition();
-    for (u32 i=0; i<10; i++) {
+    for (u32 i=0; i<(u32)pSeg->getNumberOfMeshBuffers(); i++) {
       bool bDoIt=true;
       for (u32 iTex=0; iTex<pSeg->getTextureCount() && bDoIt; iTex++) {
         if (pSeg->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
@@ -432,12 +433,11 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   vCenterPos.Y=(f32)abs((s32)vCenterPos.Y);
   vCenterPos.Z=(f32)abs((s32)vCenterPos.Z);
 
-  printf("center pos: %.2f, %.2f, %.2f\n",vCenterPos.X,vCenterPos.Y,vCenterPos.Z);
-
   core::list<CConnection *>::Iterator cit;
   for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
     CConnection *pCon=*cit;
-    for (u32 i=0; i<6; i++) {
+    pCon->update();
+    for (u32 i=0; i<(u32)pCon->getNumberOfMeshBuffers(); i++) {
       bool bDoIt=true;
       for (u32 iTex=0; iTex<pCon->getTextureCount() && bDoIt; iTex++) {
         if (pCon->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
