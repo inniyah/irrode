@@ -59,7 +59,7 @@ class CConnection : public INotification, public IRoadPart {
     
     video::IVideoDriver *m_pDrv;    /**<! the Irrlicht video driver */
 
-    scene::IMeshBuffer *m_pMeshBuffer[6]; /**<! the mesh buffers of the connection */
+    scene::IMeshBuffer *m_pMeshBuffer[8]; /**<! the mesh buffers of the connection */
     
     /**
      * Init the Bezier helppoints
@@ -270,7 +270,7 @@ class CConnection : public INotification, public IRoadPart {
     f32 getWallHeight() { return m_fWallHeight; }
     
     virtual s32 getNumberOfMeshBuffers() {
-      return 6;
+      return 8;
     }
 };
 

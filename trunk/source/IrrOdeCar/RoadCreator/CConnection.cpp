@@ -192,9 +192,11 @@ void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex
 }
 
 void CConnection::addToBuffersWall(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, bool bRotate, bool bBasement, CTextureParameters *pTex) {
-  video::S3DVertex vt[4];                                   //the vertex array
-  core::vector3df norm=(v[0]-v[1]).crossProduct(v[0]-v[2]); //the normal
-  u16 idx[6];                                               //the index array
+  video::S3DVertex vt[4] ;                                     //the vertex array
+  core::vector3df norm=((v[0]-v[1]).crossProduct(v[0]-v[2]));  //the normal
+  u16 idx[6];                                                  //the index array
+
+  if (m_bFlipVertices) norm=-norm;
 
   core::vector2df cCoord[4];
 
@@ -268,7 +270,7 @@ void CConnection::addToBuffersWall(core::vector3df v[], core::array<video::S3DVe
  */
 void CConnection::recalcMeshBuffer() {
   //Delete all meshbuffers allocated previously
-  for (u32 i=0; i<6; i++)
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++)
     if (m_pMeshBuffer[i]!=NULL) {
       m_pMeshBuffer[i]->drop();
       m_pMeshBuffer[i]=NULL;
@@ -449,7 +451,7 @@ void CConnection::recalcMeshBuffer() {
 
   //now calculate the basement sides and walls
   for (u32 iNum=0; iNum<4; iNum++) {
-    if (iNum<2 || (iNum>1 && m_bWalls[iNum-2])) {
+    if (iNum<2 || (iNum>=2 && m_bWalls[iNum-2])) {
       core::array<core::vector3df> vWall;
       scene::IMeshBuffer *p=m_pMeshBuffer[0];
 
@@ -513,8 +515,9 @@ void CConnection::recalcMeshBuffer() {
       }
       else vWall.push_back(p->getPosition(iNum==2?p->getVertexCount()-2:p->getVertexCount()-1)+m_fWallHeight*m_pSegment2->getWallNormal());
 
-      core::array<video::S3DVertex> aToAdd;
-      core::array<u16> aIdxToAdd;
+      core::array<video::S3DVertex> aToAdd1,
+                                    aToAdd2;
+      core::array<u16> aIdxToAdd1,aIdxToAdd2;
       b=false;
 
       for (u32 i=0; i<vWall.size()-2; i+=2) {
@@ -526,7 +529,7 @@ void CConnection::recalcMeshBuffer() {
           vToAdd[2]=vWall[i+1];
           vToAdd[3]=vWall[i+3];
 
-          addToBuffersWall(vToAdd,aToAdd,aIdxToAdd,b,true,false,m_pTexParams[iNum+2]);
+          addToBuffersWall(vToAdd,aToAdd1,aIdxToAdd1,b,true,false,m_pTexParams[iNum+2]);
         }
 
         if (iNum==1 || iNum==2 || iNum==3) {
@@ -535,25 +538,44 @@ void CConnection::recalcMeshBuffer() {
           vToAdd[2]=vWall[i+2];
           vToAdd[3]=vWall[i+3];
 
-          addToBuffersWall(vToAdd,aToAdd,aIdxToAdd,b,false,false,m_pTexParams[iNum+2]);
+          addToBuffersWall(vToAdd,aToAdd2,aIdxToAdd2,b,false,false,m_pTexParams[iNum+2]);
         }
 
         b=!b;
       }
 
-      m_pMeshBuffer[iNum+2]=new scene::SMeshBuffer();
-      m_pMeshBuffer[iNum+2]->append(aToAdd.const_pointer(),aToAdd.size(),aIdxToAdd.const_pointer(),aIdxToAdd.size());
-      m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
-      m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
+      if (iNum==0 || iNum>1) {
+        m_pMeshBuffer[iNum+2]=new scene::SMeshBuffer();
+        m_pMeshBuffer[iNum+2]->append(aToAdd1.const_pointer(),aToAdd1.size(),aIdxToAdd1.const_pointer(),aIdxToAdd1.size());
+        m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
+        m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
+      }
+      else {
+        m_pMeshBuffer[iNum+2]=new scene::SMeshBuffer();
+        m_pMeshBuffer[iNum+2]->append(aToAdd2.const_pointer(),aToAdd2.size(),aIdxToAdd2.const_pointer(),aIdxToAdd2.size());
+        m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
+        m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
+      }
 
-      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),""))
+      m_pMeshBuffer[iNum+4]=new scene::SMeshBuffer();
+      m_pMeshBuffer[iNum+4]->append(aToAdd2.const_pointer(),aToAdd2.size(),aIdxToAdd2.const_pointer(),aIdxToAdd2.size());
+      m_pMeshBuffer[iNum+4]->recalculateBoundingBox();
+      m_cBox.addInternalBox(m_pMeshBuffer[iNum+4]->getBoundingBox());
+
+      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),"")) {
         m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
+        m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,g_pEmptyTex);
+      }
       else {
         video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str());
-        if (pTex)
+        if (pTex) {
           m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,pTex);
-        else
+          m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,pTex);
+        }
+        else {
           m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
+          m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,g_pEmptyTex);
+        }
       }
     }
   }
@@ -800,7 +822,7 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
   }
 
   //initialize the meshbuffer members and initialize the texture parameter objects
-  for (u32 i=0; i<6; i++) {
+  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
     m_pMeshBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
   }
@@ -927,8 +949,8 @@ void CConnection::render() {
   }
 
   //Render the meshbuffers
-  for (u32 i=0; i<6; i++)
-    if (m_pMeshBuffer[i]!=NULL) {
+  for (u32 i=0; i<8; i++)
+    if (m_pMeshBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
       video::SMaterial cMat;
       cMat.Lighting=false;
       //cMat.Wireframe=true;
@@ -1083,5 +1105,5 @@ CTextureParameters *CConnection::getTextureParameters(u32 i) {
 }
 
 scene::IMeshBuffer *CConnection::getMeshBuffer(u32 i) {
-  return i<6?m_pMeshBuffer[i]:NULL;
+  return i<(u32)getNumberOfMeshBuffers()?m_pMeshBuffer[i]:NULL;
 }
