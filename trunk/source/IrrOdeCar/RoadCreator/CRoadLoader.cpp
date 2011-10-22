@@ -23,7 +23,7 @@ bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMateria
 void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMeshBuffer *> &aBuffers) {
   bool bAdded=false;
 
-  for (u32 j=0; j<aBuffers.size(); j++) {
+  for (u32 j=0; j<aBuffers.size() && !bAdded; j++) {
     video::SMaterial mat1=p->getMaterial(),
                      mat2=aBuffers[j]->getMaterial();
 
@@ -31,6 +31,7 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
       scene::IMeshBuffer *pBuffer=aBuffers[j];
       pBuffer->append(p->getVertices(),p->getVertexCount(),p->getIndices(),p->getIndexCount());
       pBuffer->recalculateBoundingBox();
+      p->drop();
       bAdded=true;
     }
   }
@@ -51,6 +52,9 @@ CRoadLoader::CRoadLoader(IrrlichtDevice *pDevice) {
 }
 
 bool CRoadLoader::loadRoad(const core::stringc sName) {
+  m_lConnections.clear();
+  m_lSegments.clear();
+
   m_sCurrentRoad=sName;
 
   bool bRet=true;
@@ -399,6 +403,8 @@ void CRoadLoader::setCurrentRoadName(const core::stringc s) { m_sCurrentRoad=s; 
 scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::array<core::aabbox3df> aBoxes;
   core::array<scene::IMeshBuffer *> aBuffers;
+
+  aBuffers.clear();
 
   core::vector3df vCenterPos=core::vector3df(0.0f,0.0f,0.0f);
 
