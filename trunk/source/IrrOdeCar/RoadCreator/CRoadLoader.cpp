@@ -46,7 +46,7 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
 CRoadLoader::CRoadLoader(IrrlichtDevice *pDevice) {
   m_pDevice=pDevice;
   m_sCurrentRoad="";
-  m_pSurface=new CSurface(pDevice->getVideoDriver());
+  m_pSurface=new CSurface(pDevice);
   m_vOfffset=core::vector3df(0.0f,0.0f,0.0f);
   m_bShrinkNode=false;
 }
@@ -88,7 +88,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             if (iState==1) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
-              pSeg=new CSegment(m_pDevice->getVideoDriver());
+              pSeg=new CSegment(m_pDevice);
               m_lSegments.push_back(pSeg);
               pSeg->load(pAttr);
               pAttr->drop();
@@ -99,7 +99,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             if (iState==2) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
-              pCon=new CConnection(m_pDevice->getVideoDriver(),NULL);
+              pCon=new CConnection(m_pDevice,NULL);
               iConTex=0;
               pCon->load(pAttr);
 
