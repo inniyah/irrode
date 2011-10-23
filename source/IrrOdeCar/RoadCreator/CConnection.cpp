@@ -433,7 +433,7 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[0]->getBoundingBox());
 
   //If we have a texture we apply it
-  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),""))
+  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
     m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
@@ -562,7 +562,7 @@ void CConnection::recalcMeshBuffer() {
       m_pMeshBuffer[iNum+4]->recalculateBoundingBox();
       m_cBox.addInternalBox(m_pMeshBuffer[iNum+4]->getBoundingBox());
 
-      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),"")) {
+      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[iNum+2]->getTexture())) {
         m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
         m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,g_pEmptyTex);
       }
@@ -597,7 +597,7 @@ void CConnection::recalcMeshBuffer() {
   m_cBox.reset(m_pMeshBuffer[1]->getBoundingBox());
 
   //If we have a texture we apply it
-  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),""))
+  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[1]->getTexture()))
     m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
@@ -782,10 +782,14 @@ core::vector3df CConnection::getBezier3(core::vector3df p[], f32 fStep) {
  * Constructor
  * @param pDrv used Irrlicht videodriver
  */
-CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTexture) {
+CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTexture) {
   //initialize the segments
   m_pSegment1=NULL;
   m_pSegment2=NULL;
+
+  m_pDevice=pDevice;
+  m_pDrv=m_pDevice->getVideoDriver();
+  m_pFs=m_pDevice->getFileSystem();
 
   //initialize the segment names
   m_sSegment1="";
@@ -813,9 +817,6 @@ CConnection::CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTex
 
   //Default type= Bezier1
   m_eType=eBezier1;
-
-  //Store the driver for later use
-  m_pDrv=pDrv;
 
   if (g_pEmptyTex==NULL) {
     g_pEmptyTex=m_pDrv->getTexture("");

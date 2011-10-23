@@ -36,6 +36,8 @@ class CSegment : public IRoadPart {
                     m_vBaseNorm;      /**<! the basement normal */
 
 
+    IrrlichtDevice *m_pDevice;
+    io::IFileSystem *m_pFs;
     video::IVideoDriver *m_pDrv;    /**<! the videodriver */
     core::stringc m_sName;          /**<! name of the segment */
 
@@ -43,7 +45,7 @@ class CSegment : public IRoadPart {
 
     scene::IMeshBuffer *m_pBuffer[14];    /**<! meshbuffers of the segment */
     CTextureParameters *m_pTexParams[14]; /**<! texture parameters of the segment */
-    
+
     /**
      * This method recalculates the meshbuffers and notifies all registered listeners of the modification
      * @see CSegment::m_lNotify
@@ -56,7 +58,7 @@ class CSegment : public IRoadPart {
      * @see CSegment::setNormal
      */
     void attributeChanged();
-    
+
     /**
      * This method recalculates the segment's meshbuffers
      * @see CSegment::CSegment
@@ -65,7 +67,7 @@ class CSegment : public IRoadPart {
      * @see CSegment::update
      */
     virtual void recalcMeshBuffer();
-    
+
     /**
      * This method takes an array of vectors and converts them to vertices
      * @param vec the array of vectors
@@ -83,13 +85,13 @@ class CSegment : public IRoadPart {
      * @param pDrv the Irrlicht video driver
      * @param pInitParam the initial texture parameters
      */
-    CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv, CTextureParameters *pInitParam);
+    CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevice *pDevice, CTextureParameters *pInitParam);
     /**
      * The construtor. This one is used by the road loading routine
      * @param pDrv the Irrlicht video driver
      */
-    CSegment(video::IVideoDriver *pDrv);
-    
+    CSegment(IrrlichtDevice *pDevice);
+
     /**
      * The destructor
      */
@@ -106,10 +108,10 @@ class CSegment : public IRoadPart {
 
     void setLevelBase(bool b);  /**<! set the base level flag of the segment */
     bool getLevelBase();        /**<! get the base level flag of the segment */
-    
+
     void setNormalBase(bool b);
     bool getNormalBase();
-    
+
     const core::vector3df &getNormalBaseVector() { return m_vBaseNorm; }
 
     void setPosition (core::vector3df v); /**<! set the position of the segment */
@@ -137,19 +139,19 @@ class CSegment : public IRoadPart {
     void update();  /**<! update the meshbuffers */
 
     virtual CTextureParameters *getTextureParameters(u32 i);  /**<! get one of the texture parameter objects */
-    
+
     virtual u32 getTextureCount() { return 6; }
-    
+
     virtual scene::IMeshBuffer *getMeshBuffer(u32 i);   /**<! get one of the meshbuffers */
-    
+
     void setWallFlag(u32 idx, bool b) { if (idx<4) { m_bWalls[idx]=b; attributeChanged(); } }
     void setWallHeight(f32 f) { m_fWallHeight=f; attributeChanged(); }
-    
+
     bool getWallFlag(u32 idx) { return idx<4?m_bWalls[idx]:false; }
     f32 getWallHeight() { return m_fWallHeight; }
-    
+
     const core::vector3df &getWallNormal() { return m_vWallNorm; }
-    
+
     virtual s32 getNumberOfMeshBuffers() {
       return 14;
     }

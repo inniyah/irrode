@@ -12,7 +12,7 @@ static video::ITexture *g_pEmptyTex=NULL;
  * @param vPosition position of the segment
  * @param pDrv the Irrlicht video driver
  */
-CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideoDriver *pDrv, CTextureParameters *pInitParam) {
+CSegment::CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevice *pDevice, CTextureParameters *pInitParam) {
   //Default values: width: 10, length: 25, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
   m_fWidth=10.0f;
   m_fLength=25.0f;
@@ -20,10 +20,13 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideo
   m_vDirection=core::vector3df(0.0f,0.0f,1.0f);
   m_vNormal=core::vector3df(0.0f,1.0f,0.0f);
   m_sName=sName;
-  m_pDrv=pDrv;
   m_fBaseOffset=10.0f;
   m_bLevelBase=true;
   m_bNormalBase=false;
+
+  m_pDevice=pDevice;
+  m_pDrv=m_pDevice->getVideoDriver();
+  m_pFs=m_pDevice->getFileSystem();
 
   if (g_pEmptyTex==NULL) {
     g_pEmptyTex=m_pDrv->getTexture("");
@@ -46,7 +49,7 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, video::IVideo
  * The construtor. This one is used by the road loading routine
  * @param pDrv the Irrlicht video driver
  */
-CSegment::CSegment(video::IVideoDriver *pDrv) {
+CSegment::CSegment(IrrlichtDevice *pDevice) {
   //Default values: width: 10, length: 25, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
   m_fWidth=10.0f;
   m_fLength=25.0f;
@@ -54,7 +57,9 @@ CSegment::CSegment(video::IVideoDriver *pDrv) {
   m_vDirection=core::vector3df(0.0f,0.0f,1.0f);
   m_vNormal=core::vector3df(0.0f,1.0f,0.0f);
   m_sName="name";
-  m_pDrv=pDrv;
+  m_pDevice=pDevice;
+  m_pDrv=m_pDevice->getVideoDriver();
+  m_pFs=m_pDevice->getFileSystem();
   m_fBaseOffset=10.0f;
   m_bLevelBase=true;
 
@@ -277,7 +282,7 @@ void CSegment::recalcMeshBuffer() {
   m_pBuffer[0]->append(vVerts,4,iIdx,6);
   m_pBuffer[0]->recalculateBoundingBox();
 
-  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),""))
+  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
     m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
@@ -316,7 +321,7 @@ void CSegment::recalcMeshBuffer() {
   m_pBuffer[1]->append(vVerts,4,iBaseIdx,6);
   m_pBuffer[1]->recalculateBoundingBox();
 
-  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),""))
+  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[1]->getTexture()))
     m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
@@ -429,7 +434,7 @@ void CSegment::recalcMeshBuffer() {
     m_pBuffer[i+2]->append(vVerts,4,iSideIdx,6);
     m_pBuffer[i+2]->recalculateBoundingBox();
 
-    if (!strcmp(m_pTexParams[i+2]->getTexture().c_str(),""))
+    if (!strcmp(m_pTexParams[i+2]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[i+2]->getTexture()))
       m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
     else {
       video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str());
@@ -451,7 +456,7 @@ void CSegment::recalcMeshBuffer() {
       m_pBuffer[i+10]->append(vVerts,4,iWallId2,6);
       m_pBuffer[i+10]->recalculateBoundingBox();
 
-      if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),"")) {
+      if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[i+6]->getTexture())) {
         m_pBuffer[i+ 6]->getMaterial().setTexture(0,g_pEmptyTex);
         m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
       }
@@ -478,7 +483,7 @@ void CSegment::render() {
   for (s32 i=0; i<getNumberOfMeshBuffers(); i++)
     if (m_pBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
       video::SMaterial cMat;
-      
+
       cMat.Lighting=false;
       cMat.setTexture(0,m_pBuffer[i]->getMaterial().getTexture(0));
 

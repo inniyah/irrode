@@ -5,8 +5,10 @@ using namespace irr;
 
 static video::ITexture *g_pEmptyTex=NULL;
 
-CSurface::CSurface(video::IVideoDriver *pDrv) {
-  m_pDrv=pDrv;
+CSurface::CSurface(IrrlichtDevice *pDevice) {
+  m_pDevice=pDevice;
+  m_pDrv=m_pDevice->getVideoDriver();
+  m_pFs=m_pDevice->getFileSystem();
 
   if (g_pEmptyTex==NULL) {
     g_pEmptyTex=m_pDrv->getTexture("");
@@ -64,7 +66,7 @@ void CSurface::recalcMeshBuffer() {
   m_pBuffers[0]=new scene::SMeshBuffer();
   m_pBuffers[0]->append(cVert,4,idx,6);
 
-  if (!strcmp(m_pParams[0]->getTexture().c_str(),""))
+  if (!strcmp(m_pParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pParams[0]->getTexture()))
     m_pBuffers[0]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
     video::ITexture *pTex=m_pDrv->getTexture(m_pParams[0]->getTexture().c_str());
@@ -125,7 +127,7 @@ void CSurface::recalcMeshBuffer() {
     cVert[3].Normal=core::vector3df(-1.0f,0.0f,0.f);
 
     m_pBuffers[1]->append(cVert,4,fenceIdx,6);
-    if (!strcmp(m_pParams[1]->getTexture().c_str(),""))
+    if (!strcmp(m_pParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pParams[1]->getTexture()))
       m_pBuffers[1]->getMaterial().setTexture(0,g_pEmptyTex);
     else {
       video::ITexture *pTex=m_pDrv->getTexture(m_pParams[1]->getTexture().c_str());

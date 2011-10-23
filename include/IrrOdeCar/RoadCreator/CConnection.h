@@ -30,7 +30,7 @@ class CConnection : public INotification, public IRoadPart {
   protected:
     CSegment *m_pSegment1,  /**<! the first connected segment */
              *m_pSegment2;  /**<! the second connected segment */
-    
+
     core::stringc m_sSegment1,  /**<! name of the first connected segment, mainly for saving */
                   m_sSegment2;  /**<! name of the second connected segment, mainly for saving */
 
@@ -52,15 +52,17 @@ class CConnection : public INotification, public IRoadPart {
          m_bWalls[2];       /**<! add wall to side? */
 
     CTextureParameters *m_pTexParams[6];  /**<! the texture parameters for the four available sides */
-    
+
     core::vector3df m_vHelpPoints[4], /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
                     m_vDraw[8];
     core::aabbox3df m_cBox;
-    
+
+    IrrlichtDevice *m_pDevice;
     video::IVideoDriver *m_pDrv;    /**<! the Irrlicht video driver */
+    io::IFileSystem *m_pFs;
 
     scene::IMeshBuffer *m_pMeshBuffer[8]; /**<! the mesh buffers of the connection */
-    
+
     /**
      * Init the Bezier helppoints
      * @see CConnection::setSegment1
@@ -70,13 +72,13 @@ class CConnection : public INotification, public IRoadPart {
      * @see CConnection::setType
      */
     void calculateHelpPoints();
-    
+
     /**
      * Recalculates the meshbuffer after some attribute was changed
      * @see CConnection::update
      */
     virtual void recalcMeshBuffer();
-    
+
     /**
      * Get the next point using the Bezier1 algorithm
      * @param p array with the two points for the algorithm
@@ -86,7 +88,7 @@ class CConnection : public INotification, public IRoadPart {
      * @see render
      */
     core::vector3df getBezier1(core::vector3df p[], f32 fStep);
-    
+
     /**
      * Get the next point using the Bezier2 algorithm
      * @param p array with the three points (start, help, end) for the algorithm
@@ -96,7 +98,7 @@ class CConnection : public INotification, public IRoadPart {
      * @see render
      */
     core::vector3df getBezier2(core::vector3df p[], f32 fStep);
-    
+
     /**
      * Get the next point using the Bezier3 algorithm
      * @param p array with the four points (start, help1, help2, end) for the algorithm
@@ -106,7 +108,7 @@ class CConnection : public INotification, public IRoadPart {
      * @see render
      */
     core::vector3df getBezier3(core::vector3df p[], f32 fStep);
-    
+
     /**
      * This method creates vertices out of the four vectors in the first argument
      * and adds those to the array and their indices to the index array
@@ -118,9 +120,9 @@ class CConnection : public INotification, public IRoadPart {
      * @see CConnection::recalcMeshBuffer
      */
     void addToBuffers(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, u32 iIdx);
-    
+
     void addToBuffersWall(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, bool bRotate, bool bBasement, CTextureParameters *pTex);
-    
+
     /**
      * Using this method you can add a single vertex to a temporarily used array of vertices. This array
      * is searched to see if the position of any vertex inside mathes the new vertex, and if this is true
@@ -138,8 +140,8 @@ class CConnection : public INotification, public IRoadPart {
      * @param pDrv used Irrlicht videodriver
      * @param pInitTexture initial texture paramters
      */
-    CConnection(video::IVideoDriver *pDrv, CTextureParameters *pInitTexture);
-    
+    CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTexture);
+
     /**
      * The destructor
      */
@@ -157,7 +159,7 @@ class CConnection : public INotification, public IRoadPart {
     void setType(eConnectionType eType);  /**<! set the type of connection (Bezier1, Bezier2, Bezier3 */
 
     void setNumberOfSteps(u32 i); /**< Set the number of steps used for this connection */
-    
+
     /**
      * Modify a helppoint
      * @param i index of the helppoint (0..3)
@@ -178,7 +180,7 @@ class CConnection : public INotification, public IRoadPart {
     eConnectionType getConnectionType();  /**<! get the connection type */
 
     u32 getNumberOfSteps(); /**<! get the number of steps */
-    
+
     /**
      * Get a helppoint
      * @param i the index of the helppoint (0..3)
@@ -201,7 +203,7 @@ class CConnection : public INotification, public IRoadPart {
 
     const core::stringc &getSegment1Name(); /**<! get the name of the first segment */
     const core::stringc &getSegment2Name(); /**<! get the name of the second segment */
-    
+
     /**
      * Callback method that is called when an attribute from one of the connected
      * segments has changed
@@ -211,7 +213,7 @@ class CConnection : public INotification, public IRoadPart {
      * @see CSegment::attributeChanged
      */
     virtual void attributesChanged(CSegment *p);
-    
+
     /**
      * Callback method that is called when one of the connected
      * segments is deleted
@@ -230,29 +232,29 @@ class CConnection : public INotification, public IRoadPart {
      * @see CRunner::loadRoad
      */
     virtual void objectDeleted(CSegment *p);
-    
+
     /**
      * This method is called when something changed. It triggers a recalculation of the meshbuffers
      * @see CConnection::recalcMeshBuffer
      */
     void update();
-    
+
     /**
      * Get one of the texture parameters structures
      * @param i the index of the structure (0..3)
      * @return the structur
      */
     virtual CTextureParameters *getTextureParameters(u32 i);
-    
+
     virtual u32 getTextureCount() { return 4; }
-    
+
     /**
      * Get one of the meshbuffers
      * @param i the index of the meshbuffer (0..3)
      * @return the meshbuffer
      */
     virtual scene::IMeshBuffer *getMeshBuffer(u32 i);
-    
+
     void setHpOffset(u32 iHp, f32 fOff) {
       if (iHp<4) {
         m_fHpOff[iHp]=fOff;
@@ -260,15 +262,15 @@ class CConnection : public INotification, public IRoadPart {
         update();
       }
     }
-    
+
     f32 getHpOffset(u32 iHp) { return iHp<4?m_fHpOff[iHp]:0.0f; }
-    
+
     void setWallFlag(u32 iIdx, bool b) { if (iIdx<2) { m_bWalls[iIdx]=b; update(); } }
     void setWallHeight(f32 f) { m_fWallHeight=f; update(); }
-    
+
     bool getWallFlag(u32 idx) { return idx<2?m_bWalls[idx]:false; }
     f32 getWallHeight() { return m_fWallHeight; }
-    
+
     virtual s32 getNumberOfMeshBuffers() {
       return 8;
     }
