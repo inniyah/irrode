@@ -8,6 +8,8 @@
 
 using namespace irr;
 
+bool g_bTrace=false;
+
 bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMaterial &m2) {
   #ifdef _IRREDIT_PLUGIN
     core::stringc s1=m1.getTexture(0)->getName(),
@@ -16,7 +18,6 @@ bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMateria
     core::stringc s1=m1.getTexture(0)->getName().getPath(),
                   s2=m2.getTexture(0)->getName().getPath();
   #endif
-
   return s1==s2;
 }
 
@@ -24,11 +25,12 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
   bool bAdded=false;
 
   for (u32 j=0; j<aBuffers.size() && !bAdded; j++) {
+    scene::IMeshBuffer *pBuffer=aBuffers[j];
+
     video::SMaterial mat1=p->getMaterial(),
-                     mat2=aBuffers[j]->getMaterial();
+                     mat2=pBuffer->getMaterial();
 
     if (sameMaterial(mat1,mat2)) {
-      scene::IMeshBuffer *pBuffer=aBuffers[j];
       pBuffer->append(p->getVertices(),p->getVertexCount(),p->getIndices(),p->getIndexCount());
       pBuffer->recalculateBoundingBox();
       p->drop();
@@ -59,7 +61,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
   bool bRet=true;
   io::IReadFile *pFile=m_pDevice->getFileSystem()->createAndOpenFile(sName.c_str());
-
+  printf("==> %s\n",sName.subString(sName.size()-11,11).c_str());
   if (pFile) {
     io::IXMLReader *pReader=m_pDevice->getFileSystem()->createXMLReader(pFile);
     if (pReader) {
@@ -89,6 +91,9 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               pSeg=new CSegment(m_pDevice);
+              pSeg->m_bTrace=sName.subString(sName.size()-11,11)=="road_c.road";
+              g_bTrace=pSeg->m_bTrace;
+              printf("bTrace: %s\n",pSeg->m_bTrace?"true":"false");
               m_lSegments.push_back(pSeg);
               pSeg->load(pAttr);
               pAttr->drop();
@@ -100,6 +105,8 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               pCon=new CConnection(m_pDevice,NULL);
+              pCon->m_bTrace=sName.subString(sName.size()-11,11)=="road_c.road";
+              g_bTrace=pCon->m_bTrace;
               iConTex=0;
               pCon->load(pAttr);
 
@@ -116,22 +123,21 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load texture parameters of a segment
             if (iState==4) {
-              if (pSeg!=NULL && iSegTex<10) {
+              if (g_bTrace) printf("******** %i\n",iSegTex);
+              if (pSeg!=NULL && iSegTex<14) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pSeg->getTextureParameters(iSegTex)->load(pAttr);
-                pSeg->update();
                 pAttr->drop();
               }
             }
 
             //Load texture parameters of a connection
             if (iState==5) {
-              if (pCon!=NULL && iConTex<6) {
+              if (pCon!=NULL && iConTex<10) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pCon->getTextureParameters(iConTex)->load(pAttr);
-                pCon->update();
                 pAttr->drop();
               }
             }
