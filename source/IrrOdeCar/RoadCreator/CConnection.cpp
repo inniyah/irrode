@@ -436,6 +436,7 @@ void CConnection::recalcMeshBuffer() {
   if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
     m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
+    //if (m_bTrace) printf("0: %s\n",m_pTexParams[0]->getTexture().c_str());
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
     if (pTex)
       m_pMeshBuffer[0]->getMaterial().setTexture(0,pTex);

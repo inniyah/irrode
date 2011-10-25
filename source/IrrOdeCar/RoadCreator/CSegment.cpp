@@ -260,6 +260,9 @@ void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pT
  */
 void CSegment::recalcMeshBuffer() {
   //delete the meshbuffers
+
+  m_bTrace&=m_sName=="Segment_6";
+  if (m_bTrace) printf("--> %s\n",m_sName.c_str());
   for (s32 i=0; i<getNumberOfMeshBuffers(); i++) if (m_pBuffer[i]!=NULL) { m_pBuffer[i]->drop(); m_pBuffer[i]=NULL; }
 
   core::vector3df pos=m_vPosition,
@@ -285,6 +288,7 @@ void CSegment::recalcMeshBuffer() {
   if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
     m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
+    if (m_bTrace) printf("==> 0: \"%s\"\n",m_pTexParams[0]->getTexture().c_str());
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
     if (pTex)
       m_pBuffer[0]->getMaterial().setTexture(0,pTex);
@@ -324,6 +328,7 @@ void CSegment::recalcMeshBuffer() {
   if (!strcmp(m_pTexParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[1]->getTexture()))
     m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
   else {
+    if (m_bTrace) printf("==> 1: \"%s\"\n",m_pTexParams[1]->getTexture().c_str());
     video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
     if (pTex)
       m_pBuffer[1]->getMaterial().setTexture(0,pTex);
@@ -437,6 +442,7 @@ void CSegment::recalcMeshBuffer() {
     if (!strcmp(m_pTexParams[i+2]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[i+2]->getTexture()))
       m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
     else {
+      if (m_bTrace) printf("==> %i: \"%s\"\n",i+2,m_pTexParams[i+2]->getTexture().c_str());
       video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str());
       if (pTex)
         m_pBuffer[i+2]->getMaterial().setTexture(0,pTex);
@@ -461,6 +467,7 @@ void CSegment::recalcMeshBuffer() {
         m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
       }
       else {
+        if (m_bTrace) printf("==> %i: \"%s\"\n",i+6,m_pTexParams[i+6]->getTexture().c_str());
         video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str());
         if (pTex) {
           m_pBuffer[i+ 6]->getMaterial().setTexture(0,pTex);
