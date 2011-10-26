@@ -12,11 +12,8 @@ class IRoadPart {
     s32 m_iMeshBufferToDraw;
 
   public:
-    bool m_bTrace;
-
     IRoadPart() {
       m_iMeshBufferToDraw=-1;
-      m_bTrace=false;
     }
 
     virtual void recalcMeshBuffer()=0;
