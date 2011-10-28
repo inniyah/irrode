@@ -4,6 +4,7 @@
   #include <CCockpitCar.h>
   #include <math.h>
   #include <irrklang.h>
+  #include <CAdvancedParticleSystemNode.h>
 
   #include <irrCC.h>
 
@@ -43,6 +44,9 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("axis_RL=%i\n",(int)m_pAxesRear[0]);
     printf("axis_RR=%i\n",(int)m_pAxesRear[1]);
 
+    m_pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_1",m_pCarBody));
+    m_pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_2",m_pCarBody));
+
     //get the two motors that are attached to the rear wheels
     /*findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
 
@@ -63,6 +67,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
     printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
     printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
+    printf("**** smoke generators: %i, %i\n",(int)m_pSmoke[0],(int)m_pSmoke[1]);
 
     aNodes.clear();
     //get the two servos that are attached to the front wheels
@@ -374,6 +379,22 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[eCarDifferential],0.0f);
         m_bDifferential=!m_bDifferential;
         m_pCockpit->setDifferentialEnabled(m_bDifferential);
+      }
+    }
+
+    if (m_pSmoke[0]!=NULL && m_pSmoke[1]!=NULL) {
+      u32 iMin=(u32)(-m_fRpm*3.0f),
+          iMax=(u32)(-m_fRpm*5.0f);
+
+      if (iMin<25) iMin=25;
+      if (iMax<50) iMax=50;
+
+      if (iMin>450) iMin=450;
+      if (iMax>500) iMax=500;
+
+      for (u32 i=0; i<2; i++) {
+        m_pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);
+        m_pSmoke[i]->getEmitter()->setMaxParticlesPerSecond(iMax);
       }
     }
 
