@@ -12,6 +12,7 @@ namespace irrklang {
 
 class CIrrCC;
 class CCockpitCar;
+class CAdvancedParticleSystemNode;
 
 using namespace irr;
 
@@ -49,6 +50,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
 
     gui::IGUITab *m_pTab;
+
+    CAdvancedParticleSystemNode *m_pSmoke[2];
 
     ode::CIrrOdeMotor *m_pMotor[2],  /*!< the motors attached to the rear wheels */
                       *m_pBrkFr[2],  /*!< front wheel brakes */
