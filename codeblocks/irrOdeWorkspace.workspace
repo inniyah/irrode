@@ -9,11 +9,13 @@
 		</Project>
 		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
+			<Depends filename="../../bbsandbox/particle_clone/project/libAdvancedParticle.cbp" />
 		</Project>
 		<Project filename="libIrrOde.cbp" />
 		<Project filename="IrrOdeRePlayer.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="RePLayerPlugin.cbp" />
+		<Project filename="../../bbsandbox/particle_clone/project/libAdvancedParticle.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
