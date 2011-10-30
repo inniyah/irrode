@@ -5,8 +5,9 @@
   #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
   #include <irrKlang.h>
+  #include <CRearView.h>
 
-CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pSndEngine) {
+CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView,pSndEngine) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
@@ -149,6 +150,14 @@ void CHeli::odeStep(u32 iStep) {
       m_pCockpit->update(false);
       m_pTab->setVisible(true);
     }
+
+    core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
+                    cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(core::vector3df(1.0f,1.35f,2.5f)),
+                    cTgt=cPos+cRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.0f)),
+                    cUp=cRot.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
+
+    m_pRView->setCameraParameters(cPos,cTgt,cUp);
+    m_pRView->update(true);
   }
 
   if (m_pSndEngine!=NULL && m_pSound!=NULL) {

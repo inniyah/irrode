@@ -4,9 +4,10 @@
   #include <irrCC.h>
   #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
+  #include <CRearView.h>
   #include <irrklang.h>
 
-CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl,pSndEngine) {
+CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView,irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl,pSndEngine) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_pSound=NULL;
@@ -79,6 +80,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     else printf("no checkpoints for helicopter found!\n");
     m_fApDist=0.0f;
     m_pCockpit=pCockpit;
+    m_pRView=pRView;
   }
 
   for (u32 i=0; i<0xFF; i++) m_aCtrlBuffer[i]=0.0f;

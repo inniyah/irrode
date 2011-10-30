@@ -33,13 +33,14 @@ class CTargetSelector;
 class CCockpitPlane;
 class CProjectile;
 class CAutoPilot;
+class CRearView;
 
 class CHeli : public CAeroVehicle {
   protected:
     bool m_bLeft;
 
   public:
-    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);
+    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
     virtual ~CHeli();
 
     virtual u32 update();

@@ -8,10 +8,11 @@
   #include <CCockpitPlane.h>
   #include <irrlicht.h>
   #include <irrKlang.h>
+  #include <CRearView.h>
 
 using namespace irr;
 
-CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pSndEngine) {
+CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView,pSndEngine) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -198,6 +199,14 @@ void CPlane::odeStep(u32 iStep) {
       m_pCockpit->update(true);
       m_pTab->setVisible(true);
     }
+
+    core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
+                    cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(core::vector3df(1.0f,1.35f,2.5f)),
+                    cTgt=cPos+cRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.0f)),
+                    cUp=cRot.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
+
+    m_pRView->setCameraParameters(cPos,cTgt,cUp);
+    m_pRView->update(true);
   }
 
   if (m_bRudderChanged) {

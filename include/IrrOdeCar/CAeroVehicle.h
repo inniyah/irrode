@@ -11,6 +11,7 @@ namespace irrklang {
 
 using namespace irr;
 
+class CRearView;
 class CAutoPilot;
 class CCockpitPlane;
 class CTargetSelector;
@@ -64,6 +65,8 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
          m_bThreeWheeler,
          m_bRudderChanged;
 
+    CRearView *m_pRView;
+
     IGUIStaticText *m_pInfo,
                    *m_pApInfo;
     IGUITab *m_pTab;
@@ -92,7 +95,7 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     irrklang::ISound *m_pSound;
 
   public:
-    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, irrklang::ISoundEngine *pSndEngine);
+    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
     virtual ~CAeroVehicle();
 
     virtual void activate();

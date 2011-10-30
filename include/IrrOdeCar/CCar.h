@@ -11,6 +11,7 @@ namespace irrklang {
 };
 
 class CIrrCC;
+class CRearView;
 class CCockpitCar;
 class CAdvancedParticleSystemNode;
 
@@ -65,6 +66,7 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
     CCockpitCar *m_pCockpit;
+    CRearView *m_pRView;
 
     irrklang::ISound *m_pSound;
 
@@ -76,7 +78,7 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     core::vector3df m_vOldSpeed;
 
   public:
-    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit, irrklang::ISoundEngine *pSndEngine);    /*!< the car's constructor */
+    CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */
