@@ -5,6 +5,7 @@
   #include <math.h>
   #include <irrklang.h>
   #include <CAdvancedParticleSystemNode.h>
+  #include <CRearView.h>
 
   #include <irrCC.h>
 
@@ -22,7 +23,7 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl,pSndEngine) {
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl,pSndEngine) {
   //get the car body
   m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
@@ -47,13 +48,6 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_1",m_pCarBody));
     m_pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_2",m_pCarBody));
 
-    //get the two motors that are attached to the rear wheels
-    /*findNodesOfType(m_pCarBody,(ESCENE_NODE_TYPE)irr::ode::IRR_ODE_MOTOR_ID,aNodes);
-
-    if (aNodes.size()>=2) {
-      m_pMotor[0]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[0]);
-      m_pMotor[1]=dynamic_cast<ode::CIrrOdeMotor *>(aNodes[1]);
-    }*/
     for (u32 i=0; i<2; i++) {
       c8 s[0xFF];
       sprintf(s,"sc_motor%i",i+1);
@@ -103,6 +97,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     //we are an IrrOde event listener
     ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     m_pCockpit=pCockpit;
+    m_pRView=pRView;
 
     m_bInternal=false;
     m_bDifferential=true;
@@ -193,8 +188,8 @@ u32 CCar::update() {
     core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
                     lookUp=core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
 
-    pos=rot.rotationToDirection(vector3df(0,1.35,0)),
-    up =rot.rotationToDirection(vector3df(0,1,0));
+    pos=rot.rotationToDirection(vector3df(0.0f,1.35f,0.0f)),
+    up =rot.rotationToDirection(vector3df(0.0f, 1.0f,0.0f));
     tgt=rot.rotationToDirection(vector3df(lookAt.Y,1.1+lookUp.Y,lookAt.X));
   }
   else {
@@ -311,8 +306,8 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(eCarBrake)!=0.0f) {
         for (u32 i=0; i<2; i++) {
-          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(350.0f);
-          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(150.0f);
+          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(m_pController->get(eCarBrake)*350.0f);
+          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(m_pController->get(eCarBrake)*150.0f);
         }
       }
 
@@ -336,6 +331,14 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       m_pTab->setVisible(false);
       m_pCockpit->update(false);
       m_pTab->setVisible(true);
+
+      core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
+                      cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(core::vector3df(1.0f,1.75f,0.0f)),
+                      cTgt=cPos+cRot.rotationToDirection(core::vector3df(1.0f,0.0f,0.0f)),
+                      cUp=cRot.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
+
+      m_pRView->setCameraParameters(cPos,cTgt,cUp);
+      m_pRView->update(true);
 
       if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
         m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
@@ -389,8 +392,8 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       if (iMin<25) iMin=25;
       if (iMax<50) iMax=50;
 
-      if (iMin>450) iMin=450;
-      if (iMax>500) iMax=500;
+      if (iMin>450) iMin=750;
+      if (iMax>500) iMax=750;
 
       for (u32 i=0; i<2; i++) {
         m_pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);

@@ -3,6 +3,7 @@
   #include <CSettings.h>
   #include <CAdvancedParticleSystemNode.h>
   #include <irrKlang.h>
+  #include <CRearView.h>
 
   #include "CCar.h"
   #include "CTank.h"
@@ -485,10 +486,12 @@ int main(int argc, char** argv) {
 
   list<ISceneNode *>::Iterator it;
 
+  scene::ICameraSceneNode *pRearCam=smgr->addCameraSceneNode();
   CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
+  CRearView *pRearView=new CRearView(device,"rearview.jpg",pRearCam);
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-    CPlane *p=new CPlane(device,*it,pController,pCockpit,pSndEngine);
+    CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -497,7 +500,7 @@ int main(int argc, char** argv) {
   CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
 
   for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController,pCarCockpit,pSndEngine);
+    CCar *p=new CCar(device,*it,pController,pCarCockpit,pRearView,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -511,7 +514,7 @@ int main(int argc, char** argv) {
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-    CHeli *p=new CHeli(device,*it,pController,pCockpit,pSndEngine);
+    CHeli *p=new CHeli(device,*it,pController,pCockpit,pRearView,pSndEngine);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
