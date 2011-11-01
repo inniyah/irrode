@@ -1,5 +1,5 @@
 # Exported from Wings 3D 1.2
-newmtl aim_1
+newmtl aim
 Ns 100.0
 d 1.0
 illum 2
@@ -17,9 +17,38 @@ Kd 1.0 1.0 1.0
 Ka 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
 Ke 0.0 0.0 0.0
-map_Kd cylinder1_auv3.jpg
+map_Kd p51.jpg
 
-newmtl instruments
+newmtl cockpit
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+map_Kd cockpit.jpg
+
+newmtl default
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+
+newmtl instr2
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+map_Kd instruments1.jpg
+
+newmtl z_instr
 Ns 100.0
 d 1.0
 illum 2
@@ -28,64 +57,4 @@ Ka 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
 Ke 0.0 0.0 0.0
 map_Kd instruments.jpg
-
-newmtl instruments_2
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd instruments_2.jpg
-
-newmtl pitch
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd cube2_auv3.jpg
-
-newmtl windscreen
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd windscreen_3.jpg
-
-newmtl windscreen_2
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd windscreen_2.jpg
-
-newmtl wings
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd cube4_auv3.jpg
-
-newmtl z1-internal
-Ns 100.0
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 1.0 1.0 1.0
-Ks 1.0 1.0 1.0
-Ke 0.0 0.0 0.0
-map_Kd z1-internal.jpg
 
