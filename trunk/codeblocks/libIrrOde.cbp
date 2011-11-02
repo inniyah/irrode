@@ -121,7 +121,7 @@
 		<Unit filename="..\include\IrrOde\joints\CIrrOdeJointFixed.h" />
 		<Unit filename="..\include\IrrOde\joints\CIrrOdeJointHinge.h" />
 		<Unit filename="..\include\IrrOde\joints\CIrrOdeJointHinge2.h" />
-		<Unit filename="..\include\IrrOde\joints\CIrrOdeJointPiston.h" />
+		<Unit filename="..\include\IrrOde\joints\CIrrOdeJointSlider.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeAeroDrag.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeImpulseMotor.h" />
 		<Unit filename="..\include\IrrOde\motors\CIrrOdeMotor.h" />

@@ -287,7 +287,7 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
         for (u32 i=0; i<2; i++) {
           m_pMotor[i]->setVelocity(-250.0*fForeward);
-          m_pMotor[i]->setForce(bBoost?fFact[i]*55*fForce:fFact[i]*30*fForce);
+          m_pMotor[i]->setForce(bBoost?fFact[i]*60*fForce:fFact[i]*40*fForce);
           m_iThrottle=-1;
         }
       }
@@ -386,6 +386,9 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
     }
 
     if (m_pSmoke[0]!=NULL && m_pSmoke[1]!=NULL) {
+      m_pSmoke[0]->setIsActive(m_bBoost);
+      m_pSmoke[1]->setIsActive(m_bBoost);
+
       u32 iMin=(u32)(-m_fRpm*3.0f),
           iMax=(u32)(-m_fRpm*5.0f);
 

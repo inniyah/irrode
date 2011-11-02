@@ -15,6 +15,7 @@ CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pBody1=NULL;
   m_pBody2=NULL;
   m_bUpdateVariables=true;
+  m_bSerializeEvents=true;
 
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
 
@@ -136,6 +137,7 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
   out->addBool("updateVariables",m_bUpdateVariables);
+  out->addBool("serializeEvents",m_bSerializeEvents);
 
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {
@@ -157,6 +159,11 @@ void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
     m_bUpdateVariables=in->getAttributeAsBool("updateVariables");
   else
     m_bUpdateVariables=true;
+
+  if (in->existsAttribute("serializeEvents"))
+    m_bSerializeEvents=in->getAttributeAsBool("serializeEvents");
+  else
+    m_bSerializeEvents=true;
 
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {
