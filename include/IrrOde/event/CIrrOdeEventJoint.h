@@ -22,11 +22,14 @@ namespace irr {
         u16 m_eEventJointType;
         s32 m_iJointID;
 
+        bool m_bSerialize;
+
       public:
         CIrrOdeEventJoint() {
           m_pJoint=NULL;
           m_iJointID=-1;
           m_eEventJointType=eIrrOdeEventJointUnknown;
+          m_bSerialize=true;
         }
 
         CIrrOdeEventJoint(u16 eEventJointType, CIrrOdeJoint *pJoint) : IIrrOdeEvent() {
@@ -34,6 +37,7 @@ namespace irr {
           m_pJoint=pJoint;
           m_iJointID=m_pJoint->getID();
           m_pToCopy=NULL;
+          m_bSerialize=pJoint->doesSerializeEvents();
         }
 
         CIrrOdeEventJoint(IIrrOdeEvent *pIn) {

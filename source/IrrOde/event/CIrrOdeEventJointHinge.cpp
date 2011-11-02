@@ -37,6 +37,8 @@ namespace irr {
     }
 
     CSerializer *CIrrOdeEventJointHinge::serialize() {
+      if (!m_bSerialize) return NULL;
+
       if (m_pSerializer==NULL) {
         CIrrOdeEventJoint::serialize();
         if (m_pSerializer!=NULL) {

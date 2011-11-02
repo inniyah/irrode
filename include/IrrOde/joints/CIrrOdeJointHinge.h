@@ -75,6 +75,8 @@ class CIrrOdeJointHinge : public CIrrOdeJoint {
      * @return "true" if the listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
+
+    bool serializeEvents() { return m_bSerializeEvents; }
 };
 
 } //namespace ode
