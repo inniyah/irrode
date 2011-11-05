@@ -205,8 +205,10 @@ void CPlane::odeStep(u32 iStep) {
                     cTgt=cPos+cRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.0f)),
                     cUp=cRot.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
 
-    m_pRView->setCameraParameters(cPos,cTgt,cUp);
-    m_pRView->update(true);
+    if (m_pRView) {
+      m_pRView->setCameraParameters(cPos,cTgt,cUp);
+      m_pRView->update(true);
+    }
   }
 
   if (m_bRudderChanged) {

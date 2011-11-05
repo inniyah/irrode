@@ -373,6 +373,9 @@ int main(int argc, char** argv) {
 
   printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lHelis.size(),lTanks.size());
 
+  bool bRearCam=pSettings->isActive(6);
+  printf("bRearCam=%s\n",bRearCam?"true":"false");
+
   if (!pSettings->isActive(0)) removeFromScene("roads"       ,smgr);
   if (!pSettings->isActive(1)) removeFromScene("bumps"       ,smgr);
   if (!pSettings->isActive(2)) removeFromScene("targets"     ,smgr);
@@ -486,9 +489,11 @@ int main(int argc, char** argv) {
 
   list<ISceneNode *>::Iterator it;
 
-  scene::ICameraSceneNode *pRearCam=smgr->addCameraSceneNode();
+  CRearView *pRearView=NULL;
+
+  smgr->addCameraSceneNode();
   CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
-  CRearView *pRearView=new CRearView(device,"rearview.jpg",pRearCam);
+  if (bRearCam) pRearView=new CRearView(device,"rearview.jpg",smgr->addCameraSceneNode());
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView,pSndEngine);
