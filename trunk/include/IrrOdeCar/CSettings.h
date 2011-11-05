@@ -39,7 +39,7 @@ class CSettings : public IEventReceiver {
     core::array<gui::IGUICheckBox *> m_aActiveBodies;
     core::array<gui::IGUIComboBox *> m_aBodyCount;
 
-    bool m_aAct[6];
+    bool m_aAct[7];
     u32 m_iCnt[4];
 
     gui::IGUIButton *m_pOk,            /**< the "OK" button */
