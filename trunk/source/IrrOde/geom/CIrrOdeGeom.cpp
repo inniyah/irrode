@@ -203,6 +203,10 @@ void CIrrOdeGeom::setSurfaceParameterName(u32 iIdx, const c8 *s) {
   m_aParamNames[iIdx]=s;
 }
 
+void CIrrOdeGeom::setSurfaceParameter(u32 iIdx, CIrrOdeSurfaceParameters *p) {
+  if (iIdx<m_aParams.size() && p!=NULL) m_aParams[iIdx]=p;
+}
+
 void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeSceneNode::copyParams(pDest);
   pDest->setName(getName());

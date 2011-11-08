@@ -45,7 +45,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
          m_bDifferential;  /*!< differential gear enabled? */
     f32 m_fActSteer,    /*!< the actual steering (-45.0, 0, +45.0) */
         m_fCamAngleH,   /*!< horizontal angle of camera */
-        m_fCamAngleV;   /*!< vertical angle of camera */
+        m_fCamAngleV,   /*!< vertical angle of camera */
+        m_fOldVel;      /*!< old velocity */
     s32 m_iThrottle;    /*!< position of the throttle */
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
@@ -54,14 +55,15 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     CAdvancedParticleSystemNode *m_pSmoke[2];
 
-    ode::CIrrOdeMotor *m_pMotor[2],  /*!< the motors attached to the rear wheels */
-                      *m_pBrkFr[2],  /*!< front wheel brakes */
-                      *m_pBrkRe[2];  /*!< rear wheel brakes */
-    ode::CIrrOdeServo *m_pServo[2];  /*!< the servos attached to the front wheels */
-    ode::CIrrOdeBody *m_pCarBody;    /*!< the car's body */
-
-    ode::CIrrOdeJointHinge2 *m_pAxesFront[2]; /*!< front left axis for speed measure */
-    ode::CIrrOdeJointHinge *m_pAxesRear[2];
+    ode::CIrrOdeBody              *m_pCarBody;        /*!< the car's body */
+    ode::CIrrOdeMotor             *m_pMotor    [2],   /*!< the motors attached to the rear wheels */
+                                  *m_pBrkFr    [2],   /*!< front wheel brakes */
+                                  *m_pBrkRe    [2];   /*!< rear wheel brakes */
+    ode::CIrrOdeServo             *m_pServo    [2];   /*!< the servos attached to the front wheels */
+    ode::CIrrOdeGeomSphere        *m_pWheels   [4];   /*!< the wheel geoms */
+    ode::CIrrOdeJointHinge2       *m_pAxesFront[2];   /*!< front left axis for speed measure */
+    ode::CIrrOdeJointHinge        *m_pAxesRear [2];   /*!< the rear axes */
+    ode::CIrrOdeSurfaceParameters *m_pParams   [4];   /*!< the contact parameters */
 
     scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
