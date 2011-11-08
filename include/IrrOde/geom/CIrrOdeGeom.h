@@ -120,6 +120,8 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
      */
     void setSurfaceParameterName(u32 iIdx, const c8 *s);
 
+    void setSurfaceParameter(u32 iIdx, CIrrOdeSurfaceParameters *p);
+
     CIrrOdeWorld *getWorld();
 
     virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;

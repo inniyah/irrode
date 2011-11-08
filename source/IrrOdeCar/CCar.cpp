@@ -58,10 +58,24 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
       m_pBrkRe[i]=reinterpret_cast<ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
     }
 
+    c8 sWheelNames[][20]={ "wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr" };
+    for (u32 i=0; i<4; i++)
+      m_pWheels[i]=reinterpret_cast<ode::CIrrOdeGeomSphere *>(m_pCarBody->getChildByName(sWheelNames[i],m_pCarBody));
+
+    core::stringw sParamNames[]={ L"surfaceTireFront", L"surfaceTireStop", L"surfaceTireBack", L"surfaceTireStop" };
+    for (u32 i=0; i<4; i++)
+      m_pParams[i]=ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i]);
+
     printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
     printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
     printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
     printf("**** smoke generators: %i, %i\n",(int)m_pSmoke[0],(int)m_pSmoke[1]);
+    printf("**** wheels: ");
+    for (u32 i=0; i<4; i++) printf("%i%s",(int)m_pWheels[i],i<3?", ":"");
+    printf("\n");
+    printf("**** params: ");
+    for (u32 i=0; i<4; i++) printf("%i%s",(int)m_pParams[i],i<3?", ":"");
+    printf("\n");
 
     aNodes.clear();
     //get the two servos that are attached to the front wheels
@@ -81,6 +95,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
 
     m_fCamAngleH=0.0f;
     m_fCamAngleV=0.0f;
+    m_fOldVel=0.0f;
 
     //add a camera
     m_pCam=m_pSmgr->addCameraSceneNode();
@@ -386,6 +401,25 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
         m_pCockpit->setDifferentialEnabled(m_bDifferential);
       }
     }
+
+    f32 fVel=m_pCarBody->getLinearVelocity().getLength();
+    if ((m_fOldVel>2.0f && fVel<=2.0f) || (m_fOldVel<-2.0f && fVel>=-2.0f)) {
+      //printf("**** set parameter slip\n");
+      for (u32 i=0; i<2; i++) {
+        m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[1]);
+        m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[3]);
+      }
+    }
+
+    if ((m_fOldVel<2.0f && fVel>=2.0f) || (m_fOldVel>-2.0f && fVel<=-2.0f)) {
+      //printf("**** set parameter noslip\n");
+      for (u32 i=0; i<2; i++) {
+        m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[0]);
+        m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[2]);
+      }
+    }
+
+    m_fOldVel=fVel;
 
     if (m_pSmoke[0]!=NULL && m_pSmoke[1]!=NULL) {
       m_pSmoke[0]->setIsActive(m_bBoost);
