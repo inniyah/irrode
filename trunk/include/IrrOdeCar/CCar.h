@@ -55,7 +55,12 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     CAdvancedParticleSystemNode *m_pSmoke[2];
 
-    ode::CIrrOdeBody              *m_pCarBody;        /*!< the car's body */
+    core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
+
+    ode::CIrrOdeBody              *m_pCarBody,        /*!< the car's body */
+                                  *m_pSuspension,     /*!< the suspension */
+                                  *m_pRearWheels[2];  /*!< the rear wheel bodies */
+    ode::CIrrOdeJointSlider       *m_pJointSus;       /*!< the supension joint */
     ode::CIrrOdeMotor             *m_pMotor    [2],   /*!< the motors attached to the rear wheels */
                                   *m_pBrkFr    [2],   /*!< front wheel brakes */
                                   *m_pBrkRe    [2];   /*!< rear wheel brakes */

@@ -145,8 +145,8 @@ void CCustomEventReceiver::hideAnimatedMesh(irr::scene::ISceneNode *pNode) {
 }
 
 bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  if (pEvent->getType()==EVENT_RUDDER_ID) {
-    CEventRudderPositions *p=(CEventRudderPositions *)pEvent;
+  if (pEvent->getType()==EVENT_PLANE_STATE_ID) {
+    CEventPlaneState *p=(CEventPlaneState *)pEvent;
     list<SPlaneNodes *>::Iterator it;
     for (it=m_lPlanes.begin(); it!=m_lPlanes.end(); it++) {
       if ((*it)->iNodeId==p->getNodeId()) {
@@ -207,6 +207,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==EVENT_RUDDER_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
+  return pEvent->getType()==EVENT_PLANE_STATE_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
          pEvent->getType()==EVENT_TANK_STATE_ID;
 }

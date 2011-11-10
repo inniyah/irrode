@@ -5,10 +5,10 @@
   #include <event/IIrrOdeEvent.h>
   #include <irrlicht.h>
 
-#define EVENT_RUDDER_ID irr::ode::eIrrOdeEventUser+1
-#define EVENT_TANK_STATE_ID irr::ode::eIrrOdeEventUser+2
+#define EVENT_PLANE_STATE_ID irr::ode::eIrrOdeEventUser+1
+#define EVENT_TANK_STATE_ID  irr::ode::eIrrOdeEventUser+2
 
-class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
+class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
     irr::s32 m_iNodeId;
     irr::s8 m_iYaw,
@@ -17,13 +17,13 @@ class CEventRudderPositions : public irr::ode::IIrrOdeEvent {
     bool m_bThreeWheeler;
 
   public:
-    CEventRudderPositions();
-    CEventRudderPositions(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, bool bThreeWheeler);
-    CEventRudderPositions(irr::ode::CSerializer *pData);
+    CEventPlaneState();
+    CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, bool bThreeWheeler);
+    CEventPlaneState(irr::ode::CSerializer *pData);
 
-    virtual ~CEventRudderPositions() { }
+    virtual ~CEventPlaneState() { }
 
-    virtual irr::u16 getType() { return EVENT_RUDDER_ID; }
+    virtual irr::u16 getType() { return EVENT_PLANE_STATE_ID; }
 
     virtual irr::ode::CSerializer *serialize();
     virtual const irr::c8 *toString();
