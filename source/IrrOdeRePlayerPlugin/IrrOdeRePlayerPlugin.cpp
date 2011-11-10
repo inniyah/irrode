@@ -76,8 +76,8 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       pData->resetBufferPos();
       irr::u16 iCode=pData->getU16();
 
-      if (iCode==EVENT_RUDDER_ID    ) return new CEventRudderPositions(pData);
-      if (iCode==EVENT_TANK_STATE_ID) return new CEventTankState      (pData);
+      if (iCode==EVENT_PLANE_STATE_ID) return new CEventPlaneState(pData);
+      if (iCode==EVENT_TANK_STATE_ID ) return new CEventTankState (pData);
 
       return NULL;
     }

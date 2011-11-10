@@ -66,6 +66,18 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     for (u32 i=0; i<4; i++)
       m_pParams[i]=ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i]);
 
+    m_pSuspension=reinterpret_cast<ode::CIrrOdeBody *>(m_pCarBody->getChildByName("sc_suspension_rear",m_pCarBody));
+    if (m_pSuspension!=NULL)
+      m_vSuspNeutral=m_pSuspension->getPosition();
+    else
+      m_vSuspNeutral=core::vector3df(0.0f,0.0f,0.0f);
+
+    m_pJointSus=reinterpret_cast<ode::CIrrOdeJointSlider *>(m_pCarBody->getChildByName("suspension_joint",m_pCarBody));
+
+    c8 sWheelBodies[][20]={ "sc_wheel_rl", "sc_wheel_rr" };
+    for (u32 i=0; i<2; i++)
+      m_pRearWheels[i]=reinterpret_cast<ode::CIrrOdeBody *>(m_pCarBody->getChildByName(sWheelBodies[i],m_pCarBody));
+
     printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
     printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
     printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
@@ -73,9 +85,12 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("**** wheels: ");
     for (u32 i=0; i<4; i++) printf("%i%s",(int)m_pWheels[i],i<3?", ":"");
     printf("\n");
+    printf("**** wheel bodies: %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1]);
     printf("**** params: ");
     for (u32 i=0; i<4; i++) printf("%i%s",(int)m_pParams[i],i<3?", ":"");
     printf("\n");
+    printf("**** suspension: %i, %i\n",(int)m_pSuspension,(int)m_pJointSus);
+    printf("**** suspension neutral: (%.2f, %.2f, %.2f)\n",m_vSuspNeutral.X,m_vSuspNeutral.Y,m_vSuspNeutral.Z);
 
     aNodes.clear();
     //get the two servos that are attached to the front wheels
@@ -438,6 +453,13 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
         m_pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);
         m_pSmoke[i]->getEmitter()->setMaxParticlesPerSecond(iMax);
       }
+    }
+
+    m_pSuspension->setPosition(m_vSuspNeutral+core::vector3df(0.0f,-1.0f,0.0f)*m_pJointSus->getSliderPosition());
+
+    for (u32 i=0; i<2; i++) {
+      core::vector3df v=(m_pAxesRear[i]->getHingeAngle()*180/PI)*core::vector3df(0.0f,0.0f,-1.0f);
+      m_pRearWheels[i]->setRotation(v);
     }
 
     if (m_pSndEngine!=NULL) {

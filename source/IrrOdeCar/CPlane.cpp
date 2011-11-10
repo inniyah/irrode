@@ -275,7 +275,7 @@ void CPlane::drawSpecifics() {
 }
 
 ode::IIrrOdeEvent *CPlane::writeEvent() {
-  CEventRudderPositions *p=new CEventRudderPositions(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
+  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
   return p;
 }
 
