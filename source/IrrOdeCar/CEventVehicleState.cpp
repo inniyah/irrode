@@ -98,3 +98,56 @@ const irr::c8 *CEventTankState::toString() {
 irr::ode::IIrrOdeEvent *CEventTankState::clone() {
   return new CEventTankState(m_iNodeId,m_aAngles,m_fCannonAngle,m_fTurretAngle);
 }
+
+CEventCarState::CEventCarState() {
+  m_iNodeId=0;
+  m_fSuspension=0.0f;
+  m_fLeftWheel=0.0f;
+  m_fRightWheel=0.0f;
+  m_iFlags=0;
+}
+
+CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::u8 iFlags) {
+  m_iNodeId=iId;
+  m_fSuspension=fSuspension;
+  m_fLeftWheel=fLeftWheel;
+  m_fRightWheel=fRightWheel;
+  m_fRpm=fRpm;
+  m_iFlags=iFlags;
+}
+
+CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
+  pData->resetBufferPos();
+  irr::u16 iCode=pData->getU16();
+  if (iCode==EVENT_CAR_STATE_ID) {
+    m_iNodeId=pData->getS32();
+    m_fSuspension=pData->getF32();
+    m_fLeftWheel=pData->getF32();
+    m_fRightWheel=pData->getF32();
+    m_fRpm=pData->getF32();
+    m_iFlags=pData->getU8();
+  }
+}
+
+irr::ode::CSerializer *CEventCarState::serialize() {
+  if (m_pSerializer==NULL) {
+    m_pSerializer=new irr::ode::CSerializer();
+    m_pSerializer->addU16(EVENT_CAR_STATE_ID);
+    m_pSerializer->addS32(m_iNodeId);
+    m_pSerializer->addF32(m_fSuspension);
+    m_pSerializer->addF32(m_fLeftWheel);
+    m_pSerializer->addF32(m_fRightWheel);
+    m_pSerializer->addF32(m_fRpm);
+    m_pSerializer->addU8(m_iFlags);
+  }
+  return m_pSerializer;
+}
+
+irr::ode::IIrrOdeEvent *CEventCarState::clone() {
+  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fRpm);
+}
+
+const irr::c8 *CEventCarState::toString() {
+  sprintf(m_sString,"CEventCarState (%i): %.2f, %.2f, %.2f, %.2f, %i",m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_fRpm,m_iFlags);
+  return m_sString;
+}

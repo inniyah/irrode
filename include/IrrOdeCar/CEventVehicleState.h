@@ -7,6 +7,7 @@
 
 #define EVENT_PLANE_STATE_ID irr::ode::eIrrOdeEventUser+1
 #define EVENT_TANK_STATE_ID  irr::ode::eIrrOdeEventUser+2
+#define EVENT_CAR_STATE_ID  irr::ode::eIrrOdeEventUser+3
 
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
@@ -62,6 +63,40 @@ class CEventTankState : public irr::ode::IIrrOdeEvent {
     irr::s32 getNodeId() { return m_iNodeId; }
     irr::f32 getCannonAngle() { return m_fCannonAngle; }
     irr::f32 getTurretAngle() { return m_fTurretAngle; }
+};
+
+class CEventCarState : public irr::ode::IIrrOdeEvent {
+  public:
+    enum eCarFlags {
+      eCarFlagBoost=1,
+      eCarFlagBrake=2,
+      eCarFlagReverse=4
+    };
+
+  protected:
+    irr::s32 m_iNodeId;
+    irr::f32 m_fSuspension,
+             m_fLeftWheel,
+             m_fRightWheel,
+             m_fRpm;
+    irr::u8  m_iFlags;
+  public:
+    CEventCarState();
+    CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::u8 iFlags);
+    CEventCarState(irr::ode::CSerializer *pData);
+
+    virtual irr::u16 getType() { return EVENT_CAR_STATE_ID; }
+    virtual const irr::c8 *toString();
+
+    virtual irr::ode::CSerializer *serialize();
+    virtual irr::ode::IIrrOdeEvent *clone();
+
+    irr::s32 getNodeId() { return m_iNodeId; }
+    irr::f32 getSuspension() { return m_fSuspension; }
+    irr::f32 getLeftWheel() { return m_fLeftWheel; }
+    irr::f32 getRightWheel() { return m_fRightWheel; }
+    irr::f32 getRpm() { return m_fRpm; }
+    irr::u8 getFlags() { return m_iFlags; }
 };
 
 #endif

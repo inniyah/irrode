@@ -77,8 +77,12 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   core::list<scene::ISceneNode *> children=pNode->getChildren();
   core::list<scene::ISceneNode *>::Iterator it;
 
-  if (!strcmp(pNode->getName(),"frontaxis")) pCar->aFrontAxes.push_back(pNode);
-  if (!strcmp(pNode->getName(),"rearaxis" )) pCar->aRearAxes .push_back(pNode);
+  if (!strcmp(pNode->getName(),"sc_wheel_rl"       )) pCar->pRearWheels[0]=pNode;
+  if (!strcmp(pNode->getName(),"sc_wheel_rr"       )) pCar->pRearWheels[1]=pNode;
+  if (!strcmp(pNode->getName(),"sc_suspension_rear")) pCar->pSuspension   =pNode;
+
+  if (!strcmp(pNode->getName(),"smoke_1")) pCar->pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
+  if (!strcmp(pNode->getName(),"smoke_2")) pCar->pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
 
   for (it=children.begin(); it!=children.end(); it++) searchCarNodes(*it,pCar);
 }
@@ -110,6 +114,7 @@ void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
 
 void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
   SCarNodes *pNodes=new SCarNodes();
+  pNodes->iNodeId=pCar->getID();
   searchCarNodes(pCar,pNodes);
   m_lCars.push_back(pNodes);
 }
@@ -203,10 +208,46 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType()==EVENT_CAR_STATE_ID) {
+    CEventCarState *p=(CEventCarState *)pEvent;
+    list<SCarNodes *>::Iterator it;
+    for (it=m_lCars.begin(); it!=m_lCars.end(); it++) {
+      SCarNodes *pCar=*it;
+      if (pCar->iNodeId==p->getNodeId()) {
+        pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
+
+        core::vector3df v=(p->getLeftWheel()*core::vector3df(0.0f,0.0f,-1.0f));
+        pCar->pRearWheels[0]->setRotation(v);
+
+        v=(p->getRightWheel()*core::vector3df(0.0f,0.0f,-1.0f));
+        pCar->pRearWheels[1]->setRotation(v);
+
+        if (pCar->pSmoke[0]!=NULL && pCar->pSmoke[1]!=NULL) {
+          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
+          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
+
+          u32 iMin=(u32)(-p->getRpm()*3.0f),
+              iMax=(u32)(-p->getRpm()*5.0f);
+
+          if (iMin<25) iMin=25;
+          if (iMax<50) iMax=50;
+
+          if (iMin>450) iMin=750;
+          if (iMax>500) iMax=750;
+
+          for (u32 i=0; i<2; i++) {
+            pCar->pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);
+            pCar->pSmoke[i]->getEmitter()->setMaxParticlesPerSecond(iMax);
+          }
+        }
+      }
+    }
+  }
+
   return false;
 }
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==EVENT_PLANE_STATE_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
-         pEvent->getType()==EVENT_TANK_STATE_ID;
+         pEvent->getType()==EVENT_TANK_STATE_ID  || pEvent->getType()==EVENT_CAR_STATE_ID;
 }
