@@ -4,6 +4,8 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
 
+class CAdvancedParticleSystemNode;
+
 class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
   protected:
     typedef struct SPlaneNodes {
@@ -20,7 +22,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     typedef struct sCarNodes {
       irr::s32 iNodeId;
-      irr::core::array<irr::scene::ISceneNode *> aFrontAxes,aRearAxes;
+      irr::scene::ISceneNode *pSuspension,
+                             *pRearWheels[2];
+      CAdvancedParticleSystemNode *pSmoke[2];
     } SCarNodes;
 
     irr::IrrlichtDevice *m_pDevice;

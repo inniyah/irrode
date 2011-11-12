@@ -6,6 +6,7 @@
   #include <irrklang.h>
   #include <CAdvancedParticleSystemNode.h>
   #include <CRearView.h>
+  #include <CEventVehicleState.h>
 
   #include <irrCC.h>
 
@@ -45,9 +46,6 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("axis_RL=%i\n",(int)m_pAxesRear[0]);
     printf("axis_RR=%i\n",(int)m_pAxesRear[1]);
 
-    m_pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_1",m_pCarBody));
-    m_pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(m_pCarBody->getChildByName("smoke_2",m_pCarBody));
-
     for (u32 i=0; i<2; i++) {
       c8 s[0xFF];
       sprintf(s,"sc_motor%i",i+1);
@@ -81,7 +79,6 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
     printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
     printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
-    printf("**** smoke generators: %i, %i\n",(int)m_pSmoke[0],(int)m_pSmoke[1]);
     printf("**** wheels: ");
     for (u32 i=0; i<4; i++) printf("%i%s",(int)m_pWheels[i],i<3?", ":"");
     printf("\n");
@@ -436,31 +433,17 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
     m_fOldVel=fVel;
 
-    if (m_pSmoke[0]!=NULL && m_pSmoke[1]!=NULL) {
-      m_pSmoke[0]->setIsActive(m_bBoost);
-      m_pSmoke[1]->setIsActive(m_bBoost);
+    //Send an event if the car's state has changed
+    u8 iFlags=0;
+    if (m_bBoost) iFlags|=CEventCarState::eCarFlagBoost;
 
-      u32 iMin=(u32)(-m_fRpm*3.0f),
-          iMax=(u32)(-m_fRpm*5.0f);
+    CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
+                                              m_pJointSus->getSliderPosition(),
+                                              m_pAxesRear[0]->getHingeAngle()*180.0f/PI,
+                                              m_pAxesRear[1]->getHingeAngle()*180.0f/PI,
+                                              m_fRpm,iFlags);
 
-      if (iMin<25) iMin=25;
-      if (iMax<50) iMax=50;
-
-      if (iMin>450) iMin=750;
-      if (iMax>500) iMax=750;
-
-      for (u32 i=0; i<2; i++) {
-        m_pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);
-        m_pSmoke[i]->getEmitter()->setMaxParticlesPerSecond(iMax);
-      }
-    }
-
-    m_pSuspension->setPosition(m_vSuspNeutral+core::vector3df(0.0f,-1.0f,0.0f)*m_pJointSus->getSliderPosition());
-
-    for (u32 i=0; i<2; i++) {
-      core::vector3df v=(m_pAxesRear[i]->getHingeAngle()*180/PI)*core::vector3df(0.0f,0.0f,-1.0f);
-      m_pRearWheels[i]->setRotation(v);
-    }
+    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
 
     if (m_pSndEngine!=NULL) {
       core::vector3df irrPos=m_pCarBody->getPosition(),

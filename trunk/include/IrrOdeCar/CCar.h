@@ -53,8 +53,6 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     gui::IGUITab *m_pTab;
 
-    CAdvancedParticleSystemNode *m_pSmoke[2];
-
     core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
 
     ode::CIrrOdeBody              *m_pCarBody,        /*!< the car's body */
