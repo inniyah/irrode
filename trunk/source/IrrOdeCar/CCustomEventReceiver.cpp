@@ -2,6 +2,8 @@
   #include <CEventVehicleState.h>
   #include <CAdvancedParticleSystemNode.h>
 
+  #include <irrklang.h>
+
 using namespace irr;
 
 CCustomEventReceiver::CCustomEventReceiver() {
@@ -35,6 +37,14 @@ void CCustomEventReceiver::destall() {
     list<STankNodes *>::Iterator it=m_lTanks.begin();
     STankNodes *p=*it;
     m_lTanks.erase(it);
+    delete p;
+  }
+
+  while (m_lCars.getSize()>0) {
+    list<SCarNodes *>::Iterator it=m_lCars.begin();
+    SCarNodes *p=*it;
+    m_lCars.erase(it);
+    p->pEngine->drop();
     delete p;
   }
 
@@ -87,9 +97,10 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   for (it=children.begin(); it!=children.end(); it++) searchCarNodes(*it,pCar);
 }
 
-void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr) {
+void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr, irrklang::ISoundEngine *pSndEngine) {
   CCustomEventReceiver::getSharedInstance()->m_pDevice=pDevice;
   CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
+  CCustomEventReceiver::getSharedInstance()->m_pSndEngine=pSndEngine;
 }
 
 CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
@@ -100,6 +111,9 @@ CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
 void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
   SPlaneNodes *pNodes=new SPlaneNodes();
   pNodes->iNodeId=pPlane->getID();
+  pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(100.0f);
+  pNodes->pPlane=reinterpret_cast<ode::CIrrOdeBody *>(pPlane);
   searchPlaneNodes(pPlane,pNodes);
   m_lPlanes.push_back(pNodes);
 }
@@ -115,6 +129,12 @@ void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
 void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
   SCarNodes *pNodes=new SCarNodes();
   pNodes->iNodeId=pCar->getID();
+  pNodes->vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
+
+  pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);
+
+  pNodes->pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(pCar,pNodes);
   m_lCars.push_back(pNodes);
 }
@@ -169,6 +189,22 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         if (nodes->aYaw.size()>0) nodes->aYaw[0]->setRotation(vector3df(0,tw?90+10.0f*fYaw:90-10.0f*fYaw, 0));
         if (nodes->aYaw.size()>1) nodes->aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
 
+        if (nodes->pEngine!=NULL) {
+          core::vector3df irrPos=nodes->pPlane->getPosition(),
+                          irrVel=nodes->pPlane->getLinearVelocity();
+
+          irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                           vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+          f32 fPitch=p->getSound();
+          if (fPitch<0.0f) fPitch=-fPitch;
+
+          nodes->pEngine->setVelocity(vVel);
+          nodes->pEngine->setPosition(vPos);
+          nodes->pEngine->setPlaybackSpeed(0.75f+0.5*fPitch);
+          nodes->pEngine->setIsPaused(false);
+        }
+
         return true;
       }
     }
@@ -214,6 +250,19 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     for (it=m_lCars.begin(); it!=m_lCars.end(); it++) {
       SCarNodes *pCar=*it;
       if (pCar->iNodeId==p->getNodeId()) {
+        if (pCar->pEngine!=NULL) {
+          core::vector3df irrPos=pCar->pCar->getPosition(),
+                          irrVel=pCar->pCar->getLinearVelocity();
+
+          irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
+                           vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
+
+          pCar->pEngine->setVelocity(vVel);
+          pCar->pEngine->setPosition(vPos);
+          pCar->pEngine->setPlaybackSpeed(p->getEngineSound());
+
+          pCar->pEngine->setIsPaused(false);
+        }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
 
         core::vector3df v=(p->getLeftWheel()*core::vector3df(0.0f,0.0f,-1.0f));
@@ -244,10 +293,31 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType()==EVENT_FIRE_SND_ID) {
+    CEventFireSound *p=(CEventFireSound *)pEvent;
+    char s[0xFF]="";
+
+    switch (p->getSound()) {
+      case CEventFireSound::eSndCrash    : strcpy(s,"../../data/sound/crash.ogg"  ); break;
+      case CEventFireSound::eSndExplode  : strcpy(s,"../../data/sound/explode.ogg"); break;
+      case CEventFireSound::eSndFireShell: strcpy(s,"../../data/sound/shot.ogg"   ); break;
+      case CEventFireSound::eSndSkid     : strcpy(s,"../../data/sound/skid.ogg"   ); break;
+    }
+
+    if (s[0]!='\0') {
+      irrklang::ISound *pSnd=m_pSndEngine->play3D(s,p->getPosition(),false,true);
+      pSnd->setVolume(p->getSound());
+      if (p->getSound()==CEventFireSound::eSndExplode) pSnd->setMinDistance(100.0f);
+      pSnd->setIsPaused(false);
+      pSnd->drop();
+    }
+  }
+
   return false;
 }
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==EVENT_PLANE_STATE_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
-         pEvent->getType()==EVENT_TANK_STATE_ID  || pEvent->getType()==EVENT_CAR_STATE_ID;
+         pEvent->getType()==EVENT_TANK_STATE_ID  || pEvent->getType()==EVENT_CAR_STATE_ID ||
+         pEvent->getType()==EVENT_FIRE_SND_ID;
 }

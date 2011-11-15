@@ -4,6 +4,11 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
 
+namespace irrklang {
+  class ISoundEngine;
+  class ISound;
+};
+
 class CAdvancedParticleSystemNode;
 
 class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
@@ -11,6 +16,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     typedef struct SPlaneNodes {
       irr::s32 iNodeId;
       irr::core::array<irr::scene::ISceneNode *> aYaw, aPitch, aRoll;
+      irrklang::ISound *pEngine;
+      ode::CIrrOdeBody *pPlane;
     } SPlaneNodes;
 
     typedef struct sTankNodes {
@@ -22,15 +29,20 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     typedef struct sCarNodes {
       irr::s32 iNodeId;
+      irr::core::vector3df vOldSpeed;
       irr::scene::ISceneNode *pSuspension,
                              *pRearWheels[2];
+      ode::CIrrOdeBody *pCar;
       CAdvancedParticleSystemNode *pSmoke[2];
+      irrklang::ISound *pEngine;
     } SCarNodes;
 
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
 
     bool m_bInstalled;
+
+    irrklang::ISoundEngine *m_pSndEngine;
 
     CCustomEventReceiver();
     ~CCustomEventReceiver();
@@ -55,7 +67,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
      */
     void hideAnimatedMesh(irr::scene::ISceneNode *pNode);
   public:
-    static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr);
+    static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr, irrklang::ISoundEngine *pSndEngine);
 
     static CCustomEventReceiver *getSharedInstance();
 

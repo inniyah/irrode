@@ -6,10 +6,6 @@
 
   #include "CIrrOdeCarState.h"
 
-namespace irrklang {
-  class ISound;
-};
-
 class CIrrCC;
 class CRearView;
 class CCockpitCar;
@@ -72,8 +68,6 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     CCockpitCar *m_pCockpit;
     CRearView *m_pRView;
-
-    irrklang::ISound *m_pSound;
 
     const u32 *m_pCtrls;
     f32 m_fSound,
