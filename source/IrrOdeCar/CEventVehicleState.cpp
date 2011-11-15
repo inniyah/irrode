@@ -8,13 +8,14 @@ CEventPlaneState::CEventPlaneState() {
   m_iRoll=0;
 }
 
-CEventPlaneState::CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, bool bThreeWheeler) {
+CEventPlaneState::CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bThreeWheeler) {
   m_iNodeId=iId;
   m_pSerializer=NULL;
   m_iYaw=(irr::u8)(fYaw*100.0f);
   m_iPitch=(irr::u8)(fPitch*100.0f);
   m_iRoll=(irr::u8)(fRoll*100.0f);
   m_bThreeWheeler=bThreeWheeler;
+  m_fSound=fSound;
 }
 
 CEventPlaneState::CEventPlaneState(irr::ode::CSerializer *pData) {
@@ -26,6 +27,7 @@ CEventPlaneState::CEventPlaneState(irr::ode::CSerializer *pData) {
     m_iPitch=pData->getS8();
     m_iRoll=pData->getS8();
     m_bThreeWheeler=pData->getU8();
+    m_fSound=pData->getF32();
   }
 }
 
@@ -38,6 +40,7 @@ irr::ode::CSerializer *CEventPlaneState::serialize() {
     m_pSerializer->addS8(m_iPitch);
     m_pSerializer->addS8(m_iRoll);
     m_pSerializer->addU8(m_bThreeWheeler?1:0);
+    m_pSerializer->addF32(m_fSound);
   }
   return m_pSerializer;
 }
@@ -48,7 +51,7 @@ const irr::c8 *CEventPlaneState::toString() {
 }
 
 irr::ode::IIrrOdeEvent *CEventPlaneState::clone() {
-  return new CEventPlaneState(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f,m_bThreeWheeler);
+  return new CEventPlaneState(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f,m_fSound,m_bThreeWheeler);
 }
 
 CEventTankState::CEventTankState() {
@@ -107,13 +110,15 @@ CEventCarState::CEventCarState() {
   m_iFlags=0;
 }
 
-CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::u8 iFlags) {
+CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::u8 iFlags) {
   m_iNodeId=iId;
   m_fSuspension=fSuspension;
   m_fLeftWheel=fLeftWheel;
   m_fRightWheel=fRightWheel;
   m_fRpm=fRpm;
   m_iFlags=iFlags;
+  m_fSound=fSound;
+  m_fDiff=fDiff;
 }
 
 CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
@@ -125,6 +130,8 @@ CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
     m_fLeftWheel=pData->getF32();
     m_fRightWheel=pData->getF32();
     m_fRpm=pData->getF32();
+    m_fDiff=pData->getF32();
+    m_fSound=pData->getF32();
     m_iFlags=pData->getU8();
   }
 }
@@ -138,16 +145,60 @@ irr::ode::CSerializer *CEventCarState::serialize() {
     m_pSerializer->addF32(m_fLeftWheel);
     m_pSerializer->addF32(m_fRightWheel);
     m_pSerializer->addF32(m_fRpm);
+    m_pSerializer->addF32(m_fDiff);
+    m_pSerializer->addF32(m_fSound);
     m_pSerializer->addU8(m_iFlags);
   }
   return m_pSerializer;
 }
 
 irr::ode::IIrrOdeEvent *CEventCarState::clone() {
-  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fRpm);
+  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fRpm);
 }
 
 const irr::c8 *CEventCarState::toString() {
   sprintf(m_sString,"CEventCarState (%i): %.2f, %.2f, %.2f, %.2f, %i",m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_fRpm,m_iFlags);
   return m_sString;
+}
+
+CEventFireSound::CEventFireSound() {
+  m_fVolume=0.0f;
+  m_iSound=0;
+  m_vPos=irr::core::vector3df(0.0f,0.0f,0.0f);
+}
+
+CEventFireSound::CEventFireSound(enSound iSound, irr::f32 fVolume, irr::core::vector3df vPos) {
+  m_iSound=iSound;
+  m_fVolume=fVolume;
+  m_vPos=vPos;
+}
+
+CEventFireSound::CEventFireSound(irr::ode::CSerializer *pData) {
+  pData->resetBufferPos();
+  irr::u16 iCode=pData->getU16();
+  if (iCode==EVENT_FIRE_SND_ID) {
+    m_iSound=pData->getU8();
+    m_fVolume=pData->getF32();
+    pData->getVector3df(m_vPos);
+  }
+}
+
+const irr::c8 *CEventFireSound::toString() {
+  sprintf(m_sString,"CEventFireSound");
+  return m_sString;
+}
+
+irr::ode::CSerializer *CEventFireSound::serialize() {
+  if (m_pSerializer==NULL) {
+    m_pSerializer=new irr::ode::CSerializer();
+    m_pSerializer->addU16(EVENT_FIRE_SND_ID);
+    m_pSerializer->addU8(m_iSound);
+    m_pSerializer->addF32(m_fVolume);
+    m_pSerializer->addVector3df(m_vPos);
+  }
+  return m_pSerializer;
+}
+
+irr::ode::IIrrOdeEvent *CEventFireSound::clone() {
+  return new CEventFireSound((enSound)m_iSound,m_fVolume,m_vPos);
 }

@@ -235,7 +235,7 @@ int main(int argc, char** argv) {
 
   ode::CIrrOdeManager::getSharedInstance()->install(device);
   irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
-  CCustomEventReceiver::setMembers(device,ode::CIrrOdeManager::getSharedInstance());
+  CCustomEventReceiver::setMembers(device,ode::CIrrOdeManager::getSharedInstance(),pSndEngine);
   CCustomEventReceiver::getSharedInstance()->install();
 
   CProgress *pProg=new CProgress(device);

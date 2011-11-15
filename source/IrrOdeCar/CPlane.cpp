@@ -46,8 +46,9 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   }
   else printf("no checkpoints for plane found!\n");
 
-  m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (m_pSound) m_pSound->setMinDistance(100.0f);
+  m_pSound=NULL;
+  //m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  //if (m_pSound) m_pSound->setMinDistance(100.0f);
 
   for (u32 i=0; i<2; i++) {
     c8 s[0xFF];
@@ -211,13 +212,13 @@ void CPlane::odeStep(u32 iStep) {
     }
   }
 
-  if (m_bRudderChanged) {
+  //if (m_bRudderChanged) {
     dataChanged();
     m_bRudderChanged=false;
-  }
+  //}
 
   if (m_pSndEngine!=NULL) {
-    if (m_pSound!=NULL) {
+    /*if (m_pSound!=NULL) {
       core::vector3df irrPos=m_pBody->getPosition(),
                       irrVel=m_pBody->getLinearVelocity();
 
@@ -230,7 +231,7 @@ void CPlane::odeStep(u32 iStep) {
       m_pSound->setVelocity(vVel);
       m_pSound->setPosition(vPos);
       m_pSound->setPlaybackSpeed(0.75f+0.5*fPitch);
-    }
+    }*/
 
     for (u32 i=0; i<2; i++) {
       if (m_pAxes[i]) {
@@ -240,12 +241,8 @@ void CPlane::odeStep(u32 iStep) {
           f32 fVol=(fImpulse-15.0f)/75.0f;
           if (fVol>1.0f) fVol=1.0f;
           core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
-          irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z);
-          irrklang::ISound *pSnd=m_pSndEngine->play3D("../../data/sound/skid.ogg",vPos,false,true);
-          pSnd->setVolume(fVol);
-          pSnd->setIsPaused(false);
-          pSnd->setMinDistance(10.0f);
-          pSnd->drop();
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
+          ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
         }
         m_fAngleRate[i]=f;
       }
@@ -258,12 +255,8 @@ void CPlane::odeStep(u32 iStep) {
         f32 fVol=(fImpulse-15.0f)/75.0f;
         if (fVol>1.0f) fVol=1.0f;
         core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
-        irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z);
-        irrklang::ISound *pSnd=m_pSndEngine->play3D("../../data/sound/skid.ogg",vPos,false,true);
-        pSnd->setVolume(fVol);
-        pSnd->setIsPaused(false);
-        pSnd->setMinDistance(10.0f);
-        pSnd->drop();
+        CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
+        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
       m_fAngleRate[2]=f;
     }
@@ -275,7 +268,7 @@ void CPlane::drawSpecifics() {
 }
 
 ode::IIrrOdeEvent *CPlane::writeEvent() {
-  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_bThreeWheeler);
+  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_bThreeWheeler);
   return p;
 }
 
