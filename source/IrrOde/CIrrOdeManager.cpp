@@ -151,21 +151,7 @@ void CIrrOdeManager::step() {
     if (p==NULL) p=(*cit)->writeEvent();
     if (p) getQueue()->postEvent(p);
   }
-
-  m_iLastStep=thisStep;
-}
-
-/**
- * Quickstep the worlds
- */
-void CIrrOdeManager::quickStep() {
-  if (!m_pTimer) printf("###### CIrrOdeManager::quickStep: timer==NULL!\n");
-  u32 thisStep=m_pTimer->getTime();
-  f32 fStep=((f32)(thisStep-m_iLastStep))/1000;
-  m_iFrameNo++;
-
-  list<CIrrOdeWorld *>::Iterator it;
-  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->quickStep(fStep);
+  m_lChanged.clear();
 
   m_iLastStep=thisStep;
 }

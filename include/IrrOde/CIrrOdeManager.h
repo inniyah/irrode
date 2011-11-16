@@ -76,7 +76,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     void clearODE();  /*!< remove all objects from the simulation */
 
     void step();      /*!< step the world(s) */
-    void quickStep(); /*!< quickstep the world(s) */
 
     void addWorld(CIrrOdeWorld *pWorld);     /*!< add a world */
     void removeWorld(CIrrOdeWorld *pWorld);  /*!< remove a world */

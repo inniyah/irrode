@@ -37,7 +37,7 @@ class CIrrOdeCarState {
 
     CIrrCC *m_pController;
 
-    irrklang::ISoundEngine *m_pSndEngine;
+    //irrklang::ISoundEngine *m_pSndEngine;
 
     core::vector3df m_vCamVelocity;
 

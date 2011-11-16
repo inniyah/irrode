@@ -5,10 +5,6 @@
   #include <CIrrOdeCarState.h>
   #include <IrrOde.h>
 
-namespace irrklang {
-  class ISound;
-};
-
 using namespace irr;
 
 class CRearView;
@@ -63,7 +59,7 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
          m_bFirePrimary,
          m_bFireSecondary,
          m_bThreeWheeler,
-         m_bRudderChanged;
+         m_bDataChanged;
 
     CRearView *m_pRView;
 
@@ -92,7 +88,7 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
     CCockpitPlane *m_pCockpit;
-    irrklang::ISound *m_pSound;
+    //irrklang::ISound *m_pSound;
 
   public:
     CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);

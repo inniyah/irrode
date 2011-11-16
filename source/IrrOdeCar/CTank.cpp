@@ -85,14 +85,6 @@ CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang
     m_pInfo->setVisible(false);
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     m_bInitialized=true;
-
-    if (m_pSndEngine) {
-      m_pSound=m_pSndEngine->play3D("../../data/sound/tank.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-      if (m_pSound) {
-        m_pSound->setVolume(0.5f);
-        m_pSound->setMinDistance(100.0f);
-      }
-    }
   }
 }
 
@@ -107,8 +99,6 @@ void CTank::activate() {
   m_pInfo->setVisible(true);
   m_bSwitchToMenu=false;
   m_bActive=true;
-
-  if (m_pSound) m_pSound->setIsPaused(false);
 
   vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getRotation();
 
@@ -195,7 +185,7 @@ bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
                   pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(vector3df(-3.0f,0,0)),
                   vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(vector3df(-350.0f,0.0f,0.0f));
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this,m_pSndEngine);
+        new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this,NULL);
       }
 
       f32 fVel[4]={ 0.0f, 0.0f, 0.0f, 0.0f },
@@ -278,46 +268,34 @@ bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
       if (bMoved) dataChanged();
     }
 
-    if (m_pSndEngine!=NULL && m_pSound!=NULL) {
-      f32 fRot=0.0f,fSound=0.5f;
+    f32 fRot=0.0f,fSound=0.5f;
 
-      core::list<ode::CIrrOdeJointHinge *>::Iterator it;
+    core::list<ode::CIrrOdeJointHinge *>::Iterator it;
 
-      for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) {
-        ode::CIrrOdeJointHinge *p=*it;
-        if (p->getHingeAngleRate()<0) fRot-=p->getHingeAngleRate(); else fRot+=p->getHingeAngleRate();
+    for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) {
+      ode::CIrrOdeJointHinge *p=*it;
+      if (p->getHingeAngleRate()<0) fRot-=p->getHingeAngleRate(); else fRot+=p->getHingeAngleRate();
+    }
+
+    fRot/=4.0f;
+
+    if (fRot>1.0f) {
+      if (fRot<35.0f) {
+        fSound=0.5f+(fRot-1.0f)/34.0f;
+      }
+      else {
+        fSound=1.5f;
       }
 
-      fRot/=4.0f;
-
-      if (fRot>1.0f) {
-        if (fRot<35.0f) {
-          fSound=0.5f+(fRot-1.0f)/34.0f;
-        }
-        else {
-          fSound=1.5f;
-        }
-
-        if (m_fSound<fSound) {
-          m_fSound+=0.01f;
-          if (m_fSound>fSound) m_fSound=fSound;
-        }
-
-        if (m_fSound>fSound) {
-          m_fSound-=0.01f;
-          if (m_fSound<fSound) m_fSound=fSound;
-        }
+      if (m_fSound<fSound) {
+        m_fSound+=0.01f;
+        if (m_fSound>fSound) m_fSound=fSound;
       }
 
-      core::vector3df irrPos=m_pTankBody->getPosition(),
-                      irrVel=m_pTankBody->getLinearVelocity();
-
-      irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
-                       vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
-
-      m_pSound->setVelocity(vVel);
-      m_pSound->setPosition(vPos);
-      m_pSound->setPlaybackSpeed(m_fSound);
+      if (m_fSound>fSound) {
+        m_fSound-=0.01f;
+        if (m_fSound<fSound) m_fSound=fSound;
+      }
     }
   }
   return false;
@@ -328,7 +306,7 @@ bool CTank::handlesEvent(ode::IIrrOdeEvent *pEvent) {
 }
 
 ode::IIrrOdeEvent *CTank::writeEvent() {
-  CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles,m_fCannonAngle,m_fTurretAngle);
+  CEventTankState *p=new CEventTankState(m_pTankBody->getID(),m_aAxesAngles,m_fCannonAngle,m_fTurretAngle,m_fSound);
   return p;
 }
 

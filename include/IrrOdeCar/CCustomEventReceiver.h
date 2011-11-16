@@ -21,6 +21,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     } SPlaneNodes;
 
     typedef struct sTankNodes {
+      ode::CIrrOdeBody *pTank;
+      irrklang::ISound *pEngine;
       irr::s32 iNodeId;
       irr::core::array<irr::scene::ISceneNode *> aAxes;
       irr::scene::ISceneNode *pCannon,
@@ -37,6 +39,12 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       irrklang::ISound *pEngine;
     } SCarNodes;
 
+    typedef struct sHeliNodes {
+      irr::s32 iNodeId;
+      irr::ode::CIrrOdeBody *pHeli;
+      irrklang::ISound *pEngine;
+    } SHeliNodes;
+
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
 
@@ -48,8 +56,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     ~CCustomEventReceiver();
 
     list<SPlaneNodes *> m_lPlanes;
-    list<STankNodes *> m_lTanks;
-    list<SCarNodes *> m_lCars;
+    list<STankNodes  *> m_lTanks;
+    list<SCarNodes   *> m_lCars;
+    list<SHeliNodes  *> m_lHelis;
 
     void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
     void searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank);
@@ -66,6 +75,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
      * @param pNode the node to check
      */
     void hideAnimatedMesh(irr::scene::ISceneNode *pNode);
+
+    void updateSound(irrklang::ISound *pSound, irr::ode::CIrrOdeBody *pBody);
   public:
     static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr, irrklang::ISoundEngine *pSndEngine);
 
@@ -75,8 +86,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     void destall();
 
     void addPlane(irr::scene::ISceneNode *pPlane);
-    void addTank(irr::scene::ISceneNode *pTank);
-    void addCar(irr::scene::ISceneNode *pCar);
+    void addTank (irr::scene::ISceneNode *pTank );
+    void addCar  (irr::scene::ISceneNode *pCar  );
+    void addHeli (irr::scene::ISceneNode *pHeli );
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

@@ -56,15 +56,17 @@ irr::ode::IIrrOdeEvent *CEventPlaneState::clone() {
 
 CEventTankState::CEventTankState() {
   m_iNodeId=0;
+  m_fSound=0.0f;
   for (irr::u32 i=0; i<4; i++) m_aAngles[i]=0;
   m_fCannonAngle=0.0f;
 }
 
-CEventTankState::CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle) {
+CEventTankState::CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle, irr::f32 fSound) {
   m_iNodeId=iId;
   for (irr::u32 i=0; i<4; i++) m_aAngles[i]=aAngles[i];
   m_fCannonAngle=fCannonAngle;
   m_fTurretAngle=fTurretAngle;
+  m_fSound=fSound;
 }
 
 CEventTankState::CEventTankState(irr::ode::CSerializer *pData) {
@@ -76,6 +78,7 @@ CEventTankState::CEventTankState(irr::ode::CSerializer *pData) {
 
     m_fCannonAngle=pData->getF32();
     m_fTurretAngle=pData->getF32();
+    m_fSound=pData->getF32();
   }
 }
 
@@ -89,6 +92,7 @@ irr::ode::CSerializer *CEventTankState::serialize() {
     }
     m_pSerializer->addF32(m_fCannonAngle);
     m_pSerializer->addF32(m_fTurretAngle);
+    m_pSerializer->addF32(m_fSound);
   }
   return m_pSerializer;
 }
@@ -99,7 +103,7 @@ const irr::c8 *CEventTankState::toString() {
 }
 
 irr::ode::IIrrOdeEvent *CEventTankState::clone() {
-  return new CEventTankState(m_iNodeId,m_aAngles,m_fCannonAngle,m_fTurretAngle);
+  return new CEventTankState(m_iNodeId,m_aAngles,m_fCannonAngle,m_fTurretAngle,m_fSound);
 }
 
 CEventCarState::CEventCarState() {
@@ -201,4 +205,41 @@ irr::ode::CSerializer *CEventFireSound::serialize() {
 
 irr::ode::IIrrOdeEvent *CEventFireSound::clone() {
   return new CEventFireSound((enSound)m_iSound,m_fVolume,m_vPos);
+}
+
+CEventHeliState::CEventHeliState() {
+  m_fSound=0.0f;
+}
+
+CEventHeliState::CEventHeliState(irr::s32 iNodeId, irr::f32 fSound) {
+  m_iNodeId=iNodeId;
+  m_fSound=fSound;
+}
+
+CEventHeliState::CEventHeliState(irr::ode::CSerializer *pData) {
+  pData->resetBufferPos();
+  irr::u16 iCode=pData->getU16();
+  if (iCode==EVENT_HELI_STATE_ID) {
+    m_iNodeId=pData->getS32();
+    m_fSound=pData->getF32();
+  }
+}
+
+const irr::c8 *CEventHeliState::toString() {
+  sprintf(m_sString,"CEventHeliState");
+  return m_sString;
+}
+
+irr::ode::CSerializer *CEventHeliState::serialize() {
+  if (m_pSerializer==NULL) {
+    m_pSerializer=new irr::ode::CSerializer();
+    m_pSerializer->addU16(EVENT_HELI_STATE_ID);
+    m_pSerializer->addS32(m_iNodeId);
+    m_pSerializer->addF32(m_fSound);
+  }
+  return m_pSerializer;
+}
+
+irr::ode::IIrrOdeEvent *CEventHeliState::clone() {
+  return new CEventHeliState(m_iNodeId,m_fSound);
 }
