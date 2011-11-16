@@ -46,10 +46,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   }
   else printf("no checkpoints for plane found!\n");
 
-  m_pSound=NULL;
-  //m_pSound=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  //if (m_pSound) m_pSound->setMinDistance(100.0f);
-
   for (u32 i=0; i<2; i++) {
     c8 s[0xFF];
     sprintf(s,"axis%i",i+1);
@@ -140,7 +136,7 @@ void CPlane::odeStep(u32 iStep) {
 
       m_bLeftMissile=!m_bLeftMissile;
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,m_pSndEngine);
+      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,NULL);
       p->setTarget(m_pTargetSelector->getTarget());
       m_iShotsFired++;
       m_bFirePrimary=false;
@@ -153,7 +149,7 @@ void CPlane::odeStep(u32 iStep) {
                 rot=m_pBody->getRotation(),
                 vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
 
-      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this,m_pSndEngine);
+      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this,NULL);
       m_iShotsFired++;
       m_bFireSecondary=false;
     }
@@ -212,54 +208,37 @@ void CPlane::odeStep(u32 iStep) {
     }
   }
 
-  //if (m_bRudderChanged) {
+  if (m_bDataChanged) {
     dataChanged();
-    m_bRudderChanged=false;
-  //}
+    m_bDataChanged=false;
+  }
 
-  if (m_pSndEngine!=NULL) {
-    /*if (m_pSound!=NULL) {
-      core::vector3df irrPos=m_pBody->getPosition(),
-                      irrVel=m_pBody->getLinearVelocity();
-
-      irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
-                       vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
-
-      f32 fPitch=m_pMotor->getPower();
-      if (fPitch<0.0f) fPitch=-fPitch;
-
-      m_pSound->setVelocity(vVel);
-      m_pSound->setPosition(vPos);
-      m_pSound->setPlaybackSpeed(0.75f+0.5*fPitch);
-    }*/
-
-    for (u32 i=0; i<2; i++) {
-      if (m_pAxes[i]) {
-        f32 f=m_pAxes[i]->getHingeAngleRate(),fImpulse=m_fAngleRate[i]-f;
-        if (fImpulse<0.0f) fImpulse=-fImpulse;
-        if (fImpulse>15.0f) {
-          f32 fVol=(fImpulse-15.0f)/75.0f;
-          if (fVol>1.0f) fVol=1.0f;
-          core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
-          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
-          ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-        }
-        m_fAngleRate[i]=f;
-      }
-    }
-
-    if (m_pSteerAxis) {
-      f32 f=m_pSteerAxis->getHingeAngle2Rate(),fImpulse=m_fAngleRate[2]-f;;
+  for (u32 i=0; i<2; i++) {
+    if (m_pAxes[i]) {
+      f32 f=m_pAxes[i]->getHingeAngleRate(),fImpulse=m_fAngleRate[i]-f;
       if (fImpulse<0.0f) fImpulse=-fImpulse;
       if (fImpulse>15.0f) {
         f32 fVol=(fImpulse-15.0f)/75.0f;
         if (fVol>1.0f) fVol=1.0f;
-        core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
+        core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
         CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
         ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
-      m_fAngleRate[2]=f;
+      m_fAngleRate[i]=f;
     }
+  }
+
+  if (m_pSteerAxis) {
+    f32 f=m_pSteerAxis->getHingeAngle2Rate(),fImpulse=m_fAngleRate[2]-f;;
+    if (fImpulse<0.0f) fImpulse=-fImpulse;
+    if (fImpulse>15.0f) {
+      f32 fVol=(fImpulse-15.0f)/75.0f;
+      if (fVol>1.0f) fVol=1.0f;
+      core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
+      CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    }
+    m_fAngleRate[2]=f;
   }
 }
 

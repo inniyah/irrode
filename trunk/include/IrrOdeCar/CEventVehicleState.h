@@ -9,6 +9,7 @@
 #define EVENT_TANK_STATE_ID  irr::ode::eIrrOdeEventUser+2
 #define EVENT_CAR_STATE_ID  irr::ode::eIrrOdeEventUser+3
 #define EVENT_FIRE_SND_ID irr::ode::eIrrOdeEventUser+4
+#define EVENT_HELI_STATE_ID irr::ode::eIrrOdeEventUser+5
 
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
@@ -46,11 +47,12 @@ class CEventTankState : public irr::ode::IIrrOdeEvent {
     irr::s32 m_iNodeId;
     irr::s8 m_aAngles[4];
     irr::f32 m_fCannonAngle,
-             m_fTurretAngle;
+             m_fTurretAngle,
+             m_fSound;
 
   public:
     CEventTankState();
-    CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle);
+    CEventTankState(irr::s32 iId, const irr::s8 *aAngles, irr::f32 fCannonAngle, irr::f32 fTurretAngle, irr::f32 fSound);
     CEventTankState(irr::ode::CSerializer *pData);
 
     virtual ~CEventTankState() { }
@@ -65,6 +67,7 @@ class CEventTankState : public irr::ode::IIrrOdeEvent {
     irr::s32 getNodeId() { return m_iNodeId; }
     irr::f32 getCannonAngle() { return m_fCannonAngle; }
     irr::f32 getTurretAngle() { return m_fTurretAngle; }
+    irr::f32 getSound() { return m_fSound; }
 };
 
 class CEventCarState : public irr::ode::IIrrOdeEvent {
@@ -134,5 +137,25 @@ class CEventFireSound : public irr::ode::IIrrOdeEvent {
     irr::u8 getSound() { return m_iSound; }
     irr::f32 getVolume() { return m_fVolume; }
     const irr::core::vector3df &getPosition() { return m_vPos; }
+};
+
+class CEventHeliState : public irr::ode::IIrrOdeEvent {
+  protected:
+    irr::s32 m_iNodeId;
+    irr::f32 m_fSound;
+
+  public:
+    CEventHeliState();
+    CEventHeliState(irr::s32 iNodeId, irr::f32 fSound);
+    CEventHeliState(irr::ode::CSerializer *pData);
+
+    virtual irr::u16 getType() { return EVENT_HELI_STATE_ID; }
+    virtual const irr::c8 *toString();
+
+    virtual irr::ode::CSerializer *serialize();
+    virtual irr::ode::IIrrOdeEvent *clone();
+
+    irr::f32 getSound() { return m_fSound; }
+    irr::s32 getNodeId() { return m_iNodeId; }
 };
 #endif

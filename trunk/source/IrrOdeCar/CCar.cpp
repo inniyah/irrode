@@ -28,6 +28,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   //get the car body
   m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
+  m_fOldSlider=0.0f;
 
   if (m_pCarBody) {
     m_pCarBody->setUserData(this);
@@ -248,22 +249,15 @@ bool CCar::OnEvent(const SEvent &event) {
 
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    bool bDataChanged=false;
+
     if (m_bActive) {
       bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
 
-      if (bBoost!=m_bBoost) m_pCockpit->setBoost(bBoost);
-      m_bBoost=bBoost;
-
-      f32 fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f;
-
-      if (m_fRpm>fRpm) {
-        m_fRpm-=1.5f;
-        if (m_fRpm<fRpm) m_fRpm=fRpm;
-      }
-
-      if (m_fRpm<fRpm) {
-        m_fRpm+=1.5f;
-        if (m_fRpm>fRpm) m_fRpm=fRpm;
+      if (bBoost!=m_bBoost) {
+        m_pCockpit->setBoost(bBoost);
+        m_bBoost=bBoost;
+        bDataChanged=true;
       }
 
       m_pCockpit->setRpm(-m_fRpm);
@@ -427,56 +421,94 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
     m_fOldVel=fVel;
 
-    //Send an event if the car's state has changed
-    u8 iFlags=0;
-    if (m_bBoost) iFlags|=CEventCarState::eCarFlagBoost;
+    f32 fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f;
 
-    if (m_pSndEngine!=NULL) {
-      f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
-      if (fRot<0.0f) fRot=-fRot;
-
-      if (fRot>5.0f) {
-        if (fRot>155.0f)
-          fSound=5.75f;
-        else
-          fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
-      }
-
-      if (m_fSound<fSound) {
-        m_fSound+=0.025f;
-        if (m_fSound>=fSound) m_fSound=fSound;
-      }
-
-      if (m_fSound>fSound) {
-        m_fSound-=0.025f;
-        if (m_fSound<=fSound) m_fSound=fSound;
-      }
-
-      f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
-      if (fImpulse<0.0f) fImpulse=-fImpulse;
-
-      if (fImpulse>5.0f) {
-        fImpulse-=5.0f;
-        fImpulse/=50.0f;
-        if (fImpulse>1.0f) fImpulse=1.0f;
-
-        CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
-      }
-
-      m_vOldSpeed=m_pCarBody->getLinearVelocity();
+    if (m_fRpm>fRpm) {
+      bDataChanged=true;
+      m_fRpm-=1.5f;
+      if (m_fRpm<fRpm) m_fRpm=fRpm;
     }
-    CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
-                                              m_pJointSus->getSliderPosition(),
-                                              m_pAxesRear[0]->getHingeAngle()*180.0f/PI,
-                                              m_pAxesRear[1]->getHingeAngle()*180.0f/PI,
-                                              m_fRpm,m_fDiff,m_fSound,iFlags);
 
-    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
+    if (m_fRpm<fRpm) {
+      bDataChanged=true;
+      m_fRpm+=1.5f;
+      if (m_fRpm>fRpm) m_fRpm=fRpm;
+    }
+
+    //Send an event if the car's state has changed
+    f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
+    if (fRot<0.0f) {
+      bDataChanged=true;
+      fRot=-fRot;
+    }
+
+    if (fRot>5.0f) {
+      if (fRot>155.0f)
+        fSound=5.75f;
+      else
+        fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
+    }
+
+    if (m_fSound<fSound) {
+      m_fSound+=0.025f;
+      if (m_fSound>=fSound) {
+        bDataChanged=true;
+        m_fSound=fSound;
+      }
+    }
+
+    if (m_fSound>fSound) {
+      m_fSound-=0.025f;
+      if (m_fSound<=fSound) {
+        m_fSound=fSound;
+        bDataChanged=true;
+      }
+    }
+
+    f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
+    if (fImpulse<0.0f) fImpulse=-fImpulse;
+
+    if (fImpulse>5.0f) {
+      fImpulse-=5.0f;
+      fImpulse/=50.0f;
+      if (fImpulse>1.0f) fImpulse=1.0f;
+
+      CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
+    }
+
+    m_vOldSpeed=m_pCarBody->getLinearVelocity();
+
+    f32 fSlider=m_pJointSus->getSliderPosition();
+    if (fSlider!=m_fOldSlider) {
+      bDataChanged=true;
+      m_fOldSlider=fSlider;
+    }
+
+    if (bDataChanged) {
+      bDataChanged=false;
+      dataChanged();
+    }
   }
   return false;
 }
 
 bool CCar::handlesEvent(ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+}
+
+ode::IIrrOdeEvent *CCar::writeEvent() {
+  u8 iFlags=0;
+  if (m_bBoost) iFlags|=CEventCarState::eCarFlagBoost;
+  CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
+                                            m_pJointSus->getSliderPosition(),
+                                            m_pAxesRear[0]->getHingeAngle()*180.0f/PI,
+                                            m_pAxesRear[1]->getHingeAngle()*180.0f/PI,
+                                            m_fRpm,m_fDiff,m_fSound,iFlags);
+
+  return pEvent;
+}
+
+ode::eEventWriterType CCar::getEventWriterType() {
+  return ode::eIrrOdeEventWriterUnknown;
 }

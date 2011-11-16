@@ -31,7 +31,7 @@ enum eCarCtrl {
   eCarDifferential
 };
 
-class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeEventListener {
+class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeEventListener, public ode::IIrrOdeEventWriter {
   protected:
     bool m_bBrake,         /*!< is the handbrake active? */
          m_bBoost,         /*!< is the boos button pushed? */
@@ -72,7 +72,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     const u32 *m_pCtrls;
     f32 m_fSound,
         m_fRpm,
-        m_fDiff;
+        m_fDiff,
+        m_fOldSlider;
 
     core::vector3df m_vOldSpeed;
 
@@ -94,6 +95,9 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     virtual stringc &getButtonText() { static stringc s=stringc("select car"); return s; }
 
     virtual void drawSpecifics() { }
+
+    virtual ode::IIrrOdeEvent *writeEvent();
+    virtual ode::eEventWriterType getEventWriterType();
 };
 
 #endif

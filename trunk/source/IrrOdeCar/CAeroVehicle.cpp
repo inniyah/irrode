@@ -10,7 +10,6 @@
 CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView,irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl,pSndEngine) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
-  m_pSound=NULL;
 
   if (m_pBody!=NULL) {
     m_pBody->setUserData(this);
@@ -25,7 +24,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_fCamAngleV=0.0f;
     m_bFirePrimary=false;
     m_bFireSecondary=false;
-    m_bRudderChanged=false;
+    m_bDataChanged=false;
 
     ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -93,8 +92,6 @@ CAeroVehicle::~CAeroVehicle() {
 void CAeroVehicle::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
 
-  if (m_pSound!=NULL) m_pSound->setIsPaused(false);
-
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pTab->setVisible(true);
@@ -141,21 +138,26 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
         fVelFact=fVel<100.0f?1.0f:fVel>180.0f?0.2f:1.0f-((fVel-100.0f)/100.0f);
 
     if (m_bActive) {
-      m_fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
+      f32 fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
+      if (fThrust<m_fThrust-0.001 || fThrust>m_fThrust+0.001) {
+        m_bDataChanged=true;
+        m_fThrust=fThrust;
+      }
 
       if (m_pController->get(m_pCtrls[eAeroPowerZero])) {
         m_fThrust=0.0f;
         m_pController->set(m_pCtrls[eAeroPowerUp],0.0f);
+        m_bDataChanged=true;
       }
 
       f32 f;
 
-      f=m_pController->get(m_pCtrls[eAeroPitchUp ]); if (f!=m_fPitch) { m_bRudderChanged=true; m_fPitch=f; }
-      f=m_pController->get(m_pCtrls[eAeroRollLeft]); if (f!=m_fRoll ) { m_bRudderChanged=true; m_fRoll =f; }
-      f=m_pController->get(m_pCtrls[eAeroYawRight]); if (f!=m_fYaw  ) { m_bRudderChanged=true; m_fYaw  =f; }
+      f=m_pController->get(m_pCtrls[eAeroPitchUp ]); if (f!=m_fPitch) { m_bDataChanged=true; m_fPitch=f; }
+      f=m_pController->get(m_pCtrls[eAeroRollLeft]); if (f!=m_fRoll ) { m_bDataChanged=true; m_fRoll =f; }
+      f=m_pController->get(m_pCtrls[eAeroYawRight]); if (f!=m_fYaw  ) { m_bDataChanged=true; m_fYaw  =f; }
 
-      if (m_fThrust> 1.0f) m_fThrust =1.0f;
-      if (m_fThrust<-0.0f) m_fThrust/=4.0f;
+      if (m_fThrust> 1.0f) { m_bDataChanged=true; m_fThrust =1.0f; }
+      if (m_fThrust<-0.0f) { m_bDataChanged=true; m_fThrust/=4.0f; }
 
       if (m_pController->get(m_pCtrls[eAeroFirePrimary])!=0.0f && pStep->getStepNo()-m_iLastShot1>60) {
         m_bFirePrimary=true;

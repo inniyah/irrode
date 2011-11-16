@@ -35,9 +35,11 @@ class CProjectile;
 class CAutoPilot;
 class CRearView;
 
-class CHeli : public CAeroVehicle {
+class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeft;
+    f32 m_fSound;
+    s32 m_iNodeId;
 
   public:
     CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
@@ -49,6 +51,9 @@ class CHeli : public CAeroVehicle {
     virtual void drawSpecifics();
 
     virtual void odeStep(u32 iStep);
+
+    virtual ode::IIrrOdeEvent *writeEvent();
+    virtual ode::eEventWriterType getEventWriterType();
 };
 
 #endif

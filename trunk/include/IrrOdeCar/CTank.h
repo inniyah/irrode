@@ -55,8 +55,6 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
                                 *m_pTurretHinge;
     irr::s8 m_aAxesAngles[4];
 
-    irrklang::ISound *m_pSound;
-
     const u32 *m_pCtrls;
     u32 m_iLastShot;
     f32 m_fSound;
