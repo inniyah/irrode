@@ -126,7 +126,7 @@ const core::stringc &CSegment::getName() { return m_sName; }
  * @param pTex the texture parameters to be used
  * @param vert the output vertex array
  */
-void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop) {
+void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop, core::vector3df vNorm) {
   //initialize some help variables to help finding the right points for the top shape
   core::vector3df calcLength=(m_fLength/2)*m_vDirection,
                   calcWidth =(m_fWidth /2)*(m_vNormal.crossProduct(m_vDirection));
@@ -199,11 +199,11 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
     for (u32 x=0; x<4; x++) for (u32 y=0; y<2; y++) fTex[x][y]=fDummy[x][y];
   }
 
+  if (vNorm.getLength()==0.0f) vNorm=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
+  vNorm.normalize();
   //Create vertices inside the output array
   for (u32 i=0; i<4; i++) {
-    vert[i]=video::S3DVertex(vec[i].X,vec[i].Y,vec[i].Z,
-                             0,1,0,video::SColor(0xFF,0xE0,0xFF,0xE0),
-                             fTex[i][0],fTex[i][1]);
+    vert[i]=video::S3DVertex(vec[i],vNorm,video::SColor(0xFF,0xE0,0xFF,0xE0),core::vector2df(fTex[i][0],fTex[i][1]));
   }
 }
 
@@ -408,7 +408,8 @@ void CSegment::recalcMeshBuffer() {
       m_pBuffer[i+10]->append(vVerts,4,iWallIdI,6);
       m_pBuffer[i+10]->recalculateBoundingBox();
 
-      fillVertexArray(vWallTop,m_pTexParams[i+14],vVerts,true);
+      core::vector3df vTopNorm=(vWallTop[0]-vWallTop[2]).crossProduct(vWallTop[0]-vWallTop[1]);
+      fillVertexArray(vWallTop,m_pTexParams[i+14],vVerts,true,vTopNorm);
       m_pBuffer[i+14]->append(vVerts,4,iWallTop,6);
       m_pBuffer[i+14]->recalculateBoundingBox();
 
@@ -454,7 +455,8 @@ void CSegment::recalcMeshBuffer() {
 
       u16 idx[]={ 1,0,2, 2,0,3 };
 
-      fillVertexArray(vCornerTop,m_pTexParams[i+14],vVerts,false);
+      core::vector3df vTopNorm=(vCornerTop[0]-vCornerTop[2]).crossProduct(vCornerTop[0]-vCornerTop[1]);
+      fillVertexArray(vCornerTop,m_pTexParams[i+14],vVerts,false,vTopNorm);
       m_pBuffer[i+14]->append(vVerts,4,idx,6);
 
       for (u32 x=0; x<4; x++) {
