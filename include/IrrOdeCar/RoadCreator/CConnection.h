@@ -5,6 +5,8 @@
   #include <INotification.h>
   #include <IRoadPart.h>
 
+  #define _CONNECTION_NUMBER_OF_BUFFERS 10
+
 class CSegment;
 class CTextureParameters;
 
@@ -44,14 +46,16 @@ class CConnection : public INotification, public IRoadPart {
         m_fOffset,          /**<! offset (i.e. height) of the connection */
         m_fRoadWidth,       /**<! highest road width of this connectior (for texture calculations) */
         m_fHpOff[4],        /**<! offset of the helppoints */
-        m_fWallHeight;      /**<! height of the surrounding walls */
+        m_fWallHeight,      /**<! height of the surrounding walls */
+        m_fWallWidth;       /**<! width of the surrounding walls */
 
     bool m_bFlipConnection, /**<! flip one of the connections. Needed from time to time to connect correctly */
          m_bFlipVertices,   /**<! flip the vertices. Sometimes it happens that we see the backface */
          m_bSelected,       /**<! is this connection selected (for editing)? */
          m_bWalls[2];       /**<! add wall to side? */
 
-    CTextureParameters *m_pTexParams[6];  /**<! the texture parameters for the four available sides */
+    CTextureParameters *m_pTexParams[_CONNECTION_NUMBER_OF_BUFFERS],    /**<! the texture parameters for all surfaces */
+                       *m_pInitTextures[_CONNECTION_NUMBER_OF_BUFFERS]; /**<! initial texture parameters */
 
     core::vector3df m_vHelpPoints[4], /**<! the four help points for Bezier3, Bezier2 uses Nr. 0 and 2, Bezier1 uses none */
                     m_vDraw[8];
@@ -61,7 +65,7 @@ class CConnection : public INotification, public IRoadPart {
     video::IVideoDriver *m_pDrv;    /**<! the Irrlicht video driver */
     io::IFileSystem *m_pFs;
 
-    scene::IMeshBuffer *m_pMeshBuffer[8]; /**<! the mesh buffers of the connection */
+    scene::IMeshBuffer *m_pMeshBuffer[_CONNECTION_NUMBER_OF_BUFFERS]; /**<! the mesh buffers of the connection */
 
     /**
      * Init the Bezier helppoints
@@ -72,6 +76,16 @@ class CConnection : public INotification, public IRoadPart {
      * @see CConnection::setType
      */
     void calculateHelpPoints();
+
+    /**
+     * Calculate the positions of the vertices and add them to a temp array
+     * @param vTemp the temporary array of vertex arrays
+     * @param p1 the points to add
+     * @param vNorm the normal vector
+     */
+    void addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNorm);
+
+    void fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::vector3df> vTemp, u32 iIdx);
 
     /**
      * Recalculates the meshbuffer after some attribute was changed
@@ -108,31 +122,6 @@ class CConnection : public INotification, public IRoadPart {
      * @see render
      */
     core::vector3df getBezier3(core::vector3df p[], f32 fStep);
-
-    /**
-     * This method creates vertices out of the four vectors in the first argument
-     * and adds those to the array and their indices to the index array
-     * @param v the input vectors
-     * @param aVerts the output array. The input vectors will be added to this array
-     * @param aIdx the index output. The indices of the vertex output array are stored here
-     * @param b boolean for multi-colored appearance in the editor
-     * @param iIdx index of the side that the vectors are for (road, bottom, left, right)
-     * @see CConnection::recalcMeshBuffer
-     */
-    void addToBuffers(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, u32 iIdx);
-
-    void addToBuffersWall(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, bool bRotate, bool bBasement, CTextureParameters *pTex);
-
-    /**
-     * Using this method you can add a single vertex to a temporarily used array of vertices. This array
-     * is searched to see if the position of any vertex inside mathes the new vertex, and if this is true
-     * the normals of those vertices are interpolated
-     * @param vtx the vertex to add
-     * @param aTmp the array of vertices
-     * @return the index of the newly added vertex
-     * @see CConnection::addToBuffers
-     */
-    u16 addToTempVertexBuffer(video::S3DVertex vtx, core::array<video::S3DVertex> &aTmp);
 
   public:
     /**
@@ -267,13 +256,13 @@ class CConnection : public INotification, public IRoadPart {
 
     void setWallFlag(u32 iIdx, bool b) { if (iIdx<2) { m_bWalls[iIdx]=b; update(); } }
     void setWallHeight(f32 f) { m_fWallHeight=f; update(); }
+    void setWallWidth(f32 f) { m_fWallWidth=f; update(); }
 
     bool getWallFlag(u32 idx) { return idx<2?m_bWalls[idx]:false; }
     f32 getWallHeight() { return m_fWallHeight; }
+    f32 getWallWidth() { return m_fWallWidth; }
 
-    virtual s32 getNumberOfMeshBuffers() {
-      return 8;
-    }
+    virtual s32 getNumberOfMeshBuffers() { return _CONNECTION_NUMBER_OF_BUFFERS; }
 };
 
 #endif

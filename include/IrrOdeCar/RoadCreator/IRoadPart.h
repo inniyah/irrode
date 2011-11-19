@@ -12,7 +12,7 @@ class IRoadPart {
     s32 m_iMeshBufferToDraw;
 
   public:
-    IRoadPart() {
+    IRoadPart(video::IVideoDriver *pDrv) {
       m_iMeshBufferToDraw=-1;
     }
 

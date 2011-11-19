@@ -16,19 +16,19 @@ bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMateria
     core::stringc s1=m1.getTexture(0)->getName().getPath(),
                   s2=m2.getTexture(0)->getName().getPath();
   #endif
+
   return s1==s2;
 }
 
 void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMeshBuffer *> &aBuffers) {
   bool bAdded=false;
-  video::SMaterial mat1=p->getMaterial();
 
   for (u32 j=0; j<aBuffers.size() && !bAdded; j++) {
-    scene::IMeshBuffer *pBuffer=aBuffers[j];
-
-    video::SMaterial mat2=pBuffer->getMaterial();
+    video::SMaterial mat1=p->getMaterial(),
+                     mat2=aBuffers[j]->getMaterial();
 
     if (sameMaterial(mat1,mat2)) {
+      scene::IMeshBuffer *pBuffer=aBuffers[j];
       pBuffer->append(p->getVertices(),p->getVertexCount(),p->getIndices(),p->getIndexCount());
       pBuffer->recalculateBoundingBox();
       p->drop();
@@ -59,6 +59,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
   bool bRet=true;
   io::IReadFile *pFile=m_pDevice->getFileSystem()->createAndOpenFile(sName.c_str());
+
   if (pFile) {
     io::IXMLReader *pReader=m_pDevice->getFileSystem()->createXMLReader(pFile);
     if (pReader) {
@@ -115,20 +116,22 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load texture parameters of a segment
             if (iState==4) {
-              if (pSeg!=NULL && iSegTex<14) {
+              if (pSeg!=NULL && iSegTex<_SEGMENT_NUMBER_OF_BUFFERS) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pSeg->getTextureParameters(iSegTex)->load(pAttr);
+                pSeg->update();
                 pAttr->drop();
               }
             }
 
             //Load texture parameters of a connection
             if (iState==5) {
-              if (pCon!=NULL && iConTex<10) {
+              if (pCon!=NULL && iConTex<_CONNECTION_NUMBER_OF_BUFFERS) {
                 io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pCon->getTextureParameters(iConTex)->load(pAttr);
+                pCon->update();
                 pAttr->drop();
               }
             }
@@ -217,8 +220,15 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
           }
         }
       }
+
       m_sCurrentRoad=sName;
       pReader->drop();
+
+      core::list<CSegment    *>::Iterator sit;
+      core::list<CConnection *>::Iterator cit;
+
+      for (sit=m_lSegments   .begin(); sit!=m_lSegments   .end(); sit++) (*sit)->update();
+      for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) (*cit)->update();
     }
     else {
       printf("ERROR: can't create XML reader for file \"%s\".\n",sName.c_str());
@@ -273,7 +283,7 @@ void CRoadLoader::saveRoad() {
         pAttr->drop();
 
         //Write the segment texture parameters
-        for (u32 i=0; i<10; i++) {
+        for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
           core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
@@ -305,7 +315,7 @@ void CRoadLoader::saveRoad() {
         pAttr->drop();
 
         //Write the connection's texture parameters
-        for (u32 i=0; i<6; i++) {
+        for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
           core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
@@ -408,9 +418,8 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::list<CSegment *>::Iterator sit;
   for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
     CSegment *pSeg=*sit;
-    pSeg->update();
     vCenterPos+=pSeg->getPosition();
-    for (u32 i=0; i<(u32)pSeg->getNumberOfMeshBuffers(); i++) {
+    for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
       bool bDoIt=true;
       for (u32 iTex=0; iTex<pSeg->getTextureCount() && bDoIt; iTex++) {
         if (pSeg->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
@@ -418,7 +427,7 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
 
       if (bDoIt) {
         scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
-        if (p) {
+        if (p && p->getVertexCount()>0) {
           aBoxes.push_back(p->getBoundingBox());
           addBufferToArray(p,aBuffers);
         }
@@ -439,8 +448,7 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   core::list<CConnection *>::Iterator cit;
   for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
     CConnection *pCon=*cit;
-    pCon->update();
-    for (u32 i=0; i<(u32)pCon->getNumberOfMeshBuffers(); i++) {
+    for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
       bool bDoIt=true;
       for (u32 iTex=0; iTex<pCon->getTextureCount() && bDoIt; iTex++) {
         if (pCon->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
@@ -448,7 +456,7 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
 
       if (bDoIt) {
         scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
-        if (p!=NULL) {
+        if (p!=NULL && p->getVertexCount()>0) {
           addBufferToArray(p,aBuffers);
         }
       }
@@ -465,7 +473,7 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
 
       if (bDoIt) {
         scene::IMeshBuffer *p=m_pSurface->getMeshBuffer(i);
-        if (p!=NULL) {
+        if (p!=NULL && p->getVertexCount()>0) {
           addBufferToArray(p,aBuffers);
         }
       }
