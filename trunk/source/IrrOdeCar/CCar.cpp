@@ -465,16 +465,18 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       }
     }
 
-    f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
-    if (fImpulse<0.0f) fImpulse=-fImpulse;
+    if (m_pCarBody->getCollision()) {
+      f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
+      if (fImpulse<0.0f) fImpulse=-fImpulse;
 
-    if (fImpulse>5.0f) {
-      fImpulse-=5.0f;
-      fImpulse/=50.0f;
-      if (fImpulse>1.0f) fImpulse=1.0f;
+      if (fImpulse>5.0f) {
+        fImpulse-=5.0f;
+        fImpulse/=50.0f;
+        if (fImpulse>1.0f) fImpulse=1.0f;
 
-      CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
-      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
+        CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
+        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
+      }
     }
 
     m_vOldSpeed=m_pCarBody->getLinearVelocity();
