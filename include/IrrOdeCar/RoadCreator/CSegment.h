@@ -79,7 +79,7 @@ class CSegment : public IRoadPart {
      * @param pTex the texture parameters to be used
      * @param vert the output vertex array
      */
-    void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop);
+    void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop, core::vector3df vNorm=core::vector3df(0,0,0));
 
     core::array<core::vector3df> vTemp[_SEGMENT_NUMBER_OF_BUFFERS];
   public:
