@@ -8,605 +8,296 @@
 
 using namespace irr;
 
-static video::ITexture *g_pEmptyTex=NULL;
 
-/**
- * Using this method you can add a single vertex to a temporarily used array of vertices. This array
- * is searched to see if the position of any vertex inside mathes the new vertex, and if this is true
- * the normals of those vertices are interpolated
- * @param vtx the vertex to add
- * @param aTmp the array of vertices
- * @return the index of the newly added vertex
- * @see CConnection::addToBuffers
- */
-u16 CConnection::addToTempVertexBuffer(video::S3DVertex vtx, core::array<video::S3DVertex> &aTmp) {
-  u16 iRet=0;
+void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNorm) {
+  for (u32 j=0; j<_CONNECTION_NUMBER_OF_BUFFERS; j++) {
+    switch (j) {
+      //Road
+      case 0: {
+          core::vector3df point1=p1[0],point2=p1[1];
+          if (m_bWalls[0]) {
+            core::vector3df vDir=p1[0]-p1[1];
+            vDir.normalize();
+            point1=p1[0]-m_fWallWidth*vDir;
+          }
 
-  iRet=aTmp.size();
-  aTmp.push_back(vtx);
+          if (m_bWalls[1]) {
+            core::vector3df vDir=p1[0]-p1[1];
+            vDir.normalize();
+            point2=p1[1]+m_fWallWidth*vDir;
+          }
+          vTemp[0].push_back(point1);
+          vTemp[0].push_back(point2);
+        }
+        break;
 
-  return iRet;
+      //Basement
+      case 1:
+        vTemp[1].push_back(p1[0]+m_fOffset*vNorm);
+        vTemp[1].push_back(p1[1]+m_fOffset*vNorm);
+        break;
+
+      //Left Basement
+      case 2:
+        vTemp[2].push_back(p1[0]);
+        vTemp[2].push_back(p1[0]+m_fOffset*vNorm);
+        break;
+
+      //Right Basement
+      case 3:
+        vTemp[3].push_back(p1[1]);
+        vTemp[3].push_back(p1[1]+m_fOffset*vNorm);
+        break;
+
+      //Left outer wall
+      case 4:
+        if (m_bWalls[0]) {
+          vTemp[4].push_back(p1[0]);
+          vTemp[4].push_back(p1[0]-m_fWallHeight*vNorm);
+        }
+        break;
+
+      //Right outer wall
+      case 5:
+        if (m_bWalls[1]) {
+          vTemp[5].push_back(p1[1]);
+          vTemp[5].push_back(p1[1]-m_fWallHeight*vNorm);
+        }
+        break;
+
+      //Left inner wall
+      case 6:
+        if (m_bWalls[0]) {
+          core::vector3df vDir=p1[0]-p1[1];
+          vDir.normalize();
+          vTemp[6].push_back(p1[0]-m_fWallWidth*vDir);
+          vTemp[6].push_back(p1[0]-m_fWallWidth*vDir-m_fWallHeight*vNorm);
+        }
+        break;
+
+      //Right inner wall
+      case 7:
+        if (m_bWalls[1]) {
+          core::vector3df vDir=p1[1]-p1[0];
+          vDir.normalize();
+          vTemp[7].push_back(p1[1]-m_fWallWidth*vDir);
+          vTemp[7].push_back(p1[1]-m_fWallWidth*vDir-m_fWallHeight*vNorm);
+        }
+        break;
+
+      //Left wall top
+      case 8:
+        if (m_bWalls[0]) {
+          vTemp[8].push_back(vTemp[4][vTemp[4].size()-1]);
+          vTemp[8].push_back(vTemp[6][vTemp[6].size()-1]);
+        }
+        break;
+
+      //Right wall top
+      case 9:
+        if (m_bWalls[1]) {
+          vTemp[9].push_back(vTemp[5][vTemp[5].size()-1]);
+          vTemp[9].push_back(vTemp[7][vTemp[7].size()-1]);
+        }
+        break;
+    }
+  }
 }
 
-/**
- * This method creates vertices out of the four vectors in the first argument
- * and adds those to the array and their indices to the index array
- * @param v the input vectors
- * @param aVerts the output array. The input vectors will be added to this array
- * @param aIdx the index output. The indices of the vertex output array are stored here
- * @param b boolean for multi-colored appearance in the editor
- * @param iIdx index of the side that the vectors are for (road, bottom, left, right)
- * @see CConnection::recalcMeshBuffer
- */
-void CConnection::addToBuffers(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, u32 iIdx) {
-  video::S3DVertex vt[4];                                   //the vertex array
-  core::vector3df norm=(v[0]-v[1]).crossProduct(v[0]-v[2]); //the normal
-  u16 idx[6];                                               //the index array
+void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::vector3df> vTemp, u32 iIdx) {
+  if (pBuffer==NULL || vTemp.size()<4) return;
 
-  //Normalize the normal and invert it if the vertices should be flipped
-  norm.normalize();
-  if (m_bFlipVertices) norm=-norm;
+  bool bFlip=iIdx==1 || iIdx==2 || iIdx==5 || iIdx==6 || iIdx==9;
+  if (m_bFlipVertices) bFlip=!bFlip;
+  bool bFlipNorm=iIdx==1 || iIdx==2 || iIdx==5 || iIdx==6 || iIdx==9;
+  if (m_bFlipVertices) bFlipNorm=!bFlipNorm;
 
-  //Calculate the length and the width defined by the vectors to add
-  f32 fLen=(((v[0]-v[2]).getLength())+((v[1]-v[3])).getLength())/2.0f,
-      fWid=(((v[0]-v[1]).getLength())+((v[2]-v[3])).getLength())/2.0f;
+  core::array<video::S3DVertex> aVerts;
+  core::array<u16> aIndices;
 
-  //Calculate the helper variables for texture calculations
-  f32 diff=fWid!=0.0f?m_pTexParams[iIdx]->getScaleX()*fLen/fWid:1.0f,
-      f1=m_bFlipVertices?m_pTexParams[iIdx]->getScaleY():0.0f,
-      f2=m_bFlipVertices?0.0f:m_pTexParams[iIdx]->getScaleY(),
-      fOffX=m_pTexParams[iIdx]->getOffsetX(),
-      fOffY=m_pTexParams[iIdx]->getOffsetY();
+  f32 fWidth=(vTemp[0]-vTemp[1]).getLength(),fTex=0.0f;
 
-  if (iIdx==0 || iIdx==1) {
-    //we need to find out the biggest width of the
-    //defined road. To do this we check the width
-    //of the road (iIdx==0) and of the bottom (iIdx==1)
-    if (m_fRoadWidth<fWid) m_fRoadWidth=fWid;
-  }
-  else
-    //Recalculate the helper variables for texture mapping if we add the side of the road
-    if (iIdx==2) {
-      diff=m_fRoadWidth!=0.0f?m_pTexParams[iIdx]->getScaleX()*fWid/m_fRoadWidth:1.0f;
-      f1=m_fRoadWidth!=0.0f?m_bFlipVertices?fWid/m_fRoadWidth:0.0f:0.0f;
-      f2=m_fRoadWidth!=0.0f?m_bFlipVertices?0.0f:fWid/m_fRoadWidth:1.0f;
-    }
-    else {
-      diff=m_fRoadWidth!=0.0f?m_pTexParams[iIdx]->getScaleX()*fLen/m_fRoadWidth:1.0f;
-      f1=m_fRoadWidth!=0.0f?m_bFlipVertices?fLen/m_fRoadWidth:0.0f:0.0f;
-      f2=m_fRoadWidth!=0.0f?m_bFlipVertices?0.0f:fLen/m_fRoadWidth:1.0f;
-    }
+  bool bColor=false;
 
-  //Texture stretched? Reset the Diff value
-  if (m_pTexParams[iIdx]->getStretch()) {
-    diff=1.0f/((f32)(m_iSteps));
-  }
+  for (u32 i=0; i<vTemp.size(); i++) {
+    core::vector3df v1,v2;
 
-  core::vector2df cCoord[4];
-
-  //Now we fill a vector array with the texture coordinates
-  //depending on the rotation
-  switch (m_pTexParams[iIdx]->getRotate()) {
-    case 0:   //Rotation 0
-      cCoord[0]=core::vector2df(f1+fOffY,m_fTexX+fOffX);
-      cCoord[1]=core::vector2df(f2+fOffY,m_fTexX+fOffX);
-      cCoord[2]=core::vector2df(f1+fOffY,m_fTexX+fOffX+diff);
-      cCoord[3]=core::vector2df(f2+fOffY,m_fTexX+fOffX+diff);
-      m_fTexX+=diff;
-      break;
-
-    case 1:   //Rotation 90
-      cCoord[0]=core::vector2df(m_fTexX+fOffX     ,f2+fOffY);
-      cCoord[1]=core::vector2df(m_fTexX+fOffX     ,f1+fOffY);
-      cCoord[2]=core::vector2df(m_fTexX+fOffX+diff,f2+fOffY);
-      cCoord[3]=core::vector2df(m_fTexX+fOffX+diff,f1+fOffY);
-      m_fTexX+=diff;
-      break;
-
-    case 2:   //Rotation 180
-      cCoord[0]=core::vector2df(f2+fOffY,m_fTexX+fOffX);
-      cCoord[1]=core::vector2df(f1+fOffY,m_fTexX+fOffX);
-      cCoord[2]=core::vector2df(f2+fOffY,m_fTexX+fOffX-diff);
-      cCoord[3]=core::vector2df(f1+fOffY,m_fTexX+fOffX-diff);
-      m_fTexX-=diff;
-      break;
-
-    case 3:   //Rotation 270
-      cCoord[0]=core::vector2df(m_fTexX+fOffX     ,f1+fOffY);
-      cCoord[1]=core::vector2df(m_fTexX+fOffX     ,f2+fOffY);
-      cCoord[2]=core::vector2df(m_fTexX+fOffX-diff,f1+fOffY);
-      cCoord[3]=core::vector2df(m_fTexX+fOffX-diff,f2+fOffY);
-      m_fTexX-=diff;
-      break;
-  }
-
-  //Next we fill the temp array of vertices
-  vt[0]=video::S3DVertex(v[0],norm,b?_RED:_BLUE,cCoord[0]);
-  vt[1]=video::S3DVertex(v[1],norm,b?_RED:_BLUE,cCoord[1]);
-  vt[2]=video::S3DVertex(v[2],norm,b?_RED:_BLUE,cCoord[2]);
-  vt[3]=video::S3DVertex(v[3],norm,b?_RED:_BLUE,cCoord[3]);
-
-  //make sure the texture coordinate starts between 0 and 1
-  while (m_fTexX>= 1.0f) m_fTexX-=1.0f;
-  while (m_fTexX<=-1.0f) m_fTexX+=1.0f;
-
-  switch (iIdx) {
-    //the ground vertices need some extra treatment
-    case 1:
-      vt[0].TCoords.X=-vt[0].TCoords.X; vt[0].Normal=-vt[0].Normal;
-      vt[1].TCoords.X=-vt[1].TCoords.X; vt[1].Normal=-vt[1].Normal;
-      vt[2].TCoords.X=-vt[2].TCoords.X; vt[2].Normal=-vt[2].Normal;
-      vt[3].TCoords.X=-vt[3].TCoords.X; vt[3].Normal=-vt[3].Normal;
-
-      if (m_bFlipVertices) {
-        u16 iTmp;
-
-        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[1]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[2]=iTmp; idx[3]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[0]=iTmp; idx[5]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[4]=iTmp;
+    if (i<vTemp.size()-2) {
+      if (i%2) {
+        v1=vTemp[i]-vTemp[i-1];
+        v2=vTemp[i]-vTemp[i+2];
       }
       else {
-        u16 iTmp;
-
-        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[1]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[0]=iTmp; idx[3]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[2]=iTmp; idx[4]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[5]=iTmp;
+        v1=vTemp[i]-vTemp[i+1];
+        v2=vTemp[i]-vTemp[i+2];
       }
-      break;
-
-    case 4:
-    case 5: {
-        u16 iTmp;
-
-        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[1]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[2]=iTmp; idx[3]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[0]=iTmp; idx[5]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[4]=iTmp;
-      }
-      break;
-
-    default:
-      if (m_bFlipVertices) {
-        u16 iTmp;
-
-        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[2]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[1]=iTmp; idx[5]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[0]=iTmp; idx[3]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[4]=iTmp;
+    }
+    else {
+      if (i==vTemp.size()-2) {
+        v1=vTemp[i]-vTemp[i+1];
+        v2=vTemp[i]-vTemp[i-2];
       }
       else {
-        u16 iTmp;
-
-        iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[0]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[1]=iTmp; idx[4]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[2]=iTmp; idx[3]=iTmp;
-        iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[5]=iTmp;
+        v1=vTemp[i]-vTemp[i-1];
+        v2=vTemp[i]-vTemp[i-2];
       }
-      break;
+    }
+
+    core::vector3df vNorm=v1.crossProduct(v2);
+    vNorm.normalize();
+    if (bFlipNorm) vNorm=-vNorm;
+    if (i>=vTemp.size()-2) vNorm=-vNorm;
+    bFlipNorm=!bFlipNorm;
+
+    video::SColor cCol=bColor?video::SColor(0xFF,0xFF,0xFF,0xFF):video::SColor(0xFF,0xFF,0,0);
+    core::vector2df vTex;
+
+    switch (m_pTexParams[iIdx]->getRotate()) {
+      case 1: vTex=core::vector2df( fTex         , i%2?1.0f:0.0f); break;
+      case 2: vTex=core::vector2df( i%2?1.0f:0.0f,-fTex         ); break;
+      case 3: vTex=core::vector2df(-fTex         , i%2?1.0f:0.0f); break;
+      default: vTex=core::vector2df(i%2?1.0f:0.0f, fTex         ); break;
+    }
+
+    vTex.X*=m_pTexParams[iIdx]->getScaleX();
+    vTex.Y*=m_pTexParams[iIdx]->getScaleY();
+    vTex.X+=m_pTexParams[iIdx]->getOffsetX();
+    vTex.Y+=m_pTexParams[iIdx]->getOffsetY();
+
+    video::S3DVertex v=video::S3DVertex(vTemp[i],vNorm,cCol,vTex);
+    aVerts.push_back(v);
+    if (i%2) {
+      fTex+=v2.getLength()/fWidth;
+      bColor=!bColor;
+    }
   }
 
-  //now we add the indices to the output array
-  for (u32 i=0; i<6; i++) aIdx.push_back(idx[i]);
-}
+  for (u16 i=0; i<vTemp.size()-2; i+=2) {
+    if (bFlip) {
+      aIndices.push_back(i  );
+      aIndices.push_back(i+2);
+      aIndices.push_back(i+1);
 
-void CConnection::addToBuffersWall(core::vector3df v[], core::array<video::S3DVertex> &aVerts, core::array<u16> &aIdx, bool b, bool bRotate, bool bBasement, CTextureParameters *pTex) {
-  video::S3DVertex vt[4] ;                                     //the vertex array
-  core::vector3df norm=((v[0]-v[1]).crossProduct(v[0]-v[2]));  //the normal
-  u16 idx[6];                                                  //the index array
-
-  if (m_bFlipVertices) norm=-norm;
-
-  core::vector2df cCoord[4];
-
-  f32 fNum=(f32)(aVerts.size()/8),
-      fOffX=pTex->getOffsetX(),
-      fOffY=pTex->getOffsetY();
-
-  if (bRotate) {
-    if (!pTex->getStretch()) {
-      cCoord[0]=core::vector2df(1+fOffX,1+fOffY);
-      cCoord[1]=core::vector2df(0+fOffX,1+fOffY);
-      cCoord[2]=core::vector2df(1+fOffX,0+fOffY);
-      cCoord[3]=core::vector2df(0+fOffX,0+fOffY);
+      aIndices.push_back(i+2);
+      aIndices.push_back(i+3);
+      aIndices.push_back(i+1);
     }
     else {
-      cCoord[0]=core::vector2df(1.0f-(fNum  )/((f32)m_iSteps)+fOffX,1+fOffY);
-      cCoord[1]=core::vector2df(1.0f-(fNum+1)/((f32)m_iSteps)+fOffX,1+fOffY);
-      cCoord[2]=core::vector2df(1.0f-(fNum  )/((f32)m_iSteps)+fOffX,0+fOffY);
-      cCoord[3]=core::vector2df(1.0f-(fNum+1)/((f32)m_iSteps)+fOffX,0+fOffY);
-    }
-  }
-  else {
-    if (!pTex->getStretch()) {
-      cCoord[0]=core::vector2df(0+fOffX,1+fOffY);
-      cCoord[1]=core::vector2df(0+fOffX,0+fOffY);
-      cCoord[2]=core::vector2df(1+fOffX,1+fOffY);
-      cCoord[3]=core::vector2df(1+fOffX,0+fOffY);
-    }
-    else {
-      cCoord[0]=core::vector2df((fNum  )/((f32)m_iSteps)+fOffX,1+fOffY);
-      cCoord[1]=core::vector2df((fNum  )/((f32)m_iSteps)+fOffX,0+fOffY);
-      cCoord[2]=core::vector2df((fNum+1)/((f32)m_iSteps)+fOffX,1+fOffY);
-      cCoord[3]=core::vector2df((fNum+1)/((f32)m_iSteps)+fOffX,0+fOffY);
+      aIndices.push_back(i  );
+      aIndices.push_back(i+1);
+      aIndices.push_back(i+2);
+
+      aIndices.push_back(i+2);
+      aIndices.push_back(i+1);
+      aIndices.push_back(i+3);
     }
   }
 
-  for (u32 i=0; i<4; i++) {
-    cCoord[i]*=core::vector2df(pTex->getScaleX(),pTex->getScaleY());
+  pBuffer->append(aVerts.const_pointer(),aVerts.size(),aIndices.const_pointer(),aIndices.size());
+
+  if (pBuffer->getVertexCount()>0) {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[iIdx]->getTexture());
+    m_pMeshBuffer[iIdx]->getMaterial().setTexture(0,pTex);
   }
-
-  norm.normalize();
-
-  vt[0]=video::S3DVertex(v[0],norm,b?_RED:_BLUE,cCoord[0]);
-  vt[1]=video::S3DVertex(v[1],norm,b?_RED:_BLUE,cCoord[1]);
-  vt[2]=video::S3DVertex(v[2],norm,b?_RED:_BLUE,cCoord[2]);
-  vt[3]=video::S3DVertex(v[3],norm,b?_RED:_BLUE,cCoord[3]);
-
-  if (m_bFlipVertices) {
-    u16 iTmp;
-
-    iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[2]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[1]=iTmp; idx[5]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[0]=iTmp; idx[3]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[4]=iTmp;
-  }
-  else {
-    u16 iTmp;
-
-    iTmp=addToTempVertexBuffer(vt[0],aVerts); idx[0]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[1],aVerts); idx[1]=iTmp; idx[4]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[2],aVerts); idx[2]=iTmp; idx[3]=iTmp;
-    iTmp=addToTempVertexBuffer(vt[3],aVerts);              idx[5]=iTmp;
-  }
-
-  //now we add the indices to the output array
-  for (u32 i=0; i<6; i++) aIdx.push_back(idx[i]);
 }
+
 /**
  * Recalculates the meshbuffer after some attribute was changed
  * @see CConnection::update
  */
 void CConnection::recalcMeshBuffer() {
   //Delete all meshbuffers allocated previously
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++)
-    if (m_pMeshBuffer[i]!=NULL) {
-      m_pMeshBuffer[i]->drop();
-      m_pMeshBuffer[i]=NULL;
-    }
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+    //if (m_pMeshBuffer[i]!=NULL)  m_pMeshBuffer[i]->drop();
+    m_pMeshBuffer[i]=new scene::SMeshBuffer();
+  }
 
   //Return without doing any further things if the connection is not connected
   if (m_pSegment1==NULL || m_pSegment2==NULL) return;
 
-  core::vector3df p1[4],p2[4],vOld[2];
+  //Return without doing any further things if the connection is not connected
+  if (m_pSegment1==NULL || m_pSegment2==NULL) return;
 
-  //initialize the texture offset for the road
-  m_fTexX=m_pTexParams[0]->getOffsetX();
+  core::vector3df p1[2],p2[2];
 
   //initialize the beginning and the ending point of the first line that is calculated
   switch (m_iSegment1Border) {
-    case 0: p1[0]=m_pSegment1->getPoint(0); p2[0]=m_pSegment1->getPoint(1); break;
-    case 1: p1[0]=m_pSegment1->getPoint(0); p2[0]=m_pSegment1->getPoint(3); break;
-    case 2: p1[0]=m_pSegment1->getPoint(3); p2[0]=m_pSegment1->getPoint(2); break;
-    case 3: p1[0]=m_pSegment1->getPoint(2); p2[0]=m_pSegment1->getPoint(1); break;
+    case 0: p1[0]=m_pSegment1->getPoint(0); p1[1]=m_pSegment1->getPoint(1); break;
+    case 1: p1[0]=m_pSegment1->getPoint(0); p1[1]=m_pSegment1->getPoint(3); break;
+    case 2: p1[0]=m_pSegment1->getPoint(3); p1[1]=m_pSegment1->getPoint(2); break;
+    case 3: p1[0]=m_pSegment1->getPoint(2); p1[1]=m_pSegment1->getPoint(1); break;
   }
 
   //initialize the beginning and the ending point of the second line that is calculated
   switch (m_iSegment2Border) {
-    case 0: p1[1]=m_pSegment2->getPoint(0); p2[1]=m_pSegment2->getPoint(1); break;
-    case 1: p1[1]=m_pSegment2->getPoint(0); p2[1]=m_pSegment2->getPoint(3); break;
-    case 2: p1[1]=m_pSegment2->getPoint(3); p2[1]=m_pSegment2->getPoint(2); break;
-    case 3: p1[1]=m_pSegment2->getPoint(2); p2[1]=m_pSegment2->getPoint(1); break;
+    case 0: p2[0]=m_pSegment2->getPoint(0); p2[1]=m_pSegment2->getPoint(1); break;
+    case 1: p2[0]=m_pSegment2->getPoint(0); p2[1]=m_pSegment2->getPoint(3); break;
+    case 2: p2[0]=m_pSegment2->getPoint(3); p2[1]=m_pSegment2->getPoint(2); break;
+    case 3: p2[0]=m_pSegment2->getPoint(2); p2[1]=m_pSegment2->getPoint(1); break;
   }
 
-  //create new meshbuffers
-  m_pMeshBuffer[0]=new scene::SMeshBuffer();
-  m_pMeshBuffer[1]=new scene::SMeshBuffer();
-  m_pMeshBuffer[2]=new scene::SMeshBuffer();
-  m_pMeshBuffer[3]=new scene::SMeshBuffer();
-
-  //Temp arrays for the vertices of the top and bottom of the road and for the indices
-  core::array<video::S3DVertex> aVerts;
-  core::array<u16> aIdx;
-
-  //if the connection wants to be flipped we flip it
   if (m_bFlipConnection) {
-    core::vector3df v=p1[1];
-    p1[1]=p2[1];
-    p2[1]=v;
+    core::vector3df v=p2[1];
+    p2[1]=p2[0];
+    p2[0]=v;
   }
 
-  bool b=false;
+  core::vector3df vBezierL[4],vBezierR[4];
 
-  //now we calculate the actual positions depending on the selected type.
   switch (m_eType) {
-    case eBezier1: {
-        //initialize the variables for the previous points
-        vOld[0]=p1[0]; vOld[1]=p2[0];
-
-        //We start the calculation one step off so that no zero-sized
-        //polygon is created at the start of the connection
-        for (f32 f=1.0f/((f32)m_iSteps); f<1.0f; f+=1.0f/((f32)m_iSteps)) {
-          //calculate the positions of the vertices,...
-          core::vector3df v1=getBezier1(p1,f),
-                          v2=getBezier1(p2,f),
-                          vToAdd[]={ vOld[0],vOld[1],v1,v2 };
-
-          //...add it to the vertex (and index) buffers...
-          addToBuffers(vToAdd,aVerts,aIdx,b,0);
-
-          //...and set the old vectors to the calculated positions for the next polygon
-          vOld[0]=v1;
-          vOld[1]=v2;
-
-          b=!b;
-        }
-
-        //now we need to add a polygon with the end of our connecting lines
-        core::vector3df v[4]={ vOld[0], vOld[1], p1[1], p2[1] };
-        addToBuffers(v,aVerts,aIdx,b,0);
-      }
+    case eBezier1:
+      vBezierL[0]=p1[0]; vBezierL[1]=p2[0];
+      vBezierR[0]=p1[1]; vBezierR[1]=p2[1];
       break;
 
-    case eBezier2: {
-        //initialize the variables for the previous points
-        vOld[0]=p1[0]; vOld[1]=p2[0];
-
-        //now we shift the point arrays because we need
-        //to insert the helppoint for the Bezier2 calculation
-        p1[2]=p1[1]; p1[1]=m_vHelpPoints[0];
-        p2[2]=p2[1]; p2[1]=m_vHelpPoints[2];
-
-        for (u32 i=0; i<3; i++) {
-          m_vDraw[i  ]=p1[i];
-          m_vDraw[i+3]=p2[i];
-        }
-
-        //We start the calculation one step off so that no zero-sized
-        //polygon is created at the start of the connection
-        for (f32 f=1.0f/((f32)m_iSteps); f<1.0f; f+=1.0f/((f32)m_iSteps)) {
-          //calculate the positions of the vertices,...
-          core::vector3df v1=getBezier2(p1,f),
-                          v2=getBezier2(p2,f),
-                          vToAdd[]={ vOld[0],vOld[1],v1,v2 };
-
-          //...add it to the vertex (and index) buffers...
-          addToBuffers(vToAdd,aVerts,aIdx,b,0);
-
-          //...and set the old vectors to the calculated positions for the next polygon
-          vOld[0]=v1;
-          vOld[1]=v2;
-
-          b=!b;
-        }
-
-        //now we need to add a polygon with the end of our connecting lines
-        core::vector3df v[4]={ vOld[0], vOld[1], p1[2], p2[2] };
-        addToBuffers(v,aVerts,aIdx,b,0);
-      }
+    case eBezier2:
+      vBezierL[0]=p1[0]; vBezierL[1]=m_vHelpPoints[0]; vBezierL[2]=p2[0];
+      vBezierR[0]=p1[1]; vBezierR[1]=m_vHelpPoints[2]; vBezierR[2]=p2[1];
       break;
 
-    case eBezier3: {
-        //initialize the variables for the previous points
-        vOld[0]=p1[0]; vOld[1]=p2[0];
-
-        //now we shift the point arrays because we need
-        //to insert the 2 helppoints for the Bezier3 calculation
-        p1[3]=p1[1]; p1[1]=m_vHelpPoints[0]; p1[2]=m_vHelpPoints[1];
-        p2[3]=p2[1]; p2[1]=m_vHelpPoints[2]; p2[2]=m_vHelpPoints[3];
-
-        for (u32 i=0; i<4; i++) {
-          m_vDraw[i  ]=p1[i];
-          m_vDraw[i+4]=p2[i];
-        }
-
-        //We start the calculation one step off so that no zero-sized
-        //polygon is created at the start of the connection
-        for (f32 f=1.0f/((f32)m_iSteps); f<1.0f; f+=1.0f/((f32)m_iSteps)) {
-          //calculate the positions of the vertices,...
-          core::vector3df v1=getBezier3(p1,f),
-                          v2=getBezier3(p2,f),
-                          vToAdd[]={ vOld[0],vOld[1],v1,v2 };
-
-          //...add it to the vertex (and index) buffers...
-          addToBuffers(vToAdd,aVerts,aIdx,b,0);
-
-          //...and set the old vectors to the calculated positions for the next polygon
-          vOld[0]=v1;
-          vOld[1]=v2;
-
-          b=!b;
-        }
-
-        //now we need to add a polygon with the end of our connecting lines
-        core::vector3df v[4]={ vOld[0], vOld[1], p1[3], p2[3] };
-        addToBuffers(v,aVerts,aIdx,b,0);
-      }
+    case eBezier3:
+      vBezierL[0]=p1[0]; vBezierL[1]=m_vHelpPoints[0]; vBezierL[2]=m_vHelpPoints[1]; vBezierL[3]=p2[0];
+      vBezierR[0]=p1[1]; vBezierR[1]=m_vHelpPoints[2]; vBezierR[2]=m_vHelpPoints[3]; vBezierR[3]=p2[1];
       break;
   }
 
-  //Now create the first meshbuffer for the road with the previously calculated data and...
-  m_pMeshBuffer[0]->append(aVerts.const_pointer(),aVerts.size(),aIdx.const_pointer(),aIdx.size());
-  m_pMeshBuffer[0]->recalculateBoundingBox();
-  //...reset the bounding box
-  m_cBox.reset(m_pMeshBuffer[0]->getBoundingBox());
+  core::array<core::vector3df> vTemp[_CONNECTION_NUMBER_OF_BUFFERS];
+  core::vector3df vNorm=m_pSegment1->getNormalBaseVector();
+  //if (m_bFlipVertices) vNorm=-vNorm;
 
-  //If we have a texture we apply it
-  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
-    m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  else {
-    //if (m_bTrace) printf("0: %s\n",m_pTexParams[0]->getTexture().c_str());
-    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
-    if (pTex)
-      m_pMeshBuffer[0]->getMaterial().setTexture(0,pTex);
-    else
-      m_pMeshBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  }
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) vTemp[i].clear();
 
-  //initialize the texture offset for the bottom
-  m_fTexX=m_pTexParams[1]->getOffsetX();
+  for (u32 i=1; i<=m_iSteps; i++) {
+    addToTempVectorBuffer(vTemp,p1,vNorm);
 
-  b=false;
-  core::array<core::vector3df> vBotLines;
+    f32 fStep=((f32)i)*(1.0f/((f32)m_iSteps));
 
-  //now calculate the basement sides and walls
-  for (u32 iNum=0; iNum<4; iNum++) {
-    if (iNum<2 || (iNum>=2 && m_bWalls[iNum-2])) {
-      core::array<core::vector3df> vWall;
-      scene::IMeshBuffer *p=m_pMeshBuffer[0];
+    switch (m_eType) {
+      case eBezier1:
+        p1[0]=getBezier1(vBezierL,fStep);
+        p1[1]=getBezier1(vBezierR,fStep);
+        break;
 
-      vWall.push_back(p->getPosition(iNum==0 || iNum==2?0:1));
+      case eBezier2:
+        p1[0]=getBezier2(vBezierL,fStep);
+        p1[1]=getBezier2(vBezierR,fStep);
+        break;
 
-      if (iNum<2) {
-        core::vector3df v=p->getPosition(iNum==0?0:1)+m_fOffset*m_pSegment1->getNormalBaseVector();
-        vWall.push_back(v);
-        vBotLines.push_back(v);
-      }
-      else vWall.push_back(p->getPosition(iNum==2?0:1)+m_fWallHeight*m_pSegment1->getWallNormal());
-
-      b=false;
-
-      for (u32 iVert=4; iVert<p->getVertexCount()-3; iVert+=4) {
-        core::vector3df v1,v2,v3,vNorm;
-
-        if (iNum==0 || iNum==2) {
-          v1=p->getPosition(iVert  );
-          v2=p->getPosition(iVert+1)-v1;
-          v3=p->getPosition(iVert+2)-v1;
-
-          f32 fHeight=iNum==0?m_fOffset:-m_fWallHeight;
-
-          if (m_bFlipVertices) {
-            vNorm=v1+(fHeight*(v2.crossProduct(v3).normalize()));
-          }
-          else {
-            vNorm=v1-(fHeight*(v2.crossProduct(v3).normalize()));
-          }
-        }
-        else {
-          v1=p->getPosition(iVert+1);
-          v2=p->getPosition(iVert  )-v1;
-          v3=p->getPosition(iVert+3)-v1;
-
-          f32 fHeight=iNum==1?m_fOffset:m_fWallHeight;
-
-          if (m_bFlipVertices) {
-            if (iNum==1) vNorm=v1-(fHeight*(v2.crossProduct(v3).normalize()));
-            if (iNum==3) vNorm=v1+(fHeight*(v2.crossProduct(v3).normalize()));
-          }
-          else {
-            if (iNum==1) vNorm=v1+(fHeight*(v2.crossProduct(v3).normalize()));
-            if (iNum==3) vNorm=v1-(fHeight*(v2.crossProduct(v3).normalize()));
-          }
-        }
-
-        vWall.push_back(v1);
-        vWall.push_back(vNorm);
-
-        if (iNum<2) vBotLines.push_back(vNorm);
-      }
-
-      vWall.push_back(p->getPosition(iNum==0 || iNum==2?p->getVertexCount()-2:p->getVertexCount()-1));
-
-      if (iNum<2) {
-        core::vector3df v=p->getPosition(iNum==0?p->getVertexCount()-2:p->getVertexCount()-1)+m_fOffset*m_pSegment2->getNormalBaseVector();
-        vWall.push_back(v);
-        vBotLines.push_back(v);
-      }
-      else vWall.push_back(p->getPosition(iNum==2?p->getVertexCount()-2:p->getVertexCount()-1)+m_fWallHeight*m_pSegment2->getWallNormal());
-
-      core::array<video::S3DVertex> aToAdd1,
-                                    aToAdd2;
-      core::array<u16> aIdxToAdd1,aIdxToAdd2;
-      b=false;
-
-      for (u32 i=0; i<vWall.size()-2; i+=2) {
-        core::vector3df vToAdd[4];
-
-        if (iNum==0 || iNum==2 || iNum==3) {
-          vToAdd[0]=vWall[i  ];
-          vToAdd[1]=vWall[i+2];
-          vToAdd[2]=vWall[i+1];
-          vToAdd[3]=vWall[i+3];
-
-          addToBuffersWall(vToAdd,aToAdd1,aIdxToAdd1,b,true,false,m_pTexParams[iNum+2]);
-        }
-
-        if (iNum==1 || iNum==2 || iNum==3) {
-          vToAdd[0]=vWall[i  ];
-          vToAdd[1]=vWall[i+1];
-          vToAdd[2]=vWall[i+2];
-          vToAdd[3]=vWall[i+3];
-
-          addToBuffersWall(vToAdd,aToAdd2,aIdxToAdd2,b,false,false,m_pTexParams[iNum+2]);
-        }
-
-        b=!b;
-      }
-
-      if (iNum==0 || iNum>1) {
-        m_pMeshBuffer[iNum+2]=new scene::SMeshBuffer();
-        m_pMeshBuffer[iNum+2]->append(aToAdd1.const_pointer(),aToAdd1.size(),aIdxToAdd1.const_pointer(),aIdxToAdd1.size());
-        m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
-        m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
-      }
-      else {
-        m_pMeshBuffer[iNum+2]=new scene::SMeshBuffer();
-        m_pMeshBuffer[iNum+2]->append(aToAdd2.const_pointer(),aToAdd2.size(),aIdxToAdd2.const_pointer(),aIdxToAdd2.size());
-        m_pMeshBuffer[iNum+2]->recalculateBoundingBox();
-        m_cBox.addInternalBox(m_pMeshBuffer[iNum+2]->getBoundingBox());
-      }
-
-      m_pMeshBuffer[iNum+4]=new scene::SMeshBuffer();
-      m_pMeshBuffer[iNum+4]->append(aToAdd2.const_pointer(),aToAdd2.size(),aIdxToAdd2.const_pointer(),aIdxToAdd2.size());
-      m_pMeshBuffer[iNum+4]->recalculateBoundingBox();
-      m_cBox.addInternalBox(m_pMeshBuffer[iNum+4]->getBoundingBox());
-
-      if (!strcmp(m_pTexParams[iNum+2]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[iNum+2]->getTexture())) {
-        m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
-        m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,g_pEmptyTex);
-      }
-      else {
-        video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[iNum+2]->getTexture().c_str());
-        if (pTex) {
-          m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,pTex);
-          m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,pTex);
-        }
-        else {
-          m_pMeshBuffer[iNum+2]->getMaterial().setTexture(0,g_pEmptyTex);
-          m_pMeshBuffer[iNum+4]->getMaterial().setTexture(0,g_pEmptyTex);
-        }
-      }
+      case eBezier3:
+        p1[0]=getBezier3(vBezierL,fStep);
+        p1[1]=getBezier3(vBezierR,fStep);
+        break;
     }
+
+    core::vector3df v1=p1[0]-p1[1],v2=p1[0]-vTemp[0][vTemp[0].size()-1];
+    vNorm=v1.crossProduct(v2);
+    vNorm.normalize();
+    if (m_bFlipVertices) vNorm=-vNorm;
   }
 
-  aVerts.clear();
-  aIdx.clear();
+  addToTempVectorBuffer(vTemp,p2,m_bFlipVertices?m_pSegment2->getNormalBaseVector():m_pSegment2->getNormalBaseVector());
 
-  u32 iAdd=vBotLines.size()/2;
-  for (u32 i=0; i<iAdd-1; i++) {
-    core::vector3df vToAdd[]={ vBotLines[i+1],vBotLines[i],vBotLines[i+iAdd+1],vBotLines[i+iAdd] };
-    addToBuffers(vToAdd,aVerts,aIdx,b,1);
-    b=!b;
-  }
-
-  //Now create the first meshbuffer for the road with the previously calculated data and...
-  m_pMeshBuffer[1]->append(aVerts.const_pointer(),aVerts.size(),aIdx.const_pointer(),aIdx.size());
-  m_pMeshBuffer[1]->recalculateBoundingBox();
-  //...reset the bounding box
-  m_cBox.reset(m_pMeshBuffer[1]->getBoundingBox());
-
-  //If we have a texture we apply it
-  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[1]->getTexture()))
-    m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  else {
-    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
-    if (pTex)
-      m_pMeshBuffer[1]->getMaterial().setTexture(0,pTex);
-    else
-      m_pMeshBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  }
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) fillMeshBuffer(m_pMeshBuffer[i],vTemp[i],i);
 }
 
 /**
@@ -783,7 +474,7 @@ core::vector3df CConnection::getBezier3(core::vector3df p[], f32 fStep) {
  * Constructor
  * @param pDrv used Irrlicht videodriver
  */
-CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTexture) {
+CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTexture) : IRoadPart(pDevice->getVideoDriver()) {
   //initialize the segments
   m_pSegment1=NULL;
   m_pSegment2=NULL;
@@ -815,24 +506,21 @@ CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTextu
   //Default: 10 steps, offset 3.0
   m_iSteps=10;
   m_fOffset=3.0f;
+  m_fWallWidth=2.5f;
 
   //Default type= Bezier1
   m_eType=eBezier1;
 
-  if (g_pEmptyTex==NULL) {
-    g_pEmptyTex=m_pDrv->getTexture("");
-  }
-
   //initialize the meshbuffer members and initialize the texture parameter objects
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
     m_pMeshBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
+    if (pInitTexture) pInitTexture[i].copyTo(m_pTexParams[i]);
   }
 
   m_fRoadWidth=0.0f;
 
   for (u32 i=0; i<4; i++) m_fHpOff[i]=1.0f;
-  if (pInitTexture) for (u32 i=0; i<4; i++) pInitTexture[i].copyTo(m_pTexParams[i]);
 
   m_fWallHeight=10.0f;
   for (u32 i=0; i<2; i++) m_bWalls[i]=false;
@@ -951,7 +639,7 @@ void CConnection::render() {
   }
 
   //Render the meshbuffers
-  for (u32 i=0; i<8; i++)
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++)
     if (m_pMeshBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
       video::SMaterial cMat;
       cMat.Lighting=false;
@@ -1042,6 +730,8 @@ void CConnection::save(io::IAttributes *out) {
   }
 
   out->addFloat("WallHeight",m_fWallHeight);
+  out->addFloat("WallWidth" ,m_fWallWidth );
+
   for (u32 i=0; i<2; i++) {
     core::stringc s="CreateWall"; s+=i;
     out->addBool(s.c_str(),m_bWalls[i]);
@@ -1075,6 +765,8 @@ void CConnection::load(io::IAttributes *in) {
   }
 
   m_fWallHeight=in->getAttributeAsFloat("WallHeight");
+  m_fWallWidth =in->getAttributeAsFloat("WallWidth" );
+
   for (u32 i=0; i<2; i++) {
     core::stringc s="CreateWall"; s+=i;
     m_bWalls[i]=in->getAttributeAsBool(s.c_str());
@@ -1103,9 +795,9 @@ void CConnection::update() {
 }
 
 CTextureParameters *CConnection::getTextureParameters(u32 i) {
-  return i<6?m_pTexParams[i]:NULL;
+  return i<_CONNECTION_NUMBER_OF_BUFFERS?m_pTexParams[i]:NULL;
 }
 
 scene::IMeshBuffer *CConnection::getMeshBuffer(u32 i) {
-  return i<(u32)getNumberOfMeshBuffers()?m_pMeshBuffer[i]:NULL;
+  return i<_CONNECTION_NUMBER_OF_BUFFERS?m_pMeshBuffer[i]:NULL;
 }

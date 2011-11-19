@@ -4,6 +4,8 @@
   #include <irrlicht.h>
   #include <IRoadPart.h>
 
+#define _SEGMENT_NUMBER_OF_BUFFERS 18
+
 using namespace irr;
 
 class INotification;
@@ -22,11 +24,13 @@ class CSegment : public IRoadPart {
     f32 m_fWidth,       /**<! width of the road segment */
         m_fLength,      /**<! length of the road segment */
         m_fBaseOffset,  /**<! height of the road segment */
-        m_fWallHeight;  /**<! height of the walls */
+        m_fWallHeight,  /**<! height of the walls */
+        m_fWallWidth;   /**<! width of the walls */
 
     bool m_bLevelBase,  /**<! bring all base points to the same Y-value? */
          m_bNormalBase, /**<! use normal of segment for base direction? */
-         m_bWalls[4];   /**<! create walls? */
+         m_bWalls[4],   /**<! create walls? */
+         m_bCorner[4];  /**<! create corner marks? */
 
     core::vector3df m_vPosition,      /**<! position of the segment */
                     m_vDirection,     /**<! direction of the segment */
@@ -43,8 +47,9 @@ class CSegment : public IRoadPart {
 
     core::list<INotification *> m_lNotify;  /**<! list of objects that get notifications on changes of the segment */
 
-    scene::IMeshBuffer *m_pBuffer[14];    /**<! meshbuffers of the segment */
-    CTextureParameters *m_pTexParams[14]; /**<! texture parameters of the segment */
+    scene::IMeshBuffer *m_pBuffer[_SEGMENT_NUMBER_OF_BUFFERS];      /**<! meshbuffers of the segment */
+    CTextureParameters *m_pTexParams[_SEGMENT_NUMBER_OF_BUFFERS],   /**<! texture parameters of the segment */
+                       *m_pTexInit[_SEGMENT_NUMBER_OF_BUFFERS];
 
     /**
      * This method recalculates the meshbuffers and notifies all registered listeners of the modification
@@ -74,9 +79,9 @@ class CSegment : public IRoadPart {
      * @param pTex the texture parameters to be used
      * @param vert the output vertex array
      */
-    void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert);
-    void fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bBasement=false);
+    void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop);
 
+    core::array<core::vector3df> vTemp[_SEGMENT_NUMBER_OF_BUFFERS];
   public:
     /**
      * The construtor. This one is used by the GUI of the editor
@@ -144,17 +149,19 @@ class CSegment : public IRoadPart {
 
     virtual scene::IMeshBuffer *getMeshBuffer(u32 i);   /**<! get one of the meshbuffers */
 
+    void setCornerFlag(u32 idx, bool b) { if (idx<4) { m_bCorner[idx]=b; attributeChanged(); } }
     void setWallFlag(u32 idx, bool b) { if (idx<4) { m_bWalls[idx]=b; attributeChanged(); } }
     void setWallHeight(f32 f) { m_fWallHeight=f; attributeChanged(); }
+    void setWallWidth(f32 f) { m_fWallWidth=f; attributeChanged(); }
 
+    bool getCornerFlag(u32 idx) { return idx<4?m_bCorner[idx]:false; }
     bool getWallFlag(u32 idx) { return idx<4?m_bWalls[idx]:false; }
     f32 getWallHeight() { return m_fWallHeight; }
+    f32 getWallWidth() { return m_fWallWidth; }
 
     const core::vector3df &getWallNormal() { return m_vWallNorm; }
 
-    virtual s32 getNumberOfMeshBuffers() {
-      return 14;
-    }
+    virtual s32 getNumberOfMeshBuffers() { return _SEGMENT_NUMBER_OF_BUFFERS; }
 };
 
 #endif

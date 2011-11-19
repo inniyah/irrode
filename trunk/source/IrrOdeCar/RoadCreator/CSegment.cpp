@@ -4,18 +4,16 @@
 
 using namespace irr;
 
-static video::ITexture *g_pEmptyTex=NULL;
-
 /**
  * The construtor. This one is used by the GUI of the editor
  * @param sName name of the segment
  * @param vPosition position of the segment
  * @param pDrv the Irrlicht video driver
  */
-CSegment::CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevice *pDevice, CTextureParameters *pInitParam) {
-  //Default values: width: 10, length: 25, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
-  m_fWidth=10.0f;
-  m_fLength=25.0f;
+CSegment::CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevice *pDevice, CTextureParameters *pInitParam) : IRoadPart(pDevice->getVideoDriver()) {
+  //Default values: width: 50, length: 50, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
+  m_fWidth=50.0f;
+  m_fLength=50.0f;
   m_vPosition=vPosition;
   m_vDirection=core::vector3df(0.0f,0.0f,1.0f);
   m_vNormal=core::vector3df(0.0f,1.0f,0.0f);
@@ -28,28 +26,24 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevic
   m_pDrv=m_pDevice->getVideoDriver();
   m_pFs=m_pDevice->getFileSystem();
 
-  if (g_pEmptyTex==NULL) {
-    g_pEmptyTex=m_pDrv->getTexture("");
-  }
-
   //initialize the buffer and texture parameter members
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
+  for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
-    if (pInitParam!=NULL) pInitParam[i].copyTo(m_pTexParams[i]);
+    pInitParam[i].copyTo(m_pTexParams[i]);
+    m_pTexInit[i]=&pInitParam[i];
   }
 
-  for (u32 i=0; i<4; i++) m_bWalls[i]=false;
+  for (u32 i=0; i<4; i++) { m_bWalls[i]=false; m_bCorner[i]=false; }
   m_fWallHeight=10.0f;
-
-  recalcMeshBuffer();
+  m_fWallWidth=2.5f;
 }
 
 /**
  * The construtor. This one is used by the road loading routine
  * @param pDrv the Irrlicht video driver
  */
-CSegment::CSegment(IrrlichtDevice *pDevice) {
+CSegment::CSegment(IrrlichtDevice *pDevice) : IRoadPart(pDevice->getVideoDriver()) {
   //Default values: width: 10, length: 25, direction: (0,0,1), normal: (0,1,0), base offset: 10, level base: true
   m_fWidth=10.0f;
   m_fLength=25.0f;
@@ -64,14 +58,13 @@ CSegment::CSegment(IrrlichtDevice *pDevice) {
   m_bLevelBase=true;
 
   //initialize the buffer and texture parameter members
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
+  for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
     m_pBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
+    m_pTexInit[i]=NULL;
   }
 
-  for (u32 i=0; i<4; i++) m_bWalls[i]=true;
-
-  recalcMeshBuffer();
+  for (u32 i=0; i<4; i++) { m_bWalls[i]=true; m_bCorner[i]=false; }
 }
 
 /**
@@ -83,7 +76,7 @@ CSegment::~CSegment() {
     (*it)->objectDeleted(this);
   }
 
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) {
+  for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
     if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
     delete m_pTexParams[i];
   }
@@ -133,17 +126,18 @@ const core::stringc &CSegment::getName() { return m_sName; }
  * @param pTex the texture parameters to be used
  * @param vert the output vertex array
  */
-void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert) {
+void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop) {
   //initialize some help variables to help finding the right points for the top shape
   core::vector3df calcLength=(m_fLength/2)*m_vDirection,
-                  calcWidth =(m_fWidth /2)*(m_vNormal.crossProduct(m_vDirection)),
-                  vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
+                  calcWidth =(m_fWidth /2)*(m_vNormal.crossProduct(m_vDirection));
 
-  vNormal.normalize();
+  core::vector3df v1=vec[0]-vec[1],v2=vec[3]-vec[2];
+  f32 fDiff=v1.getLength()-v2.getLength();
+  if (v1.getLength()>v2.getLength()) fDiff/=v1.getLength(); else fDiff/=-v2.getLength();
 
   //Some locals for texture creation
   f32 f=calcWidth.getLength()!=0 && !pTex->getStretch()?calcLength.getLength()/calcWidth.getLength():1.0f,
-      fStartX=pTex->getOffsetX(),fStartY=pTex->getOffsetY();
+      fStartX=pTex->getOffsetX()/*,fStartY=pTex->getOffsetY()*/;
 
   f*=pTex->getScaleX();
   f+=fStartX;
@@ -151,103 +145,65 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
   f32 fTex[4][2];
 
   //Calculate the texture positions of the shape points depending on the rotation
-  switch (pTex->getRotate()) {
-    case 0:
-      fTex[0][0]=0.0f+fStartY; fTex[0][1]=fStartX;
-      fTex[1][0]=1.0f+fStartY; fTex[1][1]=fStartX;
-      fTex[2][0]=1.0f+fStartY; fTex[2][1]=      f;
-      fTex[3][0]=0.0f+fStartY; fTex[3][1]=      f;
-      break;
+  fTex[0][0]=     fDiff; fTex[0][1]=0.0f;
+  fTex[1][0]=1.0f-fDiff; fTex[1][1]=0.0f;
+  fTex[2][0]=1.0f-fDiff; fTex[2][1]=1.0f;
+  fTex[3][0]=     fDiff; fTex[3][1]=1.0f;
 
-    case 1:
-      fTex[0][0]=0.0f+fStartY; fTex[0][1]=      f;
-      fTex[1][0]=0.0f+fStartY; fTex[1][1]=fStartX;
-      fTex[2][0]=1.0f+fStartY; fTex[2][1]=fStartX;
-      fTex[3][0]=1.0f+fStartY; fTex[3][1]=      f;
-      break;
-
-    case 2:
-      fTex[0][0]=1.0f+fStartY; fTex[0][1]=      f;
-      fTex[1][0]=0.0f+fStartY; fTex[1][1]=      f;
-      fTex[2][0]=0.0f+fStartY; fTex[2][1]=fStartX;
-      fTex[3][0]=1.0f+fStartY; fTex[3][1]=fStartX;
-      break;
-
-    case 3:
-      fTex[0][0]=1.0f+fStartY; fTex[0][1]=fStartX;
-      fTex[1][0]=1.0f+fStartY; fTex[1][1]=      f;
-      fTex[2][0]=0.0f+fStartY; fTex[2][1]=      f;
-      fTex[3][0]=0.0f+fStartY; fTex[3][1]=fStartX;
-      break;
-
-    default:
-      printf("invalide texture rotation!\n");
-      return;
+  if (v1.getLength()<v2.getLength()) {
+    fTex[0][0]=0.0f;
+    fTex[3][0]=0.0f;
+  }
+  else {
+    fTex[1][0]=1.0f;
+    fTex[2][0]=1.0f;
   }
 
-  //Create verices inside the output array
-  for (u32 i=0; i<4; i++) {
-    vert[i]=video::S3DVertex(vec[i],vNormal,video::SColor(0xFF,0xE0,0xFF,0xE0),core::vector2df(fTex[i][0],fTex[i][1]));
-  }
-}
+  if (bTop) {
+    f32 fDummy;
+    fDummy=fTex[2][0];
+    fTex[2][0]=fTex[3][0];
+    fTex[3][0]=fDummy;
 
-void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bBasement) {
-  //Some locals for texture creation
-  f32 fWidth =(vec[0]-vec[1]).getLength(),
-      fHeight=m_fWallHeight,
-      f=1.0f,fStart=0.0f;
-
-  core::vector3df vNormal=(vec[0]-vec[1]).crossProduct(vec[0]-vec[2]);
-  vNormal.normalize();
-
-  f*=pTex->getScaleX();
-  f+=fStart;
-
-  f32 fTex[4][2]={ { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } };
-
-  switch (pTex->getRotate()) {
-    case 0:
-      fTex[0][0]=1.0f; fTex[0][1]=1.0f;
-      fTex[1][0]=0.0f; fTex[1][1]=1.0f;
-      fTex[2][0]=1.0f; fTex[2][1]=0.0f;
-      fTex[3][0]=0.0f; fTex[3][1]=0.0f;
-      break;
-
-    case 1:
-      fTex[0][1]=1.0f; fTex[0][0]=0.0f;
-      fTex[1][1]=0.0f; fTex[1][0]=0.0f;
-      fTex[2][1]=1.0f; fTex[2][0]=1.0f;
-      fTex[3][1]=0.0f; fTex[3][0]=1.0f;
-      break;
-
-    case 2:
-      fTex[0][0]=0.0f; fTex[0][1]=0.0f;
-      fTex[1][0]=1.0f; fTex[1][1]=0.0f;
-      fTex[2][0]=0.0f; fTex[2][1]=1.0f;
-      fTex[3][0]=1.0f; fTex[3][1]=1.0f;
-      break;
-
-    case 3:
-      fTex[3][1]=1.0f; fTex[3][0]=0.0f;
-      fTex[2][1]=0.0f; fTex[2][0]=0.0f;
-      fTex[1][1]=1.0f; fTex[1][0]=1.0f;
-      fTex[0][1]=0.0f; fTex[0][0]=1.0f;
-      break;
+    fDummy=fTex[2][1];
+    fTex[2][1]=fTex[3][1];
+    fTex[3][1]=fDummy;
   }
 
-  for (u32 i=0; i<4; i++) {
-    for (u32 j=0; j<2; j++) {
-      if (!pTex->getStretch()) fTex[i][j]*=fWidth/fHeight;
+  if (pTex->getRotate()!=0) {
+    f32 fDummy[4][2]={ { 0.0f,0.0f }, { 0.0f,0.0f }, { 0.0f,0.0f}, { 0.0f,0.0f } };
+
+    switch (pTex->getRotate()) {
+      case 1:
+        fDummy[0][0]=fTex[3][0]; fDummy[0][1]=fTex[3][1];
+        fDummy[1][0]=fTex[0][0]; fDummy[1][1]=fTex[0][1];
+        fDummy[2][0]=fTex[1][0]; fDummy[2][1]=fTex[1][1];
+        fDummy[3][0]=fTex[2][0]; fDummy[3][1]=fTex[2][1];
+        break;
+
+      case 2:
+        fDummy[0][0]=fTex[2][0]; fDummy[0][1]=fTex[2][1];
+        fDummy[1][0]=fTex[3][0]; fDummy[1][1]=fTex[3][1];
+        fDummy[2][0]=fTex[0][0]; fDummy[2][1]=fTex[0][1];
+        fDummy[3][0]=fTex[1][0]; fDummy[3][1]=fTex[1][1];
+        break;
+
+      case 3:
+        fDummy[0][0]=fTex[1][0]; fDummy[0][1]=fTex[1][1];
+        fDummy[1][0]=fTex[2][0]; fDummy[1][1]=fTex[2][1];
+        fDummy[2][0]=fTex[3][0]; fDummy[2][1]=fTex[3][1];
+        fDummy[3][0]=fTex[0][0]; fDummy[3][1]=fTex[0][1];
+        break;
     }
-    fTex[i][0]/=pTex->getScaleX();
-    fTex[i][1]/=pTex->getScaleY();
-    fTex[i][0]+=pTex->getOffsetX();
-    fTex[i][1]+=pTex->getOffsetY();
+
+    for (u32 x=0; x<4; x++) for (u32 y=0; y<2; y++) fTex[x][y]=fDummy[x][y];
   }
 
-  //Create verices inside the output array
+  //Create vertices inside the output array
   for (u32 i=0; i<4; i++) {
-    vert[i]=video::S3DVertex(vec[i],vNormal,video::SColor(0xFF,0xE0,0xFF,0xE0),core::vector2df(fTex[i][0],fTex[i][1]));
+    vert[i]=video::S3DVertex(vec[i].X,vec[i].Y,vec[i].Z,
+                             0,1,0,video::SColor(0xFF,0xE0,0xFF,0xE0),
+                             fTex[i][0],fTex[i][1]);
   }
 }
 
@@ -260,8 +216,11 @@ void CSegment::fillVertexArrayWall(core::vector3df vec[], CTextureParameters *pT
  */
 void CSegment::recalcMeshBuffer() {
   //delete the meshbuffers
-
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++) if (m_pBuffer[i]!=NULL) { m_pBuffer[i]->drop(); m_pBuffer[i]=NULL; }
+  for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
+    //if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
+    m_pBuffer[i]=new scene::SMeshBuffer();
+    vTemp[i].clear();
+  }
 
   core::vector3df pos=m_vPosition,
                   calcLength=(m_fLength/2)*m_vDirection,
@@ -273,29 +232,6 @@ void CSegment::recalcMeshBuffer() {
   m_vPoints[2]=pos-calcLength+calcWidth;
   m_vPoints[3]=pos-calcLength-calcWidth;
 
-  //convert the calculated points to vertices and add them to the meshbuffer
-  video::S3DVertex vVerts[4];
-  fillVertexArray(m_vPoints,m_pTexParams[0],vVerts);
-
-  u16 iIdx[]={ 0,1,3, 3,1,2 };
-
-  m_pBuffer[0]=new scene::SMeshBuffer();
-  m_pBuffer[0]->append(vVerts,4,iIdx,6);
-  m_pBuffer[0]->recalculateBoundingBox();
-
-  if (!strcmp(m_pTexParams[0]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[0]->getTexture()))
-    m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  else {
-    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[0]->getTexture().c_str());
-    if (pTex)
-      m_pBuffer[0]->getMaterial().setTexture(0,pTex);
-    else
-      m_pBuffer[0]->getMaterial().setTexture(0,g_pEmptyTex);
-  }
-
-  //Same procedure for the bottom polygon...
-  core::vector3df vBasePoints[4];
-
   m_vWallNorm=(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize();
 
   if (m_bNormalBase) {
@@ -306,6 +242,9 @@ void CSegment::recalcMeshBuffer() {
     m_vBaseNorm=core::vector3df(0.0f,-1.0f,0.0f);
   }
 
+  //Same procedure for the bottom polygon...
+  core::vector3df vBasePoints[4];
+
   for (u32 i=0; i<4; i++) vBasePoints[i]=m_vPoints[3-i]+m_vBaseNorm*m_fBaseOffset;
 
   if (m_bLevelBase && !m_bNormalBase) {
@@ -315,31 +254,48 @@ void CSegment::recalcMeshBuffer() {
     for (u32 i=0; i<4; i++) vBasePoints[i].Y=fNewBase;
   }
 
-  u16 iBaseIdx[]={ 2,0,1, 0,2,3 };
-  fillVertexArray(vBasePoints,m_pTexParams[1],vVerts);
+  core::vector3df vCalcPoints[4]={ m_vPoints[0], m_vPoints[1], m_vPoints[2], m_vPoints[3] };
 
-  m_pBuffer[1]=new scene::SMeshBuffer();
+  u32 iDir[]={ 3, 0, 1, 2 };
+
+  for (u32 i=0; i<4; i++) {
+    if (m_bWalls[i]) {
+      core::vector3df vDir=m_vPoints[i]-m_vPoints[iDir[i]];
+      vDir.normalize();
+
+      u32 iNext=i<3?i+1:0;
+      vCalcPoints[i    ]=vCalcPoints[i    ]-m_fWallWidth*vDir;
+      vCalcPoints[iNext]=vCalcPoints[iNext]-m_fWallWidth*vDir;
+    }
+  }
+
+  //convert the calculated points to vertices and add them to the meshbuffer
+  video::S3DVertex vVerts[4];
+
+  fillVertexArray(vCalcPoints,m_pTexParams[0],vVerts,false);
+
+  u16 iIdx[]={ 0,1,3, 3,1,2 };
+
+  m_pBuffer[0]->append(vVerts,4,iIdx,6);
+  m_pBuffer[0]->recalculateBoundingBox();
+
+  u16 iBaseIdx[]={ 2,0,1, 0,2,3 };
+  fillVertexArray(vBasePoints,m_pTexParams[1],vVerts,false);
+
   m_pBuffer[1]->append(vVerts,4,iBaseIdx,6);
   m_pBuffer[1]->recalculateBoundingBox();
-
-  if (!strcmp(m_pTexParams[1]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[1]->getTexture()))
-    m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  else {
-    video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[1]->getTexture().c_str());
-    if (pTex)
-      m_pBuffer[1]->getMaterial().setTexture(0,pTex);
-    else
-      m_pBuffer[1]->getMaterial().setTexture(0,g_pEmptyTex);
-  }
 
   //Now for the automatic part: the four sides can be calculated
   //within a loop, so we do this.
   for (u32 i=0; i<4; i++) {
     u16 iSideIdx[]={ 0,1,2, 2,3,0 },
-        iWallId1[]={ 1,3,0, 2,0,3 },
-        iWallId2[]={ 0,1,2, 3,2,1 };
+        iWallIdO[]={ 0,1,3, 2,3,1 },  //Outer walls
+        iWallIdI[]={ 3,0,1, 2,3,1 },  //Inner walls
+        iWallTop[]={ 0,2,1, 1,2,3 },
+        iWallEn1[]={ 1,0,2, 3,2,0 },
+        iWallEn2[]={ 0,1,2, 2,3,0 };
 
-    core::vector3df vSide[4],vWallIn[4],vWallOut[4];
+    core::vector3df vSide[4],vWallIn[4],vWallOut[4],vWallTop[4],vWallEnd[4],vCornerHelp;
 
     //Depending on the counter value we have to use different values so we switch a little
     switch (i) {
@@ -350,18 +306,19 @@ void CSegment::recalcMeshBuffer() {
           vSide[2]=vBasePoints[3];
           vSide[3]=vBasePoints[2];
 
-          vWallIn[0]=m_vPoints[1];
-          vWallIn[1]=m_vPoints[0];
+          vWallIn[2]=vCalcPoints[1];
+          vWallIn[3]=vCalcPoints[0];
 
-          vWallOut[0]=m_vPoints[0];
-          vWallOut[1]=m_vPoints[1];
+          vWallIn[0]=vCalcPoints[0]+m_fWallHeight*m_vWallNorm;
+          vWallIn[1]=vCalcPoints[1]+m_fWallHeight*m_vWallNorm;
 
-          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
-          vWallIn[2]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
-          vWallIn[3]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
+          vWallOut[2]=m_vPoints[0];
+          vWallOut[3]=m_vPoints[1];
 
-          vWallOut[2]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
-          vWallOut[3]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
+          vWallOut[0]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
+          vWallOut[1]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
+
+          vCornerHelp=m_vPoints[2];
         }
         break;
 
@@ -371,18 +328,19 @@ void CSegment::recalcMeshBuffer() {
           vSide[2]=vBasePoints[2];
           vSide[3]=vBasePoints[1];
 
-          vWallIn[0]=m_vPoints[2];
-          vWallIn[1]=m_vPoints[1];
+          vWallIn[2]=vCalcPoints[2];
+          vWallIn[3]=vCalcPoints[1];
 
-          vWallOut[0]=m_vPoints[1];
-          vWallOut[1]=m_vPoints[2];
+          vWallIn[0]=vCalcPoints[1]+m_fWallHeight*m_vWallNorm;
+          vWallIn[1]=vCalcPoints[2]+m_fWallHeight*m_vWallNorm;
 
-          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
-          vWallIn[2]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
-          vWallIn[3]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
+          vWallOut[2]=m_vPoints[1];
+          vWallOut[3]=m_vPoints[2];
 
-          vWallOut[2]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
-          vWallOut[3]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
+          vWallOut[0]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
+          vWallOut[1]=m_vPoints[1]+m_fWallHeight*m_vWallNorm;
+
+          vCornerHelp=m_vPoints[3];
         }
         break;
 
@@ -392,18 +350,19 @@ void CSegment::recalcMeshBuffer() {
           vSide[2]=vBasePoints[1];
           vSide[3]=vBasePoints[0];
 
-          vWallIn[0]=m_vPoints[3];
-          vWallIn[1]=m_vPoints[2];
+          vWallIn[2]=vCalcPoints[3];
+          vWallIn[3]=vCalcPoints[2];
 
-          vWallOut[0]=m_vPoints[2];
-          vWallOut[1]=m_vPoints[3];
+          vWallIn[0]=vCalcPoints[2]+m_fWallHeight*m_vWallNorm;
+          vWallIn[1]=vCalcPoints[3]+m_fWallHeight*m_vWallNorm;
 
-          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
-          vWallIn[2]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
-          vWallIn[3]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
+          vWallOut[2]=m_vPoints[2];
+          vWallOut[3]=m_vPoints[3];
 
-          vWallOut[2]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
-          vWallOut[3]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
+          vWallOut[0]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
+          vWallOut[1]=m_vPoints[2]+m_fWallHeight*m_vWallNorm;
+
+          vCornerHelp=m_vPoints[0];
         }
         break;
 
@@ -413,67 +372,108 @@ void CSegment::recalcMeshBuffer() {
           vSide[2]=vBasePoints[0];
           vSide[3]=vBasePoints[3];
 
-          vWallIn[0]=m_vPoints[0];
-          vWallIn[1]=m_vPoints[3];
+          vWallIn[2]=vCalcPoints[0];
+          vWallIn[3]=vCalcPoints[3];
 
-          vWallOut[0]=m_vPoints[3];
-          vWallOut[1]=m_vPoints[0];
+          vWallIn[0]=vCalcPoints[3]+m_fWallHeight*m_vWallNorm;
+          vWallIn[1]=vCalcPoints[0]+m_fWallHeight*m_vWallNorm;
 
-          core::vector3df v1=m_vPoints[2]-m_vPoints[1],v2=m_vPoints[0]-m_vPoints[1];
-          vWallIn[2]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
-          vWallIn[3]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
+          vWallOut[2]=m_vPoints[3];
+          vWallOut[3]=m_vPoints[0];
 
-          vWallOut[2]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
-          vWallOut[3]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
+          vWallOut[0]=m_vPoints[0]+m_fWallHeight*m_vWallNorm;
+          vWallOut[1]=m_vPoints[3]+m_fWallHeight*m_vWallNorm;
+
+          vCornerHelp=m_vPoints[1];
         }
         break;
     }
 
+    vWallTop[0]=vWallIn [0];
+    vWallTop[1]=vWallIn [1];
+    vWallTop[2]=vWallOut[1];
+    vWallTop[3]=vWallOut[0];
+
     //Fill the array, create the meshbuffer, add the created array and do something about the texture...
-    fillVertexArray(vSide,m_pTexParams[i+2],vVerts);
-    m_pBuffer[i+2]=new scene::SMeshBuffer();
+    fillVertexArray(vSide,m_pTexParams[i+2],vVerts,false);
     m_pBuffer[i+2]->append(vVerts,4,iSideIdx,6);
     m_pBuffer[i+2]->recalculateBoundingBox();
 
-    if (!strcmp(m_pTexParams[i+2]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[i+2]->getTexture()))
-      m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
-    else {
-      video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+2]->getTexture().c_str());
-      if (pTex)
-        m_pBuffer[i+2]->getMaterial().setTexture(0,pTex);
-      else
-        m_pBuffer[i+2]->getMaterial().setTexture(0,g_pEmptyTex);
-    }
-
     if (m_bWalls[i]) {
-      m_pBuffer[i+ 6]=new scene::SMeshBuffer();
-      m_pBuffer[i+10]=new scene::SMeshBuffer();
-
-      fillVertexArrayWall(vWallIn,m_pTexParams[i+6],vVerts);
-      m_pBuffer[i+6]->append(vVerts,4,iWallId1,6);
+      fillVertexArray(vWallOut,m_pTexParams[i+6],vVerts,false);
+      m_pBuffer[i+6]->append(vVerts,4,iWallIdO,6);
       m_pBuffer[i+6]->recalculateBoundingBox();
 
-      fillVertexArrayWall(vWallOut,m_pTexParams[i+6],vVerts);
-      m_pBuffer[i+10]->append(vVerts,4,iWallId2,6);
+      fillVertexArray(vWallIn,m_pTexParams[i+10],vVerts,false);
+      m_pBuffer[i+10]->append(vVerts,4,iWallIdI,6);
       m_pBuffer[i+10]->recalculateBoundingBox();
 
-      if (!strcmp(m_pTexParams[i+6]->getTexture().c_str(),"") || !m_pFs->existFile(m_pTexParams[i+6]->getTexture())) {
-        m_pBuffer[i+ 6]->getMaterial().setTexture(0,g_pEmptyTex);
-        m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
-      }
-      else {
-        video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i+6]->getTexture().c_str());
-        if (pTex) {
-          m_pBuffer[i+ 6]->getMaterial().setTexture(0,pTex);
-          m_pBuffer[i+10]->getMaterial().setTexture(0,pTex);
-        }
-        else {
-          m_pBuffer[i+ 6]->getMaterial().setTexture(0,g_pEmptyTex);
-          m_pBuffer[i+10]->getMaterial().setTexture(0,g_pEmptyTex);
-        }
+      fillVertexArray(vWallTop,m_pTexParams[i+14],vVerts,true);
+      m_pBuffer[i+14]->append(vVerts,4,iWallTop,6);
+      m_pBuffer[i+14]->recalculateBoundingBox();
+
+      vWallEnd[0]=vWallIn [2];
+      vWallEnd[1]=vWallOut[3];
+      vWallEnd[2]=vWallOut[0];
+      vWallEnd[3]=vWallIn [1];
+
+      fillVertexArray(vWallEnd,m_pTexParams[i+14],vVerts,false);
+      m_pBuffer[i+14]->append(vVerts,4,iWallEn1,6);
+
+      vWallEnd[0]=vWallIn [3];
+      vWallEnd[1]=vWallOut[2];
+      vWallEnd[2]=vWallOut[1];
+      vWallEnd[3]=vWallIn [0];
+
+      fillVertexArray(vWallEnd,m_pTexParams[i+14],vVerts,false);
+      m_pBuffer[i+14]->append(vVerts,4,iWallEn2,6);
+    }
+
+    u32 iHelpIdx[][3]={ { 0,1,3 }, { 1,2,0 }, { 2,3,1 }, { 3,0,2 } },
+        iWall[][2]={ { 0,3 }, { 0,1 }, { 1,2 }, { 2,3 } };
+
+    if (m_bCorner[i] && !m_bWalls[iWall[i][0]] && !m_bWalls[iWall[i][1]]) {
+      core::vector3df v[]={ m_vPoints[iHelpIdx[i][0]], m_vPoints[iHelpIdx[i][1]], m_vPoints[iHelpIdx[i][2]] };
+
+      v[1]-=v[0];
+      v[2]-=v[0];
+
+      v[1].normalize();
+      v[2].normalize();
+
+      v[1]*=m_fWallWidth;
+      v[2]*=m_fWallWidth;
+
+      core::vector3df vCornerBot[]={ v[0]+v[1], v[0], v[0]+v[2], v[0]+v[1]+v[2] },
+                      vCornerTop[]={
+                        vCornerBot[0]+m_fWallHeight*m_vNormal,
+                        vCornerBot[1]+m_fWallHeight*m_vNormal,
+                        vCornerBot[2]+m_fWallHeight*m_vNormal,
+                        vCornerBot[3]+m_fWallHeight*m_vNormal
+                      };
+
+      u16 idx[]={ 1,0,2, 2,0,3 };
+
+      fillVertexArray(vCornerTop,m_pTexParams[i+14],vVerts,false);
+      m_pBuffer[i+14]->append(vVerts,4,idx,6);
+
+      for (u32 x=0; x<4; x++) {
+        u16 idxSide[]={ 0,1,2, 0,2,3 };
+        core::vector3df vTmp[]={ vCornerTop[x], vCornerTop[x<3?x+1:0], vCornerBot[x<3?x+1:0], vCornerBot[x] };
+        fillVertexArray(vTmp,m_pTexParams[i+6],vVerts,false);
+        m_pBuffer[i+6]->append(vVerts,4,idxSide,6);
       }
     }
   }
+
+  for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++)
+    if (m_pBuffer[i]->getVertexCount()>0) {
+      if (core::stringc("")==m_pTexParams[i]->getTexture() && m_pTexInit[i]!=NULL)
+        m_pTexInit[i]->copyTo(m_pTexParams[i]);
+
+      video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i]->getTexture().c_str());
+      m_pBuffer[i]->getMaterial().setTexture(0,pTex);
+    }
 }
 
 /**
@@ -481,9 +481,11 @@ void CSegment::recalcMeshBuffer() {
  */
 void CSegment::render() {
   //Render all meshbuffers
-  for (s32 i=0; i<getNumberOfMeshBuffers(); i++)
-    if (m_pBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
+  for (s32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
+    if (m_pBuffer[i]!=NULL && m_pBuffer[i]->getVertexCount()>0 && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
       video::SMaterial cMat;
+
+      cMat.Lighting=false;
       cMat.setTexture(0,m_pBuffer[i]->getMaterial().getTexture(0));
 
       m_pDrv->setMaterial(cMat);
@@ -500,6 +502,7 @@ void CSegment::render() {
         m_pDrv->draw3DLine(pos,pos+normal,video::SColor(0xFF,0xFF,0xFF,0xFF));
       }
     }
+  }
 }
 
 const core::vector3df &CSegment::getPoint(u32 i) {
@@ -522,9 +525,15 @@ void CSegment::save(io::IAttributes *out) {
   out->addVector3d("Normal"   ,m_vNormal   );
 
   out->addFloat("WallHeight",m_fWallHeight);
+  out->addFloat("WallWidth" ,m_fWallWidth );
   for (u32 i=0; i<4; i++) {
     core::stringc s="CreateWall"; s+=i;
     out->addBool(s.c_str(),m_bWalls[i]);
+  }
+
+  for (u32 i=0; i<4; i++) {
+    core::stringc s="CreateCorner"; s+=i;
+    out->addBool(s.c_str(),m_bCorner[i]);
   }
 }
 
@@ -545,12 +554,14 @@ void CSegment::load(io::IAttributes *in) {
   m_vNormal   =in->getAttributeAsVector3d("Normal"   );
 
   m_fWallHeight=in->getAttributeAsFloat("WallHeight");
+  m_fWallWidth =in->getAttributeAsFloat("WallWidth" );
   for (u32 i=0; i<4; i++) {
     core::stringc s="CreateWall"; s+=i;
     m_bWalls[i]=in->getAttributeAsBool(s.c_str());
-  }
 
-  recalcMeshBuffer();
+    s="CreateCorner"; s+=i;
+    m_bCorner[i]=in->getAttributeAsBool(s.c_str());
+  }
 }
 
 void CSegment::addNotify(INotification *p) {
@@ -572,14 +583,13 @@ void CSegment::delNotify(INotification *p) {
 }
 
 void CSegment::update() {
-  recalcMeshBuffer();
   attributeChanged();
 }
 
 CTextureParameters *CSegment::getTextureParameters(u32 i) {
-  return i<10?m_pTexParams[i]:NULL;
+  return i<_SEGMENT_NUMBER_OF_BUFFERS?m_pTexParams[i]:NULL;
 }
 
 scene::IMeshBuffer *CSegment::getMeshBuffer(u32 i) {
-  return i<(u32)getNumberOfMeshBuffers()?m_pBuffer[i]:NULL;
+  return i<_SEGMENT_NUMBER_OF_BUFFERS?m_pBuffer[i]:NULL;
 }

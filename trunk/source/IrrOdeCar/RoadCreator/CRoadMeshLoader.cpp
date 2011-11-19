@@ -7,9 +7,7 @@ scene::IAnimatedMesh *CRoadMeshLoader::createMesh(io::IReadFile *file) {
   CRoadLoader *pLoader=new CRoadLoader(m_pDevice);
   pLoader->loadRoad(sName);
 
-  scene::IAnimatedMesh *pRet=pLoader->createMesh();
-  delete pLoader;
-  return pRet;
+  return pLoader->createMesh();
 }
 
 #ifdef _IRREDIT_PLUGIN
