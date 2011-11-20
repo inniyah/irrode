@@ -149,7 +149,7 @@ void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
   pNodes->vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
 
   pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);
+  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);  else printf("\n\t\t**** oops\n\n");
 
   pNodes->pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(pCar,pNodes);

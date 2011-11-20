@@ -7,6 +7,8 @@
   #include <CReplayerStateReplay.h>
   #include <SSharedManagers.h>
 
+  #include <irrklang.h>
+
 using namespace irr;
 
 using namespace core;
@@ -33,10 +35,12 @@ int main(int argc, char** argv) {
   smgr->registerSceneNodeFactory(&cFactory);
 
   CPluginInfo *pPlugin=new CPluginInfo("RePlayerPlugins/RePlayerPlugin.dll",device);
+  irrklang::ISoundEngine *pSndEngine=irrklang::createIrrKlangDevice();
 
   SSharedManagers cManagers;
   cManagers.m_pOdeManager=(void *)irr::ode::CIrrOdeManager::getSharedInstance();
   cManagers.m_pEventFactory=(void *)irr::ode::CIrrOdeEventFactory::getSharedEventFactory();
+  cManagers.m_pSndEngine=(void *)pSndEngine;
 
   if (pPlugin->dllLoaded())
     pPlugin->pluginInstall(&cManagers);
@@ -51,6 +55,17 @@ int main(int argc, char** argv) {
   while(iRet==0 && device->run()) {
     iRet=pActiveState->update();
 
+    core::vector3df vPos=smgr->getActiveCamera()->getPosition(),
+                    vTgt=smgr->getActiveCamera()->getTarget(),
+                    vUp =smgr->getActiveCamera()->getUpVector();
+
+    irrklang::vec3df vLstPos=irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),
+                     vLstTgt=irrklang::vec3df(vTgt.X,vTgt.Y,vTgt.Z),
+                     vLstUp =irrklang::vec3df(vUp .X,vUp .Y,vUp .Z);
+
+    pSndEngine->setListenerPosition(vLstPos,vLstTgt,irrklang::vec3df(0.0f,0.0f,0.0f),vLstUp);
+    pSndEngine->setRolloffFactor(0.125f);
+
     driver->beginScene(true, true, SColor(0,200,200,200));
 
     smgr->drawAll();
@@ -64,6 +79,7 @@ int main(int argc, char** argv) {
   if (pPlugin->dllLoaded())
     pPlugin->pluginDestall(&cManagers);
 
+  if (pSndEngine) pSndEngine->drop();
   delete pActiveState;
   device->drop();
 
