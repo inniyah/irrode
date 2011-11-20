@@ -11,6 +11,8 @@
   #include <CCustomEventReceiver.h>
 
   #include <CRoadMeshLoader.h>
+  #include <CRandomForestNode.h>
+  #include <irrklang.h>
 
 /**
  * We use the plugin to add an addition event listener to the IrrOdeRePlayer. This
@@ -55,10 +57,40 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
       for (it=children.begin(); it!=children.end(); it++) searchTankBodies(*it);
     }
 
+    void searchCarBodies(irr::scene::ISceneNode *pNode) {
+      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
+        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+        if (p->getOdeClassname().equals_ignore_case("car")) {
+          printf("\t\t#### add car \"%s\"\n",pNode->getName());
+          CCustomEventReceiver::getSharedInstance()->addCar(p);
+        }
+      }
+      irr::core::list<ISceneNode *> children=pNode->getChildren();
+      irr::core::list<ISceneNode *>::Iterator it;
+
+      for (it=children.begin(); it!=children.end(); it++) searchCarBodies(*it);
+    }
+
+    void searchHeliBodies(irr::scene::ISceneNode *pNode) {
+      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
+        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+        if (p->getOdeClassname().equals_ignore_case("heli")) {
+          printf("\t\t#### add heli\"%s\"\n",pNode->getName());
+          CCustomEventReceiver::getSharedInstance()->addCar(p);
+        }
+      }
+      irr::core::list<ISceneNode *> children=pNode->getChildren();
+      irr::core::list<ISceneNode *>::Iterator it;
+
+      for (it=children.begin(); it!=children.end(); it++) searchHeliBodies(*it);
+    }
+
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (pEvent->getType()==irr::ode::eIrrOdeEventLoadScene) {
         searchPlaneBodies(m_pDevice->getSceneManager()->getRootSceneNode());
         searchTankBodies (m_pDevice->getSceneManager()->getRootSceneNode());
+        searchCarBodies  (m_pDevice->getSceneManager()->getRootSceneNode());
+        searchHeliBodies (m_pDevice->getSceneManager()->getRootSceneNode());
         return true;
       }
 
@@ -78,6 +110,9 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
 
       if (iCode==EVENT_PLANE_STATE_ID) return new CEventPlaneState(pData);
       if (iCode==EVENT_TANK_STATE_ID ) return new CEventTankState (pData);
+      if (iCode==EVENT_CAR_STATE_ID  ) return new CEventCarState  (pData);
+      if (iCode==EVENT_HELI_STATE_ID ) return new CEventHeliState (pData);
+      if (iCode==EVENT_FIRE_SND_ID   ) return new CEventFireSound (pData);
 
       return NULL;
     }
@@ -85,6 +120,7 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
 
 
 static CAdvancedParticleSystemNodeFactory *g_pFactory=NULL;
+static CRandomForestFactory *g_pForest=NULL;
 static APS_EventListener *g_pListener=NULL;
 static APS_EventFactory *g_pEventFactory=NULL;
 
@@ -93,11 +129,18 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
 
   irr::ode::CIrrOdeManager *pMgr=((irr::ode::CIrrOdeManager *)pManagers->m_pOdeManager);
   irr::ode::CIrrOdeEventFactory *pFac=((irr::ode::CIrrOdeEventFactory *)pManagers->m_pEventFactory);
+  irrklang::ISoundEngine *pSndEngine=((irrklang::ISoundEngine *)pManagers->m_pSndEngine);
 
   if (g_pFactory==NULL) {
     printf("registering scenenode factory...\n");
     g_pFactory=new CAdvancedParticleSystemNodeFactory(pDevice->getSceneManager());
     pDevice->getSceneManager()->registerSceneNodeFactory(g_pFactory);
+  }
+
+  if (g_pForest==NULL) {
+    printf("registering scenenode factory (RandomForest)...\n");
+    g_pForest=new CRandomForestFactory(pDevice->getSceneManager());
+    pDevice->getSceneManager()->registerSceneNodeFactory(g_pForest);
   }
 
   printf("registering event listener...\n");
@@ -111,7 +154,7 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
   CRoadMeshLoader *pLoader=new CRoadMeshLoader(pDevice);
   pDevice->getSceneManager()->addExternalMeshLoader(pLoader);
 
-  CCustomEventReceiver::setMembers(pDevice,pMgr);
+  CCustomEventReceiver::setMembers(pDevice,pMgr,pSndEngine);
   CCustomEventReceiver::getSharedInstance()->install();
 
   return 0;
