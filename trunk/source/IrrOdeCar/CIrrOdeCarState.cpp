@@ -5,7 +5,7 @@ static IGUIStaticText *g_pRecording=NULL,
 static ode::CIrrOdeRecorder *g_pRecorder=NULL;
 static u32 g_iCount=0;
 
-CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine) {
+CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
   //initialize the members
   m_pDevice=pDevice;
   m_pSmgr=m_pDevice->getSceneManager();

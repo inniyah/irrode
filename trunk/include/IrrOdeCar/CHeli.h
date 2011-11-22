@@ -42,7 +42,7 @@ class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
     s32 m_iNodeId;
 
   public:
-    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
+    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CHeli();
 
     virtual u32 update();

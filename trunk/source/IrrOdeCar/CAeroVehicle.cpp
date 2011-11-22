@@ -7,7 +7,7 @@
   #include <CRearView.h>
   #include <irrklang.h>
 
-CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView,irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl,pSndEngine) {
+CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
 

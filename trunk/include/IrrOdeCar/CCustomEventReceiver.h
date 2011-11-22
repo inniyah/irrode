@@ -45,6 +45,12 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       irrklang::ISound *pEngine;
     } SHeliNodes;
 
+    typedef struct sMissileNodes {
+      irr::s32 iNodeId;
+      irr::ode::CIrrOdeBody *pNode;
+      irrklang::ISound *pEngine;
+    } SMissileNodes;
+
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
 
@@ -55,10 +61,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     CCustomEventReceiver();
     ~CCustomEventReceiver();
 
-    list<SPlaneNodes *> m_lPlanes;
-    list<STankNodes  *> m_lTanks;
-    list<SCarNodes   *> m_lCars;
-    list<SHeliNodes  *> m_lHelis;
+    list<SPlaneNodes   *> m_lPlanes;
+    list<STankNodes    *> m_lTanks;
+    list<SCarNodes     *> m_lCars;
+    list<SHeliNodes    *> m_lHelis;
+    list<SMissileNodes *> m_lMissiles;
 
     void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
     void searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank);

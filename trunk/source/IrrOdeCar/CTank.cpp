@@ -21,7 +21,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
   return NULL;
 }
 
-CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl,pSndEngine) {
+CTank::CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pTankBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;
@@ -185,7 +185,7 @@ bool CTank::onEvent(ode::IIrrOdeEvent *pEvent) {
                   pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(vector3df(-3.0f,0,0)),
                   vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(vector3df(-350.0f,0.0f,0.0f));
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this,NULL);
+        new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this);
       }
 
       f32 fVel[4]={ 0.0f, 0.0f, 0.0f, 0.0f },

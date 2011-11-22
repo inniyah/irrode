@@ -91,7 +91,7 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     //irrklang::ISound *m_pSound;
 
   public:
-    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
+    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CAeroVehicle();
 
     virtual void activate();

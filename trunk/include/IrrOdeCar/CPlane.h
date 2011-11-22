@@ -28,7 +28,7 @@ class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
     f32 m_fAngleRate[3];
 
   public:
-    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine);
+    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CPlane();
 
     virtual void odeStep(u32 iStep);

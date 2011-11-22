@@ -9,7 +9,7 @@
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
-CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView,pSndEngine) {
+CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
@@ -101,7 +101,7 @@ void CHeli::odeStep(u32 iStep) {
                 rot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
                 vel=m_pBody->getLinearVelocity();
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,NULL);
+      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
       m_iShotsFired++;
