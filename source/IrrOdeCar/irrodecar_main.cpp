@@ -496,7 +496,7 @@ int main(int argc, char** argv) {
   if (bRearCam) pRearView=new CRearView(device,"rearview.jpg",smgr->addCameraSceneNode());
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-    CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView,pSndEngine);
+    CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -505,21 +505,21 @@ int main(int argc, char** argv) {
   CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
 
   for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController,pCarCockpit,pRearView,pSndEngine);
+    CCar *p=new CCar(device,*it,pController,pCarCockpit,pRearView);
     p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lTanks.begin(); it!=lTanks.end(); it++) {
-    CTank *p=new CTank(device,*it,pController,pSndEngine);
+    CTank *p=new CTank(device,*it,pController);
     p->setCtrl((const u32 *)iCtrls[1]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-    CHeli *p=new CHeli(device,*it,pController,pCockpit,pRearView,pSndEngine);
+    CHeli *p=new CHeli(device,*it,pController,pCockpit,pRearView);
     p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
     aStates.push_back(p);
     theMenu->addButtonForState(p);

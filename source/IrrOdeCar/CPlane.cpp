@@ -12,7 +12,7 @@
 
 using namespace irr;
 
-CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView,pSndEngine) {
+CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -136,7 +136,7 @@ void CPlane::odeStep(u32 iStep) {
 
       m_bLeftMissile=!m_bLeftMissile;
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this,NULL);
+      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
       p->setTarget(m_pTargetSelector->getTarget());
       m_iShotsFired++;
       m_bFirePrimary=false;
@@ -149,7 +149,7 @@ void CPlane::odeStep(u32 iStep) {
                 rot=m_pBody->getRotation(),
                 vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
 
-      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this,NULL);
+      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
       m_iShotsFired++;
       m_bFireSecondary=false;
     }

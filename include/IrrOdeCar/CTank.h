@@ -63,7 +63,7 @@ class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::II
     int getAcc  ();
 
   public:
-    CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, irrklang::ISoundEngine *pSndEngine);
+    CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CTank();
 
     virtual void activate();

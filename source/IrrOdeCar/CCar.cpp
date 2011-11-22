@@ -24,7 +24,7 @@ void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, ar
   }
 }
 
-CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, CRearView *pRView, irrklang::ISoundEngine *pSndEngine) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl,pSndEngine) {
+CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
   m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;

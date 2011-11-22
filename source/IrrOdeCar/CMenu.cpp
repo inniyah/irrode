@@ -1,7 +1,7 @@
   #include "CMenu.h"
   #include "CProjectile.h"
 
-CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu","../../data/irrOdeVehicleHelp.txt", pCtrl,NULL) {
+CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu","../../data/irrOdeVehicleHelp.txt", pCtrl) {
   IGUIButton *b=NULL;
 
   m_cDim=dimension2di(120,20);

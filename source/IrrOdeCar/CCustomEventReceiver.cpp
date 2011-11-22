@@ -247,6 +247,15 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (pNode!=NULL) {
       deactivateParticleSystems(pNode);
       hideAnimatedMesh(pNode);
+
+      core::list<SMissileNodes *>::Iterator it;
+      for (it=m_lMissiles.begin(); it!=m_lMissiles.end(); it++) {
+        SMissileNodes *pMsl=*it;
+        if (pMsl->iNodeId==p->getBodyId() && pMsl->pEngine!=NULL) {
+          pMsl->pEngine->stop();
+          pMsl->pEngine->drop();
+        }
+      }
     }
     return true;
   }
@@ -411,9 +420,40 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             STankNodes *pTank=*tit;
             if (p->getBodyId()==pTank->iNodeId) {
               updateSound(pTank->pEngine,pTank->pTank);
+              bDone=true;
+            }
+          }
+
+          if (!bDone) {
+            list<SMissileNodes *>::Iterator mit;
+            for (mit=m_lMissiles.begin(); mit!=m_lMissiles.end(); mit++) {
+              SMissileNodes *pMsl=*mit;
+              if (p->getBodyId()==pMsl->iNodeId) {
+                updateSound(pMsl->pEngine,pMsl->pNode);
+                bDone=true;
+              }
             }
           }
         }
+      }
+    }
+  }
+
+  if (pEvent->getType()==irr::ode::eIrrOdeEventNodeCloned) {
+    ode::CIrrOdeEventNodeCloned *p=(ode::CIrrOdeEventNodeCloned *)pEvent;
+    scene::ISceneNode *pNode=m_pDevice->getSceneManager()->getSceneNodeFromId(p->getNewId());
+    if (p && !strcmp(pNode->getName(),"missile")) {
+      bool b=true;
+      core::list<SMissileNodes *>::Iterator it;
+      for (it=m_lMissiles.begin(); it!=m_lMissiles.end() && b; it++) if ((*it)->iNodeId==p->getNewId()) b=false;
+      if (b) {
+        core::vector3df vPos=pNode->getPosition();
+        SMissileNodes *pData=new SMissileNodes();
+        pData->iNodeId=p->getNewId();
+        pData->pNode=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
+        pData->pEngine=m_pSndEngine->play3D("../../data/sound/missile.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),true,true);
+        pData->pEngine->setIsPaused(false);
+        m_lMissiles.push_back(pData);
       }
     }
   }
@@ -438,5 +478,6 @@ bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==EVENT_PLANE_STATE_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
          pEvent->getType()==EVENT_TANK_STATE_ID  || pEvent->getType()==EVENT_CAR_STATE_ID ||
          pEvent->getType()==EVENT_FIRE_SND_ID || pEvent->getType()==EVENT_HELI_STATE_ID ||
-         pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved;
+         pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved ||
+         pEvent->getType()==irr::ode::eIrrOdeEventNodeCloned;
 }

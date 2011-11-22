@@ -4,11 +4,6 @@
   #include <irrlicht.h>
   #include <irrOde.h>
 
-namespace irrklang {
-  class ISoundEngine;
-  class ISound;
-}
-
 class CAdvancedParticleSystemNode;
 class CIrrOdeCarState;
 class CAutoPilot;
@@ -24,10 +19,6 @@ class CProjectile {
 
     irr::ode::CIrrOdeAeroDrag *m_pAero;
     irr::ode::CIrrOdeTorqueMotor *m_pTorque;
-
-    irrklang::ISoundEngine *m_pSndEngine;
-    irrklang::ISound *m_pSndEplo,
-                     *m_pSndMoto;
 
     CAutoPilot *m_pAutoPilot;
 
@@ -55,7 +46,7 @@ class CProjectile {
      * @param fScale the scale of the meshscenenode
      * @param bFastCollision true for fast moving projectiles
      */
-    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pSource, irrklang::ISoundEngine *pSndEngine);
+    CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pSource);
     ~CProjectile();
 
     irr::ode::CIrrOdeBody *getBody();
