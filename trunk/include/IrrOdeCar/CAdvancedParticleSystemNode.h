@@ -85,19 +85,24 @@ class CAdvancedParticleSystemNode : public irr::scene::IParticleSystemSceneNode 
         m_iAtlasCount,        /**<! number of atlas segments */
         m_iLastMove,          /**<! last time the node was moved */
         m_iThreshold;         /**<! movement threshold */
-    f32 m_fAtlasSize;
+    f32 m_fAtlasSize,
+        m_fMove;
 
     array<vector2df> m_aAtlasPos; /**<! positions of the atlas parts */
 
     SMeshBuffer *m_pBuffer;   /**<! buffer for rendering */
-    
+
     core::vector3df m_vLastPos, /**<! the last position used for interpolation */
-                    m_vVel;     /**<! the velocity of the particle system used for interpolation */
+                    m_vVel,     /**<! the velocity of the particle system used for interpolation */
+                    m_vScale,
+                    m_vMove,
+                    m_vMoveDir;
 
     bool m_bParticlesAreGlobal, /**<! are the particles global? */
          m_bIsActive,           /**<! is this system active? */
          m_bAtlasTexture,       /**<! use an Atlas texture? */
-         m_bInterpolate;        /**<! interpolate movement. Useful for stepped physics simulations */
+         m_bInterpolate,        /**<! interpolate movement. Useful for stepped physics simulations */
+         m_bStepped;            /**<! stepped mode. Particles will be emitted on a line between the last and the current position */
 
     void reallocateBuffers();   /**<! buffer reallocation */
 
@@ -327,28 +332,28 @@ class CAdvancedParticleSystemNode : public irr::scene::IParticleSystemSceneNode 
 
       m_bIsActive=b;
     }
-    
+
     /**
      * Is the particle system active? I.e. is it still emitting particles
      * and are there particles of this system still present?
      * @return "true" if the particle system is active, "false" otherwise
      */
     bool isActive() { return m_bIsActive || m_aParticles.size()>0; }
-    
+
     /**
      * Get the number of currently visible particles
      * @return the number of currently visible particles
      */
     u32 getParticleCount() { return m_aParticles.size(); }
-    
+
     /**
      * Set the atlas size, i.e. the number of segments the particle texture has
      */
     void setAtlasSize(u32 iSize);
-    
+
     void setInterpolate(bool b) { m_bInterpolate=b; }   /**<! set the interpolate flag */
     bool doesInterpolate() { return m_bInterpolate; }   /**<! get the interpolate flag */
-    
+
     void setInterpolateThreshold(u32 i) { m_iThreshold=i; } /**<! set the interpolate threshold */
     u32 getInterpolateThreshold() { return m_iThreshold; }  /**<! get the interpolate threshold */
 };
