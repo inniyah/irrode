@@ -218,7 +218,7 @@ void CSegment::recalcMeshBuffer() {
   //delete the meshbuffers
   for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
     //if (m_pBuffer[i]!=NULL) m_pBuffer[i]->drop();
-    m_pBuffer[i]=new scene::SMeshBuffer();
+    m_pBuffer[i]=NULL;
     vTemp[i].clear();
   }
 
@@ -232,7 +232,7 @@ void CSegment::recalcMeshBuffer() {
   m_vPoints[2]=pos-calcLength+calcWidth;
   m_vPoints[3]=pos-calcLength-calcWidth;
 
-  m_vWallNorm=(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize();
+  m_vWallNorm=m_bNormalBase?(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize():core::vector3df(0.0f,1.0f,0.0f);
 
   if (m_bNormalBase) {
     m_vBaseNorm=-m_vWallNorm;
@@ -276,12 +276,14 @@ void CSegment::recalcMeshBuffer() {
 
   u16 iIdx[]={ 0,1,3, 3,1,2 };
 
+  m_pBuffer[0]=new scene::SMeshBuffer();
   m_pBuffer[0]->append(vVerts,4,iIdx,6);
   m_pBuffer[0]->recalculateBoundingBox();
 
   u16 iBaseIdx[]={ 2,0,1, 0,2,3 };
   fillVertexArray(vBasePoints,m_pTexParams[1],vVerts,false);
 
+  m_pBuffer[1]=new scene::SMeshBuffer();
   m_pBuffer[1]->append(vVerts,4,iBaseIdx,6);
   m_pBuffer[1]->recalculateBoundingBox();
 
@@ -396,20 +398,24 @@ void CSegment::recalcMeshBuffer() {
 
     //Fill the array, create the meshbuffer, add the created array and do something about the texture...
     fillVertexArray(vSide,m_pTexParams[i+2],vVerts,false);
+    m_pBuffer[i+2]=new scene::SMeshBuffer();
     m_pBuffer[i+2]->append(vVerts,4,iSideIdx,6);
     m_pBuffer[i+2]->recalculateBoundingBox();
 
     if (m_bWalls[i]) {
       fillVertexArray(vWallOut,m_pTexParams[i+6],vVerts,false);
+      m_pBuffer[i+6]=new scene::SMeshBuffer();
       m_pBuffer[i+6]->append(vVerts,4,iWallIdO,6);
       m_pBuffer[i+6]->recalculateBoundingBox();
 
       fillVertexArray(vWallIn,m_pTexParams[i+10],vVerts,false);
+      m_pBuffer[i+10]=new scene::SMeshBuffer();
       m_pBuffer[i+10]->append(vVerts,4,iWallIdI,6);
       m_pBuffer[i+10]->recalculateBoundingBox();
 
       core::vector3df vTopNorm=(vWallTop[0]-vWallTop[2]).crossProduct(vWallTop[0]-vWallTop[1]);
       fillVertexArray(vWallTop,m_pTexParams[i+14],vVerts,true,vTopNorm);
+	  m_pBuffer[i+14]=new scene::SMeshBuffer();
       m_pBuffer[i+14]->append(vVerts,4,iWallTop,6);
       m_pBuffer[i+14]->recalculateBoundingBox();
 
@@ -457,19 +463,21 @@ void CSegment::recalcMeshBuffer() {
 
       core::vector3df vTopNorm=(vCornerTop[0]-vCornerTop[2]).crossProduct(vCornerTop[0]-vCornerTop[1]);
       fillVertexArray(vCornerTop,m_pTexParams[i+14],vVerts,false,vTopNorm);
+		if (m_pBuffer[i+14]==NULL) m_pBuffer[i+14]=new scene::SMeshBuffer();
       m_pBuffer[i+14]->append(vVerts,4,idx,6);
 
       for (u32 x=0; x<4; x++) {
         u16 idxSide[]={ 0,1,2, 0,2,3 };
         core::vector3df vTmp[]={ vCornerTop[x], vCornerTop[x<3?x+1:0], vCornerBot[x<3?x+1:0], vCornerBot[x] };
         fillVertexArray(vTmp,m_pTexParams[i+6],vVerts,false);
+        if (m_pBuffer[i+6]==NULL) m_pBuffer[i+6]=new scene::SMeshBuffer();
         m_pBuffer[i+6]->append(vVerts,4,idxSide,6);
       }
     }
   }
 
   for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++)
-    if (m_pBuffer[i]->getVertexCount()>0) {
+    if (m_pBuffer[i]!=NULL && m_pBuffer[i]->getVertexCount()>0) {
       if (core::stringc("")==m_pTexParams[i]->getTexture() && m_pTexInit[i]!=NULL)
         m_pTexInit[i]->copyTo(m_pTexParams[i]);
 

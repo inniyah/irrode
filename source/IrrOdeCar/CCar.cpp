@@ -4,7 +4,6 @@
   #include <CCockpitCar.h>
   #include <math.h>
   #include <irrklang.h>
-  #include <CAdvancedParticleSystemNode.h>
   #include <CRearView.h>
   #include <CEventVehicleState.h>
 
