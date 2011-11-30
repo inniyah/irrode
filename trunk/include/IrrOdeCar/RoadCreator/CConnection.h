@@ -81,9 +81,10 @@ class CConnection : public INotification, public IRoadPart {
      * Calculate the positions of the vertices and add them to a temp array
      * @param vTemp the temporary array of vertex arrays
      * @param p1 the points to add
-     * @param vNorm the normal vector
+     * @param vNormBase the normal vector for the basement
+     * @param vNormWall the normal vector for the walls
      */
-    void addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNorm);
+    void addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNormBase, core::vector3df vNormWall);
 
     void fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::vector3df> vTemp, u32 iIdx);
 

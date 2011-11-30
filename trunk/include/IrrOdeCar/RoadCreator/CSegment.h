@@ -29,6 +29,7 @@ class CSegment : public IRoadPart {
 
     bool m_bLevelBase,  /**<! bring all base points to the same Y-value? */
          m_bNormalBase, /**<! use normal of segment for base direction? */
+         m_bNormalWall, /**<! use normal of segment for wall direction? */
          m_bWalls[4],   /**<! create walls? */
          m_bCorner[4];  /**<! create corner marks? */
 
@@ -162,6 +163,11 @@ class CSegment : public IRoadPart {
     const core::vector3df &getWallNormal() { return m_vWallNorm; }
 
     virtual s32 getNumberOfMeshBuffers() { return _SEGMENT_NUMBER_OF_BUFFERS; }
+    
+    CSegment *clone();
+    
+    void setNormalWall(bool b);
+    bool getNormalWall();
 };
 
 #endif
