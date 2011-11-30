@@ -21,6 +21,7 @@ CSegment::CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevic
   m_fBaseOffset=10.0f;
   m_bLevelBase=true;
   m_bNormalBase=false;
+  m_bNormalWall=false;
 
   m_pDevice=pDevice;
   m_pDrv=m_pDevice->getVideoDriver();
@@ -107,6 +108,9 @@ bool CSegment::getLevelBase() { return m_bLevelBase; }
 
 void CSegment::setNormalBase(bool b) { m_bNormalBase=b; attributeChanged(); }
 bool CSegment::getNormalBase() { return m_bNormalBase; }
+
+void CSegment::setNormalWall(bool b) { m_bNormalWall=b; attributeChanged(); }
+bool CSegment::getNormalWall() { return m_bNormalWall; }
 
 void CSegment::setPosition (core::vector3df v) { m_vPosition =v;                           attributeChanged(); }
 void CSegment::setDirection(core::vector3df v) { m_vDirection=v; m_vDirection.normalize(); attributeChanged(); }
@@ -232,15 +236,8 @@ void CSegment::recalcMeshBuffer() {
   m_vPoints[2]=pos-calcLength+calcWidth;
   m_vPoints[3]=pos-calcLength-calcWidth;
 
-  m_vWallNorm=m_bNormalBase?(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize():core::vector3df(0.0f,1.0f,0.0f);
-
-  if (m_bNormalBase) {
-    m_vBaseNorm=-m_vWallNorm;
-    m_vBaseNorm.normalize();
-  }
-  else {
-    m_vBaseNorm=core::vector3df(0.0f,-1.0f,0.0f);
-  }
+  m_vWallNorm=m_bNormalWall? (m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize():core::vector3df(0.0f, 1.0f,0.0f);
+  m_vBaseNorm=m_bNormalBase?-(m_vPoints[2]-m_vPoints[1]).crossProduct(m_vPoints[0]-m_vPoints[1]).normalize():core::vector3df(0.0f,-1.0f,0.0f);
 
   //Same procedure for the bottom polygon...
   core::vector3df vBasePoints[4];
@@ -415,7 +412,7 @@ void CSegment::recalcMeshBuffer() {
 
       core::vector3df vTopNorm=(vWallTop[0]-vWallTop[2]).crossProduct(vWallTop[0]-vWallTop[1]);
       fillVertexArray(vWallTop,m_pTexParams[i+14],vVerts,true,vTopNorm);
-	  m_pBuffer[i+14]=new scene::SMeshBuffer();
+      m_pBuffer[i+14]=new scene::SMeshBuffer();
       m_pBuffer[i+14]->append(vVerts,4,iWallTop,6);
       m_pBuffer[i+14]->recalculateBoundingBox();
 
@@ -453,10 +450,10 @@ void CSegment::recalcMeshBuffer() {
 
       core::vector3df vCornerBot[]={ v[0]+v[1], v[0], v[0]+v[2], v[0]+v[1]+v[2] },
                       vCornerTop[]={
-                        vCornerBot[0]+m_fWallHeight*m_vNormal,
-                        vCornerBot[1]+m_fWallHeight*m_vNormal,
-                        vCornerBot[2]+m_fWallHeight*m_vNormal,
-                        vCornerBot[3]+m_fWallHeight*m_vNormal
+                        vCornerBot[0]+m_fWallHeight*m_vWallNorm,
+                        vCornerBot[1]+m_fWallHeight*m_vWallNorm,
+                        vCornerBot[2]+m_fWallHeight*m_vWallNorm,
+                        vCornerBot[3]+m_fWallHeight*m_vWallNorm
                       };
 
       u16 idx[]={ 1,0,2, 2,0,3 };
@@ -529,6 +526,7 @@ void CSegment::save(io::IAttributes *out) {
 
   out->addBool("LevelBase" ,m_bLevelBase );
   out->addBool("NormalBase",m_bNormalBase);
+  out->addBool("NormalWall",m_bNormalWall);
 
   out->addVector3d("Position" ,m_vPosition );
   out->addVector3d("Direction",m_vDirection);
@@ -556,6 +554,11 @@ void CSegment::load(io::IAttributes *in) {
 
   m_bLevelBase =in->getAttributeAsBool("LevelBase" );
   m_bNormalBase=in->getAttributeAsBool("NormalBase");
+
+  if (in->existsAttribute("NormalWall"))
+    m_bNormalWall=in->getAttributeAsBool("NormalWall");
+  else
+    m_bNormalWall=m_bNormalBase;
 
   if (!in->existsAttribute("NormalBase")) m_bNormalBase=false;
 
@@ -602,4 +605,14 @@ CTextureParameters *CSegment::getTextureParameters(u32 i) {
 
 scene::IMeshBuffer *CSegment::getMeshBuffer(u32 i) {
   return i<_SEGMENT_NUMBER_OF_BUFFERS?m_pBuffer[i]:NULL;
+}
+
+CSegment *CSegment::clone() {
+  io::IAttributes *p=m_pFs->createEmptyAttributes();
+  this->save(p);
+
+  CSegment *pRet=new CSegment(m_pDevice);
+  pRet->load(p);
+  p->drop();
+  return pRet;
 }

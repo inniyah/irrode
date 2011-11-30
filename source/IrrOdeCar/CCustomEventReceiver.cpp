@@ -325,11 +325,11 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           u32 iMin=(u32)(-p->getRpm()*3.0f),
               iMax=(u32)(-p->getRpm()*5.0f);
 
-          if (iMin<25) iMin=25;
-          if (iMax<50) iMax=50;
+          if (iMin<250) iMin=250;
+          if (iMax<350) iMax=350;
 
-          if (iMin>450) iMin=750;
-          if (iMax>500) iMax=750;
+          if (iMin>750) iMin=750;
+          if (iMax>750) iMax=750;
 
           for (u32 i=0; i<2; i++) {
             pCar->pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);

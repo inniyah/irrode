@@ -9,7 +9,7 @@
 using namespace irr;
 
 
-void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNorm) {
+void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNormBase, core::vector3df vNormWall) {
   for (u32 j=0; j<_CONNECTION_NUMBER_OF_BUFFERS; j++) {
     switch (j) {
       //Road
@@ -33,27 +33,27 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
 
       //Basement
       case 1:
-        vTemp[1].push_back(p1[0]+m_fOffset*vNorm);
-        vTemp[1].push_back(p1[1]+m_fOffset*vNorm);
+        vTemp[1].push_back(p1[0]+m_fOffset*vNormBase);
+        vTemp[1].push_back(p1[1]+m_fOffset*vNormBase);
         break;
 
       //Left Basement
       case 2:
         vTemp[2].push_back(p1[0]);
-        vTemp[2].push_back(p1[0]+m_fOffset*vNorm);
+        vTemp[2].push_back(p1[0]+m_fOffset*vNormBase);
         break;
 
       //Right Basement
       case 3:
         vTemp[3].push_back(p1[1]);
-        vTemp[3].push_back(p1[1]+m_fOffset*vNorm);
+        vTemp[3].push_back(p1[1]+m_fOffset*vNormBase);
         break;
 
       //Left outer wall
       case 4:
         if (m_bWalls[0]) {
           vTemp[4].push_back(p1[0]);
-          vTemp[4].push_back(p1[0]-m_fWallHeight*vNorm);
+          vTemp[4].push_back(p1[0]-m_fWallHeight*vNormWall);
         }
         break;
 
@@ -61,7 +61,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
       case 5:
         if (m_bWalls[1]) {
           vTemp[5].push_back(p1[1]);
-          vTemp[5].push_back(p1[1]-m_fWallHeight*vNorm);
+          vTemp[5].push_back(p1[1]-m_fWallHeight*vNormWall);
         }
         break;
 
@@ -71,7 +71,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
           core::vector3df vDir=p1[0]-p1[1];
           vDir.normalize();
           vTemp[6].push_back(p1[0]-m_fWallWidth*vDir);
-          vTemp[6].push_back(p1[0]-m_fWallWidth*vDir-m_fWallHeight*vNorm);
+          vTemp[6].push_back(p1[0]-m_fWallWidth*vDir-m_fWallHeight*vNormWall);
         }
         break;
 
@@ -81,7 +81,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
           core::vector3df vDir=p1[1]-p1[0];
           vDir.normalize();
           vTemp[7].push_back(p1[1]-m_fWallWidth*vDir);
-          vTemp[7].push_back(p1[1]-m_fWallWidth*vDir-m_fWallHeight*vNorm);
+          vTemp[7].push_back(p1[1]-m_fWallWidth*vDir-m_fWallHeight*vNormWall);
         }
         break;
 
@@ -209,7 +209,7 @@ void CConnection::recalcMeshBuffer() {
   //Delete all meshbuffers allocated previously
   for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
     //if (m_pMeshBuffer[i]!=NULL)  m_pMeshBuffer[i]->drop();
-    m_pMeshBuffer[i]=new scene::SMeshBuffer();
+    m_pMeshBuffer[i]=NULL;
   }
 
   //Return without doing any further things if the connection is not connected
@@ -262,13 +262,14 @@ void CConnection::recalcMeshBuffer() {
   }
 
   core::array<core::vector3df> vTemp[_CONNECTION_NUMBER_OF_BUFFERS];
-  core::vector3df vNorm=m_pSegment1->getNormalBaseVector();
+  core::vector3df vNormBase=m_pSegment1->getNormalBaseVector(),
+                  vNormWall=m_pSegment1->getWallNormal();
   //if (m_bFlipVertices) vNorm=-vNorm;
 
   for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) vTemp[i].clear();
 
   for (u32 i=1; i<=m_iSteps; i++) {
-    addToTempVectorBuffer(vTemp,p1,vNorm);
+    addToTempVectorBuffer(vTemp,p1,vNormBase,-vNormWall);
 
     f32 fStep=((f32)i)*(1.0f/((f32)m_iSteps));
 
@@ -290,19 +291,29 @@ void CConnection::recalcMeshBuffer() {
     }
 
     core::vector3df v1=p1[0]-p1[1],v2=p1[0]-vTemp[0][vTemp[0].size()-1];
-    vNorm=v1.crossProduct(v2);
-    vNorm.normalize();
-    if (m_bFlipVertices) vNorm=-vNorm;
+    vNormBase=v1.crossProduct(v2);
+    vNormWall=-vNormBase;
+    vNormBase.normalize();
+    vNormWall.normalize();
+    if (m_bFlipVertices) {
+      vNormBase=-vNormBase;
+      vNormWall=-vNormWall;
+    }
   }
 
-  addToTempVectorBuffer(vTemp,p2,m_bFlipVertices?m_pSegment2->getNormalBaseVector():m_pSegment2->getNormalBaseVector());
+  addToTempVectorBuffer(vTemp,p2,
+                        m_bFlipVertices? m_pSegment2->getNormalBaseVector(): m_pSegment2->getNormalBaseVector(),
+                        m_bFlipVertices?-m_pSegment2->getWallNormal      ():-m_pSegment2->getWallNormal());
 
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) fillMeshBuffer(m_pMeshBuffer[i],vTemp[i],i);
+  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+    if (m_pMeshBuffer[i]==NULL) m_pMeshBuffer[i]=new scene::SMeshBuffer();
+    fillMeshBuffer(m_pMeshBuffer[i],vTemp[i],i);
+  }
 }
 
 /**
  * Init the Bezier helppoints. Nothing special here. We just
- * calculate the point in the middle between the chosed segment borders
+ * calculate the point in the middle between the chosen segment borders
  * @see CConnection::setSegment1
  * @see CConnection::setSegment2
  * @see CConnection::setSegment1Border
