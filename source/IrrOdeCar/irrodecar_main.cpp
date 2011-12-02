@@ -337,7 +337,7 @@ int main(int argc, char** argv) {
   smgr->registerSceneNodeFactory(&cFactory);
 
   CRandomForestFactory fFactory(smgr);
-  smgr->registerSceneNodeFactory(&fFactory);
+  if (pSettings->isActive(4)) smgr->registerSceneNodeFactory(&fFactory);
 
   CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(smgr);
   smgr->registerSceneNodeFactory(cParticleFactory);

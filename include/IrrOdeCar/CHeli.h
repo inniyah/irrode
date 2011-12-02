@@ -54,6 +54,8 @@ class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
 
     virtual ode::IIrrOdeEvent *writeEvent();
     virtual ode::eEventWriterType getEventWriterType();
+
+    virtual void activate();
 };
 
 #endif

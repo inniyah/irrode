@@ -18,10 +18,6 @@ class CRearView;
 
 class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
   protected:
-    ISceneNode *m_pRoll[2],
-               *m_pPitch[2],
-               *m_pYaw[2];
-
     bool m_bLeftMissile;
     ode::CIrrOdeJointHinge *m_pAxes[2];
     ode::CIrrOdeJointHinge2 *m_pSteerAxis;
@@ -40,6 +36,8 @@ class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
 
     virtual ode::IIrrOdeEvent *writeEvent();
     virtual ode::eEventWriterType getEventWriterType();
+
+    virtual void activate();
 };
 
 #endif
