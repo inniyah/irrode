@@ -177,3 +177,8 @@ ode::IIrrOdeEvent *CHeli::writeEvent() {
 ode::eEventWriterType CHeli::getEventWriterType() {
   return ode::eIrrOdeEventWriterUnknown;
 }
+
+void CHeli::activate() {
+  CAeroVehicle::activate();
+  dataChanged();
+}

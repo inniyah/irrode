@@ -16,13 +16,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
-  m_pRoll [0]=m_pSmgr->getSceneNodeFromName("roll1");
-  m_pRoll [1]=m_pSmgr->getSceneNodeFromName("roll2");
-  m_pPitch[0]=m_pSmgr->getSceneNodeFromName("pitch1");
-  m_pPitch[1]=m_pSmgr->getSceneNodeFromName("pitch2");
-  m_pYaw  [0]=m_pSmgr->getSceneNodeFromName("yaw");
-  m_pYaw  [1]=m_pSmgr->getSceneNodeFromName("yaw2");
-
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor);
   m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
   m_pAutoPilot->setLinkYawRoll(true);
@@ -30,9 +23,6 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
 
   printf("\nplane state\n\n");
-  printf("rudders: (%i, %i), (%i, %i), (%i, %i)\n",(int)m_pRoll [0],(int)m_pRoll [1],
-                                                   (int)m_pPitch[0],(int)m_pPitch[1],
-                                                   (int)m_pYaw  [0],(int)m_pYaw  [1]);
   m_bLeftMissile=true;
 
   m_iNextCp=-1;
@@ -253,4 +243,9 @@ ode::IIrrOdeEvent *CPlane::writeEvent() {
 
 ode::eEventWriterType CPlane::getEventWriterType() {
   return ode::eIrrOdeEventWriterUnknown;
+}
+
+void CPlane::activate() {
+  CAeroVehicle::activate();
+  dataChanged();
 }
