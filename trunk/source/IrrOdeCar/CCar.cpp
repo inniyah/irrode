@@ -313,10 +313,11 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
       f32 fSteer=m_pController->get(m_pCtrls[eCarLeft]);
 
-      if (fSteer!=0.0f)
-        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer);
-      else
-        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+      if (fSteer!=0.0f) {
+        f32 fSign=fSteer>=0?1:-1;
+        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer*fSteer*fSign);
+      }
+      else for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
       if (m_pController->get(eCarBrake)!=0.0f) {
         for (u32 i=0; i<2; i++) {
