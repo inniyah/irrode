@@ -1,6 +1,7 @@
   #include <CCustomEventReceiver.h>
   #include <CEventVehicleState.h>
   #include <CAdvancedParticleSystemNode.h>
+  #include <CRandomForestNode.h>
 
   #include <irrklang.h>
 
@@ -381,6 +382,13 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType()==EVENT_INST_FOREST_ID) {
+    printf("**** install forest!\n");
+    irr::scene::ISceneManager *smgr=m_pDevice->getSceneManager();
+    CRandomForestFactory *pFactory=new CRandomForestFactory(smgr);
+    smgr->registerSceneNodeFactory(pFactory);
+  }
+
   if (pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved) {
     bool bDone=false;
 
@@ -479,5 +487,6 @@ bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
          pEvent->getType()==EVENT_TANK_STATE_ID  || pEvent->getType()==EVENT_CAR_STATE_ID ||
          pEvent->getType()==EVENT_FIRE_SND_ID || pEvent->getType()==EVENT_HELI_STATE_ID ||
          pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved ||
-         pEvent->getType()==irr::ode::eIrrOdeEventNodeCloned;
+         pEvent->getType()==irr::ode::eIrrOdeEventNodeCloned ||
+         pEvent->getType()==EVENT_INST_FOREST_ID;
 }
