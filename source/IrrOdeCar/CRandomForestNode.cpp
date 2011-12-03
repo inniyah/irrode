@@ -320,7 +320,11 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
     }
   }
 
-  if (in->getAttributeAsBool("generate_trees") || m_aGeneratedTrees.size()==0) plantTrees();
+  if (in->getAttributeAsBool("generate_trees") || m_aGeneratedTrees.size()==0) {
+    printf("*** plant trees!\n");
+    plantTrees();
+  }
+  else printf("no trees to plant!\n");
   m_bSerializeTrees=in->getAttributeAsBool("serialize_trees");
   #ifdef _IRREDIT_PLUGIN
     this->setAutomaticCulling(scene::EAC_OFF);
@@ -447,11 +451,13 @@ void CRandomForest::setTerrainNodeName(const irr::c8 *sTerrain) {
 }
 
 void CRandomForest::plantTrees() {
+  int iPlanted=0;
   clearForest();
   createForest();
 
   for (irr::u32 i=0; i<m_aRects.size(); i++) {
     if (m_aRects[i]->m_bTree) {
+      iPlanted++;
       irr::core::position2di cPos=m_aRects[i]->m_cRect.UpperLeftCorner;
       irr::core::vector3df v=getPosition();
 
@@ -497,12 +503,14 @@ void CRandomForest::plantTrees() {
       m_aGeneratedTrees.push_back(clone);
     }
   }
+  printf("%i trees planted.\n",iPlanted);
 }
 
 
 
 
 CRandomForestFactory::CRandomForestFactory(irr::scene::ISceneManager *pManager) {
+  printf("**** RandomForestFactory\n");
   m_pSmgr=pManager;
 }
 

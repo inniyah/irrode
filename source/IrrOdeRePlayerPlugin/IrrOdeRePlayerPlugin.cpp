@@ -11,7 +11,6 @@
   #include <CCustomEventReceiver.h>
 
   #include <CRoadMeshLoader.h>
-  #include <CRandomForestNode.h>
   #include <irrklang.h>
 
 /**
@@ -114,13 +113,14 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       if (iCode==EVENT_HELI_STATE_ID ) return new CEventHeliState (pData);
       if (iCode==EVENT_FIRE_SND_ID   ) return new CEventFireSound (pData);
 
+      if (iCode==EVENT_INST_FOREST_ID) return new CEventInstallRandomForestPlugin(pData);
+
       return NULL;
     }
 };
 
 
 static CAdvancedParticleSystemNodeFactory *g_pFactory=NULL;
-static CRandomForestFactory *g_pForest=NULL;
 static APS_EventListener *g_pListener=NULL;
 static APS_EventFactory *g_pEventFactory=NULL;
 
@@ -135,12 +135,6 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
     printf("registering scenenode factory...\n");
     g_pFactory=new CAdvancedParticleSystemNodeFactory(pDevice->getSceneManager());
     pDevice->getSceneManager()->registerSceneNodeFactory(g_pFactory);
-  }
-
-  if (g_pForest==NULL) {
-    printf("registering scenenode factory (RandomForest)...\n");
-    g_pForest=new CRandomForestFactory(pDevice->getSceneManager());
-    pDevice->getSceneManager()->registerSceneNodeFactory(g_pForest);
   }
 
   printf("registering event listener...\n");

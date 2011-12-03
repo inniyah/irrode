@@ -336,8 +336,10 @@ int main(int argc, char** argv) {
   ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
-  CRandomForestFactory fFactory(smgr);
-  if (pSettings->isActive(4)) smgr->registerSceneNodeFactory(&fFactory);
+  if (pSettings->isActive(4)) {
+    CEventInstallRandomForestPlugin *p=new CEventInstallRandomForestPlugin();
+    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  }
 
   CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(smgr);
   smgr->registerSceneNodeFactory(cParticleFactory);
@@ -380,10 +382,7 @@ int main(int argc, char** argv) {
   if (!pSettings->isActive(1)) removeFromScene("bumps"       ,smgr);
   if (!pSettings->isActive(2)) removeFromScene("targets"     ,smgr);
   if (!pSettings->isActive(3)) removeFromScene("plane_course",smgr);
-  if (!pSettings->isActive(4)) {
-    removeFromScene("forests",smgr);
-  }
-  else {
+  if ( pSettings->isActive(4)) {
    const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
 
     for (u32 i=0; i<2; i++) {
