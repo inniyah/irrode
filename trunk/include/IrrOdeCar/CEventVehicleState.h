@@ -188,5 +188,7 @@ class CEventInstallRandomForestPlugin : public irr::ode::IIrrOdeEvent {
     virtual irr::ode::IIrrOdeEvent *clone() {
       return new CEventInstallRandomForestPlugin();
     }
+
+    virtual bool isObservable() { return true; }
 };
 #endif
