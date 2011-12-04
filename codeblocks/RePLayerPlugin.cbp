@@ -59,6 +59,7 @@
 		</Compiler>
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
 		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
+		<Unit filename="..\include\IrrOdeCar\CMeshCombiner.h" />
 		<Unit filename="..\include\IrrOdeCar\CRandomForestNode.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\CConnection.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadLoader.h" />
@@ -72,6 +73,7 @@
 		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CMeshCombiner.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CRandomForestNode.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CConnection.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadLoader.cpp" />
