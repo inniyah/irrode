@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
   pActiveState->activate();
 
   u32 iRet=0;
+  s32 lastFPS=-1;
 
   while(iRet==0 && device->run()) {
     iRet=pActiveState->update();
@@ -72,6 +73,14 @@ int main(int argc, char** argv) {
     guienv->drawAll();
 
     driver->endScene();
+    int fps = driver->getFPS();
+
+    if (lastFPS != fps) {
+      core::stringw s="IrrOdeRePlayer - ";
+      s+=fps;
+      s+=" Frames per Second";
+      device->setWindowCaption(s.c_str());
+    }
   }
 
   pActiveState->deactivate();

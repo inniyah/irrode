@@ -117,7 +117,6 @@ bool CIrrOdeWorldObserver::onEvent(IIrrOdeEvent *pEvent) {
     IIrrOdeEvent *pNewEvent=pEvent->clone();
     if (pNewEvent!=NULL) {
       m_lEvents.push_back(pNewEvent);
-
     }
   }
 

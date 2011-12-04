@@ -12,6 +12,8 @@
 
   #include <CRoadMeshLoader.h>
   #include <irrklang.h>
+  #include <CMeshCombiner.h>
+  #include <CRandomForestNode.h>
 
 /**
  * We use the plugin to add an addition event listener to the IrrOdeRePlayer. This
@@ -90,6 +92,41 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         searchTankBodies (m_pDevice->getSceneManager()->getRootSceneNode());
         searchCarBodies  (m_pDevice->getSceneManager()->getRootSceneNode());
         searchHeliBodies (m_pDevice->getSceneManager()->getRootSceneNode());
+
+        const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
+
+        for (u32 i=0; i<2; i++) {
+          printf("merging \"%s\"...\n",sForests[i]);
+          irr::scene::ISceneManager *smgr=m_pDevice->getSceneManager();
+          scene::ISceneNode *p=smgr->getSceneNodeFromName(sForests[i]);
+          CRandomForest *pForest=(CRandomForest *)p;
+          if (pForest!=NULL) {
+            CMeshCombiner *pCombine=new CMeshCombiner(0.8f);
+            irr::core::array<irr::scene::IMeshSceneNode *> aMeshSceneNodes;
+            irr::core::array<irr::scene::ISceneNode *> aTrees=pForest->getGeneratedTrees();
+
+            for (u32 j=0; j<aTrees.size(); j++) {
+              irr::scene::IMeshSceneNode *p=(irr::scene::IMeshSceneNode *)aTrees[j];
+              aMeshSceneNodes.push_back(p);
+            }
+
+            printf("%i trees\n",aMeshSceneNodes.size());
+
+            if (aMeshSceneNodes.size()>0) {
+              c8 s[0xFF];
+              sprintf(s,"MyCombinedTrees_%i",i);
+              irr::scene::IMesh *pCombined=pCombine->combineMeshes(smgr,m_pDevice->getVideoDriver(),aMeshSceneNodes,s);
+              if (pCombined!=NULL) {
+                irr::scene::ISceneNode *pRoot=smgr->getSceneNodeFromName(sForests[i+2]);
+                irr::scene::IMeshSceneNode *pNode=smgr->addMeshSceneNode(pCombined,pRoot==NULL?smgr->getRootSceneNode():pRoot);
+                for (u32 i=0; i<pNode->getMaterialCount(); i++) {
+                  pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
+                  pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+                }
+              }
+            }
+          }
+        }
         return true;
       }
 
