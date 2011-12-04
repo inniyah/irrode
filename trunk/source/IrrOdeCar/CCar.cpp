@@ -248,7 +248,14 @@ bool CCar::OnEvent(const SEvent &event) {
 
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
-    bool bDataChanged=false;
+    bool bDataChanged=false,bBrake=false;
+
+    core::vector3df vForeward=m_pCarBody->getRotation().rotationToDirection(core::vector3df(-1.0f,0.0f,0.0f)),
+                    vNormVel=m_pCarBody->getLinearVelocity();
+
+    vNormVel.normalize();
+
+    f32 fVelocity=vForeward.dotProduct(m_pCarBody->getLinearVelocity());
 
     if (m_bActive) {
       bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
@@ -264,6 +271,7 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
           fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
+      if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
       //calculate the differential gear
       f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
           f2=m_pAxesRear[1]->getHingeAngleRate(),
@@ -319,10 +327,13 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       }
       else for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
-      if (m_pController->get(eCarBrake)!=0.0f) {
+      if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
+        f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
+        if (fFact<0.0f) fFact=-fFact;
+
         for (u32 i=0; i<2; i++) {
-          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(m_pController->get(eCarBrake)*350.0f);
-          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(m_pController->get(eCarBrake)*150.0f);
+          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
+          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
         }
       }
 
