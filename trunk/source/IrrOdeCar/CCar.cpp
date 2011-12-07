@@ -184,20 +184,23 @@ u32 CCar::update() {
   //call the superclasse's update method
   u32 iRet=CIrrOdeCarState::update();
 
+  #define _MAX_STEER 25.0f
+  #define _MIN_STEER 10.0f
+
   //the car's velocity
   f32 v=m_pCarBody->getLinearVelocity().getLength();
   //is the adaptive steer option is not active ...
   if (!m_bAdaptSteer)
-    m_fActSteer=45.0f;   //... just use the default steering angle of 45 degrees, otherwise ...
+    m_fActSteer=_MAX_STEER;   //... just use the default steering angle of 45 degrees, otherwise ...
   else
     if (v<10.0f)
-      m_fActSteer=45.0f;    //... just use this value if the velocity is low. If the velocity is higher, even ...
+      m_fActSteer=_MAX_STEER;    //... just use this value if the velocity is low. If the velocity is higher, even ...
     else
       if (v>45.0f)
-        m_fActSteer=10.0f;  //... higher than 45 we use the minimum value of 10 degrees. If the speed is between 10 ...
+        m_fActSteer=_MIN_STEER;  //... higher than 45 we use the minimum value of 10 degrees. If the speed is between 10 ...
       else
         //and 45 we calculate the actual steering angle
-        m_fActSteer=45.0f-(35.0f)*(v-10.0f)/35.0f;
+        m_fActSteer=_MAX_STEER-(_MAX_STEER-_MIN_STEER)*(v-10.0f)/(_MAX_STEER-_MIN_STEER);
 
   //get the parameters for the camera ...
   vector3df pos=m_pCarBody->getRotation().rotationToDirection(m_bInternal?vector3df(0,1.35,0):vector3df(8,4,0)),
