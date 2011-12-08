@@ -2,6 +2,8 @@
   #define _C_ROAD_LOADER
 
   #include <irrlicht.h>
+  #include <CSurface.h>
+  #include <CTextureParameters.h>
 
 using namespace irr;
 
@@ -20,6 +22,8 @@ class CRoadLoader {
     
     core::vector3df m_vOfffset;     /**<! the Offset of the node (only relevant when shrinking the node) */
     bool m_bShrinkNode;
+    
+    CTextureParameters m_aSurfaceDefaults[_SURFACE_NUMBER_OF_BUFFERS];
 
     core::stringc m_sCurrentRoad;               /**<! the currently opened road */
 
@@ -29,6 +33,15 @@ class CRoadLoader {
 
   public:
     CRoadLoader(IrrlichtDevice *pDevice);
+    
+    ~CRoadLoader() {
+      if (m_pSurface!=NULL) delete m_pSurface;
+    }
+    
+    void setSurfaceDefaultParameters(CTextureParameters *p) {
+      if (p==NULL) return;
+      for (u32 i=0; i<_SURFACE_NUMBER_OF_BUFFERS; i++) p[i].copyTo(&m_aSurfaceDefaults[i]);
+    }
 
     bool loadRoad(const core::stringc sName);
 
@@ -58,7 +71,10 @@ class CRoadLoader {
 
     bool deleteSegment(CSegment *pToDelete);
 
-    CSurface *getSurface() { return m_pSurface; }
+    CSurface *getSurface() { 
+      if (m_pSurface==NULL) m_pSurface=new CSurface(m_pDevice,m_aSurfaceDefaults);
+      return m_pSurface; 
+    }
     
     void shrinkNode(bool b) { m_bShrinkNode=b; }
     bool didShrinkNode() { return m_bShrinkNode; }
