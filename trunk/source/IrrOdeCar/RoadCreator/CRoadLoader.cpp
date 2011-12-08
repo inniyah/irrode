@@ -46,7 +46,7 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
 CRoadLoader::CRoadLoader(IrrlichtDevice *pDevice) {
   m_pDevice=pDevice;
   m_sCurrentRoad="";
-  m_pSurface=new CSurface(pDevice);
+  m_pSurface=NULL;
   m_vOfffset=core::vector3df(0.0f,0.0f,0.0f);
   m_bShrinkNode=false;
 }
@@ -140,6 +140,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             if (iState==6) {
               io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
+              if (m_pSurface==NULL) m_pSurface=new CSurface(m_pDevice,NULL);
               m_pSurface->load(pAttr);
               m_pSurface->setVisible(true);
               pAttr->drop();
@@ -463,7 +464,7 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
     }
   }
 
-  if (m_pSurface->isVisible()) {
+  if (m_pSurface!=NULL && m_pSurface->isVisible()) {
     for (u32 i=0; i<2; i++) {
       bool bDoIt=true;
 

@@ -5,6 +5,8 @@
 
 using namespace irr;
 
+#define _SURFACE_NUMBER_OF_BUFFERS 2
+
 class CTextureParameters;
 
 class CSurface {
@@ -16,16 +18,16 @@ class CSurface {
     core::vector2df m_cTexRepeat;
     f32 m_fFenceHeight;
 
-    scene::IMeshBuffer *m_pBuffers[2];  /**<! Meshbuffer for ground and fence */
+    scene::IMeshBuffer *m_pBuffers[_SURFACE_NUMBER_OF_BUFFERS];  /**<! Meshbuffer for ground and fence */
 
-    CTextureParameters *m_pParams[2]; /**<! Texture Parameters */
+    CTextureParameters *m_pParams[_SURFACE_NUMBER_OF_BUFFERS]; /**<! Texture Parameters */
 
     IrrlichtDevice *m_pDevice;
     video::IVideoDriver *m_pDrv;
     io::IFileSystem *m_pFs;
 
   public:
-    CSurface(IrrlichtDevice *pDevice);
+    CSurface(IrrlichtDevice *pDevice, CTextureParameters *pInitParam);
     virtual ~CSurface();
 
     virtual void recalcMeshBuffer();

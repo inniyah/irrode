@@ -3,7 +3,7 @@
 
 using namespace irr;
 
-CSurface::CSurface(IrrlichtDevice *pDevice) {
+CSurface::CSurface(IrrlichtDevice *pDevice, CTextureParameters *pInitParam) {
   m_pDevice=pDevice;
   m_pDrv=m_pDevice->getVideoDriver();
   m_pFs=m_pDevice->getFileSystem();
@@ -20,6 +20,9 @@ CSurface::CSurface(IrrlichtDevice *pDevice) {
   for (u32 i=0; i<2; i++) {
     m_pBuffers[i]=NULL;
     m_pParams[i]=new CTextureParameters();
+    if (pInitParam!=NULL) {
+      pInitParam[i].copyTo(m_pParams[i]);
+    }
   }
 }
 
@@ -114,11 +117,11 @@ void CSurface::recalcMeshBuffer() {
   }
   else m_pBuffers[1]=NULL;
 
-  for (u32 i=0; i<2; i++)
-    if (m_pBuffers[i]!=NULL && m_pBuffers[i]->getVertexCount()>0) {
-      video::ITexture *pTex=m_pDrv->getTexture(m_pParams[i]->getTexture().c_str());
-      m_pBuffers[i]->getMaterial().setTexture(0,pTex);
-    }
+  for (u32 i=0; i<_SURFACE_NUMBER_OF_BUFFERS; i++) {
+    video::ITexture *pTex=m_pDrv->getTexture(m_pParams[i]->getTexture().c_str());
+    printf("==> %s\n",m_pParams[i]->getTexture().c_str());
+    m_pBuffers[i]->getMaterial().setTexture(0,pTex);
+  }
 }
 
 u32 CSurface::getTextureCount() {
