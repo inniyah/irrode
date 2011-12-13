@@ -322,11 +322,11 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
           m_pMotor[i]->setForce(5.0f);
         }
 
-      f32 fSteer=m_pController->get(m_pCtrls[eCarLeft]);
+      m_fSteer=m_pController->get(m_pCtrls[eCarLeft]);
 
-      if (fSteer!=0.0f) {
-        f32 fSign=fSteer>=0?1:-1;
-        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*fSteer*fSteer*fSign);
+      if (m_fSteer!=0.0f) {
+        f32 fSign=m_fSteer>=0?1:-1;
+        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*m_fSteer);
       }
       else for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
@@ -520,7 +520,7 @@ ode::IIrrOdeEvent *CCar::writeEvent() {
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/PI,
-                                            m_fRpm,m_fDiff,m_fSound,iFlags);
+                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/PI,iFlags);
 
   return pEvent;
 }

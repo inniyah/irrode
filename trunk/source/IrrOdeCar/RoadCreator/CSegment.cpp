@@ -141,26 +141,24 @@ void CSegment::fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, 
 
   //Some locals for texture creation
   f32 f=calcWidth.getLength()!=0 && !pTex->getStretch()?calcLength.getLength()/calcWidth.getLength():1.0f,
-      fStartX=pTex->getOffsetX()/*,fStartY=pTex->getOffsetY()*/;
-
-  f*=pTex->getScaleX();
-  f+=fStartX;
+      fStartX=pTex->getOffsetX(),fStartY=pTex->getOffsetY(),
+      fScaleX=pTex->getScaleX (),fScaleY=pTex->getScaleY ();
 
   f32 fTex[4][2];
 
   //Calculate the texture positions of the shape points depending on the rotation
-  fTex[0][0]=     fDiff; fTex[0][1]=0.0f;
-  fTex[1][0]=1.0f-fDiff; fTex[1][1]=0.0f;
-  fTex[2][0]=1.0f-fDiff; fTex[2][1]=1.0f;
-  fTex[3][0]=     fDiff; fTex[3][1]=1.0f;
+  fTex[0][0]=fScaleX*(  fDiff)+fStartX; fTex[0][1]=fScaleY*  fStartY;
+  fTex[1][0]=fScaleX*(f-fDiff)+fStartX; fTex[1][1]=fScaleY*  fStartY;
+  fTex[2][0]=fScaleX*(f-fDiff)+fStartX; fTex[2][1]=fScaleY*f+fStartY;
+  fTex[3][0]=fScaleX*(  fDiff)+fStartX; fTex[3][1]=fScaleY*f+fStartY;
 
   if (v1.getLength()<v2.getLength()) {
-    fTex[0][0]=0.0f;
-    fTex[3][0]=0.0f;
+    fTex[0][0]=fStartX*fScaleX;
+    fTex[3][0]=fStartX*fScaleX;
   }
   else {
-    fTex[1][0]=1.0f;
-    fTex[2][0]=1.0f;
+    fTex[1][0]=(f+fStartX)*fScaleX;
+    fTex[2][0]=(f+fStartX)*fScaleX;
   }
 
   if (bTop) {

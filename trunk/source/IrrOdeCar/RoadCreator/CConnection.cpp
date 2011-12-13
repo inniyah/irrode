@@ -151,7 +151,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
 
     video::SColor cCol=bColor?video::SColor(0xFF,0xFF,0xFF,0xFF):video::SColor(0xFF,0xFF,0,0);
     core::vector2df vTex;
-
+    
     switch (m_pTexParams[iIdx]->getRotate()) {
       case 1: vTex=core::vector2df( fTex         , i%2?1.0f:0.0f); break;
       case 2: vTex=core::vector2df( i%2?1.0f:0.0f,-fTex         ); break;
@@ -167,7 +167,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
     video::S3DVertex v=video::S3DVertex(vTemp[i],vNorm,cCol,vTex);
     aVerts.push_back(v);
     if (i%2) {
-      fTex+=v2.getLength()/fWidth;
+      fTex+=m_pTexParams[iIdx]->getStretch()?1.0f/vTemp.size():v2.getLength()/fWidth;
       bColor=!bColor;
     }
   }
