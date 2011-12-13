@@ -101,6 +101,7 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   if (!strcmp(pNode->getName(),"sc_wheel_rl"       )) pCar->pRearWheels[0]=pNode;
   if (!strcmp(pNode->getName(),"sc_wheel_rr"       )) pCar->pRearWheels[1]=pNode;
   if (!strcmp(pNode->getName(),"sc_suspension_rear")) pCar->pSuspension   =pNode;
+  if (!strcmp(pNode->getName(),"steering_wheel"    )) pCar->pSteering     =pNode;
 
   if (!strcmp(pNode->getName(),"smoke_1")) pCar->pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
   if (!strcmp(pNode->getName(),"smoke_2")) pCar->pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
@@ -312,6 +313,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           pCar->pEngine->setIsPaused(false);
         }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
+        pCar->pSteering->setRotation(irr::core::vector3df(p->getSteer()/2.0f,0.0f,0.0f));
 
         core::vector3df v=(p->getLeftWheel()*core::vector3df(0.0f,0.0f,-1.0f));
         pCar->pRearWheels[0]->setRotation(v);

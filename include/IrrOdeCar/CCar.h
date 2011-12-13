@@ -42,7 +42,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
     f32 m_fActSteer,    /*!< the actual steering (-45.0, 0, +45.0) */
         m_fCamAngleH,   /*!< horizontal angle of camera */
         m_fCamAngleV,   /*!< vertical angle of camera */
-        m_fOldVel;      /*!< old velocity */
+        m_fOldVel,      /*!< old velocity */
+        m_fSteer;       /*!< the steering angle */
     s32 m_iThrottle;    /*!< position of the throttle */
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
