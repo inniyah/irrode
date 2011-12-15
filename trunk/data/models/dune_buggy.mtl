@@ -19,6 +19,15 @@ Ks 1.0 1.0 1.0
 Ke 0.0 0.0 0.0
 map_Kd dune_buggy.jpg
 
+newmtl default
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+
 newmtl z_instruments
 Ns 100.0
 d 1.0
@@ -28,6 +37,16 @@ Ka 1.0 1.0 1.0
 Ks 1.0 1.0 1.0
 Ke 0.0 0.0 0.0
 map_Kd z_instruments3.jpg
+
+newmtl z_rearlights
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+map_Kd rearlights.jpg
 
 newmtl z_rearview
 Ns 100.0

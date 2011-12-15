@@ -34,7 +34,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       irr::core::vector3df vOldSpeed;
       irr::scene::ISceneNode *pSuspension,
                              *pRearWheels[2],
-                             *pSteering;
+                             *pSteering,
+                             *pBody;
       ode::CIrrOdeBody *pCar;
       CAdvancedParticleSystemNode *pSmoke[2];
       irrklang::ISound *pEngine;
@@ -54,6 +55,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
+    irr::video::ITexture *m_pRearLights[2];
 
     bool m_bInstalled;
 
