@@ -11,6 +11,8 @@ CCustomEventReceiver::CCustomEventReceiver() {
   m_pDevice=NULL;
   m_pOdeManager=NULL;
   m_bInstalled=false;
+  m_pRearLights[0]=NULL;
+  m_pRearLights[1]=NULL;
 }
 
 CCustomEventReceiver::~CCustomEventReceiver() {
@@ -102,6 +104,7 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   if (!strcmp(pNode->getName(),"sc_wheel_rr"       )) pCar->pRearWheels[1]=pNode;
   if (!strcmp(pNode->getName(),"sc_suspension_rear")) pCar->pSuspension   =pNode;
   if (!strcmp(pNode->getName(),"steering_wheel"    )) pCar->pSteering     =pNode;
+  if (!strcmp(pNode->getName(),"CarBody"           )) pCar->pBody         =pNode;
 
   if (!strcmp(pNode->getName(),"smoke_1")) pCar->pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
   if (!strcmp(pNode->getName(),"smoke_2")) pCar->pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
@@ -113,6 +116,9 @@ void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CI
   CCustomEventReceiver::getSharedInstance()->m_pDevice=pDevice;
   CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
   CCustomEventReceiver::getSharedInstance()->m_pSndEngine=pSndEngine;
+
+  CCustomEventReceiver::getSharedInstance()->m_pRearLights[0]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_off.png");
+  CCustomEventReceiver::getSharedInstance()->m_pRearLights[1]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_on.png");
 }
 
 CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
@@ -338,6 +344,11 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             pCar->pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);
             pCar->pSmoke[i]->getEmitter()->setMaxParticlesPerSecond(iMax);
           }
+        }
+
+        if (m_pRearLights[0] && m_pRearLights[1] && pCar->pBody) {
+          bool bBrk=p->getFlags()&CEventCarState::eCarFlagBrake;
+          pCar->pBody->getMaterial(4).setTexture(0,bBrk?m_pRearLights[1]:m_pRearLights[0]);
         }
       }
     }

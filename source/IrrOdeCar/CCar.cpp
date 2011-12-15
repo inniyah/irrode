@@ -324,11 +324,10 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
       m_fSteer=m_pController->get(m_pCtrls[eCarLeft]);
 
-      if (m_fSteer!=0.0f) {
-        f32 fSign=m_fSteer>=0?1:-1;
+      if (m_fSteer!=0.0f)
         for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*m_fSteer);
-      }
-      else for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+      else
+        for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
       if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
         f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
@@ -338,7 +337,9 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
           m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
           m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
         }
+        m_bBrake=true;
       }
+      else m_bBrake=false;
 
       if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
         m_bAdaptSteer=!m_bAdaptSteer;
@@ -515,7 +516,10 @@ bool CCar::handlesEvent(ode::IIrrOdeEvent *pEvent) {
 
 ode::IIrrOdeEvent *CCar::writeEvent() {
   u8 iFlags=0;
+
   if (m_bBoost) iFlags|=CEventCarState::eCarFlagBoost;
+  if (m_bBrake) iFlags|=CEventCarState::eCarFlagBrake;
+
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/PI,
