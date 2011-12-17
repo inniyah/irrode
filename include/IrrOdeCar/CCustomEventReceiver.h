@@ -31,6 +31,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     typedef struct sCarNodes {
       irr::s32 iNodeId;
+      irr::f32 fSteerAngle;
       irr::core::vector3df vOldSpeed;
       irr::scene::ISceneNode *pSuspension,
                              *pRearWheels[2],
