@@ -155,6 +155,7 @@ void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
   SCarNodes *pNodes=new SCarNodes();
   pNodes->iNodeId=pCar->getID();
   pNodes->vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
+  pNodes->fSteerAngle=0.0f;
 
   pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);  else printf("\n\t\t**** oops\n\n");
@@ -319,7 +320,12 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           pCar->pEngine->setIsPaused(false);
         }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
-        pCar->pSteering->setRotation(irr::core::vector3df(p->getSteer()/2.0f,0.0f,0.0f));
+
+        irr::f32 fSteer=p->getSteer();
+        if (pCar->fSteerAngle<fSteer) { pCar->fSteerAngle+=10.0f; if (pCar->fSteerAngle>fSteer) pCar->fSteerAngle=fSteer; }
+        if (pCar->fSteerAngle>fSteer) { pCar->fSteerAngle-=10.0f; if (pCar->fSteerAngle<fSteer) pCar->fSteerAngle=fSteer; }
+
+        pCar->pSteering->setRotation(irr::core::vector3df(pCar->fSteerAngle/2.0f,0.0f,0.0f));
 
         core::vector3df v=(p->getLeftWheel()*core::vector3df(0.0f,0.0f,-1.0f));
         pCar->pRearWheels[0]->setRotation(v);
