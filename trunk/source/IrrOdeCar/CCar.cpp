@@ -61,8 +61,10 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
       m_pWheels[i]=reinterpret_cast<ode::CIrrOdeGeomSphere *>(m_pCarBody->getChildByName(sWheelNames[i],m_pCarBody));
 
     core::stringw sParamNames[]={ L"surfaceTireFront", L"surfaceTireStop", L"surfaceTireBack", L"surfaceTireStop" };
-    for (u32 i=0; i<4; i++)
-      m_pParams[i]=ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i]);
+    for (u32 i=0; i<4; i++) {
+      m_pParams[i]=new ode::CIrrOdeSurfaceParameters();
+      ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
+    }
 
     m_pSuspension=reinterpret_cast<ode::CIrrOdeBody *>(m_pCarBody->getChildByName("sc_suspension_rear",m_pCarBody));
     if (m_pSuspension!=NULL)
@@ -139,6 +141,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
 
 CCar::~CCar() {
   ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  for (u32 i=0; i<4; i++) delete m_pParams[i];
 }
 
 //This method is called when the state is activated.
@@ -432,6 +435,21 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
         m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[0]);
         m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[2]);
       }
+    }
+
+    if (fVel>2.0f || fVel<-2.0f) {
+      f32 fFact=fVel-2.0f;
+      if (fFact<100) {
+        fFact=0.9f*(fFact/100.0f);
+      }
+      else
+        fFact=0.9f;
+
+      if (fFact>0)
+        for (u32 i=0; i<4; i++) {
+          m_pParams[i]->setSlip1(fFact);
+          m_pParams[i]->setSlip2(fFact);
+        }
     }
 
     m_fOldVel=fVel;
