@@ -104,7 +104,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_bHelp=false;
     m_bBrake=false;
     m_bBoost=false;
-    m_bAdaptSteer=true;
+    m_bAdaptSteer=false;
     m_iThrottle=0;
 
     m_fCamAngleH=0.0f;
@@ -439,16 +439,15 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
     if (fVel>2.0f || fVel<-2.0f) {
       f32 fFact=fVel-2.0f;
-      if (fFact<100) {
-        fFact=0.9f*(fFact/100.0f);
+      if (fFact<100.0f) {
+        fFact=0.75f*(fFact/100.0f);
       }
       else
-        fFact=0.9f;
+        fFact=0.75f;
 
-      if (fFact>0)
+      if (fFact>0.0f)
         for (u32 i=0; i<4; i++) {
           m_pParams[i]->setSlip1(fFact);
-          m_pParams[i]->setSlip2(fFact);
         }
     }
 
