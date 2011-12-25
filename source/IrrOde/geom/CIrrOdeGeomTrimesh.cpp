@@ -16,6 +16,7 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeGeomTrimesh constructor\n");
   #endif
+  m_fMass=1.0f;
 
   if (parent) {
     while (m_aParamNames.size()<parent->getMaterialCount()) {
