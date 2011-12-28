@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="IrrOdeTestbed" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\bin\gcc-win32-debug\IrrOdeTestBed" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeTestBed\debug" />
+				<Option external_deps="..\bin\gcc-win32\libIrrOde.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_TRACE_CONSTRUCTOR_DESTRUCTOR" />
+				</Compiler>
+				<Linker>
+					<Add library="..\bin\gcc-win32-debug\libIrrOde.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+					<Add library="Irrlicht" />
+					<Add directory="..\..\libs\ode-0.11-gcc\lib\DebugSingleDLL" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\bin\gcc-win32\IrrOdeTestBed" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeTestBed\release" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="..\bin\gcc-win32\libIrrOde.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+					<Add library="Irrlicht" />
+					<Add directory="..\..\libs\ode-0.11-gcc\lib\ReleaseSingleDLL" />
+				</Linker>
+			</Target>
+			<Target title="Linux">
+				<Option output="..\bin\Linux\IrrOdeTestBed" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\Linux" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="1" />
+				<Compiler>
+					<Add directory="\home\Dev\libs\physics\ode-0.11\include" />
+					<Add directory="\home\Dev\libs\Irrlicht\include" />
+					<Add directory="..\include\IrrOde" />
+					<Add directory="..\include\IrrOdePlayground" />
+				</Compiler>
+				<Linker>
+					<Add library="GL" />
+					<Add library="Irrlicht" />
+					<Add library="Xxf86vm" />
+					<Add library="ode" />
+					<Add directory="\home\Dev\libs\physics\ode-0.11\ode\src\.libs" />
+					<Add directory="\home\Dev\libs\Irrlicht\lib\gcc" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\include\IrrOde" />
+			<Add directory="..\include\IrrOdeTestBed" />
+		</Compiler>
+		<Linker>
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="gdi32" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+		</Linker>
+		<Unit filename="..\include\IrrOdeTestBed\CMenu.h" />
+		<Unit filename="..\include\IrrOdeTestBed\IRunner.h" />
+		<Unit filename="..\include\IrrOdeTestBed\IState.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestBoxPile.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCar.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestFastMoving.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestHeli.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestHelloWorld.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestPlane.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestTank.h" />
+		<Unit filename="..\source\IrrOdeTestBed\CMenu.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\CTestBoxPile.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\IrrOdeTestBed_main.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCar.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestFastMoving.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestHeli.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestHelloWorld.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestPlane.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestTank.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
