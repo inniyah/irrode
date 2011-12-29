@@ -23,12 +23,14 @@ class CIrrOdeSpace;
  */
 class CIrrOdeGeom : public CIrrOdeSceneNode {
   protected:
-    u32 m_iGeomId;                /**< the ODE geom id */
+    u32 m_iGeomId,                /**< the ODE geom id */
+        m_iTriggerId;             /**< id for the trigger events (if this geom is a trigger) */
     u32 m_iMass,                  /**< the ODE mass    */
 			  m_iCollisionGroup;				/**< the collision group. Two geoms with the same group!=0 won't collide */
     f32 m_fMass;                  /**< the mass */
     bool m_bCollide,              /**< does this geom collide with other geoms? */
-         m_bSurfaceMaster;
+         m_bSurfaceMaster,
+         m_bTrigger;              /**< does this geom send trigger events when colliding with a body? */
     CIrrOdeBody *m_pBody;         /**< the IrrODE body the geom is attached to */
     CIrrOdeWorld *m_pWorld;       /**< the IrrOde world the geom is in */
     CIrrOdeSpace *m_pSpace;       /**< the IrrOde space the geom is in */
@@ -193,6 +195,30 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
      * @return "true" if the listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
+
+    /**
+     * Is this geom a trigger?
+     * return true or false
+     */
+    bool isTrigger() { return m_bTrigger; }
+
+    /**
+     * Set the trigger flag of this geom
+     * @param b the new flag
+     */
+    void setIsTrigger(bool b) { m_bTrigger=b; }
+
+    /**
+     * Get the trigger id
+     * @return the trigger id
+     */
+    s32 getTriggerId() { return m_iTriggerId; }
+
+    /**
+     * Set the trigger id
+     * @param i the trigger id
+     */
+    void setTriggerId(s32 i) { m_iTriggerId=i; }
 };
 
 } //namespace ode

@@ -18,6 +18,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pSpace=NULL;
 
   m_iGeomId=0;
+  m_iTriggerId=-1;
 	m_iCollisionGroup=0;
 
   m_cCenterOfGravity=vector3df(0.0f,0.0f,0.0f);
@@ -35,6 +36,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_aParamNames.push_back("DefaultSurface");
 
   m_bCollide=true;
+  m_bTrigger=false;
 
   #ifndef _IRREDIT_PLUGIN
     if (m_pBody) {
@@ -124,6 +126,8 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
 
   out->addBool("collides",m_bCollide);
 	out->addInt("collisionGroup",m_iCollisionGroup);
+	out->addBool("trigger",m_bTrigger);
+	if (m_bTrigger) out->addInt("triggerId",m_iTriggerId);
 }
 
 void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
@@ -144,6 +148,9 @@ void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
   m_bCollide=!in->existsAttribute("collides") || in->getAttributeAsBool("collides");
 
 	m_iCollisionGroup=in->getAttributeAsInt("collisionGroup");
+
+	m_bTrigger=in->getAttributeAsBool("trigger");
+	if (m_bTrigger) m_iTriggerId=in->getAttributeAsInt("triggerId");
 }
 
 void CIrrOdeGeom::setMassTranslation(vector3df pos) {

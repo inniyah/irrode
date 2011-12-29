@@ -15,7 +15,6 @@
 #include <geom/CIrrOdeGeomTrimesh.h>
 #include <geom/CIrrOdeGeomCapsule.h>
 #include <geom/CIrrOdeGeomCylinder.h>
-#include <event/CIrrOdeEventRayHit.h>
 #include <geom/CIrrOdeGeomHeightfield.h>
 
 #include <event/IIrrOdeEvent.h>
@@ -27,8 +26,10 @@
 #include <event/CIrrOdeEventQueue.h>
 #include <event/CIrrOdeEventClose.h>
 #include <event/CIrrOdeEventJoint.h>
+#include <event/CIrrOdeEventRayHit.h>
 #include <event/IIrrOdeEventWriter.h>
 #include <event/CIrrOdeEventRayHit.h>
+#include <event/CIrrOdeEventTrigger.h>
 #include <event/CIrrOdeEventProgress.h>
 #include <event/CIrrOdeEventIdentify.h>
 #include <event/CIrrOdeEventLoadScene.h>

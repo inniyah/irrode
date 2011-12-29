@@ -81,20 +81,26 @@
 		<Unit filename="..\include\IrrOdeTestBed\IState.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestBoxPile.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCar.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCloneRemove.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestFastMoving.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestHeli.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestHelloWorld.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestPlane.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestSlipstream.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestTank.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestTrigger.h" />
 		<Unit filename="..\source\IrrOdeTestBed\CMenu.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\CTestBoxPile.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\IrrOdeTestBed_main.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCar.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCloneRemove.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestFastMoving.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestHeli.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestHelloWorld.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestPlane.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestSlipstream.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestTank.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestTrigger.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
