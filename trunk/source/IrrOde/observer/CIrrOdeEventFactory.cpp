@@ -13,6 +13,7 @@
   #include <event/CIrrOdeEventStep.h>
   #include <event/CIrrOdeEventIdentify.h>
   #include <event/CIrrOdeEventNodeRemoved.h>
+  #include <event/CIrrOdeEventTrigger.h>
 
 namespace irr {
 namespace ode {
@@ -37,6 +38,7 @@ IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, ISce
     case eIrrOdeEventLoadScene        : return new CIrrOdeEventLoadScene        (pData);
     case eIrrOdeEventIdentify         : return new CIrrOdeEventIdentify         (pData);
     case eIrrOdeEventNodeRemoved      : return new CIrrOdeEventNodeRemoved      (pData);
+    case eIrrOdeEventTrigger          : return new CIrrOdeEventTrigger          (pData);
     default: return NULL;
   }
 }

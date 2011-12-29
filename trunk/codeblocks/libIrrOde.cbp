@@ -104,6 +104,7 @@
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventQueue.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventRayHit.h" />
 		<Unit filename="..\include\IrrOde\event\CIrrOdeEventStep.h" />
+		<Unit filename="..\include\IrrOde\event\CIrrOdeEventTrigger.h" />
 		<Unit filename="..\include\IrrOde\event\IIrrOdeEvent.h" />
 		<Unit filename="..\include\IrrOde\event\IIrrOdeEventListener.h" />
 		<Unit filename="..\include\IrrOde\event\IIrrOdeEventQueue.h" />

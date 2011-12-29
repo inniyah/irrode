@@ -20,6 +20,7 @@
   #include <event/CIrrOdeEventJointHinge.h>
   #include <event/CIrrOdeEventJointSlider.h>
   #include <event/CIrrOdeEventJointHinge2.h>
+  #include <event/CIrrOdeEventTrigger.h>
 
   #define GETWORLD(i) m_pOdeData[i-1]->m_pWorld
   #define GETJOINT(i) m_pOdeData[i-1]->m_pJoint
@@ -198,10 +199,15 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
     if (dGeomIsSpace(iGeom2)) dSpaceCollide((dxSpace *)iGeom2,pData,&CIrrOdeDevice::nearCollisionCallback);
   }
   else {
-    if (!pGeom1 || !pGeom2 || !pGeom1->doesCollide() || !pGeom2->doesCollide() ||
-        (pGeom1->getCollisionGroup()!=0 &&
+    //invalid geom in collision (i.e. no IrrOde node attached)
+    if (!pGeom1 || !pGeom2) return;
+    //neither collising nor a trigger
+    if (!pGeom1->doesCollide() && !pGeom1->isTrigger()) return;
+    if (!pGeom2->doesCollide() && !pGeom2->isTrigger()) return;
+    //collision is skipped due to collision group
+    if ( pGeom1->getCollisionGroup()!=0 &&
          pGeom2->getCollisionGroup()!=0 &&
-         pGeom1->getCollisionGroup()==pGeom2->getCollisionGroup())) return;
+         pGeom1->getCollisionGroup()==pGeom2->getCollisionGroup()) return;
 
     u32 i=0;
 
@@ -261,93 +267,108 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
     u32 numc=dCollide(iGeom1,iGeom2,MAX_CONTACTS,&contact[0].geom,sizeof(dContact));
 
     if(numc>0) {
-      CIrrOdeGeom *pGeom1=(CIrrOdeGeom *)dGeomGetData(iGeom1),*pGeom2=(CIrrOdeGeom *)dGeomGetData(iGeom2);
-
-      if (b1) {
-        CIrrOdeBody *pBody1=(CIrrOdeBody *)dBodyGetData(b1);
-        pBody1->setCollision(true);
-        pBody1->setIsTouching(pGeom2);
-        pBody1->setCollisionMaterial(iSurfaceIdx[1]);
-
-        vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
-        pBody1->setCollisionPoint(point);
-
-        if (!b2 && p2->dampsObjects()) {
-          vector3df oldVL=pBody1->getLinearVelocity() ,
-                    oldVA=pBody1->getAngularVelocity();
-
-          oldVL*=(1-p2->getLinearDamping ());
-          oldVA*=(1-p2->getAngularDamping());
-
-          if (p2->getMaxLinearVelocity()>0.0f && oldVL.getLength()>p2->getMaxLinearVelocity()) {
-            f32 fact=1.0f-p2->getMaxLinearVelocityDamping(),v=(oldVL.getLength())*fact;
-            if (v>=p2->getMaxLinearVelocity())
-              oldVL=oldVL*fact;
-            else {
-              oldVL=oldVL.normalize()*p2->getMaxLinearVelocity();
-            }
-          }
-
-          if (p2->getMaxAngularVelocity()>0.0f && oldVA.getLength()>p2->getMaxAngularVelocity()) {
-            f32 fact=1.0f-p2->getMaxAngularVelocityDamping(),v=(oldVA.getLength())*fact;
-            if (v>=p2->getMaxAngularVelocity())
-              oldVA=oldVA*fact;
-            else {
-              oldVA=oldVA.normalize()*p2->getMaxAngularVelocity();
-            }
-          }
-
-          pBody1->setLinearVelocity (oldVL);
-          pBody1->setAngularVelocity(oldVA);
-        }
+      //we have a trigger collision --> we need to fire a trigger event
+      if (pGeom1->isTrigger() && b2) {
+        CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b2);
+        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom1->getTriggerId(),pBody->getID());
+        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
 
-      if (b2) {
-        CIrrOdeBody *pBody2=(CIrrOdeBody *)dBodyGetData(b2);
-        pBody2->setCollision(true);
-        pBody2->setIsTouching(pGeom1);
-        pBody2->setCollisionMaterial(iSurfaceIdx[0]);
-
-        vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
-        pBody2->setCollisionPoint(point);
-
-        if (!b1 && p1->dampsObjects()) {
-          vector3df oldVL=pBody2->getLinearVelocity() ,
-                    oldVA=pBody2->getAngularVelocity();
-
-          oldVL*=(1-p1->getLinearDamping ());
-          oldVA*=(1-p1->getAngularDamping());
-
-          if (p1->getMaxLinearVelocity()>0.0f && oldVL.getLength()>p1->getMaxLinearVelocity()) {
-            f32 fact=1.0f-p1->getMaxLinearVelocityDamping(),v=(oldVL.getLength())*fact;
-            if (v>=p1->getMaxLinearVelocity())
-              oldVL=oldVL*fact;
-            else {
-              oldVL=oldVL.normalize()*p1->getMaxLinearVelocity();
-            }
-          }
-
-          if (p1->getMaxAngularVelocity()>0.0f && oldVA.getLength()>p1->getMaxAngularVelocity()) {
-            f32 fact=1.0f-p1->getMaxAngularVelocityDamping(),v=(oldVA.getLength())*fact;
-            if (v>=p1->getMaxAngularVelocity())
-              oldVA=oldVA*fact;
-            else {
-              oldVA=oldVA.normalize()*p1->getMaxAngularVelocity();
-            }
-          }
-
-          pBody2->setLinearVelocity (oldVL);
-          pBody2->setAngularVelocity(oldVA);
-        }
+      if (pGeom2->isTrigger() && b1) {
+        CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b1);
+        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom2->getTriggerId(),pBody->getID());
+        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
 
-      dJointID pJoints[MAX_CONTACTS];
+      if (pGeom1->doesCollide() && pGeom2->doesCollide()) {
+        CIrrOdeGeom *pGeom1=(CIrrOdeGeom *)dGeomGetData(iGeom1),*pGeom2=(CIrrOdeGeom *)dGeomGetData(iGeom2);
 
-      CIrrOdeDevice *pDevice=(CIrrOdeDevice *)CIrrOdeManager::getSharedInstance()->getOdeDevice();
+        if (b1) {
+          CIrrOdeBody *pBody1=(CIrrOdeBody *)dBodyGetData(b1);
+          pBody1->setCollision(true);
+          pBody1->setIsTouching(pGeom2);
+          pBody1->setCollisionMaterial(iSurfaceIdx[1]);
 
-      for(i=0; i<numc; i++) {
-        pJoints[i]=dJointCreateContact(pDevice->getWorldId(pWorld->getWorldId()),pOdeDevice->getJGroupId(pWorld->getJointGroupId()),&contact[i]);
-        dJointAttach(pJoints[i],b1,b2);
+          vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
+          pBody1->setCollisionPoint(point);
+
+          if (!b2 && p2->dampsObjects()) {
+            vector3df oldVL=pBody1->getLinearVelocity() ,
+                      oldVA=pBody1->getAngularVelocity();
+
+            oldVL*=(1-p2->getLinearDamping ());
+            oldVA*=(1-p2->getAngularDamping());
+
+            if (p2->getMaxLinearVelocity()>0.0f && oldVL.getLength()>p2->getMaxLinearVelocity()) {
+              f32 fact=1.0f-p2->getMaxLinearVelocityDamping(),v=(oldVL.getLength())*fact;
+              if (v>=p2->getMaxLinearVelocity())
+                oldVL=oldVL*fact;
+              else {
+                oldVL=oldVL.normalize()*p2->getMaxLinearVelocity();
+              }
+            }
+
+            if (p2->getMaxAngularVelocity()>0.0f && oldVA.getLength()>p2->getMaxAngularVelocity()) {
+              f32 fact=1.0f-p2->getMaxAngularVelocityDamping(),v=(oldVA.getLength())*fact;
+              if (v>=p2->getMaxAngularVelocity())
+                oldVA=oldVA*fact;
+              else {
+                oldVA=oldVA.normalize()*p2->getMaxAngularVelocity();
+              }
+            }
+
+            pBody1->setLinearVelocity (oldVL);
+            pBody1->setAngularVelocity(oldVA);
+          }
+        }
+
+        if (b2) {
+          CIrrOdeBody *pBody2=(CIrrOdeBody *)dBodyGetData(b2);
+          pBody2->setCollision(true);
+          pBody2->setIsTouching(pGeom1);
+          pBody2->setCollisionMaterial(iSurfaceIdx[0]);
+
+          vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
+          pBody2->setCollisionPoint(point);
+
+          if (!b1 && p1->dampsObjects()) {
+            vector3df oldVL=pBody2->getLinearVelocity() ,
+                      oldVA=pBody2->getAngularVelocity();
+
+            oldVL*=(1-p1->getLinearDamping ());
+            oldVA*=(1-p1->getAngularDamping());
+
+            if (p1->getMaxLinearVelocity()>0.0f && oldVL.getLength()>p1->getMaxLinearVelocity()) {
+              f32 fact=1.0f-p1->getMaxLinearVelocityDamping(),v=(oldVL.getLength())*fact;
+              if (v>=p1->getMaxLinearVelocity())
+                oldVL=oldVL*fact;
+              else {
+                oldVL=oldVL.normalize()*p1->getMaxLinearVelocity();
+              }
+            }
+
+            if (p1->getMaxAngularVelocity()>0.0f && oldVA.getLength()>p1->getMaxAngularVelocity()) {
+              f32 fact=1.0f-p1->getMaxAngularVelocityDamping(),v=(oldVA.getLength())*fact;
+              if (v>=p1->getMaxAngularVelocity())
+                oldVA=oldVA*fact;
+              else {
+                oldVA=oldVA.normalize()*p1->getMaxAngularVelocity();
+              }
+            }
+
+            pBody2->setLinearVelocity (oldVL);
+            pBody2->setAngularVelocity(oldVA);
+          }
+        }
+
+        dJointID pJoints[MAX_CONTACTS];
+
+        CIrrOdeDevice *pDevice=(CIrrOdeDevice *)CIrrOdeManager::getSharedInstance()->getOdeDevice();
+
+        for(i=0; i<numc; i++) {
+          pJoints[i]=dJointCreateContact(pDevice->getWorldId(pWorld->getWorldId()),pOdeDevice->getJGroupId(pWorld->getJointGroupId()),&contact[i]);
+          dJointAttach(pJoints[i],b1,b2);
+        }
       }
     }
   }

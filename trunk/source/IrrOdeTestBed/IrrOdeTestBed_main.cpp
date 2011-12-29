@@ -12,6 +12,9 @@
   #include <tests/CTestPlane.h>
   #include <tests/CTestCar.h>
   #include <tests/CTestTank.h>
+  #include <tests/CTestTrigger.h>
+  #include <tests/CTestCloneRemove.h>
+  #include <tests/CTestSlipstream.h>
 
 using namespace irr;
 
@@ -29,14 +32,17 @@ class CRunner : public IRunner, public IEventReceiver {
       m_iActive=0;
       m_iRet=0;
 
-      m_aStates.push_back(new CMenuState     (m_pDevice,this,&m_aStates));
-      m_aStates.push_back(new CTestHelloWorld(m_pDevice,this));
-      m_aStates.push_back(new CTestBoxPile   (m_pDevice,this));
-      m_aStates.push_back(new CTestFastMoving(m_pDevice,this));
-      m_aStates.push_back(new CTestHeli      (m_pDevice,this));
-      m_aStates.push_back(new CTestPlane     (m_pDevice,this));
-      m_aStates.push_back(new CTestCar       (m_pDevice,this));
-      m_aStates.push_back(new CTestTank      (m_pDevice,this));
+      m_aStates.push_back(new CMenuState      (m_pDevice,this,&m_aStates));
+      m_aStates.push_back(new CTestHelloWorld (m_pDevice,this));
+      m_aStates.push_back(new CTestCloneRemove(m_pDevice,this));
+      m_aStates.push_back(new CTestBoxPile    (m_pDevice,this));
+      m_aStates.push_back(new CTestTrigger    (m_pDevice,this));
+      m_aStates.push_back(new CTestSlipstream (m_pDevice,this));
+      m_aStates.push_back(new CTestFastMoving (m_pDevice,this));
+      m_aStates.push_back(new CTestHeli       (m_pDevice,this));
+      m_aStates.push_back(new CTestPlane      (m_pDevice,this));
+      m_aStates.push_back(new CTestCar        (m_pDevice,this));
+      m_aStates.push_back(new CTestTank       (m_pDevice,this));
 
       m_pDevice->setEventReceiver(this);
     }

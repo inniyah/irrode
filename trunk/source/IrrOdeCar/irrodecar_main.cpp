@@ -352,7 +352,7 @@ int main(int argc, char** argv) {
   ode::CIrrOdeManager::getSharedInstance()->initODE();
 
   //load the scene
-  ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/IrrOdeCar.xml",smgr);
+  ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",smgr);
 
   for (irr::u32 i=0; i<smgr->getMeshCache()->getMeshCount(); i++) {
     irr::scene::IAnimatedMesh *p=smgr->getMeshCache()->getMeshByIndex(i);
