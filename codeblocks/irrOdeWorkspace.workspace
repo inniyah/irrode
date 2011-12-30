@@ -2,13 +2,13 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="IrrODE">
 		<Project filename="libIrrOde.cbp" />
-		<Project filename="IrrOdeCar.cbp">
+		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="IrrOdeRePlayer.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeTestbed.cbp" active="1">
+		<Project filename="IrrOdeTestbed.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="RePLayerPlugin.cbp" />
