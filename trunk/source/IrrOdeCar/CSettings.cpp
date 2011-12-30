@@ -90,14 +90,14 @@ void CSettings::createGUI() {
   gui::IGUIComboBox *cb=NULL;
 
   cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
-  cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2"); cb->addItem(L"3"); cb->addItem(L"4");
+  cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2");
   m_pGuiEnv->addStaticText(L"cars",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[0]);
   m_aBodyCount.push_back(cb);
 
   cb=m_pGuiEnv->addComboBox(core::rect<s32>(pos,dim3));
-  cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2"); cb->addItem(L"3"); cb->addItem(L"4");
+  cb->addItem(L"0"); cb->addItem(L"1"); cb->addItem(L"2");
   m_pGuiEnv->addStaticText(L"planes",core::rect<s32>(pos3,dim2),false,true,0,-1,true);
   pos.Y+=20; pos2.Y+=20; pos3.Y+=20;
   cb->setSelected(m_iCnt[1]);
