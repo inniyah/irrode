@@ -38,7 +38,7 @@ class CRunner : public IRunner, public IEventReceiver {
       m_aStates.push_back(new CTestBoxPile    (m_pDevice,this));
       m_aStates.push_back(new CTestTrigger    (m_pDevice,this));
       m_aStates.push_back(new CTestSlipstream (m_pDevice,this));
-      m_aStates.push_back(new CTestFastMoving (m_pDevice,this));
+      //m_aStates.push_back(new CTestFastMoving (m_pDevice,this));
       m_aStates.push_back(new CTestHeli       (m_pDevice,this));
       m_aStates.push_back(new CTestPlane      (m_pDevice,this));
       m_aStates.push_back(new CTestCar        (m_pDevice,this));
