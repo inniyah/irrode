@@ -476,7 +476,7 @@ void CSegment::recalcMeshBuffer() {
       if (core::stringc("")==m_pTexParams[i]->getTexture() && m_pTexInit[i]!=NULL)
         m_pTexInit[i]->copyTo(m_pTexParams[i]);
 
-      video::ITexture *pTex=m_pDrv->getTexture(m_pTexParams[i]->getTexture().c_str());
+      video::ITexture *pTex=getTexture(m_pTexParams[i]->getTexture().c_str());
       m_pBuffer[i]->getMaterial().setTexture(0,pTex);
     }
 }
