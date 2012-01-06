@@ -7,13 +7,25 @@ using namespace irr;
 
 class CTextureParameters;
 
+static video::ITexture *s_pEmptyTex=NULL;
+
 class IRoadPart {
   protected:
     s32 m_iMeshBufferToDraw;
+    video::IVideoDriver *m_pDrv;
+
+    video::ITexture *getTexture(const c8* sPath) {
+      if (sPath[0]=='\0')
+        return s_pEmptyTex;
+      else
+        return m_pDrv->getTexture(sPath);
+    }
 
   public:
     IRoadPart(video::IVideoDriver *pDrv) {
       m_iMeshBufferToDraw=-1;
+      m_pDrv=pDrv;
+      if (s_pEmptyTex==NULL) s_pEmptyTex=m_pDrv->getTexture("");
     }
 
     virtual void recalcMeshBuffer()=0;
