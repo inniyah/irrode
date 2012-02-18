@@ -270,13 +270,13 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
       //we have a trigger collision --> we need to fire a trigger event
       if (pGeom1->isTrigger() && b2) {
         CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b2);
-        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom1->getTriggerId(),pBody->getID());
+        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom1->getTriggerId()!=0?pGeom1->getTriggerId():pGeom1->getID(),pBody->getID(),pGeom1->getAbsolutePosition());
         CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
 
       if (pGeom2->isTrigger() && b1) {
         CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b1);
-        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom2->getTriggerId(),pBody->getID());
+        CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom2->getTriggerId()!=0?pGeom2->getTriggerId():pGeom2->getID(),pBody->getID(),pGeom2->getAbsolutePosition());
         CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
 

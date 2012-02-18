@@ -67,6 +67,9 @@ class CProjectileManager : irr::ode::IIrrOdeEventListener {
 
     CProjectile *m_pLast;
 
+    list<s32> m_lGasStationIn,
+              m_lGasStationCheck;
+
     CProjectileManager();
     virtual ~CProjectileManager();
 

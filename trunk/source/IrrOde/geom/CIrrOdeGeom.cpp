@@ -234,6 +234,9 @@ void CIrrOdeGeom::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
     pDst->setMassTotal(m_fMass);
 
   pDst->setMassTranslation(m_cMassTranslate);
+
+  pDst->m_bTrigger=m_bTrigger;
+  pDst->m_iTriggerId=m_iTriggerId;
 }
 
 void CIrrOdeGeom::removeFromPhysics() {
