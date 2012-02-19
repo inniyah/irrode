@@ -39,6 +39,10 @@ CCockpitCar::CCockpitCar(IrrlichtDevice *pDevice, const char *sName) : IRenderTo
 
   m_bDifferential=true;
 
+  m_stCurLap =m_pGuienv->addStaticText(L"Current Lap",core::rect<s32>(core::position2di(260,260),core::dimension2di(100,13)),false,true,m_pTab);
+  m_stSplit  =m_pGuienv->addStaticText(L"Split Time" ,core::rect<s32>(core::position2di(260,274),core::dimension2di(100,13)),false,true,m_pTab);
+  m_stLastLap=m_pGuienv->addStaticText(L"Last Lap"   ,core::rect<s32>(core::position2di(260,288),core::dimension2di(100,13)),false,true,m_pTab);
+
   u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
   printf("**** CCockpitCar: replaced %i texture.\n",iReplace);
 }
@@ -62,4 +66,27 @@ void CCockpitCar::update(bool b) {
 void CCockpitCar::setBoost(bool b) {
   m_pBoostGray->setVisible(!b);
   m_pBoostRed ->setVisible( b);
+}
+
+void CCockpitCar::setCurrentLapTime(f32 fTime) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"Current Lap: %.2f sec",fTime);
+  m_stCurLap->setText(s);
+}
+
+void CCockpitCar::setLastLapTime(f32 fLastLap) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"Last Lap: %.2f sec",fLastLap);
+  m_stLastLap->setText(s);
+}
+
+void CCockpitCar::setSplitTime(f32 fTime) {
+  wchar_t s[0xFF];
+  swprintf(s,0xFF,L"Split Time: %.2f sec",fTime);
+  m_stSplit->setText(s);
+}
+
+void CCockpitCar::cancelLap() {
+  m_stCurLap->setText(L"Current Lap: -----");
+  m_stSplit->setText(L"Split Time: -----");
 }

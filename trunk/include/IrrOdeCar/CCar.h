@@ -47,7 +47,10 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
         m_fOldVel,      /*!< old velocity */
         m_fSteer;       /*!< the steering angle */
     s32 m_iThrottle,    /*!< position of the throttle */
-        m_iBodyId;
+        m_iBodyId,      /*!< id of the car body */
+        m_iNextCp,      /*!< checkpoint for racetrack laps */
+        m_iCurStep,
+        m_iLastLapStep;
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
 

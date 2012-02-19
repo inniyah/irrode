@@ -23,7 +23,10 @@ class CCockpitCar : public IRenderToTexture {
     gui::CGUINeedleIndicator *m_pMeter,
                              *m_pRpm,
                              *m_pDiff;
-    gui::IGUIStaticText *m_stDifferential;
+    gui::IGUIStaticText *m_stDifferential,
+                        *m_stCurLap,
+                        *m_stLastLap,
+                        *m_stSplit;
     gui::IGUITab *m_pTab;
     gui::IGUIImage *m_pBoostRed,
                    *m_pBoostGray;
@@ -43,6 +46,11 @@ class CCockpitCar : public IRenderToTexture {
     void setBoost(bool b);
 
     void setDifferentialEnabled(bool b) { m_bDifferential=b; }
+
+    void setCurrentLapTime(f32 fTime);
+    void setLastLapTime(f32 fLastLap);
+    void setSplitTime(f32 fTime);
+    void cancelLap();
 };
 
 #endif
