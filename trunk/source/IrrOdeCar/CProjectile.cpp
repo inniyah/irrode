@@ -222,31 +222,11 @@ bool CProjectileManager::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
-  if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
-    irr::ode::CIrrOdeEventTrigger *pTrig=(irr::ode::CIrrOdeEventTrigger *)pEvent;
-    if (pTrig->getTriggerId()==1) {   //gas station
-      core::list<s32>::Iterator it;
-      bool bNew = true;
-      core::list<s32>::Iterator sit;
-      for (sit=m_lGasStationCheck.begin(); sit!=m_lGasStationCheck.end() && bNew; sit++) {
-        s32 iId=*sit;
-        if (iId==pTrig->getBodyId()) bNew=false;
-      }
-
-      if (bNew) {
-        const core::vector3df v=pTrig->getPosition();
-        CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-      }
-      m_lGasStationIn.push_back(pTrig->getBodyId());
-    }
-  }
-
   return false;
 }
 
 bool CProjectileManager::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved || pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger;
+  return pEvent->getType()==irr::ode::eIrrOdeEventBodyMoved || pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
 
 CProjectile *CProjectileManager::getLast() {

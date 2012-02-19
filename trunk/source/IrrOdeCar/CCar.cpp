@@ -28,8 +28,10 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   m_pCarBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
   m_fOldSlider=0.0f;
+  m_bGasStation=false;
 
   if (m_pCarBody) {
+    m_iBodyId=m_pCarBody->getID();
     m_pCarBody->setUserData(this);
     CCustomEventReceiver::getSharedInstance()->addCar(m_pCarBody);
     array<ISceneNode *> aNodes;
@@ -254,6 +256,15 @@ bool CCar::OnEvent(const SEvent &event) {
 
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    if (m_bGasLastStep && !m_bGasStation) {
+      const core::vector3df v=m_pCarBody->getPosition();
+      CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
+      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    }
+
+    m_bGasLastStep = m_bGasStation;
+    m_bGasStation=false;
+
     bool bDataChanged=false,bBrake=false;
 
     core::vector3df vForeward=m_pCarBody->getRotation().rotationToDirection(core::vector3df(-1.0f,0.0f,0.0f)),
@@ -524,11 +535,25 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       dataChanged();
     }
   }
+
+  if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
+    irr::ode::CIrrOdeEventTrigger *pTrig=(irr::ode::CIrrOdeEventTrigger *)pEvent;
+    if (pTrig->getTriggerId()==1 && pTrig->getBodyId()==m_iBodyId) {   //gas station
+      core::list<s32>::Iterator it;
+
+      if (!m_bGasLastStep) {
+        const core::vector3df v=pTrig->getPosition();
+        CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
+        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      }
+      m_bGasStation=true;
+    }
+  }
   return false;
 }
 
 bool CCar::handlesEvent(ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger;
 }
 
 ode::IIrrOdeEvent *CCar::writeEvent() {
