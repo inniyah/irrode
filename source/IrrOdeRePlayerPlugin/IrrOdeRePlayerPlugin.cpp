@@ -151,6 +151,7 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       if (iCode==EVENT_FIRE_SND_ID   ) return new CEventFireSound (pData);
 
       if (iCode==EVENT_INST_FOREST_ID) return new CEventInstallRandomForestPlugin(pData);
+      if (iCode==EVENT_LAP_TIME_ID   ) return new CEventLapTime                  (pData);
 
       return NULL;
     }

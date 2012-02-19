@@ -4,6 +4,8 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
 
+  #include <CCockpitCar.h>
+
 namespace irrklang {
   class ISoundEngine;
   class ISound;
@@ -62,6 +64,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     irrklang::ISoundEngine *m_pSndEngine;
 
+    CCockpitCar *m_pCockpitCar;
+
     CCustomEventReceiver();
     ~CCustomEventReceiver();
 
@@ -100,6 +104,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     void addTank (irr::scene::ISceneNode *pTank );
     void addCar  (irr::scene::ISceneNode *pCar  );
     void addHeli (irr::scene::ISceneNode *pHeli );
+
+    void setCockpitCar(CCockpitCar *p) { m_pCockpitCar = p; }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

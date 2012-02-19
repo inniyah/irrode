@@ -11,6 +11,7 @@
 #define EVENT_FIRE_SND_ID irr::ode::eIrrOdeEventUser+4
 #define EVENT_HELI_STATE_ID irr::ode::eIrrOdeEventUser+5
 #define EVENT_INST_FOREST_ID irr::ode::eIrrOdeEventUser+6
+#define EVENT_LAP_TIME_ID irr::ode::eIrrOdeEventUser+7
 
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
@@ -190,6 +191,53 @@ class CEventInstallRandomForestPlugin : public irr::ode::IIrrOdeEvent {
 
     virtual irr::ode::IIrrOdeEvent *clone() {
       return new CEventInstallRandomForestPlugin();
+    }
+
+    virtual bool isObservable() { return true; }
+};
+
+class CEventLapTime : public irr::ode::IIrrOdeEvent {
+  protected:
+    irr::f32 m_fTime;
+    irr::s32 m_iBody,
+             m_iCp;
+
+  public:
+    CEventLapTime(irr::f32 fTime, irr::s32 iBody, irr::s32 iCp) {
+      m_fTime=fTime;
+      m_iBody=iBody;
+      m_iCp=iCp;
+    }
+
+    CEventLapTime(irr::ode::CSerializer *pData) {
+      pData->resetBufferPos();
+      irr::u16 iCode=pData->getU16();
+      if (iCode==EVENT_LAP_TIME_ID) {
+        m_fTime=pData->getF32();
+        m_iBody=pData->getS32();
+        m_iCp  =pData->getS32();
+      }
+    }
+
+    virtual irr::u16 getType() { return EVENT_LAP_TIME_ID; }
+    virtual const irr::c8 *toString() {
+      strcpy(m_sString,"CEventLapTime");
+      return m_sString;
+    }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer==NULL) {
+        m_pSerializer=new irr::ode::CSerializer();
+        m_pSerializer->addU16(EVENT_LAP_TIME_ID);
+        m_pSerializer->addF32(m_fTime);
+        m_pSerializer->addS32(m_iBody);
+        m_pSerializer->addS16(m_iCp);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::ode::IIrrOdeEvent *clone() {
+      return new CEventLapTime(m_fTime,m_iBody,m_iCp);
     }
 
     virtual bool isObservable() { return true; }

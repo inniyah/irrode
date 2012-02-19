@@ -29,6 +29,10 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
   m_fSound=0.75f;
   m_fOldSlider=0.0f;
   m_bGasStation=false;
+  m_bGasLastStep=false;
+  m_iNextCp=-1;
+  m_iCurStep=0;
+  m_iLastLapStep=0;
 
   if (m_pCarBody) {
     m_iBodyId=m_pCarBody->getID();
@@ -256,6 +260,8 @@ bool CCar::OnEvent(const SEvent &event) {
 
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    m_iCurStep++;
+    if (m_iNextCp!=-1 && m_iLastLapStep!=0) m_pCockpit->setCurrentLapTime((((float)m_iCurStep)-(float)m_iLastLapStep)*0.016f);
     if (m_bGasLastStep && !m_bGasStation) {
       const core::vector3df v=m_pCarBody->getPosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
@@ -538,15 +544,60 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
     irr::ode::CIrrOdeEventTrigger *pTrig=(irr::ode::CIrrOdeEventTrigger *)pEvent;
-    if (pTrig->getTriggerId()==1 && pTrig->getBodyId()==m_iBodyId) {   //gas station
-      core::list<s32>::Iterator it;
+    if (pTrig->getBodyId()==m_iBodyId) {
+      if (pTrig->getTriggerId()==1) {   //gas station
+        core::list<s32>::Iterator it;
 
-      if (!m_bGasLastStep) {
-        const core::vector3df v=pTrig->getPosition();
-        CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        if (!m_bGasLastStep) {
+          const core::vector3df v=pTrig->getPosition();
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
+          ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        }
+        m_bGasStation=true;
       }
-      m_bGasStation=true;
+
+      if (pTrig->getTriggerId()>=100) {
+        s32 iId = pTrig->getTriggerId() % 100;
+        if (iId==0) {
+          if (m_iNextCp==-1) {
+            CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
+            irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+          }
+          else
+            if (m_iNextCp==0) {
+              CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              m_pCockpit->setLastLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
+              m_pCockpit->setSplitTime(0.0f);
+            }
+          m_iNextCp=1;
+          m_iLastLapStep=m_iCurStep;
+        }
+        else
+          if (iId==50) {
+            if (m_iNextCp!=0) {
+              CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,iId);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
+            }
+            m_iNextCp=0;
+          }
+          else
+            if (iId==99) {
+              CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              m_pCockpit->cancelLap();
+              m_iNextCp=-1;
+            }
+            else {
+              if (m_iNextCp==iId) {
+                CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
+                irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+                m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
+                m_iNextCp++;
+              }
+            }
+      }
     }
   }
   return false;
