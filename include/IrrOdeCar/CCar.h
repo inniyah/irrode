@@ -38,13 +38,16 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
          m_bAdaptSteer,    /*!< is the adaptive steer mode active? */
          m_bHelp,          /*!< is the help screen visible? */
          m_bInternal,      /*!< internal view active? */
-         m_bDifferential;  /*!< differential gear enabled? */
+         m_bDifferential,  /*!< differential gear enabled? */
+         m_bGasStation,    /*!< is the car in a gas station? */
+         m_bGasLastStep;   /*!< was the car in a gas station in the last step? */
     f32 m_fActSteer,    /*!< the actual steering (-45.0, 0, +45.0) */
         m_fCamAngleH,   /*!< horizontal angle of camera */
         m_fCamAngleV,   /*!< vertical angle of camera */
         m_fOldVel,      /*!< old velocity */
         m_fSteer;       /*!< the steering angle */
-    s32 m_iThrottle;    /*!< position of the throttle */
+    s32 m_iThrottle,    /*!< position of the throttle */
+        m_iBodyId;
 
     IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
 
