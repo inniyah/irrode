@@ -235,6 +235,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventJointHinge.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventJointHinge2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\IrrOde\event\CIrrOdeEventJointSlider.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp"
 					>
 				</File>
