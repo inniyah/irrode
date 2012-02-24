@@ -540,6 +540,20 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
       bDataChanged=false;
       dataChanged();
     }
+
+    core::vector3df r = m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
+                    v = m_pCarBody->getLinearVelocity(),
+                    p = m_pCarBody->getAbsolutePosition(),
+                    f = r.rotationToDirection(core::vector3df(-1.0f,0.0f,0.0f)),
+                    s = r.rotationToDirection(core::vector3df(0.0f,0.0f,1.0f)),
+                    u = r.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
+
+    f32 fFact = v.getLength()<10.0f?0.0f:v.getLength()>100.0f?0.03f:0.03f*(v.getLength()-10.0f)/90.0f;
+    v.normalize();
+
+    f32 f1 = v.dotProduct(f), f2 = v.dotProduct(s), f3 = v.dotProduct(u);
+
+    m_pCarBody->addForceAtPosition(v-f,-fFact*f2*s);
   }
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
