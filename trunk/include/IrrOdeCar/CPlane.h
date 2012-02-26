@@ -10,6 +10,7 @@
 
 using namespace irr;
 
+class CIrrOdeCarTrack;
 class CTargetSelector;
 class CCockpitPlane;
 class CProjectile;
@@ -22,6 +23,8 @@ class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
     ode::CIrrOdeJointHinge *m_pAxes[2];
     ode::CIrrOdeJointHinge2 *m_pSteerAxis;
     f32 m_fAngleRate[3];
+
+    CIrrOdeCarTrack *m_pLap;
 
   public:
     CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);

@@ -9,6 +9,7 @@
   #include <irrlicht.h>
   #include <irrKlang.h>
   #include <CRearView.h>
+  #include <CIrrOdeCarTrack.h>
 
 using namespace irr;
 
@@ -47,6 +48,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
 
   m_pSteerAxis=(ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
   printf("steer axis: %i\n",(int)m_pSteerAxis);
+
+  m_pLap = new CIrrOdeCarTrack(m_pBody);
 }
 
 CPlane::~CPlane() {

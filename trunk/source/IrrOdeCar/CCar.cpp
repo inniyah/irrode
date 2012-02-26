@@ -570,49 +570,6 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
         }
         m_bGasStation=true;
       }
-
-      if (pTrig->getTriggerId()>=100) {
-        s32 iId = pTrig->getTriggerId() % 100;
-        if (iId==0) {
-          if (m_iNextCp==-1) {
-            CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
-            irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-          }
-          else
-            if (m_iNextCp==0) {
-              CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              m_pCockpit->setLastLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
-              m_pCockpit->setSplitTime(0.0f);
-            }
-          m_iNextCp=1;
-          m_iLastLapStep=m_iCurStep;
-        }
-        else
-          if (iId==50) {
-            if (m_iNextCp!=0) {
-              CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,iId);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
-            }
-            m_iNextCp=0;
-          }
-          else
-            if (iId==99) {
-              CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              m_pCockpit->cancelLap();
-              m_iNextCp=-1;
-            }
-            else {
-              if (m_iNextCp==iId) {
-                CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
-                irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-                m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
-                m_iNextCp++;
-              }
-            }
-      }
     }
   }
   return false;
