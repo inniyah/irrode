@@ -113,6 +113,7 @@
 		<Unit filename="..\include\IrrOdeCar\CGUINeedleIndicator.h" />
 		<Unit filename="..\include\IrrOdeCar\CHeli.h" />
 		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarState.h" />
+		<Unit filename="..\include\IrrOdeCar\CIrrOdeCarTrack.h" />
 		<Unit filename="..\include\IrrOdeCar\CMenu.h" />
 		<Unit filename="..\include\IrrOdeCar\CMeshCombiner.h" />
 		<Unit filename="..\include\IrrOdeCar\CPlane.h" />
@@ -145,6 +146,7 @@
 		<Unit filename="..\source\IrrOdeCar\CGUINeedleIndicator.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CHeli.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CIrrOdeCarTrack.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CMenu.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CMeshCombiner.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CPlane.cpp" />
