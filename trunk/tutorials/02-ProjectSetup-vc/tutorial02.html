@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>IrrOde Tutorial 01 - helloOdeWorld</title>
+    <title>IrrOde Tutorial 02 - Project Setup - Visual C++</title>
 	<style type="text/css">
 
 #mainFrame
@@ -107,66 +107,14 @@ int main(int argc, char** argv) {
   CIrrOdeManager::getSharedInstance()->install(device);
 	  </pre>
 
-	<b>Step 3: create an IrrODE scene</b><br />
-	  Now for the ODE specific scenenodes: the first scene node to add is a <i>CIrrOdeWorld</i>. This is the IrrODE version
-	  of ODE's <i>dWorld</i>. All nodes of the dynamic world need to be children of this world node. Don't be confused by
-	  the &quot;nodeNameToC8&quot; method. I used widestrings to store the scene node names, mainly to display them in the
-	  <b>IrrOdePlayground</b> application, but as the scenemanager needs the names as c8-strings I convert them using a
-	  method in the <i>CIrrOdeSceneNode</i> base class.
-	  <pre>
-  ISceneNode *pNode=smgr->addSceneNode(
-                    CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_WORLD_NAME),
-                    smgr->getRootSceneNode());
-  CIrrOdeWorld *worldNode=reinterpret_cast&lt;CIrrOdeWorld *&gt;(pNode);</pre>
-	  As we want a sphere bouncing off a box in this demo we need to add gravity to the world node
-	  <pre>
-  worldNode->setGravity(vector3df(0,-10,0));</pre>
-      Now let's add the node for the box where the sphere will bounce off when the program is finished. Please note that the
-	  AnimatedMeshSceneNode is a child of the worldNode.
-	  <pre>
-  IAnimatedMesh *Mesh=smgr->getMesh("data/box.3ds");
-  IAnimatedMeshSceneNode *Node=smgr->addAnimatedMeshSceneNode(Mesh,worldNode);
-  Node->setMaterialTexture(0,driver->getTexture("data/box0.jpg"));
-  Node->setScale(vector3df(15.0f,1.5f,15.0f));
-  Node->setMaterialFlag(EMF_LIGHTING,false);</pre>
-	  Now for the node that makes the box a static object. We use the Irrlicht scenemanager to add a CIrrOdeGeomBox scene node as child
-	  of the previously added box. Next we set some surface parameters, we want the surface to be bouncy.
-	  <pre>
-  CIrrOdeGeomBox *bx=reinterpret_cast&lt;CIrrOdeGeomBox *&gt;(smgr->addSceneNode(
-                     CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_GEOM_BOX_NAME),
-                     Node));
-  bx->getSurfaceParameters(0)->setBounce(1.0f);
-  bx->getSurfaceParameters(0)->setModeBounce(true);
-  bx->drop();</pre>
-	  The next object we add is the sphere that drops on the box. As this should not be a static object we add a <i>CIrrOdeBody</i>
-	  object first, then the AnimatedMeshSceneNode as child of the body and (last but not least) a CIrrOdeGeomSphere object as
-	  child of the child of the body. The surface parameters of the geom will (again) be set to bouncy.
-	  <pre>
-  //first add a body as child of the worldNode
-  CIrrOdeBody *pBody=reinterpret_cast&lt;CIrrOdeBody *&gt;(
-                     smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(
-                     IRR_ODE_BODY_NAME),worldNode));
-  pBody->setPosition(vector3df(0.0f,15.0f,0.0f));
-
-  //next load a mesh and add an AnimatedMeshSceneNode
-  //as child of the body
-  Mesh=smgr->getMesh("data/sphere.3ds");
-  Node=smgr->addAnimatedMeshSceneNode(Mesh,pBody);
-  Node->setMaterialTexture(0,driver->getTexture("data/sphere0.jpg"));
-  Node->setMaterialFlag(EMF_LIGHTING,false);
-
-  //as the last part we add a sphere geom as child of the 
-  //AnimatedMeshSceneNode
-  CIrrOdeGeomSphere *pSphere=reinterpret_cast&lt;CIrrOdeGeomSphere *&gt;
-                     (smgr->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(
-                      IRR_ODE_GEOM_SPHERE_NAME),Node));
-  pSphere->setMassTotal(0.5f);
-  pSphere->getSurfaceParameters(0)->setBounce(1.0f);
-  pSphere->getSurfaceParameters(0)->setModeBounce(true);
-  pSphere->drop();</pre>
+	<b>Step 3: load an IrrODE scene</b><br />
 	Before adding objects to the system we init ODE.
 	<pre>
   CIrrOdeManager::getSharedInstance()->initODE();</pre>
+  The normal way of using IrrOde is to create scenes with the &quot;IrrOdEdit&quot; plugin for the 
+  <a href="http://www.ambiera.com/irredit/index.html">IrrEdit</a> scene editor. See tutorial 3 for details about that,
+  for the moment we just load the scene:<br />
+  <pre>  smgr->loadScene("../../data/IrrOdEdit_example.xml");</pre>
 	  In order to make IrrOde initialize the physics entities of the objects we have added until now we tell the worldNode to do so.
 	  <pre>
   worldNode->initPhysics();</pre>
@@ -177,8 +125,7 @@ int main(int argc, char** argv) {
 	  <pre>
   ICameraSceneNode *cam=smgr->addCameraSceneNode();
   cam->setPosition(vector3df(-20.0f, 15.0f, -20.0f));
-  cam->setTarget(vector3df(0.0f,0.0f,0.0f));
-  </pre>
+  cam->setTarget(vector3df(0.0f,0.0f,0.0f));</pre>
 	  The final thing to do is to adjust the main loop of the program so that our world get steped in each frame. Please note that the
 	  default IrrODE rate is 60fps (0.016s/step), so that even if your computer makes a higher framerate IrrODE will automatically get
 	  the physic's rate down to that value. Please read the ODE wiki on <a href="http://opende.sourceforge.net">their homepage</a> on
