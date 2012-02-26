@@ -22,18 +22,7 @@ class CSettings : public IEventReceiver {
         s32 iBpp;     /**< bit depth of the mode */
     };
 
-    /**
-     * @class CSettings::_DRV
-     * In this class the name and the ID of the available drivers are stored
-     */
-    class _DRV {
-      public:
-        wchar_t sName[0xFF];           /**< name of the driver */
-        video::E_DRIVER_TYPE iDriver;  /**< ID of the driver */
-    };
-
-    gui::IGUIComboBox *m_pDrivers,     /**< combobox to pick the video driver */
-                      *m_pResolution;  /**< combobox to pick the screen mode */
+    gui::IGUIComboBox *m_pResolution;  /**< combobox to pick the screen mode */
     gui::IGUICheckBox *m_pFullscreen;  /**< checkbox to choose whether or not fullscreen is wanted */
 
     core::array<gui::IGUICheckBox *> m_aActiveBodies;
@@ -62,7 +51,6 @@ class CSettings : public IEventReceiver {
 
     video::IVideoModeList *m_pVModes;    /**< list of the available video modes from the Irrlicht device */
     core::array<_VRES *> m_aVModes;     /**< list of the video modes that are available in the combobox */
-    core::array<_DRV  *> m_aDrvs;       /**< list of the video drivers that are available in the combobox */
 
     c8 m_sScene[0xFF];
 
@@ -94,8 +82,6 @@ class CSettings : public IEventReceiver {
      * @return the newly created IrrlichtDevice instance
      */
     IrrlichtDevice *createDeviceFromSettings();
-
-		void addValidDriver(const wchar_t *sName, video::E_DRIVER_TYPE iDriver);
 
 		void setMinResolution(core::dimension2du iMin) { m_iMinResolution=iMin; }
 

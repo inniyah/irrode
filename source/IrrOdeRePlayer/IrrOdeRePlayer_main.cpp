@@ -21,7 +21,7 @@ using namespace gui;
 //the unresolved external of the IdentityMaterial
 
 int main(int argc, char** argv) {
-  irr::IrrlichtDevice *device =createDevice(EDT_DIRECT3D9,dimension2d<u32>(1024,768),24,false,false,false,0);
+  irr::IrrlichtDevice *device =createDevice(EDT_OPENGL,dimension2d<u32>(1024,768),24,false,false,false,0);
   irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
   device->setWindowCaption(L"IrrOdeRePlayer");
