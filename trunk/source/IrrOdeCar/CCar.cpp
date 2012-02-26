@@ -551,10 +551,10 @@ bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
     f32 fFact = v.getLength()<10.0f?0.0f:v.getLength()>100.0f?0.1f:0.1f*(v.getLength()-10.0f)/90.0f;
     v.normalize();
 
-    f32 f1 = v.dotProduct(f), f2 = 200.0f*v.dotProduct(s), f3 = 200.0f*v.dotProduct(u);
+    f32 f1 = v.dotProduct(f), f2 = 125.0f*v.dotProduct(s), f3 = 125.0f*v.dotProduct(u);
 
-    m_pCarBody->addForceAtPosition(p-2.0f*f,-fFact*f2*s);
-    m_pCarBody->addForceAtPosition(p-2.0f*f,-fFact*f3*u);
+    m_pCarBody->addForceAtPosition(p-2.0f*f,(-fFact*f2*s)+(-fFact*f3*u));
+    m_pCarBody->addForceAtPosition(p+2.0f*f,( fFact*f2*s)+( fFact*f3*u));
   }
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
