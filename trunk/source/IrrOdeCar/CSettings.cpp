@@ -17,7 +17,7 @@ CSettings::CSettings(const c8 *sSettingsFile, const wchar_t *sTitle, video::SCol
 
 void CSettings::createGUI() {
   //Create a software device
-  m_pDevice=createDevice(video::EDT_SOFTWARE,core::dimension2d<u32>(230,400),16,false,false,false,0);
+  m_pDevice=createDevice(video::EDT_SOFTWARE,core::dimension2d<u32>(230,365),16,false,false,false,0);
   m_pDevice->setWindowCaption(m_sTitle);
 
   strcpy(m_sSettingsFile,m_sSettingsFile);
@@ -31,19 +31,8 @@ void CSettings::createGUI() {
 
   for (u32 i=0; i<8; i++) m_aAct[i]=true;
 
-  bool bFillDriverList=m_aDrvs.size()==0;
-
   if (pXml!=NULL) {
     while (pXml->read()) {
-      //This is special: the video drivers to choose from need to be in the XML file
-      if (bFillDriverList)
-        if (!strcmp(pXml->getNodeName(),"videodriver")) {
-          _DRV *drv=new _DRV();
-          wcscpy(drv->sName,core::stringw(pXml->getAttributeValue("name")).c_str());
-          drv->iDriver=(video::E_DRIVER_TYPE)atoi(pXml->getAttributeValue("id"  ));
-          m_aDrvs.push_back(drv);
-        }
-
       if (!strcmp(pXml->getNodeName(),"resolution")) m_iResolution=atoi(pXml->getAttributeValue("value"));
       if (!strcmp(pXml->getNodeName(),"fullscreen")) m_bFullscreen=atoi(pXml->getAttributeValue("value"));
       if (!strcmp(pXml->getNodeName(),"driver"    )) m_iDriver=(video::E_DRIVER_TYPE)atoi(pXml->getAttributeValue("value"));
@@ -72,19 +61,17 @@ void CSettings::createGUI() {
 
   //add the static textfields
   m_pGuiEnv->addStaticText(m_sTitle,core::rect<s32>(5,5,125,18),true,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"graphics driver",core::rect<s32>(5,40,75, 52),false,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"resolution"     ,core::rect<s32>(5,65,75, 77),false,true,0,-1,true);
-  m_pGuiEnv->addStaticText(L"fullscreen"     ,core::rect<s32>(5,90,75,102),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"resolution"     ,core::rect<s32>(5,40,75,52),false,true,0,-1,true);
+  m_pGuiEnv->addStaticText(L"fullscreen"     ,core::rect<s32>(5,65,75,77),false,true,0,-1,true);
 
-  //add the "driver" and "resolution" comboboxes
-  m_pDrivers   =m_pGuiEnv->addComboBox(core::rect<s32>(80,39,180,53),0,3);
-  m_pResolution=m_pGuiEnv->addComboBox(core::rect<s32>(80,64,180,78),0,4);
+  //add the "resolution" combobox
+  m_pResolution=m_pGuiEnv->addComboBox(core::rect<s32>(80,39,180,53),0,4);
 
   //add the "fullscreen" checkboxes
-  m_pFullscreen=m_pGuiEnv->addCheckBox(false,core::rect<s32>(80,88,94,102),0,5);
+  m_pFullscreen=m_pGuiEnv->addCheckBox(false,core::rect<s32>(80,65,94,77),0,5);
 
-  core::position2di  pos=core::position2di ( 5,130),pos2=core::position2di ( 35,130),pos3=core::position2di (45,130);
-  core::dimension2di dim=core::dimension2di(14, 14),dim2=core::dimension2di(150, 14),dim3=core::dimension2di(30, 14);
+  core::position2di  pos=core::position2di ( 5,85),pos2=core::position2di ( 35,85),pos3=core::position2di (45,85);
+  core::dimension2di dim=core::dimension2di(14,14),dim2=core::dimension2di(150,14),dim3=core::dimension2di(30,14);
 
   gui::IGUICheckBox *p=NULL;
   gui::IGUIComboBox *cb=NULL;
@@ -127,21 +114,8 @@ void CSettings::createGUI() {
 
 
   //add the "OK" and "Cancel" buttons
-  m_pOk    =m_pGuiEnv->addButton(core::rect<s32>( 80,380,120,395),0,1,L"Start");
-  m_pCancel=m_pGuiEnv->addButton(core::rect<s32>(125,380,175,395),0,2,L"Close");
-
-  //If no driver information was found in the settings file we initialize the driver list with all available drivers
-  if (m_aDrvs.size()==0) {
-    _DRV *drv;
-    drv=new _DRV(); drv->iDriver=video::EDT_SOFTWARE     ; wcscpy(drv->sName,L"Software"     ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=video::EDT_BURNINGSVIDEO; wcscpy(drv->sName,L"BurningsVideo"); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=video::EDT_DIRECT3D8    ; wcscpy(drv->sName,L"Direct3D8"    ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=video::EDT_DIRECT3D9    ; wcscpy(drv->sName,L"Direct3D9"    ); m_aDrvs.push_back(drv);
-    drv=new _DRV(); drv->iDriver=video::EDT_OPENGL       ; wcscpy(drv->sName,L"OpenGL"       ); m_aDrvs.push_back(drv);
-  }
-
-  //If driver information were found we just add the drivers from the XML file
-  for (u32 i=0; i<m_aDrvs.size(); i++) m_pDrivers->addItem(m_aDrvs[i]->sName);
+  m_pOk    =m_pGuiEnv->addButton(core::rect<s32>( 80,330,120,345),0,1,L"Start");
+  m_pCancel=m_pGuiEnv->addButton(core::rect<s32>(125,330,175,345),0,2,L"Close");
 
   //we add all video modes with a bit depth of at least 16 to the "resolution" combobox
   m_pVModes=m_pDevice->getVideoModeList();
@@ -168,9 +142,6 @@ void CSettings::createGUI() {
 
   //Now add an event receiver
   m_pDevice->setEventReceiver(this);
-
-  //we init the GUI items with the values read from the settings XML file
-  m_pDrivers->setSelected(m_iDriver);
 
   m_pResolution->setSelected(m_iResolution);
 
@@ -203,12 +174,6 @@ CSettings::~CSettings() {
 
     pXml->writeXMLHeader();
     pXml->writeElement(L"settings"); pXml->writeLineBreak();
-    for (u32 i=0; i<m_aDrvs.size(); i++) {
-      wchar_t s[0xFF];
-      swprintf(s,0xFE,L"%i",m_aDrvs[i]->iDriver);
-      pXml->writeElement(L"videodriver",true,L"name",m_aDrvs[i]->sName,L"id",s);
-      pXml->writeLineBreak();
-    }
     pXml->writeElement(L"resolution",true,aResN,aResV); pXml->writeLineBreak();
     pXml->writeElement(L"fullscreen",true,aFlsN,aFlsV); pXml->writeLineBreak();
     pXml->writeElement(L"driver"    ,true,aDrvN,aDrvV); pXml->writeLineBreak();
@@ -264,7 +229,6 @@ bool CSettings::OnEvent(const SEvent &event) {
     if (event.GUIEvent.EventType==gui::EGET_COMBO_BOX_CHANGED) {
       m_bSettingsChanged=true;
       switch (event.GUIEvent.Caller->getID()) {
-        case 3: m_iDriver=m_pDrivers->getSelected(); break;
         case 4: m_iResolution=m_pResolution->getSelected(); break;
       }
     }
@@ -319,14 +283,7 @@ IrrlichtDevice *CSettings::createDeviceFromSettings() {
   m_pDevice->drop();
   _VRES *res=m_aVModes[m_iResolution];
   printf("\n\tcreating device with settings:\n\ndriver: %i\nresolution: (%i, %i)\n%i bits per pixel\nfullscreen: %s\n",m_iDriver,res->iWidth,res->iHeight,res->iBpp,m_bFullscreen?"YES":"NO");
-  m_eDriver=m_aDrvs[m_iDriver]->iDriver;
+  m_eDriver=video::EDT_OPENGL;
   m_pDevice=createDevice(m_eDriver,core::dimension2du(res->iWidth,res->iHeight),res->iBpp,m_bFullscreen,false,false,0);
   return m_pDevice;
-}
-
-void CSettings::addValidDriver(const wchar_t *sName, video::E_DRIVER_TYPE iDriver) {
-  _DRV *drv=new _DRV();
-  wcscpy(drv->sName,sName);
-  drv->iDriver=iDriver;
-  m_aDrvs.push_back(drv);
 }

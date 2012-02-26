@@ -67,7 +67,7 @@
 		</Build>
 		<Compiler>
 			<Add directory="..\include\IrrOde" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\include" />
 			<Add directory="..\..\libs\ode-0.11.1-gcc\include" />
 		</Compiler>
 		<Unit filename="..\include\IrrOde\CIrrOdeBody.h" />

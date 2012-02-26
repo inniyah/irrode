@@ -21,7 +21,7 @@
 				<Option output="..\bin\gcc-win32\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
 				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\release" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -33,7 +33,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeRePlayer" />
 			<Add directory="..\..\libs\irrKlang-1.3.0\include" />
@@ -45,7 +45,7 @@
 			<Add library="glu32" />
 			<Add library="gdi32" />
 			<Add library="..\..\libs\irrKlang-1.3.0\lib\Win32-gcc\libirrKlang.a" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeRePlayer\CPluginInfo.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\CReplayerStateReplay.h" />

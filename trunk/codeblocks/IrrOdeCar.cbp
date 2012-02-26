@@ -84,7 +84,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeCar" />
 			<Add directory="CodeSnippets" />
@@ -97,7 +97,7 @@
 			<Add library="gdi32" />
 			<Add library="libAdvancedParticle.a" />
 			<Add library="irrklang" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc" />
 			<Add directory="..\codeblocks" />
 			<Add directory="..\..\libs\irrKlang-1.3.0\lib\Win32-gcc" />
 		</Linker>

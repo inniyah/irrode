@@ -66,7 +66,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\include" />
 			<Add directory="..\include\IrrOde" />
 			<Add directory="..\include\IrrOdeTestBed" />
 		</Compiler>
@@ -74,7 +74,7 @@
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
-			<Add directory="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc" />
+			<Add directory="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeTestBed\CMenu.h" />
 		<Unit filename="..\include\IrrOdeTestBed\IRunner.h" />

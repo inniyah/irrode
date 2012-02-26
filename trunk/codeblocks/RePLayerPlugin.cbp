@@ -22,7 +22,7 @@
 					<Add library="user32" />
 					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
-					<Add library="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc\libIrrlicht.dll.a" />
+					<Add library="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc\libIrrlicht.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="release">
@@ -41,7 +41,7 @@
 					<Add option="-s" />
 					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
 					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
-					<Add library="..\..\libs\irrlicht-1.7.2\lib\Win32-gcc\libIrrlicht.dll.a" />
+					<Add library="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc\libIrrlicht.dll.a" />
 					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 				</Linker>
 			</Target>
