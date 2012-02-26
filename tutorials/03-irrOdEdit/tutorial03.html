@@ -50,15 +50,52 @@ pre {
 	  <img src="pix/world.jpg" alt="adding a CIrrOdeWorld object" /><br />
 	  Next we add the box that our sphere will drop on. First we need to add an AnimatedMeshSceneNode and set it's texture, next we
 	  add a <i>CIrrOdeGeomBox</i> scene node and adjust the parameters of all these nodes. Set the position of both the AnimatedMeshSceneNode
-	  and the <i>CIrrOdeGeomBox</i> scene node to (0,0,0), then check the &quot;mode_bounce&quot; flag of the <i>CIrrOdeGeomBox</i> and
-	  set it's &quot;bounce&quot; attribute to 1.<br />
+	  and the <i>CIrrOdeGeomBox</i> scene node to (0,0,0).<br />
 	  <img src="pix/box.jpg" alt="adding a box" /><br />
+    This is the place where the XML files defining the surface attributes get involved. The XML file &quot;data/bounce.xml&quot; is the one
+    necessary for this little demo. This is the content of the file:<br /><br />
+    <pre>
+&lt;parameters&gt;
+	&lt;attributes&gt;
+		&lt;string name="name" value="bounce" /&gt;
+		&lt;bool name="mode_mu2" value="false" /&gt;
+		&lt;bool name="mode_fdir1" value="false" /&gt;
+		&lt;bool name="mode_bounce" value="true" /&gt;
+		&lt;bool name="mode_softERP" value="false" /&gt;
+		&lt;bool name="mode_softCFM" value="false" /&gt;
+		&lt;bool name="mode_motion1" value="false" /&gt;
+		&lt;bool name="mode_motion2" value="false" /&gt;
+		&lt;bool name="mode_motionN" value="false" /&gt;
+		&lt;bool name="mode_slip1" value="false" /&gt;
+		&lt;bool name="mode_slip2" value="false" /&gt;
+		&lt;bool name="mode_approx1_1" value="false" /&gt;
+		&lt;bool name="mode_approx1_2" value="false" /&gt;
+		&lt;float name="mu" value="0.000000" /&gt;
+		&lt;float name="mu2" value="0.000000" /&gt;
+		&lt;float name="bounce" value="1.000000" /&gt;
+		&lt;float name="bounce_vel" value="0.000000" /&gt;
+		&lt;float name="soft_erp" value="0.000000" /&gt;
+		&lt;float name="soft_cfm" value="0.000000" /&gt;
+		&lt;float name="motion1" value="0.000000" /&gt;
+		&lt;float name="motion2" value="0.000000" /&gt;
+		&lt;float name="motionN" value="0.000000" /&gt;
+		&lt;float name="slip1" value="0.000000" /&gt;
+		&lt;float name="slip2" value="0.000000" /&gt;
+		&lt;bool name="damps" value="false" /&gt;
+	&lt;/attributes&gt;
+&lt;/parameters&gt;
+    </pre><br /><br />
+    Enter the relative path (from the directory of the program using the scene file) of this surface definition file in the &quot;surfaceDefinitions&quot;
+    attribute of the &quot;CIrrOdeWorld&quot; object you use. Now switch back to the CIrrOdeGeomBox you just inserted and you'll notice that there is a
+    &quot;surface&quot; combobox in the node specific parameters of this node, and that the only entry is &quot;bounce&quot;. Select this option and
+    you'll have a bouncy box in your scene.<br /><br />
+    The data relevant for this demo is the &quot;bounce&quot; tag. The value of &quot;1&quot; defines that a full bounce will occur. For
+    the rest of the data please refer to the <a href="http://ode-wiki.org/wiki/index.php?title=Manual">ODE documentation</a>.<br /><br />
 	  In order to get some dynamic stuff into our scene we will add a sphere that will bounce off our static box. I think I heard that before
 	  ... somewhere. First we add a <i>CIrrOdeBody</i> scene node as child of the <i>CIrrOdeWorld</i> node. Set it's position to (0,15,0).
 	  Next we need another AnimatedMeshSceneNode as child of our body. The position of this new node needs to be (0,0,0). We're almost done now,
 	  all that's left to do is to add a <i>CIrrOdeGeomSphere</i> scene node as child of the child of our body. Set it's position to (0,0,0) as
-	  well and don't forget to make the surface bouncy by checking the &quot;mode_bounce&quot; flag and setting the &quot;bounce&quot;
-	  attribute to 1.<br />
+	  well and don't forget to make the surface bouncy selecting the &quot;bounce&quot; option in the surface combobox..<br />
 	  <img src="pix/sphere.jpg" alt="add a dynamic sphere" /><br />
 	  Now save the scene so that you can load it later on.<br /><br />
 	  <b>Step 3: loading the scene from an IrrODE program</b><br />
