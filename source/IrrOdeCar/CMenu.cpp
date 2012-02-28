@@ -4,26 +4,19 @@
 CMenu::CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu","../../data/irrOdeVehicleHelp.txt", pCtrl) {
   IGUIButton *b=NULL;
 
-  m_cDim=dimension2di(120,20);
+  m_cDim=dimension2di(128,30);
   m_cPos=position2di(5,5);
   m_iIdx=2;
 
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,L"Controller Setup");
+  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,L"");
+
+  b->setImage       (m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_off.png"));
+  b->setPressedImage(m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_on.png" ));
+  b->setUseAlphaChannel(true);
+
   m_aButtons.push_back(b);
-  m_cPos.Y+=25;
-
-  //initialize the info text
-  m_pText=m_pGuiEnv->addStaticText(m_pHelp->getText(),rect<s32>(135,5,325,50));
-  m_pText->setDrawBackground(true);
-  m_pText->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-
-  m_pHits=m_pGuiEnv->addStaticText(L"",rect<s32>(135,55,325,80));
-  m_pHits->setDrawBackground(true);
-  m_pHits->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-
-  m_pText->setVisible(false);
-  m_pHits->setVisible(false);
+  m_cPos.Y+=35;
 
   list<IGUIButton *>::Iterator i;
   for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
@@ -58,10 +51,6 @@ void CMenu::activate() {
   //returning 0 means that no state change is wished, so we init the member returned by CMenu::update
   m_iMenuSelect=0;
 
-  //show the info texts
-  m_pText->setVisible(true);
-  m_pHits->setVisible(true);
-
   //show the buttons
   list<IGUIButton *>::Iterator i;
   for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(true);
@@ -71,10 +60,6 @@ void CMenu::activate() {
 }
 
 void CMenu::deactivate() {
-  //hide the info texts
-  m_pText->setVisible(false);
-  m_pHits->setVisible(false);
-
   //hide the buttons
   list<IGUIButton *>::Iterator i;
   for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
@@ -83,26 +68,15 @@ void CMenu::deactivate() {
 u32 CMenu::update() {
   //show the info text and the buttons if help is visible
   if (!m_bHelp && m_pHelp->isVisible()) {
-    m_pText->setVisible(true);
-
     list<IGUIButton *>::Iterator i;
     for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(true);
   }
 
   //hide the info text and the buttons if help is visible
   if (m_bHelp && !m_pHelp->isVisible()) {
-    m_pText->setVisible(false);
-
     list<IGUIButton *>::Iterator i;
     for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
   }
-
-  //show the information about shots and hits
-  CProjectileManager *ppm=CProjectileManager::getSharedInstance();
-  u32 iHits=ppm->getHits(),iShots=ppm->getShots();
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"%i shots fired\n%i hits scored",iShots,iHits);
-  m_pHits->setText(s);
 
   //call superclass update
   CIrrOdeCarState::update();
@@ -171,8 +145,23 @@ void CMenu::addButtonForState(CIrrOdeCarState *pState) {
   IGUIButton *b=NULL;
 
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,stringw(pState->getButtonText()).c_str());
+  b=m_pGuiEnv->addButton(rect<s32>(m_cPos,m_cDim),0,m_iIdx++,L"");
   b->setVisible(false);
+
+  core::stringw sBtn = "../../data/textures/buttons/";
+  sBtn += pState->getButton();
+
+  core::stringw sOn  = sBtn+"_on.png",
+                sOff = sBtn+"_off.png";
+
+  ITexture *pOn  = m_pDevice->getVideoDriver()->getTexture(sOn ),
+           *pOff = m_pDevice->getVideoDriver()->getTexture(sOff);
+
+  b->setImage       (pOff);
+  b->setPressedImage(pOn );
+
+  b->setUseAlphaChannel(true);
+
   m_aButtons.push_back(b);
-  m_cPos.Y+=25;
+  m_cPos.Y+=35;
 }

@@ -63,8 +63,6 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
 
     CRearView *m_pRView;
 
-    IGUIStaticText *m_pInfo,
-                   *m_pApInfo;
     IGUITab *m_pTab;
 
     irr::ode::CIrrOdeWorld *m_pWorld;

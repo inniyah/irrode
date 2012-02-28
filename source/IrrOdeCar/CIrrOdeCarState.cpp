@@ -28,7 +28,6 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   //hide the help text and don't switch back to menu ... for now
   m_bHelp=false;
   m_bSwitchToMenu=false;
-  m_pFps=NULL;
 
   if (g_pRecording==NULL) {
     dimension2d<u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
@@ -104,14 +103,12 @@ u32 CIrrOdeCarState::update() {
   //If the help shoudl be shown we deactivate the current state and show the help screen...
   if (m_bHelp) {
     deactivate();
-    if (m_pFps) m_pFps->setVisible(false);
     m_pHelp->setVisible(true);
   }
   else
     //...on hiding we activate the current state and hide the help screen
     if (m_pHelp->isVisible()) {
       m_pHelp->setVisible(false);
-      if (m_pFps) m_pFps->setVisible(true);
       activate();
     }
 
@@ -133,8 +130,4 @@ void CIrrOdeCarState::loadHelpFile() {
   memset(sHelp,10000,0);
   stringw sw(sHelp);
   m_pHelp->setText(sw.c_str());
-}
-
-void CIrrOdeCarState::setFpsInfo(gui::IGUIStaticText *pFps) {
-  m_pFps=pFps;
 }

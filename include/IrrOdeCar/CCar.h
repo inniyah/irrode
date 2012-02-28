@@ -99,7 +99,7 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
 
     void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
 
-    virtual stringc &getButtonText() { static stringc s=stringc("select car"); return s; }
+    virtual const stringw &getButton() { static core::stringw s=L"car"; return s; }
 
     virtual void drawSpecifics() { }
 

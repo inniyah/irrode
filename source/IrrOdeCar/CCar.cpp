@@ -122,10 +122,7 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_pCam->setNearValue(0.1f);
 
     m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,300,300));
-    //add a static text element that will show useful information
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,55),true,false,m_pTab);
-    m_pInfo->setDrawBackground(true);
-    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+
     m_pTab->setVisible(false);
     m_pCtrls=NULL;
 
@@ -244,7 +241,6 @@ u32 CCar::update() {
   pos=m_pCarBody->getAbsolutePosition();
   swprintf(dummy,0xFE,L"vel: %.2f\npos: (%.0f, %.0f, %.0f)\nsteer: %.2f %s",v,pos.X,pos.Y,pos.Z,m_fActSteer,m_bAdaptSteer?L"(adaptive)":L"");
   if (m_pController->get(m_pCtrls[eCarBoost])!=0.0f) swprintf(dummy,0xFF,L"%s\nBOOST!",dummy);
-  m_pInfo->setText(dummy);
 
   //if the iRet value we got from CVehicle::update is more than 0 the state will be deactivated and
   //one of the other states will get active.

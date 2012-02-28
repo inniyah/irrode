@@ -47,7 +47,8 @@ class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
 
     virtual u32 update();
 
-    virtual stringc &getButtonText() { static stringc s=stringc("select helicopter"); return s; }
+    virtual const stringw &getButton() { static core::stringw s=L"heli"; return s; }
+
     virtual void drawSpecifics();
 
     virtual void odeStep(u32 iStep);

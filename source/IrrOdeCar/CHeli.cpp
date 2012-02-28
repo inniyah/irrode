@@ -13,7 +13,6 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
-  m_pAutoPilot->setAutoPilotInfo(m_pApInfo);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
 
@@ -66,25 +65,6 @@ u32 CHeli::update() {
     m_pCam->setUpVector(up);
     m_pCam->setTarget(m_pBody->getPosition()+tgt);
   }
-
-  //now show some interesting information
-  wchar_t dummy[0xFF];
-  pos=m_pBody->getAbsolutePosition();
-  rot=m_pBody->getRotation();
-  vector3df v=m_pBody->getLinearVelocity();
-  swprintf(dummy,0xFE,L"pos: (%.0f, %.0f, %.0f)\nvelocity: (%.0f, %.0f, %.0f) %.2f",pos.X,pos.Y,pos.Z,v.X,v.Y,v.Z,m_pAero->getForewardVel());
-  swprintf(dummy,0xFE,L"%s\nrotation: (%.0f, %.0f, %.0f)",dummy,rot.X,rot.Y,rot.Z);
-  swprintf(dummy,0xFE,L"%s\nrudder: (%.0f%%, %.0f%%, %.0f%%)\n",dummy,m_fPitch*100.0f,m_fRoll*100.0f,m_fYaw*100.0f);
-
-  swprintf(dummy,0xFE,L"%sThrust=%.0f%%",dummy,m_fThrust*100.0f);
-
-  f32 fHeight=pos.Y-m_pTerrain->getHeight(pos.X,pos.Z);
-  swprintf(dummy,0xFE,L"%s\nAltitude: %.0f",dummy,fHeight);
-
-  if (m_bWeaponCam) swprintf(dummy,0xFE,L"%s\nFollow Missile Cam",dummy);
-  if (m_pAutoPilot->isEnabled()) swprintf(dummy,0xFE,L"%s\nAutopilot active (%i, %.0f)",dummy,m_iNextCp,m_fApDist);
-
-  m_pInfo->setText(dummy);
 
   return iRet;
 }

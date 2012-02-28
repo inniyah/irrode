@@ -11,8 +11,6 @@ using namespace irr;
 class CMenu : public CIrrOdeCarState, public IEventReceiver {
   protected:
     list<IGUIButton *> m_aButtons;  /*!< a list of buttons */
-    IGUIStaticText *m_pText,        /*!< the info text */
-                   *m_pHits;        /*!< some additional information about shots and hits */
     u32 m_iMenuSelect;              /*!< this member is used to store state changes */
     dimension2di m_cDim;
     position2di m_cPos;
@@ -41,6 +39,8 @@ class CMenu : public CIrrOdeCarState, public IEventReceiver {
     virtual stringc &getButtonText() { static stringc s=stringc("menu"); return s; }
 
     void addButtonForState(CIrrOdeCarState *pState);
+
+    virtual const stringw &getButton() { static core::stringw s=L""; return s; }
 
     virtual void drawSpecifics() { }
 };
