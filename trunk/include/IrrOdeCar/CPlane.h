@@ -34,7 +34,8 @@ class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
 
     virtual u32 update();
 
-    virtual stringc &getButtonText() { static stringc s=stringc("select airplane"); return s; }
+    virtual const stringw &getButton() { static core::stringw s=L"plane"; return s; }
+
     virtual void drawSpecifics();
 
     virtual ode::IIrrOdeEvent *writeEvent();

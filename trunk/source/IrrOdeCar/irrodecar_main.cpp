@@ -472,11 +472,6 @@ int main(int argc, char** argv) {
 
   dimension2d<u32> cSize=driver->getScreenSize();
 
-  IGUIStaticText *pFps=guienv->addStaticText(L"Hello World!",rect<s32>(position2di(cSize.Width-155,5),dimension2di(150,22)),true);
-  pFps->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-  pFps->setDrawBackground(true);
-  pFps->setVisible(false);
-
   //create the necessary state objects
   CIrrOdeCarState *pActive=NULL;
   array<CIrrOdeCarState *> aStates;
@@ -494,7 +489,7 @@ int main(int argc, char** argv) {
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
     CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView);
-    p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
+    p->setCtrl((const u32 *)iCtrls[2]);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
@@ -503,27 +498,24 @@ int main(int argc, char** argv) {
 
   for (it=lCars.begin(); it!=lCars.end(); it++) {
     CCar *p=new CCar(device,*it,pController,pCarCockpit,pRearView);
-    p->setCtrl((const u32 *)iCtrls[0]); p->setFpsInfo(pFps);
+    p->setCtrl((const u32 *)iCtrls[0]);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lTanks.begin(); it!=lTanks.end(); it++) {
     CTank *p=new CTank(device,*it,pController);
-    p->setCtrl((const u32 *)iCtrls[1]); p->setFpsInfo(pFps);
+    p->setCtrl((const u32 *)iCtrls[1]);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
     CHeli *p=new CHeli(device,*it,pController,pCockpit,pRearView);
-    p->setCtrl((const u32 *)iCtrls[2]); p->setFpsInfo(pFps);
+    p->setCtrl((const u32 *)iCtrls[2]);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
-
-
-  theCtrl->setFpsInfo(pFps);
 
   //phyiscs initialization
   ode::CIrrOdeManager::getSharedInstance()->initPhysics();
@@ -536,7 +528,6 @@ int main(int argc, char** argv) {
   pActive->activate();
 
   CConfigFileManager::getSharedInstance()->loadConfig(device,"../../data/irrOdeCarControls.xml");
-  pFps->setVisible(true);
 
   list<ode::CIrrOdeSceneNode *> lNodes=ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
   list<ode::CIrrOdeSceneNode *>::Iterator nit;
@@ -609,10 +600,6 @@ int main(int argc, char** argv) {
 
       device->setWindowCaption(str.c_str());
       lastFPS = fps;
-
-      wchar_t s[0xFF];
-      swprintf(s,0xFE,L"FPS: %i\nPrimives Drawn: %i",lastFPS,driver->getPrimitiveCountDrawn());
-      pFps->setText(s);
     }
   }
 

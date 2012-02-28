@@ -26,8 +26,7 @@ class CIrrOdeCarState {
     ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
     IGUIEnvironment *m_pGuiEnv;   /*!< the current Irrlicht GUI environment */
 
-    IGUIStaticText *m_pHelp,    /*!< the help text */
-                   *m_pFps;     /*!< the FPS info text */
+    IGUIStaticText *m_pHelp;    /*!< the help text */
 
     c8 m_sHelpFile[1024];
 
@@ -54,13 +53,11 @@ class CIrrOdeCarState {
 
     void loadHelpFile();
 
-    void setFpsInfo(gui::IGUIStaticText *pFps);
-
     bool isInitialized() { return m_bInitialized; }
 
-    virtual stringc &getButtonText()=0;
-
     virtual void drawSpecifics()=0;
+
+    virtual const stringw &getButton()=0;
 
     const core::vector3df &getCameraVelocity() {
       return m_vCamVelocity;

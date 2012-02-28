@@ -30,14 +30,6 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
 
     m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500));
     m_pTab->setVisible(false);
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,5,150,85),true,true,m_pTab);
-    m_pInfo->setDrawBackground(true);
-    m_pInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-
-    m_pApInfo=m_pGuiEnv->addStaticText(L"Hello World!",rect<s32>(5,95,150,355),true,true,m_pTab);
-    m_pApInfo->setDrawBackground(true);
-    m_pApInfo->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
-    m_pApInfo->setVisible(false);
 
     m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pBody->getStepMotorFromName("aero_motor" );
     m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pBody->getStepMotorFromName("aero_torque");
@@ -95,7 +87,6 @@ void CAeroVehicle::activate() {
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pTab->setVisible(true);
-  m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -117,7 +108,6 @@ void CAeroVehicle::activate() {
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((f32 *)m_aCtrlBuffer);
   m_pTab->setVisible(false);
-  m_pApInfo->setVisible(false);
   m_bActive=false;
 }
 
@@ -192,7 +182,6 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eAeroAutoPilot])) {
         m_pController->set(m_pCtrls[eAeroAutoPilot],0.0f);
         m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
-        m_pApInfo->setVisible(m_pAutoPilot->isEnabled());
       }
 
       if (m_pController->get(m_pCtrls[eAeroSelectTarget])) {
