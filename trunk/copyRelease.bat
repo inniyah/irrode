@@ -2,9 +2,7 @@ mkdir irrOde
 mkdir irrode\bin
 mkdir irrode\bin\gcc-win32
 copy bin\gcc-win32\*.exe irrode\bin\gcc-win32
-copy bin\gcc-win32\D3DX81ab.dll irrode\bin\gcc-win32
-copy bin\gcc-win32\Irrlicht.dll irrode\bin\gcc-win32
-copy bin\gcc-win32\ode_single.dll irrode\bin\gcc-win32
+copy bin\gcc-win32\*.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\irrklang.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\libirrode.a irrode\bin\gcc-win32
 del irrode\bin\gcc-win32\*_debug.exe
@@ -53,6 +51,8 @@ mkdir irrode\data\roads
 copy data\roads\*.* irrode\data\roads
 mkdir irrode\data\textures
 copy data\textures\*.* irrode\data\textures
+mkdir irrode\data\textures\buttons
+copy data\textures\buttons\*.png irrode\data\textures\buttons
 mkdir irrode\data\shaders
 copy data\shaders\*.* irrode\data\shaders
 
