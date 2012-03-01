@@ -1,11 +1,20 @@
   #include <irrlicht.h>
   #include <CCockpitCar.h>
   #include <CGUINeedleIndicator.h>
+  #include <event/IIrrOdeEvent.h>
+  #include <event/IIrrOdeEventQueue.h>
+  #include <CEventVehicleState.h>
+  #include <CIrrOdeManager.h>
 
 using namespace irr;
 
 CCockpitCar::CCockpitCar(IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,core::dimension2d<u32>(512,512)) {
   m_pTab=m_pGuienv->addTab(core::rect<s32>(0,0,512,512));
+
+  m_iBodyId = -1;
+  m_bLapStarted = false;
+  m_iLapStart = 0;
+  m_iTime = 0;
 
   m_pGuienv->addStaticText(L"The Car",core::rect<s32>(5,400,105,25),false,true,m_pTab);
 
@@ -45,9 +54,12 @@ CCockpitCar::CCockpitCar(IrrlichtDevice *pDevice, const char *sName) : IRenderTo
 
   u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
   printf("**** CCockpitCar: replaced %i texture.\n",iReplace);
+
+  ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 }
 
 CCockpitCar::~CCockpitCar() {
+  ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CCockpitCar::update(bool b) {
@@ -69,24 +81,60 @@ void CCockpitCar::setBoost(bool b) {
 }
 
 void CCockpitCar::setCurrentLapTime(f32 fTime) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"Current Lap: %.2f sec",fTime);
-  m_stCurLap->setText(s);
 }
 
 void CCockpitCar::setLastLapTime(f32 fLastLap) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"Last Lap: %.2f sec",fLastLap);
-  m_stLastLap->setText(s);
 }
 
 void CCockpitCar::setSplitTime(f32 fTime) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"Split Time: %.2f sec",fTime);
-  m_stSplit->setText(s);
 }
 
 void CCockpitCar::cancelLap() {
-  m_stCurLap->setText(L"Current Lap: -----");
-  m_stSplit->setText(L"Split Time: -----");
+}
+
+bool CCockpitCar::onEvent(ode::IIrrOdeEvent *pEvent) {
+  wchar_t s[0xFF];
+
+  if (pEvent->getType() == EVENT_LAP_TIME_ID) {
+    CEventLapTime *p = (CEventLapTime *)pEvent;
+    if (p->getBodyId() == m_iBodyId) {
+      switch (p->getCpId()) {
+        case 0:
+          m_bLapStarted = true;
+          m_iLapStart = m_iTime;
+
+          if (m_bLapStarted) {
+            swprintf(s,0xFF,L"Last Lap: %.2f sec",p->getTime());
+            m_stLastLap->setText(s);
+          }
+          break;
+
+        case 1:
+        case 2:
+          swprintf(s,0xFF,L"Split Time: %.2f sec",p->getTime());
+          m_stSplit->setText(s);
+          break;
+
+        case 3:
+          m_stCurLap->setText(L"Current Lap: -----");
+          m_stSplit->setText(L"Split Time: -----");
+          m_bLapStarted = false;
+          break;
+      }
+    }
+  }
+
+  if (pEvent->getType() == ode::eIrrOdeEventStep) {
+    if (m_bLapStarted) {
+      swprintf(s,0xFF,L"Current Lap: %.2f sec",((float)(m_iTime - m_iLapStart) * 0.016f));
+      m_stCurLap->setText(s);
+    }
+    m_iTime++;
+  }
+
+  return true;
+}
+
+bool CCockpitCar::handlesEvent(ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == ode::eIrrOdeEventStep;
 }

@@ -3,16 +3,22 @@
 
   #include <irrlicht.h>
   #include <IRenderToTexture.h>
+  #include <event/IIrrOdeEventListener.h>
+  #include <CIrrOdeBody.h>
 
 namespace irr {
   namespace gui {
     class CGUINeedleIndicator;
   }
 }
+  namespace ode {
+    class IIrrOdeEvent;
+  }
+
 
 using namespace irr;
 
-class CCockpitPlane : public IRenderToTexture {
+class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventListener {
   protected:
     scene::ISceneManager    *m_pRttSmgr;
     video::ITexture         *m_pElement,
@@ -22,12 +28,17 @@ class CCockpitPlane : public IRenderToTexture {
                             *m_pWarnImgHeli[2];
     gui::IGUITab            *m_pTab,
                             *m_pPlaneWarnings,
-                            *m_pHeliWarnings;
+                            *m_pHeliWarnings,
+                            *m_pWeaponInfo,
+                            *m_pLapInfo;
     gui::IGUIStaticText     *m_pLblTgtDist,
                             *m_pLblTgtName,
                             *m_pLblShots,
                             *m_pLblHitsScored,
-                            *m_pLblHitsTaken;
+                            *m_pLblHitsTaken,
+                            *m_stCurLap,
+                            *m_stLastLap,
+                            *m_stSplit;
     scene::ISceneNode       *m_pHorizon;
     scene::ICameraSceneNode *m_pCam;
 
@@ -38,6 +49,11 @@ class CCockpitPlane : public IRenderToTexture {
         m_fPower,
         m_fHeading,
         m_fVelVert;
+    u32 m_iInfoMode,
+        m_iTime,
+        m_iLapStart;
+    s32 m_iBodyId;
+    bool m_bLapStarted;
 
   public:
     CCockpitPlane(IrrlichtDevice *pDevice, const char *sName);
@@ -62,6 +78,11 @@ class CCockpitPlane : public IRenderToTexture {
     void setShotsFired(s32 iShots);
     void setHitsScored(s32 iHits);
     void setHitsTaken(s32 iHits);
+
+    void activate(irr::ode::CIrrOdeBody *p) { if (p!=NULL) m_iBodyId = p->getID(); else m_iBodyId = -1; m_iInfoMode = 0; }
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif

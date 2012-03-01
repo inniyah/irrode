@@ -1,10 +1,15 @@
   #include <irrlicht.h>
   #include <CCockpitPlane.h>
   #include <CGUINeedleIndicator.h>
-
-using namespace irr;
+  #include <CEventVehicleState.h>
+  #include <CIrrOdeManager.h>
+  #include <event/IIrrOdeEventQueue.h>
 
 CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,core::dimension2d<u32>(512,512)) {
+  m_bLapStarted = false;
+  m_iTime = 0;
+  m_iLapStart = 0;
+
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 	scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
 
@@ -137,23 +142,38 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRend
 
   gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
 
-  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(10, 10,80, 30),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(10, 35,80, 55),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(10, 60,80, 80),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Hits Sc:" ,core::rect<s32>(10, 85,80,105),false,false,pTab,-1,false)->setOverrideFont(pFont);
-  m_pGuienv->addStaticText(L"Hits Tk:" ,core::rect<s32>(10,110,80,125),false,false,pTab,-1,false)->setOverrideFont(pFont);
+  m_pWeaponInfo = m_pGuienv->addTab(core::rect<s32>(10, 10, 185, 125), pTab);
 
-  m_pLblTgtName   =m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(85, 10,185, 30),true,true,pTab,-1,true);
-  m_pLblTgtDist   =m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(85, 35,185, 55),true,true,pTab,-1,true);
-  m_pLblShots     =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(85, 60,165, 80),true,true,pTab,-1,true);
-  m_pLblHitsScored=m_pGuienv->addStaticText(L"Hits Sc",core::rect<s32>(85, 85,165,105),true,true,pTab,-1,true);
-  m_pLblHitsTaken =m_pGuienv->addStaticText(L"Hits Tk",core::rect<s32>(85,110,165,125),true,true,pTab,-1,true);
+  m_pGuienv->addStaticText(L"Target:"  ,core::rect<s32>(0,  0,80, 20),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Distance:",core::rect<s32>(0, 25,80, 45),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Shots:"   ,core::rect<s32>(0, 50,80, 70),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits Sc:" ,core::rect<s32>(0, 75,80, 95),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
+  m_pGuienv->addStaticText(L"Hits Tk:" ,core::rect<s32>(0,100,80,115),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
+
+  m_pLblTgtName   =m_pGuienv->addStaticText(L"Tg Name",core::rect<s32>(75,  0,175, 20),true,true,m_pWeaponInfo,-1,true);
+  m_pLblTgtDist   =m_pGuienv->addStaticText(L"Tg Dist",core::rect<s32>(75, 25,175, 45),true,true,m_pWeaponInfo,-1,true);
+  m_pLblShots     =m_pGuienv->addStaticText(L"Shots"  ,core::rect<s32>(75, 50,175, 70),true,true,m_pWeaponInfo,-1,true);
+  m_pLblHitsScored=m_pGuienv->addStaticText(L"Hits Sc",core::rect<s32>(75, 75,155, 95),true,true,m_pWeaponInfo,-1,true);
+  m_pLblHitsTaken =m_pGuienv->addStaticText(L"Hits Tk",core::rect<s32>(75,100,155,115),true,true,m_pWeaponInfo,-1,true);
 
   m_pLblTgtName   ->setOverrideFont(pFont);
   m_pLblTgtDist   ->setOverrideFont(pFont);
   m_pLblShots     ->setOverrideFont(pFont);
   m_pLblHitsScored->setOverrideFont(pFont);
   m_pLblHitsTaken ->setOverrideFont(pFont);
+
+  m_pLapInfo = m_pGuienv->addTab(core::rect<s32>(0,0,195,135), pTab);
+
+  m_stCurLap =m_pGuienv->addStaticText(L"Current Lap",core::rect<s32>(core::position2di(5,10),core::dimension2di(190,20)),false,true,m_pLapInfo);
+  m_stSplit  =m_pGuienv->addStaticText(L"Split Time" ,core::rect<s32>(core::position2di(5,35),core::dimension2di(190,20)),false,true,m_pLapInfo);
+  m_stLastLap=m_pGuienv->addStaticText(L"Last Lap"   ,core::rect<s32>(core::position2di(5,60),core::dimension2di(190,20)),false,true,m_pLapInfo);
+
+  m_stCurLap ->setOverrideFont(pFont);
+  m_stSplit  ->setOverrideFont(pFont);
+  m_stLastLap->setOverrideFont(pFont);
+
+  m_pWeaponInfo->setVisible(false);
+  m_pLapInfo->setVisible(false);
 
   m_pGuienv->addImage(m_pDrv->getTexture("../../data/dustbin.png"),core::position2di(169,96),true,pTab);
   m_pTab->setVisible(false);
@@ -163,12 +183,17 @@ CCockpitPlane::CCockpitPlane(IrrlichtDevice *pDevice, const char *sName) : IRend
   m_fPower   =0.0f;
   m_fHeading =0.0f;
 
+  m_iInfoMode = 0;
+
   u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
+
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 }
 
 CCockpitPlane::~CCockpitPlane() {
   m_pElement->drop();
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CCockpitPlane::update(bool bPlane) {
@@ -201,6 +226,19 @@ void CCockpitPlane::update(bool bPlane) {
   m_pRttSmgr->drawAll();
   startRttUpdate();
   m_pTab->setVisible(true);
+
+  switch (m_iInfoMode) {
+    case 0:
+      m_pWeaponInfo->setVisible(true);
+      m_pLapInfo->setVisible(false);
+      break;
+
+    case 1:
+      m_pWeaponInfo->setVisible(false);
+      m_pLapInfo->setVisible(true);
+      break;
+  }
+
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
   endRttUpdate();
@@ -226,6 +264,9 @@ void CCockpitPlane::setHorizon(core::vector3df vRot, core::vector3df vUp) {
 
 void CCockpitPlane::setTargetName(const wchar_t *sName) {
   m_pLblTgtName->setText(sName);
+
+  m_pLapInfo->setVisible(false);
+  m_pWeaponInfo->setVisible(true);
 }
 
 void CCockpitPlane::setTargetDist(f32 fDist) {
@@ -238,16 +279,67 @@ void CCockpitPlane::setShotsFired(s32 iShots) {
   wchar_t s[0xFF];
   swprintf(s,0xFF,L"%i",iShots);
   m_pLblShots->setText(s);
+  m_iInfoMode = 0;
 }
 
 void CCockpitPlane::setHitsScored(s32 iHits) {
   wchar_t s[0xFF];
   swprintf(s,0xFF,L"%i",iHits);
   m_pLblHitsScored->setText(s);
+  m_iInfoMode = 0;
 }
 
 void CCockpitPlane::setHitsTaken(s32 iHits) {
   wchar_t s[0xFF];
   swprintf(s,0xFF,L"%i",iHits);
   m_pLblHitsTaken->setText(s);
+  m_iInfoMode = 0;
+}
+
+bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  wchar_t s[0xFF];
+
+  if (pEvent->getType() == EVENT_LAP_TIME_ID) {
+    m_iInfoMode = 1;
+    CEventLapTime *p = (CEventLapTime *)pEvent;
+    if (p->getBodyId() == m_iBodyId) {
+      switch (p->getCpId()) {
+        case 0:
+          m_bLapStarted = true;
+          m_iLapStart = m_iTime;
+
+          if (m_bLapStarted) {
+            swprintf(s,0xFF,L"Last Lap: %.2f sec",p->getTime());
+            m_stLastLap->setText(s);
+          }
+          break;
+
+        case 1:
+        case 2:
+          swprintf(s,0xFF,L"Split Time: %.2f sec",p->getTime());
+          m_stSplit->setText(s);
+          break;
+
+        case 3:
+          m_stCurLap->setText(L"Current Lap: -----");
+          m_stSplit->setText(L"Split Time: -----");
+          m_bLapStarted = false;
+          break;
+      }
+    }
+  }
+
+  if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+    if (m_bLapStarted) {
+      swprintf(s,0xFF,L"Current Lap: %.2f sec",((float)(m_iTime - m_iLapStart) * 0.016f));
+      m_stCurLap->setText(s);
+    }
+    m_iTime++;
+  }
+
+  return true;
+}
+
+bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == irr::ode::eIrrOdeEventStep;
 }

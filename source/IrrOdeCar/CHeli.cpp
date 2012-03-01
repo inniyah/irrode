@@ -21,6 +21,9 @@ CHeli::CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpit
   m_iNodeId=pNode->getID();
 
   CCustomEventReceiver::getSharedInstance()->addHeli(pNode);
+
+  m_iOldHitsScored = -1;
+  m_iOldHitsTaken = -1;
 }
 
 CHeli::~CHeli() {
@@ -85,6 +88,7 @@ void CHeli::odeStep(u32 iStep) {
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
       m_iShotsFired++;
+      m_pCockpit->setShotsFired(m_iShotsFired);
     }
 
     if (m_pCockpit!=NULL) {
@@ -106,7 +110,7 @@ void CHeli::odeStep(u32 iStep) {
       v=m_pBody->getAbsoluteTransformation().getRotationDegrees();
       m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
 
-      ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
+      irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
 
       if (pTarget!=NULL) {
         core::stringw s=core::stringw(pTarget->getName());
@@ -118,9 +122,11 @@ void CHeli::odeStep(u32 iStep) {
         m_pCockpit->setTargetDist(0.0f);
       }
 
-      m_pCockpit->setShotsFired(m_iShotsFired);
-      m_pCockpit->setHitsScored(m_iHitsScored);
-      m_pCockpit->setHitsTaken (m_iHitsTaken );
+      if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
+      if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+
+      m_iOldHitsTaken  = m_iHitsTaken ;
+      m_iOldHitsScored = m_iHitsScored;
 
 
       m_pTab->setVisible(false);
@@ -150,12 +156,12 @@ void CHeli::drawSpecifics() {
   m_pTargetSelector->highlightTargets();
 }
 
-ode::IIrrOdeEvent *CHeli::writeEvent() {
+irr::ode::IIrrOdeEvent *CHeli::writeEvent() {
   return new CEventHeliState(m_iNodeId,m_fSound);
 }
 
-ode::eEventWriterType CHeli::getEventWriterType() {
-  return ode::eIrrOdeEventWriterUnknown;
+irr::ode::eEventWriterType CHeli::getEventWriterType() {
+  return irr::ode::eIrrOdeEventWriterUnknown;
 }
 
 void CHeli::activate() {

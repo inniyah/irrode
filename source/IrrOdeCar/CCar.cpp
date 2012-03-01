@@ -6,6 +6,7 @@
   #include <irrklang.h>
   #include <CRearView.h>
   #include <CEventVehicleState.h>
+  #include <CIrrOdeCarTrack.h>
 
   #include <irrCC.h>
 
@@ -131,6 +132,8 @@ CCar::CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCa
     m_pCockpit=pCockpit;
     m_pRView=pRView;
 
+    m_pLap = new CIrrOdeCarTrack(m_pCarBody);
+
     m_bInternal=false;
     m_bDifferential=true;
 
@@ -170,6 +173,8 @@ void CCar::activate() {
   wchar_t s[0xFFFF];
   swprintf(s,0xFFFE,m_pHelp->getText(),m_pController->getSettingsText(0));
   m_pHelp->setText(s);
+
+  if (m_pCockpit) m_pCockpit->activate(m_pCarBody);
 }
 
 void CCar::deactivate() {
@@ -183,6 +188,8 @@ void CCar::deactivate() {
   }
 
   for (u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+
+  if (m_pCockpit) m_pCockpit->activate(NULL);
 }
 
 //This method is called once for each rendered frame.

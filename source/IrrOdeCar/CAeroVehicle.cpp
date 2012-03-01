@@ -8,8 +8,8 @@
   #include <irrklang.h>
 
 CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
-  m_pWorld=reinterpret_cast<ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
-  m_pBody=reinterpret_cast<ode::CIrrOdeBody *>(pNode);
+  m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
+  m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
   if (m_pBody!=NULL) {
     m_pBody->setUserData(this);
@@ -26,7 +26,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_bFireSecondary=false;
     m_bDataChanged=false;
 
-    ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
     m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500));
     m_pTab->setVisible(false);
@@ -43,7 +43,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
       m_pBrakes[i]=dynamic_cast<irr::ode::CIrrOdeMotor *>(m_pBody->getMotorFromName(s));
     }
 
-    m_pSteer=(ode::CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
+    m_pSteer=(irr::ode::CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
 
     m_bThreeWheeler=!strcmp(m_pBody->getName(),"plane2") || !strcmp(m_pBody->getName(),"plane4");
 
@@ -103,12 +103,14 @@ void CAeroVehicle::activate() {
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
   m_pController->restoreState((f32 *)m_aCtrlBuffer);
+  if (m_pCockpit) m_pCockpit->activate(m_pBody);
 }
 
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((f32 *)m_aCtrlBuffer);
   m_pTab->setVisible(false);
   m_bActive=false;
+  if (m_pCockpit) m_pCockpit->activate(NULL);
 }
 
 bool CAeroVehicle::OnEvent(const SEvent &event) {
@@ -117,7 +119,7 @@ bool CAeroVehicle::OnEvent(const SEvent &event) {
   return bRet;
 }
 
-bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
+bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     vector3df vPos=m_pBody->getAbsolutePosition();
@@ -286,6 +288,6 @@ bool CAeroVehicle::onEvent(ode::IIrrOdeEvent *pEvent) {
   return false;
 }
 
-bool CAeroVehicle::handlesEvent(ode::IIrrOdeEvent *pEvent) {
+bool CAeroVehicle::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }

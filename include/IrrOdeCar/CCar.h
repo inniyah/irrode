@@ -9,6 +9,7 @@
 class CIrrCC;
 class CRearView;
 class CCockpitCar;
+class CIrrOdeCarTrack;
 class CAdvancedParticleSystemNode;
 
 using namespace irr;
@@ -83,6 +84,8 @@ class CCar : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeE
         m_fOldSlider;
 
     core::vector3df m_vOldSpeed;
+
+    CIrrOdeCarTrack *m_pLap;
 
   public:
     CCar(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl,CCockpitCar *pCockpit, CRearView *pRView);    /*!< the car's constructor */

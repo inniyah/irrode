@@ -241,5 +241,10 @@ class CEventLapTime : public irr::ode::IIrrOdeEvent {
     }
 
     virtual bool isObservable() { return true; }
+
+    irr::s32 getBodyId() { return m_iBody; }
+    irr::s32 getCpId() { return m_iCp; }
+
+    irr::f32 getTime() { return m_fTime; }
 };
 #endif
