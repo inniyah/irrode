@@ -39,14 +39,17 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   for (u32 i=0; i<2; i++) {
     c8 s[0xFF];
     sprintf(s,"axis%i",i+1);
-    m_pAxes[i]=(ode::CIrrOdeJointHinge *)m_pBody->getChildByName(s,m_pBody);
+    m_pAxes[i]=(irr::ode::CIrrOdeJointHinge *)m_pBody->getChildByName(s,m_pBody);
     printf("%s: %i\n",s,(int)m_pAxes[i]);
     m_fAngleRate[i]=0.0f;
   }
   m_fAngleRate[2]=0.0f;
 
-  m_pSteerAxis=(ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
+  m_pSteerAxis=(irr::ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
   printf("steer axis: %i\n",(int)m_pSteerAxis);
+
+  m_iOldHitsScored = -1;
+  m_iOldHitsTaken = -1;
 
   m_pLap = new CIrrOdeCarTrack(m_pBody);
 }
@@ -112,6 +115,7 @@ void CPlane::odeStep(u32 iStep) {
       CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
       p->setTarget(m_pTargetSelector->getTarget());
       m_iShotsFired++;
+      m_pCockpit->setShotsFired(m_iShotsFired);
       m_bFirePrimary=false;
     }
 
@@ -149,7 +153,7 @@ void CPlane::odeStep(u32 iStep) {
       v=m_pBody->getAbsoluteTransformation().getRotationDegrees();
       m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
 
-      ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
+      irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
 
       if (pTarget!=NULL) {
         core::stringw s=core::stringw(pTarget->getName());
@@ -161,9 +165,11 @@ void CPlane::odeStep(u32 iStep) {
         m_pCockpit->setTargetDist(0.0f);
       }
 
-      m_pCockpit->setShotsFired(m_iShotsFired);
-      m_pCockpit->setHitsScored(m_iHitsScored);
-      m_pCockpit->setHitsTaken (m_iHitsTaken );
+      if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
+      if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+
+      m_iOldHitsTaken  = m_iHitsTaken ;
+      m_iOldHitsScored = m_iHitsScored;
 
       m_pTab->setVisible(false);
       m_pCockpit->update(true);
@@ -195,7 +201,7 @@ void CPlane::odeStep(u32 iStep) {
         if (fVol>1.0f) fVol=1.0f;
         core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
         CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
       m_fAngleRate[i]=f;
     }
@@ -209,7 +215,7 @@ void CPlane::odeStep(u32 iStep) {
       if (fVol>1.0f) fVol=1.0f;
       core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
-      ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
     }
     m_fAngleRate[2]=f;
   }
@@ -219,13 +225,13 @@ void CPlane::drawSpecifics() {
   m_pTargetSelector->highlightTargets();
 }
 
-ode::IIrrOdeEvent *CPlane::writeEvent() {
+irr::ode::IIrrOdeEvent *CPlane::writeEvent() {
   CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_bThreeWheeler);
   return p;
 }
 
-ode::eEventWriterType CPlane::getEventWriterType() {
-  return ode::eIrrOdeEventWriterUnknown;
+irr::ode::eEventWriterType CPlane::getEventWriterType() {
+  return irr::ode::eIrrOdeEventWriterUnknown;
 }
 
 void CPlane::activate() {

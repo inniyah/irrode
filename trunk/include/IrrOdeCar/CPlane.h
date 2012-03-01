@@ -23,6 +23,8 @@ class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
     ode::CIrrOdeJointHinge *m_pAxes[2];
     ode::CIrrOdeJointHinge2 *m_pSteerAxis;
     f32 m_fAngleRate[3];
+    s32 m_iOldHitsTaken,
+        m_iOldHitsScored;
 
     CIrrOdeCarTrack *m_pLap;
 

@@ -39,7 +39,9 @@ class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeft;
     f32 m_fSound;
-    s32 m_iNodeId;
+    s32 m_iNodeId,
+        m_iOldHitsTaken,
+        m_iOldHitsScored;
 
   public:
     CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
