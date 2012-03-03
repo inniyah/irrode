@@ -18,22 +18,22 @@ namespace ode {
 /**
  * Standard Irrlicht constructor
  */
-CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                         const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeBody::CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                         const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                          CIrrOdeDampable(parent, mgr, id, position, rotation, scale), IIrrOdeEventWriter() {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeBody contructor\n");
   #endif
 
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
   if (m_pWorld) m_pWorld->addBody(this);
   m_iBodyId=0;
   m_bEnabled=false;
-  m_vLinear=vector3df(0.0f,0.0f,0.0f);
-  m_vAngular=vector3df(0.0f,0.0f,0.0f);
-  m_vFiniteRotationAxis=vector3df(0.0f,0.0f,0.0f);
-  m_pParentBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
+  m_vLinear=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vAngular=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vFiniteRotationAxis=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_pParentBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
   m_bFiniteRotationMode=false;
   m_iGravityMode=1;
   m_bParamMaster=false;
@@ -56,7 +56,7 @@ CIrrOdeBody::CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   m_pQueue=CIrrOdeManager::getSharedInstance()->getQueue();
 
-  CIrrOdeBody *pParent=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
+  CIrrOdeBody *pParent=(CIrrOdeBody *)getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
   if (pParent!=NULL) pParent->addChildBody(this);
 
   updateAbsolutePosition();
@@ -67,7 +67,7 @@ CIrrOdeBody::~CIrrOdeBody() {
     printf("CIrrOdeBody destructor\n");
   #endif
 
-  list<CIrrOdeGeom *>::Iterator i;
+  irr::core::list<CIrrOdeGeom *>::Iterator i;
 
   for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++) {
     #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -114,7 +114,7 @@ void CIrrOdeBody::initPhysics() {
         setParent(m_pWorld);
         m_pParentBody->updateAbsolutePosition();
         setScale(m_pParentBody->getScale());
-        vector3df rot=getAbsoluteTransformation().getRotationDegrees();
+        irr::core::vector3df rot=getAbsoluteTransformation().getRotationDegrees();
         rot+=m_pParentBody->getAbsoluteTransformation().getRotationDegrees();
         setRotation(m_pParentBody->getAbsoluteTransformation().getRotationDegrees());
       }
@@ -140,7 +140,7 @@ void CIrrOdeBody::initPhysics() {
         m_pOdeDevice->bodySetMaxAngularSpeed(m_iBodyId,m_fMaxAngularSpeed);
 
       if (m_iBodyId) {
-        list<CIrrOdeGeom *>::Iterator i;
+        irr::core::list<CIrrOdeGeom *>::Iterator i;
         for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++) {
           CIrrOdeGeom *geom=(*i);
           #ifdef _TRACE_INIT_PHYSICS
@@ -149,7 +149,7 @@ void CIrrOdeBody::initPhysics() {
           geom->initPhysics();
         }
 
-        list <CIrrOdeJoint *>::Iterator j;
+        irr::core::list <CIrrOdeJoint *>::Iterator j;
         for (j=m_pJoints.begin(); j!=m_pJoints.end(); j++) {
           CIrrOdeJoint *joint=(*j);
           joint->initLinkedObjects();
@@ -192,7 +192,7 @@ void CIrrOdeBody::initPhysics() {
      m_pQueue->postEvent(pEvent);
     }
   }
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
 }
 
@@ -389,7 +389,7 @@ bool CIrrOdeBody::getFiniteRotationMode() {
  * Set the finite rotation axis
  * @param pAxis the finite rotaion axis
  */
-void CIrrOdeBody::setFiniteRotationAxis(vector3df &pAxis) {
+void CIrrOdeBody::setFiniteRotationAxis(irr::core::vector3df &pAxis) {
   m_vFiniteRotationAxis=pAxis;
   if (m_iBodyId) m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,pAxis);
 }
@@ -398,8 +398,8 @@ void CIrrOdeBody::setFiniteRotationAxis(vector3df &pAxis) {
  * Get the finite rotation axis
  * @return the finite rotation axis
  */
-vector3df &CIrrOdeBody::getFiniteRotationAxis() {
-  static vector3df v=m_iBodyId && m_bPhysicsInitialized?m_pOdeDevice->bodyGetFiniteRotationAxis(m_iBodyId):m_vFiniteRotationAxis;
+irr::core::vector3df &CIrrOdeBody::getFiniteRotationAxis() {
+  static irr::core::vector3df v=m_iBodyId && m_bPhysicsInitialized?m_pOdeDevice->bodyGetFiniteRotationAxis(m_iBodyId):m_vFiniteRotationAxis;
   return v;
 }
 
@@ -462,15 +462,15 @@ void CIrrOdeBody::render() {
 
 void CIrrOdeBody::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 /**
  * Get the body's class identifier
  * @return IRR_ODE_BODY_ID
  */
-ESCENE_NODE_TYPE CIrrOdeBody::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_BODY_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeBody::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID;
 }
 
 /**
@@ -489,7 +489,7 @@ void CIrrOdeBody::addGeom(CIrrOdeGeom *pGeom) {
  * @param pGeom the geom to be removed
  */
 void CIrrOdeBody::removeGeom(CIrrOdeGeom *pGeom) {
-  list<CIrrOdeGeom *>::Iterator i;
+  irr::core::list<CIrrOdeGeom *>::Iterator i;
   for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++)
     if ((*i)==pGeom) {
       #ifdef _TRACE_INIT_PHYSICS
@@ -505,7 +505,7 @@ void CIrrOdeBody::removeGeom(CIrrOdeGeom *pGeom) {
  * @param pJoint the joint to be added
  */
 void CIrrOdeBody::addJoint(CIrrOdeJoint *pJoint) {
-  list<CIrrOdeJoint *>::Iterator i;
+  irr::core::list<CIrrOdeJoint *>::Iterator i;
   for (i=m_pJoints.begin(); i!=m_pJoints.end(); i++) if ((*i)==pJoint) return;
   m_pJoints.push_back(pJoint);
   #ifdef _TRACE_INIT_PHYSICS
@@ -541,7 +541,7 @@ void CIrrOdeBody::frameUpdate() {
  * @param pos the position of the force to be added
  * @param force the force to be added
  */
-void CIrrOdeBody::addForceAtPosition(vector3df pos, vector3df force) {
+void CIrrOdeBody::addForceAtPosition(irr::core::vector3df pos, irr::core::vector3df force) {
   m_pOdeDevice->bodyEnable(m_iBodyId);
   m_pOdeDevice->bodyAddForceAtPosition(m_iBodyId,force,pos);
 }
@@ -550,7 +550,7 @@ void CIrrOdeBody::addForceAtPosition(vector3df pos, vector3df force) {
  * Add a force to the body at it's center of gravity
  * @param force the force to be added
  */
-void CIrrOdeBody::addForce(vector3df force) {
+void CIrrOdeBody::addForce(irr::core::vector3df force) {
   m_pOdeDevice->bodyEnable(m_iBodyId);
   m_pOdeDevice->bodyAddForce(m_iBodyId,force);
 }
@@ -559,7 +559,7 @@ void CIrrOdeBody::addForce(vector3df force) {
  * Add a torque to the body
  * @param torque the torque to add
  */
-void CIrrOdeBody::addTorque(vector3df torque) {
+void CIrrOdeBody::addTorque(irr::core::vector3df torque) {
   m_pOdeDevice->bodyEnable(m_iBodyId);
   m_pOdeDevice->bodyAddTorque(m_iBodyId,torque);
 }
@@ -568,7 +568,7 @@ void CIrrOdeBody::addTorque(vector3df torque) {
  * Set the body's torque
  * @param torque the new torque of the body
  */
-void CIrrOdeBody::setTorque(vector3df torque) {
+void CIrrOdeBody::setTorque(irr::core::vector3df torque) {
   m_pOdeDevice->bodyEnable(m_iBodyId);
   m_pOdeDevice->bodySetTorque(m_iBodyId,torque);
 }
@@ -577,7 +577,7 @@ void CIrrOdeBody::setTorque(vector3df torque) {
  * Set linear velocity of the body
  * @param newVelocity the new linear velocity of the body
  */
-void CIrrOdeBody::setLinearVelocity(vector3df newVelocity) {
+void CIrrOdeBody::setLinearVelocity(irr::core::vector3df newVelocity) {
   m_vLinear=newVelocity;
   if (m_bPhysicsInitialized)
     m_pOdeDevice->bodySetLinearVelocity(m_iBodyId,newVelocity);
@@ -587,7 +587,7 @@ void CIrrOdeBody::setLinearVelocity(vector3df newVelocity) {
  * Set the angular velocity of the body
  * @param newVelocity the new angular velocity of the body
  */
-void CIrrOdeBody::setAngularVelocity(vector3df newVelocity) {
+void CIrrOdeBody::setAngularVelocity(irr::core::vector3df newVelocity) {
   m_vAngular=newVelocity;
   if (m_bPhysicsInitialized)
     m_pOdeDevice->bodySetAngularVelocity(m_iBodyId,newVelocity);
@@ -597,8 +597,8 @@ void CIrrOdeBody::setAngularVelocity(vector3df newVelocity) {
  * Set the Irrlicht position of the body. This method will update the absolute position if initPhysics was not yet called
  * @param newPos the new position
  */
-void CIrrOdeBody::setPosition(const vector3df &newPos) {
-  ISceneNode::setPosition(newPos);
+void CIrrOdeBody::setPosition(const irr::core::vector3df &newPos) {
+  irr::scene::ISceneNode::setPosition(newPos);
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
@@ -608,8 +608,8 @@ void CIrrOdeBody::setPosition(const vector3df &newPos) {
  * Set the Irrlicht rotation of the body. This method will update the absolute position if initPhysics was not yet called
  * @param newRot the new rotation
  */
-void CIrrOdeBody::setRotation(const vector3df &newRot) {
-  ISceneNode::setRotation(newRot);
+void CIrrOdeBody::setRotation(const irr::core::vector3df &newRot) {
+  irr::scene::ISceneNode::setRotation(newRot);
   //since ODE only handles world coordinates we update the absolute position if physics is not yet initializes
   if (!m_bPhysicsInitialized)
     updateAbsolutePosition();
@@ -631,10 +631,10 @@ const wchar_t *CIrrOdeBody::getTypeName() {
   return IRR_ODE_BODY_NAME;
 }
 
-void CIrrOdeBody::addChild(ISceneNode *pChild) {
-	ISceneNode::addChild(pChild);
+void CIrrOdeBody::addChild(irr::scene::ISceneNode *pChild) {
+	irr::scene::ISceneNode::addChild(pChild);
 	#ifdef _IRREDIT_PLUGIN
-	  pChild->setPosition(vector3df(0.0f,0.0f,0.0f));
+	  pChild->setPosition(irr::core::vector3df(0.0f,0.0f,0.0f));
   #endif
 }
 
@@ -643,31 +643,31 @@ void CIrrOdeBody::addChild(ISceneNode *pChild) {
  * @param pBody the child body to be added
  */
 void CIrrOdeBody::addChildBody(CIrrOdeBody *pBody) {
-  list<CIrrOdeBody *>::Iterator it;
+  irr::core::list<CIrrOdeBody *>::Iterator it;
   for (it=m_pChildBodies.begin(); it!=m_pChildBodies.end(); it++) if (*it==pBody) return;
   #ifdef _TRACE_INIT_PHYSICS
-    printf("CIrrOdeBody::addChildBody: adding body %i to list\n",pBody->getID());
+    printf("CIrrOdeBody::addChildBody: adding body %i to irr::core::list\n",pBody->getID());
   #endif
   m_pChildBodies.push_back(pBody);
 }
 
 /**
- * Get a list of all child bodies attached to this one
- * @return list of all child bodies attached to this one
+ * Get a irr::core::list of all child bodies attached to this one
+ * @return irr::core::list of all child bodies attached to this one
  */
-list<CIrrOdeBody *> &CIrrOdeBody::getChildBodies() {
+irr::core::list<CIrrOdeBody *> &CIrrOdeBody::getChildBodies() {
   return m_pChildBodies;
 }
 
 /**
- * Get a list of the joints attached to the body
- * @return a list of the joints attached to the body
+ * Get a irr::core::list of the joints attached to the body
+ * @return a irr::core::list of the joints attached to the body
  */
-list<CIrrOdeJoint *> CIrrOdeBody::getJoints() {
+irr::core::list<CIrrOdeJoint *> CIrrOdeBody::getJoints() {
   return m_pJoints;
 }
 
-void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeBody::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
 	CIrrOdeDampable::serializeAttributes(out,options);
 
 	out->addBool("Enabled",m_bEnabled);
@@ -681,7 +681,7 @@ void CIrrOdeBody::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
   if (m_bFiniteRotationMode) out->addVector3d("FiniteRotationAxis",m_vFiniteRotationAxis);
 }
 
-void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeBody::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
 	CIrrOdeDampable::deserializeAttributes(in,options);
 
 	m_bEnabled=in->getAttributeAsBool("Enabled");
@@ -695,7 +695,7 @@ void CIrrOdeBody::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
   if (m_bFiniteRotationMode) m_vFiniteRotationAxis=in->getAttributeAsVector3d("FiniteRotationAxis");
 }
 
-ISceneNode *CIrrOdeBody::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeBody::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeBody *pRet=new CIrrOdeBody(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
 
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
@@ -806,19 +806,19 @@ CIrrOdeGeom *CIrrOdeBody::getTouched() {
   return m_pTouching;
 }
 
-vector3df CIrrOdeBody::getLinearVelocity() {
+irr::core::vector3df CIrrOdeBody::getLinearVelocity() {
   return m_vLinear;
 }
 
-vector3df CIrrOdeBody::getAngularVelocity() {
+irr::core::vector3df CIrrOdeBody::getAngularVelocity() {
   return m_vAngular;
 }
 
-void CIrrOdeBody::setCollisionPoint(vector3df vPoint) {
+void CIrrOdeBody::setCollisionPoint(irr::core::vector3df vPoint) {
   m_vCollisionPoint=vPoint;
 }
 
-vector3df CIrrOdeBody::getCollisionPoint() {
+irr::core::vector3df CIrrOdeBody::getCollisionPoint() {
   return m_vCollisionPoint;
 }
 
@@ -830,15 +830,15 @@ s32 CIrrOdeBody::getCollisionMaterial() {
   return m_iCollisionMaterial;
 }
 
-vector3df CIrrOdeBody::getPointVel(vector3df vPos) {
+irr::core::vector3df CIrrOdeBody::getPointVel(irr::core::vector3df vPos) {
   return m_pOdeDevice->bodyGetPointVel(m_iBodyId,vPos);
 }
 
-vector3df CIrrOdeBody::getRelPointVel(vector3df vPos) {
+irr::core::vector3df CIrrOdeBody::getRelPointVel(irr::core::vector3df vPos) {
   return m_pOdeDevice->bodyGetRelPointVel(m_iBodyId,vPos);
 }
 
-vector3df CIrrOdeBody::getRelPointPos(vector3df vPos) {
+irr::core::vector3df CIrrOdeBody::getRelPointPos(irr::core::vector3df vPos) {
   return m_pOdeDevice->bodyGetRelPointPos(m_iBodyId,vPos);
 }
 
@@ -872,7 +872,7 @@ void CIrrOdeBody::setIsFastMoving(bool b) {
   }
 
   if (b) {
-    ISceneNode *pNode=m_pSceneManager->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_GEOM_RAY_NAME),m_pWorld);
+    irr::scene::ISceneNode *pNode=m_pSceneManager->addSceneNode(CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_GEOM_RAY_NAME),m_pWorld);
     m_pRay=reinterpret_cast<CIrrOdeGeomRay *>(pNode);
     m_pRay->setAttachedBody(this);
     if (m_bPhysicsInitialized) m_pRay->initPhysics();
@@ -883,20 +883,20 @@ bool CIrrOdeBody::isFastMoving() {
   return m_bFastMoving;
 }
 
-void CIrrOdeBody::bodyMoved(vector3df newPos) {
+void CIrrOdeBody::bodyMoved(irr::core::vector3df newPos) {
   if (m_bFiniteRotationMode && m_vFiniteRotationAxis.getLength()!=0) {
-    vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
+    irr::core::vector3df axis=getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_vFiniteRotationAxis);
     m_pOdeDevice->bodySetFiniteRotationAxis(m_iBodyId,axis);
   }
 
-  core::list<CIrrOdeJoint *>::Iterator it;
+  irr::core::list<CIrrOdeJoint *>::Iterator it;
   for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
     if ((*it)->doesUpdateVariables()) m_pOdeManager->objectChanged(*it);
   }
 }
 
 void CIrrOdeBody::addStepMotor(IIrrOdeStepMotor *pMotor) {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) return;
   m_lStepMotors.push_back(pMotor);
 }
@@ -907,35 +907,35 @@ void CIrrOdeBody::addMotor(IIrrOdeMotor *p) {
 }
 
 void CIrrOdeBody::removeStepMotor(IIrrOdeStepMotor *pMotor) {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
 }
 
-vector3df CIrrOdeBody::getPosRelPoint(vector3df vPos) {
-  static vector3df v=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeBody::getPosRelPoint(irr::core::vector3df vPos) {
+  static irr::core::vector3df v=irr::core::vector3df(0,0,0);
   v=m_pOdeDevice->bodyGetPosRelPoint(m_iBodyId,vPos);
   return v;
 }
 
-vector3df CIrrOdeBody::getVectorFromWorld(vector3df vPos) {
-  static vector3df v=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeBody::getVectorFromWorld(irr::core::vector3df vPos) {
+  static irr::core::vector3df v=irr::core::vector3df(0,0,0);
   v=m_pOdeDevice->bodyVectorFromWorld(m_iBodyId,vPos);
   return v;
 }
 
-void CIrrOdeBody::getOdeRotation(vector3df &cRot) {
+void CIrrOdeBody::getOdeRotation(irr::core::vector3df &cRot) {
   cRot=m_pOdeDevice->bodyGetRotation(m_iBodyId);
 }
 
 CIrrOdeGeom *CIrrOdeBody::getGeomFromName(const c8 *sName) {
-  list<CIrrOdeGeom *>::Iterator it;
+  irr::core::list<CIrrOdeGeom *>::Iterator it;
   for (it=m_pGeoms.begin(); it!=m_pGeoms.end(); it++) {
     CIrrOdeGeom *p=*it;
     printf("find geom: \"%s\" -- \"%s\"\n",p->getName(),sName);
     if (!strcmp(p->getName(),sName)) return *it;
   }
 
-  list<CIrrOdeBody *>::Iterator it2;
+  irr::core::list<CIrrOdeBody *>::Iterator it2;
   for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
     CIrrOdeGeom *p=(*it2)->getGeomFromName(sName);
     if (p!=NULL) return p;
@@ -944,14 +944,14 @@ CIrrOdeGeom *CIrrOdeBody::getGeomFromName(const c8 *sName) {
 }
 
 CIrrOdeJoint *CIrrOdeBody::getJointFromName(const c8 *sName) {
-  list<CIrrOdeJoint *>::Iterator it;
+  irr::core::list<CIrrOdeJoint *>::Iterator it;
   for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
     CIrrOdeJoint *p=*it;
     printf("find joint: \"%s\" -- \"%s\"\n",p->getName(),sName);
     if (!strcmp(p->getName(),sName)) return *it;
   }
 
-  list<CIrrOdeBody *>::Iterator it2;
+  irr::core::list<CIrrOdeBody *>::Iterator it2;
   for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
     CIrrOdeJoint *p=(*it2)->getJointFromName(sName);
     if (p!=NULL) return p;
@@ -962,13 +962,13 @@ CIrrOdeJoint *CIrrOdeBody::getJointFromName(const c8 *sName) {
 CIrrOdeBody *CIrrOdeBody::getChildBodyFromName(const c8 *sName) {
   if (!strcmp(getName(),sName)) return this;
 
-  list<CIrrOdeBody *>::Iterator it;
+  irr::core::list<CIrrOdeBody *>::Iterator it;
   for (it=m_pChildBodies.begin(); it!=m_pChildBodies.end(); it++) {
     CIrrOdeBody *p=(*it)->getChildBodyFromName(sName);
     if (p!=NULL) return p;
   }
 
-  list<CIrrOdeJoint *>::Iterator it2;
+  irr::core::list<CIrrOdeJoint *>::Iterator it2;
   for (it2=m_pJoints.begin(); it2!=m_pJoints.end(); it2++) {
     CIrrOdeJoint *p=*it2;
     CIrrOdeBody *pRet=NULL;
@@ -982,14 +982,14 @@ CIrrOdeBody *CIrrOdeBody::getChildBodyFromName(const c8 *sName) {
 }
 
 IIrrOdeStepMotor *CIrrOdeBody::getStepMotorFromName(const c8 *sName) {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) {
     IIrrOdeStepMotor *p=*it;
     printf("find step motor: \"%s\" -- \"%s\"\n",p->getName(),sName);
     if (!strcmp(p->getName(),sName)) return *it;
   }
 
-  list<CIrrOdeBody *>::Iterator it2;
+  irr::core::list<CIrrOdeBody *>::Iterator it2;
   for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
     IIrrOdeStepMotor *p=(*it2)->getStepMotorFromName(sName);
     if (p!=NULL) return p;
@@ -998,14 +998,14 @@ IIrrOdeStepMotor *CIrrOdeBody::getStepMotorFromName(const c8 *sName) {
 }
 
 IIrrOdeMotor *CIrrOdeBody::getMotorFromName(const c8 *sName) {
-  list<IIrrOdeMotor *>::Iterator it;
+  irr::core::list<IIrrOdeMotor *>::Iterator it;
   for (it=m_lMotors.begin(); it!=m_lMotors.end(); it++) {
     IIrrOdeMotor *p=*it;
     printf("find motor: \"%s\" -- \"%s\"\n",p->getName(),sName);
     if (!strcmp(p->getName(),sName)) return *it;
   }
 
-  list<CIrrOdeBody *>::Iterator it2;
+  irr::core::list<CIrrOdeBody *>::Iterator it2;
   for (it2=m_pChildBodies.begin(); it2!=m_pChildBodies.end(); it2++) {
     IIrrOdeMotor *p=(*it2)->getMotorFromName(sName);
     if (p!=NULL) return p;
@@ -1018,10 +1018,10 @@ bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
     CIrrOdeEventBodyMoved *pEvent=(CIrrOdeEventBodyMoved *)pEvt;
 
     if (pEvent->positionChanged  ()) {
-      core::vector3df newPos=pEvent->getNewPosition();
+      irr::core::vector3df newPos=pEvent->getNewPosition();
       if (m_bFastMoving && m_pRay) {
         updateAbsolutePosition();
-        vector3df dir=newPos-getAbsolutePosition();
+        irr::core::vector3df dir=newPos-getAbsolutePosition();
         f32 fVel=dir.getLength();
         dir.normalize();
         m_pRay->set(getAbsolutePosition(),dir,fVel);
@@ -1040,7 +1040,7 @@ bool CIrrOdeBody::onEvent(IIrrOdeEvent *pEvt) {
       if (pEvent->getTouched())
         setIsTouching(pEvent->getTouched());
       else {
-        ISceneNode *pNode=m_pSceneManager->getSceneNodeFromId(pEvent->getTouchId());
+        irr::scene::ISceneNode *pNode=m_pSceneManager->getSceneNodeFromId(pEvent->getTouchId());
         CIrrOdeGeom *pGeom=reinterpret_cast<CIrrOdeGeom *>(pNode);
         setIsTouching(pGeom);
       }

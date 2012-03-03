@@ -4,12 +4,12 @@ namespace irr {
 namespace ode {
 
 CIrrOdeEventLoadScene::CIrrOdeEventLoadScene(const c8 *sScene) : IIrrOdeEvent() {
-  m_sScene=stringc(sScene);
+  m_sScene=irr::core::stringc(sScene);
 }
 
 CIrrOdeEventLoadScene::CIrrOdeEventLoadScene(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
   if (pIn->getType()==eIrrOdeEventLoadScene) {
-    m_sScene=stringc(((CIrrOdeEventLoadScene *)pIn)->getScene());
+    m_sScene=irr::core::stringc(((CIrrOdeEventLoadScene *)pIn)->getScene());
   }
 }
 
@@ -18,7 +18,7 @@ CIrrOdeEventLoadScene::CIrrOdeEventLoadScene(CSerializer *pData) : IIrrOdeEvent(
   if (pData->getU16()==eIrrOdeEventLoadScene) {
     c8 s[1024];
     pData->getString(s,1023);
-    m_sScene=stringc(s);
+    m_sScene=irr::core::stringc(s);
   }
 }
 

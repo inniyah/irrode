@@ -12,7 +12,7 @@ CIrrOdeEventBodyRemoved::CIrrOdeEventBodyRemoved(CIrrOdeBody *pBody) : IIrrOdeEv
   m_iBodyId=pBody?pBody->getID():0;
 }
 
-CIrrOdeEventBodyRemoved::CIrrOdeEventBodyRemoved(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
+CIrrOdeEventBodyRemoved::CIrrOdeEventBodyRemoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventBodyRemoved) {
     m_iBodyId=pData->getU32();

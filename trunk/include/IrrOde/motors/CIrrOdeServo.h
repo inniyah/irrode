@@ -25,10 +25,10 @@ class CIrrOdeServo : public IIrrOdeMotor {
     /**
      * Standard Irrlicht scenenode constructor
      */
-    CIrrOdeServo(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                 const vector3df &position=core::vector3df(0,0,0),
-		             const vector3df &rotation = core::vector3df(0,0,0),
-		             const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeServo(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                 const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     ~CIrrOdeServo();
 
@@ -45,21 +45,21 @@ class CIrrOdeServo : public IIrrOdeMotor {
 		 * the "setPosition" method is overridden to make sure the IrrOdeGeom nodes always have a relative position of (0,0,0)
 		 * @param newpos the new position. Will be discarded and set to (0,0,0)
 		 */
-		virtual void setPosition(const vector3df &newpos);
+		virtual void setPosition(const irr::core::vector3df &newpos);
 
 		virtual void render();
     virtual void OnRegisterSceneNode();
     virtual void initPhysics();
 
     virtual s32 getID() const;
-    virtual ESCENE_NODE_TYPE getType() const;
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const;
     virtual const wchar_t *getTypeName();
 
-    virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+    virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
     virtual void removeFromPhysics() { CIrrOdeSceneNode::removeFromPhysics(); }
 };
 

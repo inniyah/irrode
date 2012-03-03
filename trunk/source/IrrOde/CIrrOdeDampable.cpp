@@ -4,8 +4,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeDampable::CIrrOdeDampable(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                 const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeDampable::CIrrOdeDampable(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                 const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                  CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -33,10 +33,10 @@ CIrrOdeDampable::~CIrrOdeDampable() {
   #endif
 }
 
-void CIrrOdeDampable::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeDampable::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
-	out->addString("paramName",stringc(m_sParamName).c_str());
+	out->addString("paramName",irr::core::stringc(m_sParamName).c_str());
 	out->addBool("useDefined",m_bUseDefined);
 
 	CIrrOdeDampable *p=NULL;
@@ -57,7 +57,7 @@ void CIrrOdeDampable::serializeAttributes(IAttributes* out, SAttributeReadWriteO
 	}
 }
 
-void CIrrOdeDampable::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeDampable::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
 	m_sParamName=in->getAttributeAsString("paramName");

@@ -29,35 +29,29 @@
 namespace irr {
 namespace ode {
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
-CIrrOdeSceneNodeFactory::CIrrOdeSceneNodeFactory(ISceneManager *pManager) {
+CIrrOdeSceneNodeFactory::CIrrOdeSceneNodeFactory(irr::scene::ISceneManager *pManager) {
   m_pManager=pManager;
 
-  m_cNames.push_back(stringc(IRR_ODE_BODY_NAME             )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID             );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_BOX_NAME         )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_BOX_ID         );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_CAPSULE_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_CAPSULE_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_CYLINDER_NAME    )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_CYLINDER_ID    );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_HEIGHTFIELD_NAME )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_HEIGHTFIELD_ID );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_PLANE_NAME       )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_PLANE_ID       );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_RAY_NAME         )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_RAY_ID         );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_SPHERE_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_SPHERE_ID      );
-  m_cNames.push_back(stringc(IRR_ODE_GEOM_TRIMESH_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_GEOM_TRIMESH_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_FIXED_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_FIXED_ID      );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_HINGE_NAME      )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE_ID      );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_HINGE2_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE2_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_JOINT_SLIDER_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_JOINT_SLIDER_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_SPACE_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID            );
-  m_cNames.push_back(stringc(IRR_ODE_WORLD_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID            );
-  m_cNames.push_back(stringc(IRR_ODE_MOTOR_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_MOTOR_ID            );
-  m_cNames.push_back(stringc(IRR_ODE_SERVO_NAME            )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_SERVO_ID            );
-  m_cNames.push_back(stringc(IRR_ODE_IMPULSE_MOTOR_NAME    )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_IMPULSE_MOTOR_ID    );
-  m_cNames.push_back(stringc(IRR_ODE_TORQUE_MOTOR_NAME     )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_TORQUE_MOTOR_ID     );
-  m_cNames.push_back(stringc(IRR_ODE_AERO_DRAG_NAME        )); m_cTypes.push_back((ESCENE_NODE_TYPE)IRR_ODE_AERO_DRAG_ID        );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_BODY_NAME             )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID             );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_BOX_NAME         )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_BOX_ID         );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_CAPSULE_NAME     )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_CAPSULE_ID     );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_CYLINDER_NAME    )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_CYLINDER_ID    );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_HEIGHTFIELD_NAME )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_HEIGHTFIELD_ID );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_PLANE_NAME       )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_PLANE_ID       );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_RAY_NAME         )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_RAY_ID         );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_SPHERE_NAME      )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_SPHERE_ID      );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_GEOM_TRIMESH_NAME     )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_TRIMESH_ID     );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_JOINT_FIXED_NAME      )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_FIXED_ID      );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_JOINT_HINGE_NAME      )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE_ID      );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_JOINT_HINGE2_NAME     )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE2_ID     );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_JOINT_SLIDER_NAME     )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_SLIDER_ID     );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_SPACE_NAME            )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID            );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_WORLD_NAME            )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID            );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_MOTOR_NAME            )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_MOTOR_ID            );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_SERVO_NAME            )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SERVO_ID            );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_IMPULSE_MOTOR_NAME    )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_IMPULSE_MOTOR_ID    );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_TORQUE_MOTOR_NAME     )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_TORQUE_MOTOR_ID     );
+  m_cNames.push_back(irr::core::stringc(IRR_ODE_AERO_DRAG_NAME        )); m_cTypes.push_back((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_AERO_DRAG_ID        );
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     for (u32 i=0; i<m_cNames.size(); i++)
@@ -65,7 +59,7 @@ CIrrOdeSceneNodeFactory::CIrrOdeSceneNodeFactory(ISceneManager *pManager) {
   #endif
 }
 
-ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (ESCENE_NODE_TYPE type, ISceneNode *parent) {
+irr::scene::ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (irr::scene::ESCENE_NODE_TYPE type, irr::scene::ISceneNode *parent) {
   CIrrOdeSceneNode *pRet=NULL;
   if (!parent) parent=m_pManager->getRootSceneNode();
   switch (type) {
@@ -94,15 +88,15 @@ ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (ESCENE_NODE_TYPE type, IScene
   }
 
   #ifdef _TRACE_FACTORY
-    stringc sName(pRet->getTypeName());
+    irr::core::stringc sName(pRet->getTypeName());
     printf("CIrrOdeSceneNodeFactory::addSceneNode(%i): \"%s\"\n",(int)type,sName.c_str());
   #endif
 
   return pRet;
 }
 
-ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (const c8 *typeName, ISceneNode *parent) {
-  stringc sName=stringc(typeName);
+irr::scene::ISceneNode *CIrrOdeSceneNodeFactory::addSceneNode (const c8 *typeName, irr::scene::ISceneNode *parent) {
+  irr::core::stringc sName=irr::core::stringc(typeName);
   for (u32 i=0; i<m_cNames.size(); i++)
     if (m_cNames[i]==sName) {
       #ifdef _TRACE_FACTORY
@@ -117,15 +111,15 @@ u32 CIrrOdeSceneNodeFactory::getCreatableSceneNodeTypeCount() const {
   return m_cNames.size();
 }
 
-ESCENE_NODE_TYPE CIrrOdeSceneNodeFactory::getCreateableSceneNodeType (u32 idx) const {
-  ESCENE_NODE_TYPE iRet=idx<m_cTypes.size()?m_cTypes[idx]:ESNT_UNKNOWN;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeSceneNodeFactory::getCreateableSceneNodeType (u32 idx) const {
+  irr::scene::ESCENE_NODE_TYPE iRet=idx<m_cTypes.size()?m_cTypes[idx]:irr::scene::ESNT_UNKNOWN;
   #ifdef _TRACE_FACTORY
     printf("CIrrOdeSceneNodeFactory::getCreateableSceneNodeType(%i): %i\n",idx,iRet);
   #endif
   return iRet;
 }
 
-const c8 *CIrrOdeSceneNodeFactory::getCreateableSceneNodeTypeName(ESCENE_NODE_TYPE type) const {
+const c8 *CIrrOdeSceneNodeFactory::getCreateableSceneNodeTypeName(irr::scene::ESCENE_NODE_TYPE type) const {
   for (u32 i=0; i<m_cTypes.size(); i++)
     if (m_cTypes[i]==type) {
       #ifdef _TRACE_FACTORY

@@ -16,7 +16,7 @@
   #define _DEFAULT_AUTO_DISABLE_TIME 0.0f
 
   #define _DEFAULT_MAX_ANGULAR_SPEED 0.0f
-  
+
 namespace irr {
 namespace ode {
 
@@ -34,14 +34,14 @@ class CIrrOdeDampable : public CIrrOdeSceneNode {
         m_fAutoDisableLinearThreshold,m_fAutoDisableAngularThreshold,m_fAutoDisableTime,
         m_fMaxAngularSpeed;
     s32 m_iAutoDisableSteps,m_iAutoDisableFlag;
-		stringw m_sParamName;
+		irr::core::stringw m_sParamName;
 		bool m_bUseDefined;
 
   public:
-    CIrrOdeDampable(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                    const vector3df &position=core::vector3df(0,0,0),
-		                const vector3df &rotation = core::vector3df(0,0,0),
-		                const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeDampable(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                    const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		                const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		                const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeDampable();
 
@@ -67,8 +67,8 @@ class CIrrOdeDampable : public CIrrOdeSceneNode {
     virtual void setAutoDisableTime(f32 fTime)=0;                   /*!< set the auto disable time parameter */
     virtual f32 getAutoDisableTime()=0;                             /*!< get the auto disable time parameter */
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
 

@@ -7,7 +7,7 @@ namespace irr {
      * @class CGUINeedleIndicator
      * A GUI element for a needle indicator
      */
-    class CGUINeedleIndicator : public gui::IGUIElement {
+    class CGUINeedleIndicator : public irr::gui::IGUIElement {
       public:
         /**
          * @class CNeedle
@@ -60,7 +60,7 @@ namespace irr {
         };
 
       protected:
-        gui::IGUIEnvironment *m_pGuiEnv;    /**<! the GUI environment */
+        irr::gui::IGUIEnvironment *m_pGuiEnv;    /**<! the GUI environment */
         video::ITexture *m_pTexture;        /**<! the background texture */
         video::IVideoDriver *m_pDrv;        /**<! the video driver */
         core::list<CNeedle *> m_lNeedles;   /**<! list of the needles */

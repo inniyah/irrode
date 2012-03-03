@@ -8,8 +8,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomBox::CIrrOdeGeomBox(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                               const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeGeomBox::CIrrOdeGeomBox(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                               const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                CIrrOdeGeom(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -42,15 +42,15 @@ CIrrOdeGeomBox::~CIrrOdeGeomBox() {
 void CIrrOdeGeomBox::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_BOUNDING_BOXES
-    m_pVideoDriver->setTransform(video::ETS_WORLD,AbsoluteTransformation);
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD,AbsoluteTransformation);
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->draw3DBox(m_cBoundingBox,SColor(100,0x40,0x40,0x40));
+    m_pVideoDriver->draw3DBox(m_cBoundingBox,irr::video::SColor(100,0x40,0x40,0x40));
   #endif
 }
 
 void CIrrOdeGeomBox::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomBox::initPhysics() {
@@ -58,22 +58,22 @@ void CIrrOdeGeomBox::initPhysics() {
 
   getParent()->updateAbsolutePosition();
   updateAbsolutePosition();
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   if (m_fWidth==0.0f && m_fHeight==0.0f && m_fDepth==0.0f) {
     if (this->m_bUseAllMeshBuffers) {
-      IMesh *pMesh=NULL;
+      irr::scene::IMesh *pMesh=NULL;
 
-      ISceneNode *pNode=getParent();
+      irr::scene::ISceneNode *pNode=getParent();
 
       switch (pNode->getType()) {
-        case ESNT_MESH :
-          pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+        case irr::scene::ESNT_MESH :
+          pMesh=(reinterpret_cast<irr::scene::IMeshSceneNode *>(pNode))->getMesh();
           break;
 
-        case ESNT_ANIMATED_MESH:
-          pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+        case irr::scene::ESNT_ANIMATED_MESH:
+          pMesh=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
           break;
 
         default:
@@ -92,18 +92,18 @@ void CIrrOdeGeomBox::initPhysics() {
       }
     }
     else {
-      IMesh *pMesh=NULL;
-      CDynamicMeshBuffer cDynMeshBuffer(EVT_2TCOORDS,EIT_16BIT);
-      aabbox3d<f32> theBox=aabbox3d<f32>(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
-      ISceneNode *pNode=getParent();
+      irr::scene::IMesh *pMesh=NULL;
+      irr::scene::CDynamicMeshBuffer cDynMeshBuffer(irr::video::EVT_2TCOORDS,irr::video::EIT_16BIT);
+      irr::core::aabbox3d<f32> theBox=irr::core::aabbox3d<f32>(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+      irr::scene::ISceneNode *pNode=getParent();
 
       switch (pNode->getType()) {
-        case ESNT_MESH :
-          pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+        case irr::scene::ESNT_MESH :
+          pMesh=(reinterpret_cast<irr::scene::IMeshSceneNode *>(pNode))->getMesh();
           break;
 
-        case ESNT_ANIMATED_MESH:
-          pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+        case irr::scene::ESNT_ANIMATED_MESH:
+          pMesh=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
           break;
 
         default:
@@ -128,7 +128,7 @@ void CIrrOdeGeomBox::initPhysics() {
   m_iGeomId=m_pOdeDevice->geomCreateBox(m_pSpace->getSpaceId(),m_fWidth,m_fHeight,m_fDepth);
 
   if (m_iGeomId) {
-    vector3df pos=getAbsolutePosition(),
+    irr::core::vector3df pos=getAbsolutePosition(),
               rot=getAbsoluteTransformation().getRotationDegrees();
 
     m_pOdeDevice->geomSetPosition(m_iGeomId,pos);
@@ -167,8 +167,8 @@ s32 CIrrOdeGeomBox::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomBox::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_GEOM_BOX_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomBox::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_BOX_ID;
 }
 
 const wchar_t *CIrrOdeGeomBox::getTypeName() {
@@ -191,14 +191,14 @@ void CIrrOdeGeomBox::setDepht(f32 fDepth) {
   m_fDepth=fDepth;
 }
 
-void CIrrOdeGeomBox::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomBox::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
 
   out->addFloat("Width" ,m_fWidth );
   out->addFloat("Height",m_fHeight);
   out->addFloat("Depth" ,m_fDepth );
 
-  if (getParent() && (getParent()->getType()==ESNT_MESH || getParent()->getType()==ESNT_ANIMATED_MESH)) {
+  if (getParent() && (getParent()->getType()==irr::scene::ESNT_MESH || getParent()->getType()==irr::scene::ESNT_ANIMATED_MESH)) {
     out->addBool("useAllMaterials",m_bUseAllMeshBuffers);
 
     if (!m_bUseAllMeshBuffers) {
@@ -214,14 +214,14 @@ void CIrrOdeGeomBox::serializeAttributes(IAttributes* out, SAttributeReadWriteOp
   }
 }
 
-void CIrrOdeGeomBox::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomBox::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
 
   m_fWidth =in->getAttributeAsFloat("Width" );
   m_fHeight=in->getAttributeAsFloat("Height");
   m_fDepth =in->getAttributeAsFloat("Depth" );
 
-  if (getParent() && (getParent()->getType()==ESNT_MESH || getParent()->getType()==ESNT_ANIMATED_MESH)) {
+  if (getParent() && (getParent()->getType()==irr::scene::ESNT_MESH || getParent()->getType()==irr::scene::ESNT_ANIMATED_MESH)) {
     if (in->existsAttribute("useAllMaterials"))
  	  m_bUseAllMeshBuffers=in->getAttributeAsBool("useAllMaterials");
     else
@@ -229,7 +229,7 @@ void CIrrOdeGeomBox::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
 
     if (!m_bUseAllMeshBuffers) {
       m_aUseMeshBuffer.clear();
-      ISceneNode *pParent=getParent();
+      irr::scene::ISceneNode *pParent=getParent();
       if (pParent)
 	  for (u32 i=0; i<getParent()->getMaterialCount(); i++) {
         c8 s[0xFF];
@@ -244,11 +244,11 @@ void CIrrOdeGeomBox::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
   else m_bUseAllMeshBuffers=true;
 
   #ifdef _DRAW_BOUNDING_BOXES
-    m_cBoundingBox=aabbox3d<f32>(-m_fWidth/2,-m_fHeight/2,-m_fDepth/2,m_fWidth/2,m_fHeight/2,m_fDepth/2);
+    m_cBoundingBox=irr::core::aabbox3d<f32>(-m_fWidth/2,-m_fHeight/2,-m_fDepth/2,m_fWidth/2,m_fHeight/2,m_fDepth/2);
   #endif
 }
 
-ISceneNode *CIrrOdeGeomBox::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomBox::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   if (newManager==NULL) newManager=m_pSceneManager;
   if (newParent==NULL) newParent=getParent();
 

@@ -3,7 +3,7 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeEventRayHit::CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance) : IIrrOdeEvent() {
+CIrrOdeEventRayHit::CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, irr::core::vector3df pos, f32 fDistance) : IIrrOdeEvent() {
   m_pBody=pBody;
   m_pGeom=pGeom;
   m_pRay=pRay;
@@ -11,7 +11,7 @@ CIrrOdeEventRayHit::CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, C
   m_fDistance=fDistance;
 }
 
-CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
+CIrrOdeEventRayHit::CIrrOdeEventRayHit(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventRayHit) {
     u32 iRayId=pData->getU32(),iBodyId=pData->getU32(),iGeomId=pData->getU32();
@@ -51,7 +51,7 @@ CIrrOdeGeomRay *CIrrOdeEventRayHit::getRay() {
   return m_pRay;
 }
 
-vector3df CIrrOdeEventRayHit::getPosition() {
+irr::core::vector3df CIrrOdeEventRayHit::getPosition() {
   return m_cPos;
 }
 

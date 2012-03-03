@@ -13,13 +13,13 @@ class IIrrOdeEvent;
  * @class CIrrOdeWorldObserver
  * This class is used for nice features like the IrrOdeRecorder and IrrOdeNet. The purpose of
  * this class is to keep track of all changes that happen in the simulated world. Whenever a
- * new listener registeres the necessary events to reflect this state will be sent
+ * new irr::core::listener registeres the necessary events to reflect this state will be sent
  * @author Christian Keimel / dustbin::games
  */
 class CIrrOdeWorldObserver : public CIrrOdeEventQueue, public IIrrOdeEventListener {
   protected:
     /** the events that reflect the current state of the world */
-    list<IIrrOdeEvent *> m_lEvents;
+    irr::core::list<IIrrOdeEvent *> m_lEvents;
 
     /** protected constructor */
     CIrrOdeWorldObserver();
@@ -34,9 +34,9 @@ class CIrrOdeWorldObserver : public CIrrOdeEventQueue, public IIrrOdeEventListen
      */
     static CIrrOdeWorldObserver *getSharedInstance();
 
-    /** install the observer. Registeres the shared instance as event listener */
+    /** install the observer. Registeres the shared instance as event irr::core::listener */
     void install();
-    /** destall the observer. Removes the shared instancfe as event listener */
+    /** destall the observer. Removes the shared instancfe as event irr::core::listener */
     void destall();
 
     //implementation of CIrrOdeEventQueue methods

@@ -3,13 +3,13 @@
 namespace irr {
   namespace ode {
 
-CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                 const vector3df &position, const vector3df &rotation, const vector3df &scale)
+CIrrOdeAeroDrag::CIrrOdeAeroDrag(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                 const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale)
                                  :IIrrOdeStepMotor(parent,mgr,id,position,rotation,scale) {
 
-  m_vForeward=vector3df(1.0f,0.0f,0.0f);
-  m_vSideward=vector3df(0.0f,0.0f,1.0f);
-  m_vUpward  =vector3df(0.0f,1.0f,0.0f);
+  m_vForeward=irr::core::vector3df(1.0f,0.0f,0.0f);
+  m_vSideward=irr::core::vector3df(0.0f,0.0f,1.0f);
+  m_vUpward  =irr::core::vector3df(0.0f,1.0f,0.0f);
 
   m_fStallSpeed      =0.0f;
   m_fMaxUpSpeed      =0.0f;
@@ -37,15 +37,15 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
 void CIrrOdeAeroDrag::step() {
   if (m_pBody && m_pBody->physicsInitialized() && m_bIsActive) {
-    vector3df vRot=m_pBody->getRotation(),
+    irr::core::vector3df vRot=m_pBody->getRotation(),
               vVel=m_pBody->getLinearVelocity(),
               vNormVel=vVel,
               vUp=vRot.rotationToDirection(m_vUpward),
-              vPushForeward=core::vector3df(0.0f,0.0f,0.0f);
+              vPushForeward=irr::core::vector3df(0.0f,0.0f,0.0f);
 
     vNormVel.normalize();
 
-    vector3df vForeward=vRot.rotationToDirection(m_vForeward);
+    irr::core::vector3df vForeward=vRot.rotationToDirection(m_vForeward);
     f32 fForeward=vForeward.dotProduct(vNormVel.normalize()),
         fSideUpDampFactor=1.0f;
 
@@ -79,26 +79,26 @@ void CIrrOdeAeroDrag::step() {
       f32 fUp=fForeward;
       //...but only if it's higher than the stall speed...
       if (m_fForewardVel>=m_fStallSpeed)
-        //with a limit of max up speed (in this case ... not realistic, but OK)...
+        //with a limit of max up speed (in this case ... not reairr::core::listic, but OK)...
         if (m_fForewardVel>=m_fMaxUpSpeed)
           vUp*=m_fUpFactor*m_fMaxUpSpeed;
         else
           vUp*=m_fUpFactor*(m_fForewardVel-m_fStallSpeed);
       else
         //...but if the stall speed isn't exceeded we don't create a lifting force.
-        vUp=vector3df(0.0f,0.0f,0.0f);
+        vUp=irr::core::vector3df(0.0f,0.0f,0.0f);
 
       //now calculate the upwards force vector...
       vUp=m_fPower*m_fMaxPower*fUp*vUp;
 
       vPushForeward=vForeward*(m_fUpToForeward*vUp.getLength());
     }
-    else vUp=vector3df(0.0f,0.0f,0.0f);  //...or set it to a "null" vector if no up force is done
+    else vUp=irr::core::vector3df(0.0f,0.0f,0.0f);  //...or set it to a "null" vector if no up force is done
 
     //the calculation of the lifting force is one point of this method, now we calculate forces that damp velocities
     //into any direction. First comes the foreward damping. This is the simplest form: we just multiply the
     //square of the foreward part of the velocity vector with the given value and scale a vector with the result.
-    vector3df vForewardDamp=vector3df(0.0f,0.0f,0.0f);
+    irr::core::vector3df vForewardDamp=irr::core::vector3df(0.0f,0.0f,0.0f);
 
     if (m_fForewardDamp!=0.0f) {
       f32 fForewardDamp=m_fForewardVel*m_fForewardVel*m_fForewardDamp;
@@ -108,10 +108,10 @@ void CIrrOdeAeroDrag::step() {
     //Sidewards and upwards damping are a bit different. They both add a static limit at which the effect begins.
     //They use the part of the vector that points into their direction (cross product) and calculate the
     //damping vectors using these values.
-    vector3df vSideDamp=vector3df(0.0f,0.0f,0.0f);
+    irr::core::vector3df vSideDamp=irr::core::vector3df(0.0f,0.0f,0.0f);
 
     if (m_fSidewardDamp!=0.0f) {
-      vector3df vSideward=vRot.rotationToDirection(m_vSideward);
+      irr::core::vector3df vSideward=vRot.rotationToDirection(m_vSideward);
       f32 fSideward=vSideward.dotProduct(vNormVel.normalize());
 
       if (fSideward>=0.01f || fSideward<=-0.01f) {
@@ -121,10 +121,10 @@ void CIrrOdeAeroDrag::step() {
       }
     }
 
-    vector3df vUpDamp=vector3df(0.0f,0.0f,0.0f);
+    irr::core::vector3df vUpDamp=irr::core::vector3df(0.0f,0.0f,0.0f);
 
     if (m_fUpwardDamp!=0.0f) {
-      vector3df vUpward=vRot.rotationToDirection(m_vUpward);
+      irr::core::vector3df vUpward=vRot.rotationToDirection(m_vUpward);
       f32 fUpward=vUpward.dotProduct(vNormVel.normalize());
 
       if (fUpward>=0.1f || fUpward<=-0.1f) {
@@ -141,7 +141,7 @@ void CIrrOdeAeroDrag::step() {
     //fUpdamp: the damping of the upward slidet
     //
     //now we combine these vectors to a single one that is then...
-    vector3df vForce=vUp+vPushForeward-vForewardDamp-vSideDamp-vUpDamp;
+    irr::core::vector3df vForce=vUp+vPushForeward-vForewardDamp-vSideDamp-vUpDamp;
 
     //...applied to the body
     m_pBody->addForce(vForce);
@@ -152,7 +152,7 @@ const wchar_t *CIrrOdeAeroDrag::getTypeName() {
   return IRR_ODE_AERO_DRAG_NAME;
 }
 
-void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeAeroDrag::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   IIrrOdeStepMotor::serializeAttributes(out,options);
 
   out->addVector3d("foreward",m_vForeward);
@@ -176,7 +176,7 @@ void CIrrOdeAeroDrag::serializeAttributes(IAttributes* out, SAttributeReadWriteO
   out->addFloat("max_damp_velocity"  ,m_fDampMaxVel      );
 }
 
-void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeAeroDrag::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   IIrrOdeStepMotor::deserializeAttributes(in,options);
   m_vForeward=in->getAttributeAsVector3d("foreward");
   m_vSideward=in->getAttributeAsVector3d("sideward");
@@ -199,7 +199,7 @@ void CIrrOdeAeroDrag::deserializeAttributes(io::IAttributes* in, io::SAttributeR
   m_fDampMaxVel      =in->getAttributeAsFloat("max_damp_velocity");
 }
 
-ISceneNode *CIrrOdeAeroDrag::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeAeroDrag::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeAeroDrag *pRet=new CIrrOdeAeroDrag(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
   pRet->setName(getName());

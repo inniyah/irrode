@@ -13,7 +13,7 @@ namespace irr {
 
       public:
         CIrrOdeEventJointSlider(CIrrOdeJoint *pJoint, f32 fSliderPosition, f32 fSliderPositionRate);
-        CIrrOdeEventJointSlider(CSerializer *pData, ISceneManager *pSmgr);
+        CIrrOdeEventJointSlider(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
         CIrrOdeEventJointSlider(IIrrOdeEvent *pIn);
 
         f32 getSliderPosition() { return m_fSliderPosition; }

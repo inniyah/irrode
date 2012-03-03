@@ -19,7 +19,7 @@ class CIrrOdeEventBodyCreated : public IIrrOdeEvent {
 
   public:
     CIrrOdeEventBodyCreated(CIrrOdeBody *pBody);
-    CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr);
+    CIrrOdeEventBodyCreated(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
     CIrrOdeEventBodyCreated(IIrrOdeEvent *pIn);
 
     virtual u16 getType();

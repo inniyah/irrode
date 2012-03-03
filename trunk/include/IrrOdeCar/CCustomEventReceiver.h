@@ -69,11 +69,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     CCustomEventReceiver();
     ~CCustomEventReceiver();
 
-    list<SPlaneNodes   *> m_lPlanes;
-    list<STankNodes    *> m_lTanks;
-    list<SCarNodes     *> m_lCars;
-    list<SHeliNodes    *> m_lHelis;
-    list<SMissileNodes *> m_lMissiles;
+    irr::core::list<SPlaneNodes   *> m_lPlanes;
+    irr::core::list<STankNodes    *> m_lTanks;
+    irr::core::list<SCarNodes     *> m_lCars;
+    irr::core::list<SHeliNodes    *> m_lHelis;
+    irr::core::list<SMissileNodes *> m_lMissiles;
 
     void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
     void searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank);

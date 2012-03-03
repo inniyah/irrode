@@ -20,7 +20,7 @@ class CIrrOdeEventBodyRemoved : public IIrrOdeEvent {
 
   public:
     CIrrOdeEventBodyRemoved(CIrrOdeBody *pBody);
-    CIrrOdeEventBodyRemoved(CSerializer *pData, ISceneManager *pSmgr);
+    CIrrOdeEventBodyRemoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
     CIrrOdeEventBodyRemoved(IIrrOdeEvent *pIn);
 
     virtual u16 getType();

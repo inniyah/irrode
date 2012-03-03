@@ -7,10 +7,10 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeServo::CIrrOdeServo(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                           const vector3df &position,
-		                       const vector3df &rotation,
-          		             const vector3df &scale) : IIrrOdeMotor(parent, mgr, id, position, rotation, scale) {
+CIrrOdeServo::CIrrOdeServo(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                           const irr::core::vector3df &position,
+		                       const irr::core::vector3df &rotation,
+          		             const irr::core::vector3df &scale) : IIrrOdeMotor(parent, mgr, id, position, rotation, scale) {
 
   m_iAxis=0;
   m_fServoPos=0;
@@ -63,14 +63,14 @@ CIrrOdeJoint *CIrrOdeServo::getJoint() {
   return m_pJoint;
 }
 
-void CIrrOdeServo::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeServo::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
   out->addInt("Axis",m_iAxis);
   out->addFloat("ServoPos",m_fServoPos);
 }
 
-void CIrrOdeServo::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeServo::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
   m_iAxis=in->getAttributeAsInt("Axis");
@@ -80,15 +80,15 @@ void CIrrOdeServo::deserializeAttributes(io::IAttributes* in, io::SAttributeRead
 void CIrrOdeServo::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_BOUNDING_BOXES
-    m_pVideoDriver->setTransform(video::ETS_WORLD,AbsoluteTransformation);
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD,AbsoluteTransformation);
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->draw3DBox(m_cBoundingBox,SColor(100,0x40,0x40,0x40));
+    m_pVideoDriver->draw3DBox(m_cBoundingBox,irr::video::SColor(100,0x40,0x40,0x40));
   #endif
 }
 
 void CIrrOdeServo::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeServo::initPhysics() {
@@ -111,15 +111,15 @@ s32 CIrrOdeServo::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeServo::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_SERVO_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeServo::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SERVO_ID;
 }
 
 const wchar_t *CIrrOdeServo::getTypeName() {
   return IRR_ODE_SERVO_NAME;
 }
 
-ISceneNode *CIrrOdeServo::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeServo::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeServo *pRet=new CIrrOdeServo(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
@@ -134,8 +134,8 @@ void CIrrOdeServo::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setServoPos(m_fServoPos);
 }
 
-void CIrrOdeServo::setPosition(const vector3df &newpos) {
-	ISceneNode::setPosition(vector3df(0.0f,0.0f,0.0f));
+void CIrrOdeServo::setPosition(const irr::core::vector3df &newpos) {
+	irr::scene::ISceneNode::setPosition(irr::core::vector3df(0.0f,0.0f,0.0f));
 }
 
 } //namespace ode

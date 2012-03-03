@@ -9,8 +9,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                       const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                       const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                        CIrrOdeGeom(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -55,14 +55,14 @@ CIrrOdeGeomTrimesh::~CIrrOdeGeomTrimesh() {
 
 void CIrrOdeGeomTrimesh::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomTrimesh::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_BOUNDING_BOXES
-    m_pVideoDriver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
-    m_pVideoDriver->draw3DBox(m_cBoundingBox,SColor(100,0xFF,0,0));
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD, AbsoluteTransformation);
+    m_pVideoDriver->draw3DBox(m_cBoundingBox,irr::video::SColor(100,0xFF,0,0));
   #endif
 }
 
@@ -71,12 +71,12 @@ void CIrrOdeGeomTrimesh::initPhysics() {
 
   getParent()->updateAbsolutePosition();
   updateAbsolutePosition();
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
-  IMeshSceneNode *pNode=reinterpret_cast<IMeshSceneNode *>(getParent());
+  irr::scene::IMeshSceneNode *pNode=reinterpret_cast<irr::scene::IMeshSceneNode *>(getParent());
   if (getChildren().getSize()) {
-    pNode=reinterpret_cast<IMeshSceneNode *>(*(getChildren().begin()));
+    pNode=reinterpret_cast<irr::scene::IMeshSceneNode *>(*(getChildren().begin()));
     pNode->setVisible(false);
   }
 
@@ -86,7 +86,7 @@ void CIrrOdeGeomTrimesh::initPhysics() {
     m_cBoundingBox=pNode->getBoundingBox();
 	#endif
 
-  vector3df pos=m_pBody?m_pBody->getPosition():getAbsolutePosition(),
+  irr::core::vector3df pos=m_pBody?m_pBody->getPosition():getAbsolutePosition(),
             rot=getAbsoluteTransformation().getRotationDegrees().normalize();
 
   if (m_pBody) {
@@ -109,7 +109,7 @@ void CIrrOdeGeomTrimesh::initPhysics() {
 
     if (m_fMass) {
       m_pOdeDevice->massSetZero(m_iMass);
-      vector3df vSize=pNode->getBoundingBox().getExtent();
+      irr::core::vector3df vSize=pNode->getBoundingBox().getExtent();
       //dMassSetTrimeshTotal(&m_cMass,m_fMass,m_iGeomId);
       //dMassTranslate(&m_cMass,vSize.X/2,vSize.Y/2,vSize.Z/2);
 
@@ -138,7 +138,7 @@ void CIrrOdeGeomTrimesh::initPhysics() {
       //m_aDataIds.push_back(iData);
       m_aGeomIds.push_back(iGeom);
 
-      vector3df rot=getParent()->getRotation();
+      irr::core::vector3df rot=getParent()->getRotation();
       #ifdef _TRACE_INIT_PHYSICS
         printf("setRotation2: %.2f, %.2f, %.2f\n",rot.X,rot.Y,rot.Z);
       #endif
@@ -152,8 +152,8 @@ void CIrrOdeGeomTrimesh::initPhysics() {
   CIrrOdeGeom::initPhysics();
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomTrimesh::getType() const {
-  return (ESCENE_NODE_TYPE )IRR_ODE_GEOM_TRIMESH_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomTrimesh::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE )IRR_ODE_GEOM_TRIMESH_ID;
 }
 
 s32 CIrrOdeGeomTrimesh::getID() const {
@@ -177,15 +177,15 @@ void CIrrOdeGeomTrimesh::setMassTotal(f32 fMass) {
   m_fMass=fMass;
 }
 
-void CIrrOdeGeomTrimesh::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomTrimesh::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
 }
 
-void CIrrOdeGeomTrimesh::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomTrimesh::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
 }
 
-ISceneNode *CIrrOdeGeomTrimesh::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomTrimesh::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeGeomTrimesh *pRet=new CIrrOdeGeomTrimesh(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
@@ -196,10 +196,10 @@ void CIrrOdeGeomTrimesh::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   if (bRecurse) CIrrOdeGeom::copyParams(pDest);
 }
 
-void CIrrOdeGeomTrimesh::setParent(ISceneNode *pParent) {
-  ISceneNode::setParent(pParent);
+void CIrrOdeGeomTrimesh::setParent(irr::scene::ISceneNode *pParent) {
+  irr::scene::ISceneNode::setParent(pParent);
 
-	CIrrOdeBody *pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
+	CIrrOdeBody *pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
 
   if (pParent) {
     if (!pBody) {

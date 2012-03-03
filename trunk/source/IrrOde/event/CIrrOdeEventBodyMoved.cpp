@@ -5,7 +5,7 @@ namespace ode {
 
 class CIrrOdeBody;
 
-CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos, vector3df &vRot, vector3df &vLinVel, vector3df &vAngVel) : IIrrOdeEvent(){
+CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, irr::core::vector3df &vPos, irr::core::vector3df &vRot, irr::core::vector3df &vLinVel, irr::core::vector3df &vAngVel) : IIrrOdeEvent(){
   m_pBody=pBody;
   m_pTouch=pBody->getTouched();
 
@@ -22,7 +22,7 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos
 
   if (pBody->dampingChanged()) m_iFlags+=siIrrOdeEventDamping;
 
-  vector3df v=vLinVel-pBody->getLinearVelocity();
+  irr::core::vector3df v=vLinVel-pBody->getLinearVelocity();
 
   if (m_pTouch!=NULL) m_iFlags+=siIrrOdeEventBodyTouching;
 
@@ -38,7 +38,7 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos
   m_vColPoint=pBody->getCollisionPoint();
 }
 
-CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
+CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   u16 iCode=pData->getU16();
   if (iCode==eIrrOdeEventBodyMoved) {

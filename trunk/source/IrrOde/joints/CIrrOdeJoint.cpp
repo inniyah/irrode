@@ -7,8 +7,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                           const vector3df &position,const vector3df &rotation,const vector3df &scale) :
+CIrrOdeJoint::CIrrOdeJoint(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                           const irr::core::vector3df &position,const irr::core::vector3df &rotation,const irr::core::vector3df &scale) :
                            CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale), IIrrOdeEventWriter() {
 
   m_iJointId=0;
@@ -17,13 +17,13 @@ CIrrOdeJoint::CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_bUpdateVariables=true;
   m_bSerializeEvents=true;
 
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeGeom constructor: m_pWorld=%i\n",m_pWorld->getID());
   #endif
 
-  ISceneNode *pNode=getParent();
+  irr::scene::ISceneNode *pNode=getParent();
   if (pNode->getType()==IRR_ODE_BODY_ID) {
     #ifdef _TRACE_INIT_PHYSICS
       printf("CIrrOdeJoint::initLinkedObjects: ancestor of type CIrrOdeBody ... use as body 1\n");
@@ -82,8 +82,8 @@ void CIrrOdeJoint::initLinkedObjects() {
     return;
   }
 
-  list<ISceneNode *> children=getChildren();
-  list<ISceneNode *>::Iterator i;
+  irr::core::list<irr::scene::ISceneNode *> children=getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator i;
   int iCnt=0;
   for (i=children.begin(); i!=children.end(); i++) {
     if ((*i)->getType()==IRR_ODE_BODY_ID) {
@@ -127,13 +127,13 @@ f32 CIrrOdeJoint::getParameter(u16 iGroup, eJointParameter iParam) {
   return 0.0f;
 }
 
-void CIrrOdeJoint::setPosition(const vector3df &newPos) {
-  ISceneNode::setPosition(newPos);
+void CIrrOdeJoint::setPosition(const irr::core::vector3df &newPos) {
+  irr::scene::ISceneNode::setPosition(newPos);
   updateAbsolutePosition();
 }
 
 
-void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeJoint::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
   out->addBool("updateVariables",m_bUpdateVariables);
@@ -142,7 +142,7 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
-      stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
+      irr::core::stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
       sprintf(sName,"use_%s_group_%i",sParamName.c_str(),x);
       out->addBool(sName,m_bParamUsed[y][x]);
       if (m_bParamUsed[y][x]) {
@@ -152,7 +152,7 @@ void CIrrOdeJoint::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
     }
 }
 
-void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeJoint::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
   if (in->existsAttribute("updateVariables"))
@@ -168,7 +168,7 @@ void CIrrOdeJoint::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
   for (int x=0; x<numParamGroups(); x++)
     for (int y=0; y<eParamEnd; y++) {
       c8 sName[0xFF];
-      stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
+      irr::core::stringc sParamName=CIrrOdeSceneNode::nodeNameToC8(IRR_ODE_PARAM_NAMES[y]);
       sprintf(sName,"use_%s_group_%i",sParamName.c_str(),x);
       m_bParamUsed[y][x]=in->getAttributeAsBool(sName);
       sprintf(sName,"%s_group_%i",sParamName.c_str(),x);

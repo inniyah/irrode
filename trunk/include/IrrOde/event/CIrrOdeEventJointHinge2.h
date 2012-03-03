@@ -14,7 +14,7 @@ namespace irr {
 
       public:
         CIrrOdeEventJointHinge2(CIrrOdeJoint *pJoint, f32 fAngle1, f32 fAngleRate1, f32 fAngleRate2);
-        CIrrOdeEventJointHinge2(CSerializer *pData, ISceneManager *pSmgr);
+        CIrrOdeEventJointHinge2(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
         CIrrOdeEventJointHinge2(IIrrOdeEvent *pIn);
 
         f32 getAngle1() { return m_fAngle1; }

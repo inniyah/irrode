@@ -22,10 +22,10 @@ class CProjectile {
 
     CAutoPilot *m_pAutoPilot;
 
-    array<CAdvancedParticleSystemNode *> m_aParticleSystems;
+    irr::core::array<CAdvancedParticleSystemNode *> m_aParticleSystems;
 
     CIrrOdeCarState *m_pShooter;
-    f32 m_fVolume;
+    irr::f32 m_fVolume;
 
     bool m_bActive;
 
@@ -67,8 +67,8 @@ class CProjectileManager : irr::ode::IIrrOdeEventListener {
 
     CProjectile *m_pLast;
 
-    list<s32> m_lGasStationIn,
-              m_lGasStationCheck;
+    irr::core::list<irr::s32> m_lGasStationIn,
+                              m_lGasStationCheck;
 
     CProjectileManager();
     virtual ~CProjectileManager();

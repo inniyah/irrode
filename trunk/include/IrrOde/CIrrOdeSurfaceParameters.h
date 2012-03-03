@@ -6,10 +6,6 @@
 namespace irr {
 namespace ode {
 
-using namespace scene;
-using namespace core;
-using namespace io;
-
 const int IRR_ODE_SURFACE_PARAMETERS_ID=MAKE_IRR_ID('i','o','s','p');
 const c8 IRR_ODE_SURFACE_PARAMETER_NAME[0xFF]="CIrrOdeSurfaceParameter";
 
@@ -37,7 +33,7 @@ enum {
  */
 class CIrrOdeSurfaceParameters {
   protected:
-		stringw m_sName;
+		irr::core::stringw m_sName;
 
     s32 mode;
     f32 mu,mu2;

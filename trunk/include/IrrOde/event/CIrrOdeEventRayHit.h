@@ -19,12 +19,12 @@ class CIrrOdeEventRayHit : public IIrrOdeEvent {
     CIrrOdeGeom *m_pGeom;
     CIrrOdeGeomRay *m_pRay;
 
-    vector3df m_cPos;
+    irr::core::vector3df m_cPos;
     f32 m_fDistance;
 
   public:
-    CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, vector3df pos, f32 fDistance);
-    CIrrOdeEventRayHit(CSerializer *pData, ISceneManager *pSmgr);
+    CIrrOdeEventRayHit(CIrrOdeBody *pBody, CIrrOdeGeom *pGeom, CIrrOdeGeomRay *pRay, irr::core::vector3df pos, f32 fDistance);
+    CIrrOdeEventRayHit(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
     CIrrOdeEventRayHit(IIrrOdeEvent *pIn);
 
     virtual u16 getType();
@@ -32,7 +32,7 @@ class CIrrOdeEventRayHit : public IIrrOdeEvent {
     CIrrOdeBody *getBody();
     CIrrOdeGeom *getGeom();
     CIrrOdeGeomRay *getRay();
-    vector3df getPosition();
+    irr::core::vector3df getPosition();
     f32 getDistance();
 
     virtual CSerializer *serialize();

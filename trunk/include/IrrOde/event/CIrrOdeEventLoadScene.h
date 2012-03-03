@@ -13,7 +13,7 @@ namespace ode {
  */
 class CIrrOdeEventLoadScene : public IIrrOdeEvent {
   protected:
-    stringc m_sScene;
+    irr::core::stringc m_sScene;
 
   public:
     CIrrOdeEventLoadScene(const c8 *sScene);

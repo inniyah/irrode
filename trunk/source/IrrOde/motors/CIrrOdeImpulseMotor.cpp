@@ -3,12 +3,12 @@
 namespace irr {
   namespace ode {
 
-CIrrOdeImpulseMotor::CIrrOdeImpulseMotor(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                    const vector3df &position, const vector3df &rotation, const vector3df &scale)
+CIrrOdeImpulseMotor::CIrrOdeImpulseMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                    const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale)
                     :IIrrOdeStepMotor(parent,mgr,id,position,rotation,scale) {
   m_fMaxPower=0;
   m_fPower=0;
-  m_vForeward=vector3df(1.0f,0.0f,0.0f);
+  m_vForeward=irr::core::vector3df(1.0f,0.0f,0.0f);
 
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -29,17 +29,17 @@ const wchar_t *CIrrOdeImpulseMotor::getTypeName() {
   return IRR_ODE_IMPULSE_MOTOR_NAME;
 }
 
-void CIrrOdeImpulseMotor::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeImpulseMotor::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   IIrrOdeStepMotor::serializeAttributes(out,options);
   out->addVector3d("foreward",m_vForeward);
 }
 
-void CIrrOdeImpulseMotor::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeImpulseMotor::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   IIrrOdeStepMotor::deserializeAttributes(in,options);
   m_vForeward=in->getAttributeAsVector3d("foreward");
 }
 
-ISceneNode *CIrrOdeImpulseMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeImpulseMotor::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeImpulseMotor *pRet=new CIrrOdeImpulseMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   pRet->setName(getName());
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));

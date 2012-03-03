@@ -8,8 +8,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomRay::CIrrOdeGeomRay(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                               const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeGeomRay::CIrrOdeGeomRay(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                               const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                CIrrOdeGeom(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -37,14 +37,14 @@ CIrrOdeGeomRay::~CIrrOdeGeomRay() {
 
 void CIrrOdeGeomRay::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomRay::render() {
   CIrrOdeSceneNode::render();
 }
 
-void CIrrOdeGeomRay::set(vector3df pos, vector3df dir, f32 fLength) {
+void CIrrOdeGeomRay::set(irr::core::vector3df pos, irr::core::vector3df dir, f32 fLength) {
   m_pPos=pos;
   m_pDir=dir;
   m_fLength=fLength;
@@ -56,7 +56,7 @@ void CIrrOdeGeomRay::initPhysics() {
   if (m_bPhysicsInitialized) return;
 
   updateAbsolutePosition();
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   m_iGeomId=m_pOdeDevice->geomCreateRay(m_pSpace->getSpaceId(),m_fLength);
@@ -74,8 +74,8 @@ s32 CIrrOdeGeomRay::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomRay::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_GEOM_RAY_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomRay::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_RAY_ID;
 }
 
 void CIrrOdeGeomRay::bodyHit(CIrrOdeBody *pBody) {
@@ -91,7 +91,7 @@ const wchar_t *CIrrOdeGeomRay::getTypeName() {
 void CIrrOdeGeomRay::setMassTotal(f32 fMass) {
 }
 
-void CIrrOdeGeomRay::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomRay::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
 
   out->addFloat("Length",m_fLength);
@@ -100,7 +100,7 @@ void CIrrOdeGeomRay::serializeAttributes(IAttributes* out, SAttributeReadWriteOp
   out->addVector3d("Direction",m_pDir);
 }
 
-void CIrrOdeGeomRay::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomRay::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
 
   m_fLength=in->getAttributeAsFloat("Length");
@@ -109,7 +109,7 @@ void CIrrOdeGeomRay::deserializeAttributes(IAttributes* in, SAttributeReadWriteO
   m_pDir=in->getAttributeAsVector3d("Direction");
 }
 
-ISceneNode *CIrrOdeGeomRay::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomRay::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeGeomRay *pRet=new CIrrOdeGeomRay(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

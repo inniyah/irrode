@@ -15,26 +15,26 @@ class CIrrOdeBody;
 class CIrrOdeGeomRay : public CIrrOdeGeom {
   protected:
     f32 m_fLength;          /**< length of the ray */
-    vector3df m_pPos,       /**< position of the ray */
+    irr::core::vector3df m_pPos,       /**< position of the ray */
               m_pDir;       /**< direction of the ray */
     bool m_bBackfaceCull;   /**< do backface culling for ray hits */
     CIrrOdeBody *m_pBody;
 
   public:
-    CIrrOdeGeomRay(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                   const vector3df &position=core::vector3df(0,0,0),
-		               const vector3df &rotation = core::vector3df(0,0,0),
-		               const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeGeomRay(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                   const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		               const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		               const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeGeomRay();
 
-    void set(vector3df pos, vector3df dir, f32 fLength);
+    void set(irr::core::vector3df pos, irr::core::vector3df dir, f32 fLength);
 
     virtual void render();
     virtual void OnRegisterSceneNode();
     virtual void initPhysics();
 
-    virtual ESCENE_NODE_TYPE getType() const;
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const;
     virtual s32 getID() const;
     virtual const wchar_t *getTypeName();
 
@@ -44,11 +44,11 @@ class CIrrOdeGeomRay : public CIrrOdeGeom {
 
     virtual void setMassTotal(f32 fMass);
 
-  	virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+  	virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
   	virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     void setBackfaceCull(bool b);
     bool getBackfaceCull();

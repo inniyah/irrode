@@ -91,7 +91,7 @@ void CIrrOdeRePlayer::update() {
         IIrrOdeEvent *p=(IIrrOdeEvent *)*m_iIt,*p2=p->clone();
         if (p->getType()==eIrrOdeEventLoadScene) {
           CIrrOdeEventLoadScene *pEvt=(CIrrOdeEventLoadScene *)p;
-          m_sSceneFile=stringc(pEvt->getScene());
+          m_sSceneFile=irr::core::stringc(pEvt->getScene());
           m_bSceneLoaded=m_pSmgr->loadScene(m_sSceneFile.c_str());
           CIrrOdeManager::getSharedInstance()->initPhysics();
           printf("scene file: \"%s\"\n",m_sSceneFile.c_str());

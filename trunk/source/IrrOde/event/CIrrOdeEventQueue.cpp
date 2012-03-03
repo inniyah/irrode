@@ -12,7 +12,7 @@ CIrrOdeEventQueue::~CIrrOdeEventQueue() {
 }
 
 void CIrrOdeEventQueue::postEvent(IIrrOdeEvent *pEvent, bool bDelete) {
-  core::list<IIrrOdeEventListener *>::Iterator i;
+  irr::core::list<IIrrOdeEventListener *>::Iterator i;
   for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
     if ((*i)->handlesEvent(pEvent))
       (*i)->onEvent(pEvent);
@@ -21,7 +21,7 @@ void CIrrOdeEventQueue::postEvent(IIrrOdeEvent *pEvent, bool bDelete) {
 }
 
 void CIrrOdeEventQueue::addEventListener(IIrrOdeEventListener *pListener) {
-	core::list<IIrrOdeEventListener *>::Iterator it;
+	irr::core::list<IIrrOdeEventListener *>::Iterator it;
 	for (it=m_pListeners.begin(); it!=m_pListeners.end(); it++)
 	  if (*it==pListener)
 			return;
@@ -30,7 +30,7 @@ void CIrrOdeEventQueue::addEventListener(IIrrOdeEventListener *pListener) {
 }
 
 void CIrrOdeEventQueue::removeEventListener(IIrrOdeEventListener *pListener) {
-	list<IIrrOdeEventListener *>::Iterator it;
+	irr::core::list<IIrrOdeEventListener *>::Iterator it;
 	for (it=m_pListeners.begin(); it!=m_pListeners.end(); it++)
 	  if (*it==pListener) {
 			m_pListeners.erase(it);

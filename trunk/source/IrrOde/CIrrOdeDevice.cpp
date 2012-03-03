@@ -70,7 +70,7 @@ COdeDataWrapper::~COdeDataWrapper() {
 }
 
 static CIrrOdeDevice *s_pOdeDevice=NULL;
-static list<CFastCollision *> s_lCollisionQueue;
+static irr::core::list<CFastCollision *> s_lCollisionQueue;
 
 CIrrOdeDevice::CIrrOdeDevice() : IIrrOdeDevice() {
   m_pContactCalculator=new CIrrOdeContactParameters();
@@ -168,7 +168,7 @@ int CIrrOdeDevice::convertToOdeJointParam(u16 iGroup, s32 &iParam) {
 
 void CIrrOdeDevice::handleFastCollisions() {
   while (s_lCollisionQueue.getSize()>0) {
-    list<CFastCollision *>::Iterator it=s_lCollisionQueue.begin();
+    irr::core::list<CFastCollision *>::Iterator it=s_lCollisionQueue.begin();
     CFastCollision *p=*it;
     s_lCollisionQueue.erase(it);
 
@@ -289,11 +289,11 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
           pBody1->setIsTouching(pGeom2);
           pBody1->setCollisionMaterial(iSurfaceIdx[1]);
 
-          vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
+          irr::core::vector3df point=irr::core::vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
           pBody1->setCollisionPoint(point);
 
           if (!b2 && p2->dampsObjects()) {
-            vector3df oldVL=pBody1->getLinearVelocity() ,
+            irr::core::vector3df oldVL=pBody1->getLinearVelocity() ,
                       oldVA=pBody1->getAngularVelocity();
 
             oldVL*=(1-p2->getLinearDamping ());
@@ -328,11 +328,11 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
           pBody2->setIsTouching(pGeom1);
           pBody2->setCollisionMaterial(iSurfaceIdx[0]);
 
-          vector3df point=vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
+          irr::core::vector3df point=irr::core::vector3df(contact[0].geom.pos[0],contact[0].geom.pos[1],contact[0].geom.pos[2]);
           pBody2->setCollisionPoint(point);
 
           if (!b1 && p1->dampsObjects()) {
-            vector3df oldVL=pBody2->getLinearVelocity() ,
+            irr::core::vector3df oldVL=pBody2->getLinearVelocity() ,
                       oldVA=pBody2->getAngularVelocity();
 
             oldVL*=(1-p1->getLinearDamping ());
@@ -380,7 +380,7 @@ void CIrrOdeDevice::handleRayEvent(dGeomID theRay, dGeomID theGeom) {
     CIrrOdeBody *pBody=dGeomGetBody(theGeom)?(CIrrOdeBody *)dBodyGetData(dGeomGetBody(theGeom)):NULL;
     CIrrOdeGeom *pGeom=(CIrrOdeGeom *)dGeomGetData(theGeom);
     CIrrOdeGeomRay *pRay=(CIrrOdeGeomRay *)dGeomGetData(theRay);
-    vector3df pos(contact.pos[0],contact.pos[1],contact.pos[2]);
+    irr::core::vector3df pos(contact.pos[0],contact.pos[1],contact.pos[2]);
 
     //Some problem with the ODE heightfield: doesn't work properly in this case, does always give collision,
     //so it's skipped. That's no problem anyways, because normally collision with heightfield is detected
@@ -437,7 +437,7 @@ void CIrrOdeDevice::bodyMovedCallback(dBodyID iMovedBody) {
  * @param quaternion the quaternion to be converted
  * @param euler the resulting euler angle vector
  */
-void CIrrOdeDevice::quaternionToEuler(const dQuaternion quaternion, vector3df &euler){
+void CIrrOdeDevice::quaternionToEuler(const dQuaternion quaternion, irr::core::vector3df &euler){
   dReal w,x,y,z;
   w=quaternion[0];
   x=quaternion[1];
@@ -458,7 +458,7 @@ void CIrrOdeDevice::quaternionToEuler(const dQuaternion quaternion, vector3df &e
  * @param v the euler angles vector to be converted
  * @param q the resulting quaternion
  */
-void CIrrOdeDevice::eulerToQuaternion (const vector3df v, dQuaternion q) {
+void CIrrOdeDevice::eulerToQuaternion (const irr::core::vector3df v, dQuaternion q) {
   float heading=v.Z*GRAD_PI2/2.0f;
   float attitude=v.Y*GRAD_PI2/2.0f;
   float bank=v.X*GRAD_PI2/2.0f;
@@ -643,7 +643,7 @@ f32 CIrrOdeDevice::worldGetQuickStepW(u32 iWorld) {
   return dWorldGetQuickStepW(GETWORLD(iWorld));
 }
 
-void CIrrOdeDevice::worldSetGravity(u32 iWorld, vector3df cGravity) {
+void CIrrOdeDevice::worldSetGravity(u32 iWorld, irr::core::vector3df cGravity) {
   dWorldSetGravity(GETWORLD(iWorld),cGravity.X,cGravity.Y,cGravity.Z);
 }
 
@@ -741,12 +741,12 @@ void CIrrOdeDevice::jointDestroy(u32 iJoint) {
   GETJOINT(iJoint)=0;
 }
 
-void CIrrOdeDevice::jointSetBallAnchor(u32 iJoint, vector3df pos) {
+void CIrrOdeDevice::jointSetBallAnchor(u32 iJoint, irr::core::vector3df pos) {
   dJointSetBallAnchor(GETJOINT(iJoint),pos.X,pos.Y,pos.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetBallAnchor(u32 iJoint) {
-  static vector3df v;
+irr::core::vector3df CIrrOdeDevice::jointGetBallAnchor(u32 iJoint) {
+  static irr::core::vector3df v;
   dVector3 result;
   dJointGetBallAnchor(GETJOINT(iJoint),result);
   v.X=result[0];
@@ -755,8 +755,8 @@ vector3df CIrrOdeDevice::jointGetBallAnchor(u32 iJoint) {
   return v;
 }
 
-vector3df CIrrOdeDevice::jointGetBallAnchor2(u32 iJoint) {
-  static vector3df v;
+irr::core::vector3df CIrrOdeDevice::jointGetBallAnchor2(u32 iJoint) {
+  static irr::core::vector3df v;
   dVector3 result;
   dJointGetBallAnchor2(GETJOINT(iJoint),result);
   v.X=result[0];
@@ -769,32 +769,32 @@ void CIrrOdeDevice::jointSetFixed(u32 iJoint) {
   dJointSetFixed(GETJOINT(iJoint));
 }
 
-void CIrrOdeDevice::jointSetHingeAnchor(u32 iJoint, vector3df p) {
+void CIrrOdeDevice::jointSetHingeAnchor(u32 iJoint, irr::core::vector3df p) {
   dJointSetHingeAnchor(GETJOINT(iJoint),p.X,p.Y,p.Z);
 }
 
-void CIrrOdeDevice::jointSetHingeAxis(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetHingeAxis(u32 iJoint, irr::core::vector3df a) {
   dJointSetHingeAxis(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetHingeAxis(u32 iJoint) {
-  static vector3df v;
+irr::core::vector3df CIrrOdeDevice::jointGetHingeAxis(u32 iJoint) {
+  static irr::core::vector3df v;
   dVector3 result;
   dJointGetHingeAxis(GETJOINT(iJoint),result);
   VEC2IRR(result,v);
   return v;
 }
 
-vector3df CIrrOdeDevice::jointGetHingeAnchor1(u32 iJoint) {
-  static vector3df v;
+irr::core::vector3df CIrrOdeDevice::jointGetHingeAnchor1(u32 iJoint) {
+  static irr::core::vector3df v;
   dVector3 result;
   dJointGetHingeAnchor(GETJOINT(iJoint),result);
   VEC2IRR(result,v);
   return v;
 }
 
-vector3df CIrrOdeDevice::jointGetHingeAnchor2(u32 iJoint) {
-  static vector3df v;
+irr::core::vector3df CIrrOdeDevice::jointGetHingeAnchor2(u32 iJoint) {
+  static irr::core::vector3df v;
   dVector3 result;
   dJointGetHingeAnchor2(GETJOINT(iJoint),result);
   VEC2IRR(result,v);
@@ -817,44 +817,44 @@ f32 CIrrOdeDevice::jointGetHingeParam(u32 iJoint, s32 iParam) {
   return dJointGetHingeParam(GETJOINT(iJoint),convertToOdeJointParam(0,iParam));
 }
 
-void CIrrOdeDevice::jointSetHinge2Anchor(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetHinge2Anchor(u32 iJoint, irr::core::vector3df a) {
   dJointSetHinge2Anchor(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetHinge2Axis1(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetHinge2Axis1(u32 iJoint, irr::core::vector3df a) {
   dJointSetHinge2Axis1(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetHinge2Axis2(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetHinge2Axis2(u32 iJoint, irr::core::vector3df a) {
   dJointSetHinge2Axis2(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetHinge2Axis1(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetHinge2Axis1(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetHinge2Axis1(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetHinge2Axis2(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetHinge2Axis2(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetHinge2Axis2(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetHinge2Anchor(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetHinge2Anchor(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetHinge2Anchor(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetHinge2Anchor2(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetHinge2Anchor2(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetHinge2Anchor2(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
@@ -881,11 +881,11 @@ f32 CIrrOdeDevice::jointGetHinge2Param(u32 iJoint, u32 iGroup, s32 iParam) {
   return dJointGetHinge2Param(GETJOINT(iJoint),convertToOdeJointParam(iGroup,iParam));
 }
 
-void CIrrOdeDevice::jointSetPistonAnchor(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetPistonAnchor(u32 iJoint, irr::core::vector3df a) {
   dJointSetPistonAnchor(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetPistonAxis(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetPistonAxis(u32 iJoint, irr::core::vector3df a) {
   dJointSetPistonAxis(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
@@ -905,28 +905,28 @@ f32 CIrrOdeDevice::jointGetPistonParam(u32 iJoint, u32 iGroup, s32 iParam) {
   return dJointGetPistonParam(GETJOINT(iJoint),convertToOdeJointParam(iGroup,iParam));
 }
 
-vector3df CIrrOdeDevice::jointGetPistonAnchor(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetPistonAnchor(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetPistonAnchor(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetPistonAxis(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetPistonAxis(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetPistonAxis(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-void CIrrOdeDevice::jointSetSliderAxis(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetSliderAxis(u32 iJoint, irr::core::vector3df a) {
   dJointSetSliderAxis(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetSliderAxis(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetSliderAxis(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetSliderAxis(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
@@ -949,44 +949,44 @@ f32 CIrrOdeDevice::jointGetSliderParam(u32 iJoint, s32 iParam) {
   return dJointGetSliderParam(GETJOINT(iJoint),convertToOdeJointParam(0,iParam));
 }
 
-void CIrrOdeDevice::jointSetUniversalAnchor(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetUniversalAnchor(u32 iJoint, irr::core::vector3df a) {
   dJointSetUniversalAnchor(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetUniversalAxis1(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetUniversalAxis1(u32 iJoint, irr::core::vector3df a) {
   dJointSetUniversalAxis1(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetUniversalAxis2(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetUniversalAxis2(u32 iJoint, irr::core::vector3df a) {
   dJointSetUniversalAxis2(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetUniversalAnchor(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetUniversalAnchor(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetUniversalAnchor(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetUniversalAnchor2(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetUniversalAnchor2(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetUniversalAnchor2(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetUniversalAxis1(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetUniversalAxis1(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetUniversalAxis1(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetUniversalAxis2(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetUniversalAxis2(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetUniversalAxis2(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
@@ -1017,36 +1017,36 @@ f32 CIrrOdeDevice::jointGetUniversalParam(u32 iJoint, u32 iGroup, s32 iParam) {
   return dJointGetUniversalParam(GETJOINT(iJoint),convertToOdeJointParam(iGroup,iParam));
 }
 
-void CIrrOdeDevice::jointSetPrAxis1(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetPrAxis1(u32 iJoint, irr::core::vector3df a) {
   dJointSetPRAxis1(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetPrAxis2(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetPrAxis2(u32 iJoint, irr::core::vector3df a) {
   dJointSetPRAxis2(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-void CIrrOdeDevice::jointSetPrAnchor(u32 iJoint, vector3df a) {
+void CIrrOdeDevice::jointSetPrAnchor(u32 iJoint, irr::core::vector3df a) {
   dJointSetPRAnchor(GETJOINT(iJoint),a.X,a.Y,a.Z);
 }
 
-vector3df CIrrOdeDevice::jointGetPrAxis1(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetPrAxis1(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetPRAxis1(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetPrAxis2(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetPrAxis2(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetPRAxis2(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
   return result;
 }
 
-vector3df CIrrOdeDevice::jointGetPrAnchor(u32 iJoint) {
-  static vector3df result;
+irr::core::vector3df CIrrOdeDevice::jointGetPrAnchor(u32 iJoint) {
+  static irr::core::vector3df result;
   dVector3 v;
   dJointGetPRAnchor(GETJOINT(iJoint),v);
   VEC2IRR(v,result);
@@ -1085,7 +1085,7 @@ u32 CIrrOdeDevice::bodyCreate(u32 iWorld) {
 
 void CIrrOdeDevice::bodyDestroy(u32 iBody) {
   if (GETBODY(iBody)==0) return;
-  list<CFastCollision *>::Iterator it;
+  irr::core::list<CFastCollision *>::Iterator it;
   for (it=s_lCollisionQueue.begin(); it!=s_lCollisionQueue.end(); it++) {
     CFastCollision *p=*it;
     if (p->m_pBody->getBodyId()==iBody) {
@@ -1098,12 +1098,12 @@ void CIrrOdeDevice::bodyDestroy(u32 iBody) {
   GETBODY(iBody)=0;
 }
 
-void CIrrOdeDevice::bodySetPosition(u32 iBody, vector3df pos) {
+void CIrrOdeDevice::bodySetPosition(u32 iBody, irr::core::vector3df pos) {
   if (iBody) dBodySetPosition(GETBODY(iBody),pos.X,pos.Y,pos.Z);
 }
 
-vector3df CIrrOdeDevice::bodyGetPosition(u32 iBody) {
-  static vector3df s_vPos=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetPosition(u32 iBody) {
+  static irr::core::vector3df s_vPos=irr::core::vector3df(0,0,0);
   if (iBody) {
     const dReal *pos=dBodyGetPosition(GETBODY(iBody));
     VEC2IRR(pos,s_vPos);
@@ -1111,8 +1111,8 @@ vector3df CIrrOdeDevice::bodyGetPosition(u32 iBody) {
   return s_vPos;
 }
 
-vector3df CIrrOdeDevice::bodyGetRotation(u32 iBody) {
-  static vector3df s_vRot=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetRotation(u32 iBody) {
+  static irr::core::vector3df s_vRot=irr::core::vector3df(0,0,0);
   if (iBody) {
     //const dReal *quat;
     //quat=dBodyGetQuaternion(GETBODY(iBody));
@@ -1151,7 +1151,7 @@ void CIrrOdeDevice::bodySetQuaternion(u32 iBody, core::quaternion rot) {
   }
 }
 
-void CIrrOdeDevice::bodySetRotation(u32 iBody, vector3df rot) {
+void CIrrOdeDevice::bodySetRotation(u32 iBody, irr::core::vector3df rot) {
   if (iBody) {
     dQuaternion q;
     eulerToQuaternion(rot,q);
@@ -1251,12 +1251,12 @@ bool CIrrOdeDevice::bodyGetFiniteRotationMode(u32 iBody) {
   return iBody && m_bOdeInitialized?dBodyGetFiniteRotationMode(GETBODY(iBody))!=0:false;
 }
 
-void CIrrOdeDevice::bodySetFiniteRotationAxis(u32 iBody, vector3df v) {
+void CIrrOdeDevice::bodySetFiniteRotationAxis(u32 iBody, irr::core::vector3df v) {
   if (iBody) dBodySetFiniteRotationAxis(GETBODY(iBody),v.X,v.Y,v.Z);
 }
 
-const vector3df CIrrOdeDevice::bodyGetFiniteRotationAxis(u32 iBody) {
-  static vector3df pResultVector(0,0,0);
+const irr::core::vector3df CIrrOdeDevice::bodyGetFiniteRotationAxis(u32 iBody) {
+  static irr::core::vector3df pResultVector(0,0,0);
 
   if (iBody && m_bOdeInitialized) {
     dVector3 pResult;
@@ -1297,19 +1297,19 @@ bool CIrrOdeDevice::bodyIsEnabled(u32 iBody) {
   return dBodyIsEnabled(GETBODY(iBody));
 }
 
-void CIrrOdeDevice::bodyAddForce(u32 iBody, vector3df f) {
+void CIrrOdeDevice::bodyAddForce(u32 iBody, irr::core::vector3df f) {
   dBodyAddForce(GETBODY(iBody),f.X,f.Y,f.Z);
 }
 
-void CIrrOdeDevice::bodyAddForceAtPosition(u32 iBody, vector3df f, vector3df p) {
+void CIrrOdeDevice::bodyAddForceAtPosition(u32 iBody, irr::core::vector3df f, irr::core::vector3df p) {
   dBodyAddForceAtPos(GETBODY(iBody),f.X,f.Y,f.Z,p.X,p.Y,p.Z);
 }
 
-void CIrrOdeDevice::bodyAddTorque(u32 iBody, vector3df t) {
+void CIrrOdeDevice::bodyAddTorque(u32 iBody, irr::core::vector3df t) {
   dBodyAddTorque(GETBODY(iBody),t.X,t.Y,t.Z);
 }
 
-void CIrrOdeDevice::bodySetTorque(u32 iBody, vector3df t) {
+void CIrrOdeDevice::bodySetTorque(u32 iBody, irr::core::vector3df t) {
   if (iBody) dBodySetTorque(GETBODY(iBody),t.X,t.Y,t.Z);
 }
 
@@ -1321,13 +1321,13 @@ void CIrrOdeDevice::bodyDisable(u32 iBody) {
   dBodyDisable(GETBODY(iBody));
 }
 
-void CIrrOdeDevice::bodySetLinearVelocity(u32 iBody, vector3df v) {
+void CIrrOdeDevice::bodySetLinearVelocity(u32 iBody, irr::core::vector3df v) {
   if (iBody) dBodySetLinearVel(GETBODY(iBody),v.X,v.Y,v.Z);
 }
 
-vector3df CIrrOdeDevice::bodyGetLinearVelocity(u32 iBody) {
+irr::core::vector3df CIrrOdeDevice::bodyGetLinearVelocity(u32 iBody) {
 
-  static vector3df vLinear;
+  static irr::core::vector3df vLinear;
 
   if (!iBody || !m_bOdeInitialized ) {
     vLinear.X=0.0f;
@@ -1345,12 +1345,12 @@ vector3df CIrrOdeDevice::bodyGetLinearVelocity(u32 iBody) {
   return vLinear;
 }
 
-void CIrrOdeDevice::bodySetAngularVelocity(u32 iBody, vector3df v) {
+void CIrrOdeDevice::bodySetAngularVelocity(u32 iBody, irr::core::vector3df v) {
   if (iBody) dBodySetAngularVel(GETBODY(iBody),v.X,v.Y,v.Z);
 }
 
-vector3df CIrrOdeDevice::bodyGetAngularVelocity(u32 iBody) {
-  static vector3df vAngular;
+irr::core::vector3df CIrrOdeDevice::bodyGetAngularVelocity(u32 iBody) {
+  static irr::core::vector3df vAngular;
 
   if (!iBody || !m_bOdeInitialized) {
     vAngular.X=0.0f;
@@ -1367,8 +1367,8 @@ vector3df CIrrOdeDevice::bodyGetAngularVelocity(u32 iBody) {
   return vAngular;
 }
 
-vector3df CIrrOdeDevice::bodyGetPointVel(u32 iBody, vector3df vPos) {
-  static vector3df vRelPointPos=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetPointVel(u32 iBody, irr::core::vector3df vPos) {
+  static irr::core::vector3df vRelPointPos=irr::core::vector3df(0,0,0);
   if (iBody) {
     dVector3 v,p;
     IRR2VEC(vPos,p);
@@ -1378,8 +1378,8 @@ vector3df CIrrOdeDevice::bodyGetPointVel(u32 iBody, vector3df vPos) {
   return vRelPointPos;
 }
 
-vector3df CIrrOdeDevice::bodyGetRelPointVel(u32 iBody, vector3df vPos) {
-  static vector3df vRelPointVel=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetRelPointVel(u32 iBody, irr::core::vector3df vPos) {
+  static irr::core::vector3df vRelPointVel=irr::core::vector3df(0,0,0);
   if (iBody) {
     dVector3 v;
     dBodyGetRelPointVel(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
@@ -1388,8 +1388,8 @@ vector3df CIrrOdeDevice::bodyGetRelPointVel(u32 iBody, vector3df vPos) {
   return vRelPointVel;
 }
 
-vector3df CIrrOdeDevice::bodyGetRelPointPos(u32 iBody, vector3df vPos) {
-  static vector3df vPointVel=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetRelPointPos(u32 iBody, irr::core::vector3df vPos) {
+  static irr::core::vector3df vPointVel=irr::core::vector3df(0,0,0);
   if (iBody) {
     dVector3 v;
     dBodyGetRelPointPos(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
@@ -1398,8 +1398,8 @@ vector3df CIrrOdeDevice::bodyGetRelPointPos(u32 iBody, vector3df vPos) {
   return vPointVel;
 }
 
-vector3df CIrrOdeDevice::bodyGetPosRelPoint(u32 iBody, vector3df vPos) {
-  static vector3df vRelPos=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyGetPosRelPoint(u32 iBody, irr::core::vector3df vPos) {
+  static irr::core::vector3df vRelPos=irr::core::vector3df(0,0,0);
   if (iBody) {
     dVector3 v;
     dBodyGetPosRelPoint(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
@@ -1408,8 +1408,8 @@ vector3df CIrrOdeDevice::bodyGetPosRelPoint(u32 iBody, vector3df vPos) {
   return vRelPos;
 }
 
-vector3df CIrrOdeDevice::bodyVectorFromWorld(u32 iBody, vector3df vPos) {
-  static vector3df vWorldPos=vector3df(0,0,0);
+irr::core::vector3df CIrrOdeDevice::bodyVectorFromWorld(u32 iBody, irr::core::vector3df vPos) {
+  static irr::core::vector3df vWorldPos=irr::core::vector3df(0,0,0);
   if (iBody) {
     dVector3 v;
     dBodyVectorFromWorld(GETBODY(iBody),vPos.X,vPos.Y,vPos.Z,v);
@@ -1431,11 +1431,11 @@ void CIrrOdeDevice::geomDestroy(u32 iGeom) {
   GETGEOM(iGeom)=0;
 }
 
-void CIrrOdeDevice::geomSetPosition(u32 iGeom, vector3df pos) {
+void CIrrOdeDevice::geomSetPosition(u32 iGeom, irr::core::vector3df pos) {
   dGeomSetPosition(GETGEOM(iGeom),pos.X,pos.Y,pos.Z);
 }
 
-void CIrrOdeDevice::geomSetRotation(u32 iGeom, vector3df rot) {
+void CIrrOdeDevice::geomSetRotation(u32 iGeom, irr::core::vector3df rot) {
   dQuaternion q;
   CIrrOdeDevice::eulerToQuaternion(rot,q);
   #ifdef _TRACE_INIT_PHYSICS
@@ -1448,7 +1448,7 @@ void CIrrOdeDevice::geomSetData(u32 iGeom, void *pData) {
   if (iGeom) dGeomSetData(GETGEOM(iGeom),pData);
 }
 
-void CIrrOdeDevice::geomRaySetData(u32 iGeom, vector3df pos, vector3df dir, f32 fLength) {
+void CIrrOdeDevice::geomRaySetData(u32 iGeom, irr::core::vector3df pos, irr::core::vector3df dir, f32 fLength) {
   dGeomRaySet(GETGEOM(iGeom),pos.X,pos.Y,pos.Z,dir.X,dir.Y,dir.Z);
   dGeomRaySetLength(GETGEOM(iGeom),fLength);
 }
@@ -1457,11 +1457,11 @@ void CIrrOdeDevice::geomSetBackfaceCull(u32 iGeom, bool bBackfaceCull) {
   dGeomRaySetParams(GETGEOM(iGeom),0,bBackfaceCull?1:0);
 }
 
-void CIrrOdeDevice::geomSetOffsetPosition(u32 iGeom, vector3df offset) {
+void CIrrOdeDevice::geomSetOffsetPosition(u32 iGeom, irr::core::vector3df offset) {
   dGeomSetOffsetPosition(GETGEOM(iGeom),offset.X,offset.Y,offset.Z);
 }
 
-void CIrrOdeDevice::geomSetOffsetQuaternion(u32 iGeom, vector3df rot) {
+void CIrrOdeDevice::geomSetOffsetQuaternion(u32 iGeom, irr::core::vector3df rot) {
   dQuaternion q;
   eulerToQuaternion(rot,q);
   dGeomSetOffsetQuaternion(GETGEOM(iGeom),q);
@@ -1588,11 +1588,11 @@ void CIrrOdeDevice::massSetZero(u32 iMass) {
   dMassSetZero(GETMASS(iMass));
 }
 
-void CIrrOdeDevice::massSetParameters(u32 iMass, f32 fMass, vector3df c, vector3df i1, vector3df i2) {
+void CIrrOdeDevice::massSetParameters(u32 iMass, f32 fMass, irr::core::vector3df c, irr::core::vector3df i1, irr::core::vector3df i2) {
   dMassSetParameters(GETMASS(iMass),fMass,c.X,c.Y,c.Z,i1.X,i1.Y,i1.Z,i2.X,i2.Y,i2.Z);
 }
 
-void CIrrOdeDevice::massTranslate(u32 iMass, vector3df pos) {
+void CIrrOdeDevice::massTranslate(u32 iMass, irr::core::vector3df pos) {
   dMassTranslate(GETMASS(iMass),pos.X,pos.Y,pos.Z);
 }
 
@@ -1621,24 +1621,24 @@ u32 CIrrOdeDevice::geomTrimeshDataCreate() {
   return iRet;
 }
 
-void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer) {
-  IMesh *pMesh=NULL;
-  CDynamicMeshBuffer cDynMeshBuffer(EVT_2TCOORDS,EIT_16BIT);
-  if (pNode->getType()==ESNT_TERRAIN)
-    (reinterpret_cast<ITerrainSceneNode *>(pNode))->getMeshBufferForLOD(cDynMeshBuffer,0);
+void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, irr::scene::ISceneNode *pNode, u32 iBuffer) {
+  irr::scene::IMesh *pMesh=NULL;
+  irr::scene::CDynamicMeshBuffer cDynMeshBuffer(irr::video::EVT_2TCOORDS,irr::video::EIT_16BIT);
+  if (pNode->getType()==irr::scene::ESNT_TERRAIN)
+    (reinterpret_cast<irr::scene::ITerrainSceneNode *>(pNode))->getMeshBufferForLOD(cDynMeshBuffer,0);
 
   switch (pNode->getType()) {
-    case ESNT_TERRAIN:
-      pMesh=(reinterpret_cast<ITerrainSceneNode *>(pNode))->getMesh();
+    case irr::scene::ESNT_TERRAIN:
+      pMesh=(reinterpret_cast<irr::scene::ITerrainSceneNode *>(pNode))->getMesh();
       break;
 
-    case ESNT_OCTREE:
-    case ESNT_MESH :
-      pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+    case irr::scene::ESNT_OCTREE:
+    case irr::scene::ESNT_MESH :
+      pMesh=(reinterpret_cast<irr::scene::IMeshSceneNode *>(pNode))->getMesh();
       break;
 
-    case ESNT_ANIMATED_MESH:
-      pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+    case irr::scene::ESNT_ANIMATED_MESH:
+      pMesh=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
       break;
 
     default:
@@ -1654,8 +1654,8 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
     return;
   }
 
-	IMeshBuffer *pBuffer=NULL;
-  if (pNode->getType()==ESNT_TERRAIN) {
+	irr::scene::IMeshBuffer *pBuffer=NULL;
+  if (pNode->getType()==irr::scene::ESNT_TERRAIN) {
     INDEXCOUNT(iData)+=cDynMeshBuffer.getIndexCount();
     VERTEXCOUNT(iData)+=cDynMeshBuffer.getVertexCount();
     pBuffer=pMesh->getMeshBuffer(iBuffer);
@@ -1667,7 +1667,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
       VERTEXCOUNT(iData)+=pBuffer->getVertexCount();
     }
     else {
-      IAnimatedMesh *pAnim=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+      irr::scene::IAnimatedMesh *pAnim=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
       if (pAnim && pAnim->getFrameCount()>0) {
         if (pMesh) {
           pBuffer=pAnim->getMesh(0)->getMeshBuffer(iBuffer);
@@ -1695,13 +1695,13 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
   VERTICES(iData)=new dVector3[VERTEXCOUNT(iData)];
   INDICES(iData)=new u32[INDEXCOUNT(iData)];
 
-  ci=0;  // current index in the indices array
-  cif=0; // offset of the irrlicht-vertex-index in the vetices array
-  cv=0;  // current index in the vertices array
+  ci=0;  // current index in the indices irr::core::array
+  cif=0; // offset of the irrlicht-vertex-index in the vetices irr::core::array
+  cv=0;  // current index in the vertices irr::core::array
 	u16 *mb_indices;
 
   if (pBuffer==NULL) pBuffer=pMesh->getMeshBuffer(iBuffer);
-  if (pNode->getType()==ESNT_TERRAIN) {
+  if (pNode->getType()==irr::scene::ESNT_TERRAIN) {
     mb_indices=cDynMeshBuffer.getIndices();
     for (j=0; j<cDynMeshBuffer.getIndexCount(); j++) {
       INDICES(iData)[ci]=cif+mb_indices[j];
@@ -1712,7 +1712,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
     // fill indices
     mb_indices=pBuffer->getIndices();
     for(j=0; j<pBuffer->getIndexCount(); j++) {
-      // scale the indices from multiple meshbuffers to single index array
+      // scale the indices from multiple meshbuffers to single index irr::core::array
       INDICES(iData)[ci]=cif+mb_indices[j];
       ci++;
     }
@@ -1721,7 +1721,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
   cif=cif+pBuffer->getVertexCount();
   // fill vertices
   if(pBuffer->getVertexType()==irr::video::EVT_STANDARD) {
-    irr::video::S3DVertex *mb_vertices=(S3DVertex *)pBuffer->getVertices();
+    irr::video::S3DVertex *mb_vertices=(irr::video::S3DVertex *)pBuffer->getVertices();
     for(j=0; j<pBuffer->getVertexCount(); j++) {
       VERTICES(iData)[cv][0]=sx*mb_vertices[j].Pos.X;
       VERTICES(iData)[cv][1]=sy*mb_vertices[j].Pos.Y;
@@ -1731,7 +1731,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
   }
   else
     if(pBuffer->getVertexType()==irr::video::EVT_2TCOORDS) {
-      irr::video::S3DVertex2TCoords *mb_vertices=(S3DVertex2TCoords*)pBuffer->getVertices();
+      irr::video::S3DVertex2TCoords *mb_vertices=(irr::video::S3DVertex2TCoords*)pBuffer->getVertices();
       for(j=0; j<pBuffer->getVertexCount(); j++) {
         VERTICES(iData)[cv][0]=sx*mb_vertices[j].Pos.X;
         VERTICES(iData)[cv][1]=sy*mb_vertices[j].Pos.Y;
@@ -1747,24 +1747,24 @@ void CIrrOdeDevice::geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pN
   dGeomTriMeshDataBuildSimple(GETDATA(iData),(dReal *)VERTICES(iData),VERTEXCOUNT(iData),INDICES(iData),INDEXCOUNT(iData));
 }
 
-void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
-  IMesh *pMesh=NULL;
-  CDynamicMeshBuffer cDynMeshBuffer(EVT_2TCOORDS,EIT_16BIT);
-  if (pNode->getType()==ESNT_TERRAIN)
-    (reinterpret_cast<ITerrainSceneNode *>(pNode))->getMeshBufferForLOD(cDynMeshBuffer,0);
+void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, irr::scene::ISceneNode *pNode) {
+  irr::scene::IMesh *pMesh=NULL;
+  irr::scene::CDynamicMeshBuffer cDynMeshBuffer(irr::video::EVT_2TCOORDS,irr::video::EIT_16BIT);
+  if (pNode->getType()==irr::scene::ESNT_TERRAIN)
+    (reinterpret_cast<irr::scene::ITerrainSceneNode *>(pNode))->getMeshBufferForLOD(cDynMeshBuffer,0);
 
   switch (pNode->getType()) {
-    case ESNT_TERRAIN:
-      pMesh=(reinterpret_cast<ITerrainSceneNode *>(pNode))->getMesh();
+    case irr::scene::ESNT_TERRAIN:
+      pMesh=(reinterpret_cast<irr::scene::ITerrainSceneNode *>(pNode))->getMesh();
       break;
 
-    //case ESNT_OCT_TREE:
-    case ESNT_MESH :
-      pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+    //case irr::scene::ESNT_OCT_TREE:
+    case irr::scene::ESNT_MESH :
+      pMesh=(reinterpret_cast<irr::scene::IMeshSceneNode *>(pNode))->getMesh();
       break;
 
-    case ESNT_ANIMATED_MESH:
-      pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+    case irr::scene::ESNT_ANIMATED_MESH:
+      pMesh=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
       break;
 
     default:
@@ -1781,9 +1781,9 @@ void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
     return;
   }
 
-	IMeshBuffer *pBuffer;
+	irr::scene::IMeshBuffer *pBuffer;
   for(u32 i=0; i<pMesh->getMeshBufferCount(); i++) {
-    if (pNode->getType()==ESNT_TERRAIN) {
+    if (pNode->getType()==irr::scene::ESNT_TERRAIN) {
       INDEXCOUNT(iData)+=cDynMeshBuffer.getIndexCount();
       VERTEXCOUNT(iData)+=cDynMeshBuffer.getVertexCount();
     }
@@ -1800,13 +1800,13 @@ void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
   VERTICES(iData)=new dVector3[VERTEXCOUNT(iData)];
   INDICES(iData)=new u32[INDEXCOUNT(iData)];
 
-  ci=0;  // current index in the indices array
-  cif=0; // offset of the irrlicht-vertex-index in the vetices array
-  cv=0;  // current index in the vertices array
+  ci=0;  // current index in the indices irr::core::array
+  cif=0; // offset of the irrlicht-vertex-index in the vetices irr::core::array
+  cv=0;  // current index in the vertices irr::core::array
 	u16 *mb_indices;
   for(i=0; i<pMesh->getMeshBufferCount(); i++) {
     pBuffer=pMesh->getMeshBuffer(i);
-    if (pNode->getType()==ESNT_TERRAIN) {
+    if (pNode->getType()==irr::scene::ESNT_TERRAIN) {
       mb_indices=cDynMeshBuffer.getIndices();
       for (j=0; j<cDynMeshBuffer.getIndexCount(); j++) {
         INDICES(iData)[ci]=cif+mb_indices[j];
@@ -1817,7 +1817,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
       // fill indices
       mb_indices=pBuffer->getIndices();
       for(j=0; j<pBuffer->getIndexCount(); j++) {
-        // scale the indices from multiple meshbuffers to single index array
+        // scale the indices from multiple meshbuffers to single index irr::core::array
         INDICES(iData)[ci]=cif+mb_indices[j];
         ci++;
       }
@@ -1826,7 +1826,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
     cif=cif+pBuffer->getVertexCount();
     // fill vertices
     if(pBuffer->getVertexType()==irr::video::EVT_STANDARD) {
-      irr::video::S3DVertex *mb_vertices=(S3DVertex *)pBuffer->getVertices();
+      irr::video::S3DVertex *mb_vertices=(irr::video::S3DVertex *)pBuffer->getVertices();
       for(j=0; j<pBuffer->getVertexCount(); j++) {
         VERTICES(iData)[cv][0]=sx*mb_vertices[j].Pos.X;
         VERTICES(iData)[cv][1]=sy*mb_vertices[j].Pos.Y;
@@ -1836,7 +1836,7 @@ void CIrrOdeDevice::geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) {
     }
     else
       if(pBuffer->getVertexType()==irr::video::EVT_2TCOORDS) {
-        irr::video::S3DVertex2TCoords *mb_vertices=(S3DVertex2TCoords*)pBuffer->getVertices();
+        irr::video::S3DVertex2TCoords *mb_vertices=(irr::video::S3DVertex2TCoords*)pBuffer->getVertices();
         for(j=0; j<pBuffer->getVertexCount(); j++) {
           VERTICES(iData)[cv][0]=sx*mb_vertices[j].Pos.X;
           VERTICES(iData)[cv][1]=sy*mb_vertices[j].Pos.Y;
@@ -1871,7 +1871,7 @@ u32 CIrrOdeDevice::spaceCreateHash(u32 iParent) {
   return iRet;
 }
 
-u32 CIrrOdeDevice::spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth) {
+u32 CIrrOdeDevice::spaceCreateQuadTree(u32 iParent, irr::core::vector3df center, irr::core::vector3df extends, s32 iDepth) {
   u32 iRet;
   COdeDataWrapper *wrap=new COdeDataWrapper();
   dVector3 ctr; ctr[0]=center.X; ctr[1]=center.Y; ctr[2]=center.Z;
@@ -1920,16 +1920,16 @@ void CIrrOdeDevice::convertToSurfaceParameters(dSurfaceParameters *pOde, CIrrOde
   pOde->slip2     =pIrr->getSlip2();
 }
 
-void CIrrOdeDevice::trimeshDrawDebug(u32 iData, IVideoDriver *pDrv) {
-  pDrv->setTransform(ETS_WORLD,CMatrix4<f32>());
+void CIrrOdeDevice::trimeshDrawDebug(u32 iData, irr::video::IVideoDriver *pDrv) {
+  pDrv->setTransform(irr::video::ETS_WORLD,irr::core::CMatrix4<f32>());
   for (u32 i=0; i<INDEXCOUNT(iData); i+=3) {
     const dReal *p1=VERTICES(iData)[INDICES(iData)[i  ]],
                 *p2=VERTICES(iData)[INDICES(iData)[i+1]],
                 *p3=VERTICES(iData)[INDICES(iData)[i+2]];
 
-    pDrv->draw3DLine(vector3df(p1[0],p1[1],p1[2]),vector3df(p2[0],p2[1],p2[2]),SColor(0x80,0xFF,0xFF,0xFF));
-    pDrv->draw3DLine(vector3df(p3[0],p3[1],p3[2]),vector3df(p2[0],p2[1],p2[2]),SColor(0x80,0xFF,0xFF,0xFF));
-    pDrv->draw3DLine(vector3df(p1[0],p1[1],p1[2]),vector3df(p3[0],p3[1],p3[2]),SColor(0x80,0xFF,0xFF,0xFF));
+    pDrv->draw3DLine(irr::core::vector3df(p1[0],p1[1],p1[2]),irr::core::vector3df(p2[0],p2[1],p2[2]),irr::video::SColor(0x80,0xFF,0xFF,0xFF));
+    pDrv->draw3DLine(irr::core::vector3df(p3[0],p3[1],p3[2]),irr::core::vector3df(p2[0],p2[1],p2[2]),irr::video::SColor(0x80,0xFF,0xFF,0xFF));
+    pDrv->draw3DLine(irr::core::vector3df(p1[0],p1[1],p1[2]),irr::core::vector3df(p3[0],p3[1],p3[2]),irr::video::SColor(0x80,0xFF,0xFF,0xFF));
   }
 }
 
@@ -2002,8 +2002,8 @@ IIrrOdeEvent *CIrrOdeDevice::writeEventFor(IIrrOdeEventWriter *p) {
         const dReal *vLin=dBodyGetLinearVel (pOdeDevice->getBodyId(theBody->getBodyId()));
         const dReal *vAng=dBodyGetAngularVel(pOdeDevice->getBodyId(theBody->getBodyId()));
 
-        vector3df vl=vector3df(vLin[0],vLin[1],vLin[2]);
-        vector3df va=vector3df(vAng[0],vAng[1],vAng[2]);
+        irr::core::vector3df vl=irr::core::vector3df(vLin[0],vLin[1],vLin[2]);
+        irr::core::vector3df va=irr::core::vector3df(vAng[0],vAng[1],vAng[2]);
 
         CIrrOdeEventBodyMoved *pEvent=new CIrrOdeEventBodyMoved (theBody,pos,rot,vl,va);
         return pEvent;

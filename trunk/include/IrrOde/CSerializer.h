@@ -6,8 +6,6 @@
 namespace irr {
 namespace ode {
 
-  using namespace core;
-
 /**
  * @class CSerializer
  * This class is used to store changes in the world with the CIrrOdeRecorder. Data added to the buffer is saved at
@@ -131,10 +129,10 @@ class CSerializer {
     }
 
 		/**
-		 * add a vector3df
-		 * @param v vector3df to add
+		 * add a irr::core::vector3df
+		 * @param v irr::core::vector3df to add
 		 */
-    void addVector3df(vector3df v) {
+    void addVector3df(irr::core::vector3df v) {
       addF32(v.X);
       addF32(v.Y);
       addF32(v.Z);
@@ -252,11 +250,11 @@ class CSerializer {
     }
 
 		/**
-		 * get a vector3df
+		 * get a irr::core::vector3df
 		 * @param v buffer for the vector. Value will be copied there
-		 * @return a vector3df (a.k.a. "param v")
+		 * @return a irr::core::vector3df (a.k.a. "param v")
 		 */
-    vector3df &getVector3df(vector3df &v) {
+    irr::core::vector3df &getVector3df(irr::core::vector3df &v) {
       v.X=getF32();
       v.Y=getF32();
       v.Z=getF32();

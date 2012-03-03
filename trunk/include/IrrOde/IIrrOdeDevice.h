@@ -78,7 +78,7 @@ class IIrrOdeDevice {
     virtual s32 worldGetQuickStepNumIterations(u32 iWorld)=0;
     virtual void worldSetQuickStepW(u32 iWorld, f32 f)=0;
     virtual f32 worldGetQuickStepW(u32 iWorld)=0;
-    virtual void worldSetGravity(u32 iWorld, vector3df cGravity)=0;
+    virtual void worldSetGravity(u32 iWorld, irr::core::vector3df cGravity)=0;
     virtual void worldSetERP(u32 iWorld, f32 fErp)=0;
     virtual f32 worldGetERP(u32 iWorld)=0;
     virtual void worldSetCFM(u32 iWorld, f32 fCfm)=0;
@@ -106,9 +106,9 @@ class IIrrOdeDevice {
     /**
      * Functions for the Ball and Socket joint
      */
-    virtual void jointSetBallAnchor(u32 iJoint, vector3df pos)=0;
-    virtual vector3df jointGetBallAnchor(u32 iJoint)=0;
-    virtual vector3df jointGetBallAnchor2(u32 iJoint)=0;
+    virtual void jointSetBallAnchor(u32 iJoint, irr::core::vector3df pos)=0;
+    virtual irr::core::vector3df jointGetBallAnchor(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetBallAnchor2(u32 iJoint)=0;
 
     /**
      * Function for the Fixed joint
@@ -118,11 +118,11 @@ class IIrrOdeDevice {
     /**
      * Functions for the Hinge joint
      */
-    virtual void jointSetHingeAnchor(u32 iJoint, vector3df p)=0;
-    virtual void jointSetHingeAxis(u32 iJoint, vector3df a)=0;
-    virtual vector3df jointGetHingeAxis(u32 iJoint)=0;
-    virtual vector3df jointGetHingeAnchor1(u32 iJoint)=0;
-    virtual vector3df jointGetHingeAnchor2(u32 iJoint)=0;
+    virtual void jointSetHingeAnchor(u32 iJoint, irr::core::vector3df p)=0;
+    virtual void jointSetHingeAxis(u32 iJoint, irr::core::vector3df a)=0;
+    virtual irr::core::vector3df jointGetHingeAxis(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetHingeAnchor1(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetHingeAnchor2(u32 iJoint)=0;
     virtual f32 jointGetHingeAngle(u32 iJoint)=0;
     virtual f32 jointGetHingeAngleRate(u32 iJoint)=0;
     virtual void jointSetHingeParam(u32 iJoint, s32 iParam, f32 iValue)=0;
@@ -131,13 +131,13 @@ class IIrrOdeDevice {
     /**
      * Functions for the Hinge2 joint
      */
-    virtual void jointSetHinge2Anchor(u32 iJoint, vector3df a)=0;
-    virtual void jointSetHinge2Axis1(u32 iJoint, vector3df a)=0;
-    virtual void jointSetHinge2Axis2(u32 iJoint, vector3df a)=0;
-    virtual vector3df jointGetHinge2Axis1(u32 iJoint)=0;
-    virtual vector3df jointGetHinge2Axis2(u32 iJoint)=0;
-    virtual vector3df jointGetHinge2Anchor(u32 iJoint)=0;
-    virtual vector3df jointGetHinge2Anchor2(u32 iJoint)=0;
+    virtual void jointSetHinge2Anchor(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetHinge2Axis1(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetHinge2Axis2(u32 iJoint, irr::core::vector3df a)=0;
+    virtual irr::core::vector3df jointGetHinge2Axis1(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetHinge2Axis2(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetHinge2Anchor(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetHinge2Anchor2(u32 iJoint)=0;
     virtual f32 jointGetHinge2Angle1(u32 iJoint)=0;
     virtual f32 jointGetHinge2Angle1Rate(u32 iJoint)=0;
     virtual f32 jointGetHinge2Angle2Rate(u32 iJoint)=0;
@@ -147,20 +147,20 @@ class IIrrOdeDevice {
     /**
      * Functions for the Piston joint
      */
-    virtual void jointSetPistonAnchor(u32 iJoint, vector3df a)=0;
-    virtual void jointSetPistonAxis(u32 iJoint, vector3df a)=0;
+    virtual void jointSetPistonAnchor(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetPistonAxis(u32 iJoint, irr::core::vector3df a)=0;
     virtual f32 jointGetPistonPosition(u32 iJoint)=0;
     virtual f32 jointGetPistonPositionRate(u32 iJoint)=0;
-    virtual vector3df jointGetPistonAnchor(u32 iJoint)=0;
-    virtual vector3df jointGetPistonAxis(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetPistonAnchor(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetPistonAxis(u32 iJoint)=0;
     virtual void jointSetPistonParam(u32 iJoint, u32 iGroup, s32 iParam, f32 fValue)=0;
     virtual f32 jointGetPistonParam(u32 iJoint, u32 iGroup, s32 iParam)=0;
 
     /**
      * Functions for the Slider joint
      */
-    virtual void jointSetSliderAxis(u32 iJoint, vector3df a)=0;
-    virtual vector3df jointGetSliderAxis(u32 iJoint)=0;
+    virtual void jointSetSliderAxis(u32 iJoint, irr::core::vector3df a)=0;
+    virtual irr::core::vector3df jointGetSliderAxis(u32 iJoint)=0;
     virtual f32 jointGetSliderPosition(u32 iJoint)=0;
     virtual f32 jointGetSliderPositionRate(u32 iJoint)=0;
     virtual void jointSetSliderParam(u32 iJoint, s32 iParam, f32 fValue)=0;
@@ -169,13 +169,13 @@ class IIrrOdeDevice {
     /**
      * Functions for the Universal joint
      */
-    virtual void jointSetUniversalAnchor(u32 iJoint, vector3df a)=0;
-    virtual void jointSetUniversalAxis1(u32 iJoint, vector3df a)=0;
-    virtual void jointSetUniversalAxis2(u32 iJoint, vector3df a)=0;
-    virtual vector3df jointGetUniversalAnchor(u32 iJoint)=0;
-    virtual vector3df jointGetUniversalAnchor2(u32 iJoint)=0;
-    virtual vector3df jointGetUniversalAxis1(u32 iJoint)=0;
-    virtual vector3df jointGetUniversalAxis2(u32 iJoint)=0;
+    virtual void jointSetUniversalAnchor(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetUniversalAxis1(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetUniversalAxis2(u32 iJoint, irr::core::vector3df a)=0;
+    virtual irr::core::vector3df jointGetUniversalAnchor(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetUniversalAnchor2(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetUniversalAxis1(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetUniversalAxis2(u32 iJoint)=0;
     virtual f32 jointGetUniversalAngle1(u32 iJoint)=0;
     virtual f32 jointGetUniversalAngle2(u32 iJoint)=0;
     virtual f32 jointGetUniversalAngle1Rate(u32 iJoint)=0;
@@ -186,12 +186,12 @@ class IIrrOdeDevice {
     /**
      * Functions for the Prismatic-Rotoide joint
      */
-    virtual void jointSetPrAxis1(u32 iJoint, vector3df a)=0;
-    virtual void jointSetPrAxis2(u32 iJoint, vector3df a)=0;
-    virtual void jointSetPrAnchor(u32 iJoint, vector3df a)=0;
-    virtual vector3df jointGetPrAxis1(u32 iJoint)=0;
-    virtual vector3df jointGetPrAxis2(u32 iJoint)=0;
-    virtual vector3df jointGetPrAnchor(u32 iJoint)=0;
+    virtual void jointSetPrAxis1(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetPrAxis2(u32 iJoint, irr::core::vector3df a)=0;
+    virtual void jointSetPrAnchor(u32 iJoint, irr::core::vector3df a)=0;
+    virtual irr::core::vector3df jointGetPrAxis1(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetPrAxis2(u32 iJoint)=0;
+    virtual irr::core::vector3df jointGetPrAnchor(u32 iJoint)=0;
     virtual f32 jointGetPrPosition(u32 iJoint)=0;
     virtual f32 jointGetPrAngle(u32 iJoint)=0;
     virtual f32 jointGetPrAngleRate(u32 iJoint)=0;
@@ -203,11 +203,11 @@ class IIrrOdeDevice {
      */
     virtual u32 bodyCreate(u32 iWorld)=0;
     virtual void bodyDestroy(u32 iBody)=0;
-    virtual void bodySetPosition(u32 iBody, vector3df pos)=0;
-    virtual vector3df bodyGetPosition(u32 iBody)=0;
-    virtual vector3df bodyGetRotation(u32 iBody)=0;
+    virtual void bodySetPosition(u32 iBody, irr::core::vector3df pos)=0;
+    virtual irr::core::vector3df bodyGetPosition(u32 iBody)=0;
+    virtual irr::core::vector3df bodyGetRotation(u32 iBody)=0;
     virtual void bodySetQuaternion(u32 iBody, core::quaternion rot)=0;
-    virtual void bodySetRotation(u32 iBody, vector3df rot)=0;
+    virtual void bodySetRotation(u32 iBody, irr::core::vector3df rot)=0;
     virtual void bodySetData(u32 iBody, void *pData)=0;
     virtual void bodySetLinearDamping(u32 iBody, f32 f)=0;
     virtual f32 bodyGetLinearDamping(u32 iBody)=0;
@@ -231,40 +231,40 @@ class IIrrOdeDevice {
     virtual f32 bodyGetAutoDisableTime(u32 iBody)=0;
     virtual void bodySetFiniteRotationMode(u32 iBody, bool b)=0;
     virtual bool bodyGetFiniteRotationMode(u32 iBody)=0;
-    virtual void bodySetFiniteRotationAxis(u32 iBody, vector3df v)=0;
-    virtual const vector3df bodyGetFiniteRotationAxis(u32 iBody)=0;
+    virtual void bodySetFiniteRotationAxis(u32 iBody, irr::core::vector3df v)=0;
+    virtual const irr::core::vector3df bodyGetFiniteRotationAxis(u32 iBody)=0;
     virtual void bodySetGravityMode(u32 iBody, s32 i)=0;
     virtual s32 bodyGetGravityMode(u32 iBody)=0;
     virtual CIrrOdeGeom *bodyGetFirstGeom(u32 iBody)=0;
     virtual CIrrOdeGeom *bodyGetNextGeom(CIrrOdeGeom *pPrev)=0;
     virtual bool bodyIsEnabled(u32 iBody)=0;
-    virtual void bodyAddForce(u32 iBody, vector3df f)=0;
-    virtual void bodyAddForceAtPosition(u32 iBody, vector3df f, vector3df p)=0;
-    virtual void bodyAddTorque(u32 iBody, vector3df t)=0;
-    virtual void bodySetTorque(u32 iBody, vector3df t)=0;
+    virtual void bodyAddForce(u32 iBody, irr::core::vector3df f)=0;
+    virtual void bodyAddForceAtPosition(u32 iBody, irr::core::vector3df f, irr::core::vector3df p)=0;
+    virtual void bodyAddTorque(u32 iBody, irr::core::vector3df t)=0;
+    virtual void bodySetTorque(u32 iBody, irr::core::vector3df t)=0;
     virtual void bodyEnable(u32 iBody)=0;
     virtual void bodyDisable(u32 iBody)=0;
-    virtual void bodySetLinearVelocity(u32 iBody, vector3df v)=0;
-    virtual vector3df bodyGetLinearVelocity(u32 iBody)=0;
-    virtual void bodySetAngularVelocity(u32 iBody, vector3df v)=0;
-    virtual vector3df bodyGetAngularVelocity(u32 iBody)=0;
-    virtual vector3df bodyGetPointVel(u32 iBody, vector3df vPos)=0;
-    virtual vector3df bodyGetRelPointVel(u32 iBody, vector3df vPos)=0;
-    virtual vector3df bodyGetRelPointPos(u32 iBody, vector3df vPos)=0;
-    virtual vector3df bodyGetPosRelPoint(u32 iBody, vector3df vPos)=0;
-    virtual vector3df bodyVectorFromWorld(u32 iBody, vector3df vPos)=0;
+    virtual void bodySetLinearVelocity(u32 iBody, irr::core::vector3df v)=0;
+    virtual irr::core::vector3df bodyGetLinearVelocity(u32 iBody)=0;
+    virtual void bodySetAngularVelocity(u32 iBody, irr::core::vector3df v)=0;
+    virtual irr::core::vector3df bodyGetAngularVelocity(u32 iBody)=0;
+    virtual irr::core::vector3df bodyGetPointVel(u32 iBody, irr::core::vector3df vPos)=0;
+    virtual irr::core::vector3df bodyGetRelPointVel(u32 iBody, irr::core::vector3df vPos)=0;
+    virtual irr::core::vector3df bodyGetRelPointPos(u32 iBody, irr::core::vector3df vPos)=0;
+    virtual irr::core::vector3df bodyGetPosRelPoint(u32 iBody, irr::core::vector3df vPos)=0;
+    virtual irr::core::vector3df bodyVectorFromWorld(u32 iBody, irr::core::vector3df vPos)=0;
 
     virtual void bodySetMass(u32 iBody, u32 iMass)=0;
 
     virtual void geomSetBody(u32 iGeom, CIrrOdeBody *pBody)=0;
     virtual void geomDestroy(u32 iGeom)=0;
-    virtual void geomSetOffsetPosition(u32 iGeom, vector3df offset)=0;
-    virtual void geomSetOffsetQuaternion(u32 iGeom, vector3df rot)=0;
+    virtual void geomSetOffsetPosition(u32 iGeom, irr::core::vector3df offset)=0;
+    virtual void geomSetOffsetQuaternion(u32 iGeom, irr::core::vector3df rot)=0;
 
-    virtual void geomSetPosition(u32 iGeom, vector3df pos)=0;
-    virtual void geomSetRotation(u32 iGeom, vector3df rot)=0;
+    virtual void geomSetPosition(u32 iGeom, irr::core::vector3df pos)=0;
+    virtual void geomSetRotation(u32 iGeom, irr::core::vector3df rot)=0;
     virtual void geomSetData(u32 iGeom, void *pData)=0;
-    virtual void geomRaySetData(u32 iGeom, vector3df pos, vector3df dir, f32 fLength)=0;
+    virtual void geomRaySetData(u32 iGeom, irr::core::vector3df pos, irr::core::vector3df dir, f32 fLength)=0;
     virtual void geomSetBackfaceCull(u32 iGeom, bool bBackfaceCull)=0;
 
     virtual u32 geomCreateBox(u32 iSpace, f32 fWidth, f32 fHeight, f32 fDepth)=0;
@@ -281,8 +281,8 @@ class IIrrOdeDevice {
     virtual void geomHeightfieldDataCallback(u32 iHFData, void *pData, void *pCallback, f32 fWidth, f32 fDepth, s32 iWidthSamples, s32 iDepthSamples, f32 fScale, f32 fOffset, f32 fThickness, s32 bWrap)=0;
 
     virtual u32 geomTrimeshDataCreate()=0;
-    virtual void geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode)=0;
-    virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer)=0;
+    virtual void geomTrimeshDataBuildSimple(u32 iData, irr::scene::ISceneNode *pNode)=0;
+    virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, irr::scene::ISceneNode *pNode, u32 iBuffer)=0;
 
     virtual void geomSetCategoryBits(u32 iGeom, u32 iBits)=0;
     virtual void geomSetCollisionBits(u32 iGeom, u32 iBits)=0;
@@ -293,8 +293,8 @@ class IIrrOdeDevice {
     virtual u32 massCreate()=0;
     virtual void massAdd(u32 iDst, u32 iSrc)=0;
     virtual void massSetZero(u32 iMass)=0;
-    virtual void massSetParameters(u32 iMass, f32 fMass, vector3df c, vector3df i1, vector3df i2)=0;
-    virtual void massTranslate(u32 iMass, vector3df pos)=0;
+    virtual void massSetParameters(u32 iMass, f32 fMass, irr::core::vector3df c, irr::core::vector3df i1, irr::core::vector3df i2)=0;
+    virtual void massTranslate(u32 iMass, irr::core::vector3df pos)=0;
     virtual void massSetBoxTotal(u32 iMass, f32 fMass, f32 lx, f32 ly, f32 lz)=0;
     virtual void massSetCapsuleTotal(u32 iMass, f32 fMass, s32 iDirection, f32 fRadius, f32 fLength)=0;
     virtual void massSetCylinderTotal(u32 iMass, f32 fMass, s32 iDirection, f32 fRadius, f32 fLength)=0;
@@ -302,14 +302,14 @@ class IIrrOdeDevice {
 
     virtual u32 spaceCreateSimple(u32 iParent)=0;
     virtual u32 spaceCreateHash(u32 iParent)=0;
-    virtual u32 spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth)=0;
+    virtual u32 spaceCreateQuadTree(u32 iParent, irr::core::vector3df center, irr::core::vector3df extends, s32 iDepth)=0;
     virtual void spaceDestroy(u32 iSpace)=0;
 
     virtual u32 jointGroupCreate(s32 iMaxSize)=0;
     virtual void jointGroupDestroy(u32 iJointGroup)=0;
     virtual void jointGroupEmtpy(u32 iJointGroup)=0;
 
-    virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv)=0;
+    virtual void trimeshDrawDebug(u32 iData, irr::video::IVideoDriver *pDrv)=0;
 
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits)=0;
 

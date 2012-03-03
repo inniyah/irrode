@@ -6,12 +6,6 @@
 namespace irr {
 namespace ode {
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /**
  * @class CIrrOdeDefaultEventFactory
  * @author Christian Keimel / bulletbyte.de
@@ -22,7 +16,7 @@ using namespace gui;
 class CIrrOdeDefaultEventFactory : public IIrrOdeEventFactory {
   public:
     CIrrOdeDefaultEventFactory();
-    virtual IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr);
+    virtual IIrrOdeEvent *createMessage(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
 };
 
 /**
@@ -35,9 +29,9 @@ class CIrrOdeDefaultEventFactory : public IIrrOdeEventFactory {
  */
 class CIrrOdeEventFactory {
   protected:
-    ISceneManager *m_pSmgr;                       /**<! the scene manager to use */
+    irr::scene::ISceneManager *m_pSmgr;                       /**<! the scene manager to use */
     CIrrOdeDefaultEventFactory *m_pDefaultFact;   /**< the default event factory */
-    list<IIrrOdeEventFactory *> m_lFactories;     /**< a list of all registered event factories */
+    irr::core::list<IIrrOdeEventFactory *> m_lFactories;     /**< a irr::core::list of all registered event factories */
     CIrrOdeEventFactory();                        /**< protected constructor */
     ~CIrrOdeEventFactory();                       /**< protected destructor */
 
@@ -53,7 +47,7 @@ class CIrrOdeEventFactory {
      * @param pData the serialized data
      * @param pSmgr the scene manager to use
      */
-    IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr);
+    IIrrOdeEvent *createMessage(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
 
     /**
      * Register an event factory. The event factory will be deleted on removal.
@@ -72,13 +66,13 @@ class CIrrOdeEventFactory {
      * Set the scene manager to use
      * @param pSmgr the scene manager to use
      */
-    void setSceneManager(ISceneManager *pSmgr);
+    void setSceneManager(irr::scene::ISceneManager *pSmgr);
 
     /**
      * Get the registered scene manager
      * @return the registered scene manager
      */
-    ISceneManager *getSceneManager() { return m_pSmgr; }
+    irr::scene::ISceneManager *getSceneManager() { return m_pSmgr; }
 };
 
 }

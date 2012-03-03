@@ -3,13 +3,13 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                    const vector3df &position, const vector3df &rotation, const vector3df &scale)
+CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                    const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale)
                     :IIrrOdeStepMotor(parent,mgr,id,position,rotation,scale) {
 
-  m_vRollAxis =vector3df(1.0f,0.0f,0.0f);  //default roll axis
-  m_vPitchAxis=vector3df(0.0f,0.0f,1.0f);  //default pitch axis
-  m_vYawAxis  =vector3df(0.0f,1.0f,0.0f);  //default yaw axis
+  m_vRollAxis =irr::core::vector3df(1.0f,0.0f,0.0f);  //default roll axis
+  m_vPitchAxis=irr::core::vector3df(0.0f,0.0f,1.0f);  //default pitch axis
+  m_vYawAxis  =irr::core::vector3df(0.0f,1.0f,0.0f);  //default yaw axis
 
   m_bAeroRudder=false;
 
@@ -34,12 +34,12 @@ CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32
 
 void CIrrOdeTorqueMotor::step() {
   if (m_pBody!=NULL && m_pBody->physicsInitialized() && m_bIsActive) {
-    vector3df vRot=m_pBody->getRotation(),
+    irr::core::vector3df vRot=m_pBody->getRotation(),
               vVel=m_pBody->getLinearVelocity(),
               vNormVel=vVel;
 
     vNormVel.normalize();
-    vector3df vForeward=vRot.rotationToDirection(m_vRollAxis);
+    irr::core::vector3df vForeward=vRot.rotationToDirection(m_vRollAxis);
     f32 fForeward=vForeward.dotProduct(vNormVel.normalize());
 
     m_fForewardVel=fForeward*vVel.getLength();
@@ -47,12 +47,12 @@ void CIrrOdeTorqueMotor::step() {
     //1st case: we are an aero rudder, e.g. of an airplane
     if (m_bAeroRudder) {
       //initialize the force vector
-      vector3df vTorque=vector3df(0.0f,0.0f,0.0f);
+      irr::core::vector3df vTorque=irr::core::vector3df(0.0f,0.0f,0.0f);
 
       //OK, if the linear velocity is bigger than the minimum velocity (or smaller than the negative of minimum velocity)...
       if (m_fForewardVel>=m_fMinVel || m_fForewardVel<=-m_fMinVel) {
         //...we create a vector with the rudder settings and...
-        vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor;
+        irr::core::vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor;
         //...rotate this vector by the bodie's rotation
         vTorque=vRot.rotationToDirection(vRudder);
         if (m_fForewardVel>=m_fMaxVel || m_fForewardVel<=-m_fMaxVel)
@@ -66,7 +66,7 @@ void CIrrOdeTorqueMotor::step() {
     }
     else {
       //2nd case: no aero rudder (e.g. helicopters): just apply the rotational force given by the values and axes
-      vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor,
+      irr::core::vector3df vRudder=m_vPitchAxis*m_fPitch*m_fPitchFactor+m_vYawAxis*m_fYaw*m_fYawFactor+m_vRollAxis*m_fRoll*m_fRollFactor,
                 vTorque=vRot.rotationToDirection(vRudder)*m_fMaxPower;
 
       m_pBody->addTorque(m_fPower*vTorque);
@@ -78,7 +78,7 @@ const wchar_t *CIrrOdeTorqueMotor::getTypeName() {
   return IRR_ODE_TORQUE_MOTOR_NAME;
 }
 
-void CIrrOdeTorqueMotor::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeTorqueMotor::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   IIrrOdeStepMotor::serializeAttributes(out,options);
 
   out->addVector3d("roll_axis" ,m_vRollAxis );
@@ -95,7 +95,7 @@ void CIrrOdeTorqueMotor::serializeAttributes(IAttributes* out, SAttributeReadWri
   out->addFloat("max_vel",m_fMaxVel);
 }
 
-void CIrrOdeTorqueMotor::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeTorqueMotor::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   IIrrOdeStepMotor::deserializeAttributes(in,options);
 
   m_vRollAxis =in->getAttributeAsVector3d("roll_axis" );
@@ -112,7 +112,7 @@ void CIrrOdeTorqueMotor::deserializeAttributes(io::IAttributes* in, io::SAttribu
   m_fMaxVel=in->getAttributeAsFloat("max_vel");
 }
 
-ISceneNode *CIrrOdeTorqueMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeTorqueMotor::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeTorqueMotor *pRet=new CIrrOdeTorqueMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   pRet->setBody(reinterpret_cast<irr::ode::CIrrOdeBody *>(newParent));
   pRet->setName(getName());
