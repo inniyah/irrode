@@ -6,29 +6,27 @@
   #include <CConnection.h>
   #include <CTextureParameters.h>
 
-using namespace irr;
-
-bool CRoadLoader::sameMaterial(const video::SMaterial &m1, const video::SMaterial &m2) {
+bool CRoadLoader::sameMaterial(const irr::video::SMaterial &m1, const irr::video::SMaterial &m2) {
   #ifdef _IRREDIT_PLUGIN
-    core::stringc s1=m1.getTexture(0)->getName(),
+    irr::core::stringc s1=m1.getTexture(0)->getName(),
                   s2=m2.getTexture(0)->getName();
   #else
-    core::stringc s1=m1.getTexture(0)->getName().getPath(),
+    irr::core::stringc s1=m1.getTexture(0)->getName().getPath(),
                   s2=m2.getTexture(0)->getName().getPath();
   #endif
 
   return s1==s2;
 }
 
-void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMeshBuffer *> &aBuffers) {
+void CRoadLoader::addBufferToArray(irr::scene::IMeshBuffer *p, irr::core::array<irr::scene::IMeshBuffer *> &aBuffers) {
   bool bAdded=false;
 
-  for (u32 j=0; j<aBuffers.size() && !bAdded; j++) {
-    video::SMaterial mat1=p->getMaterial(),
+  for (irr::u32 j=0; j<aBuffers.size() && !bAdded; j++) {
+    irr::video::SMaterial mat1=p->getMaterial(),
                      mat2=aBuffers[j]->getMaterial();
 
     if (sameMaterial(mat1,mat2)) {
-      scene::IMeshBuffer *pBuffer=aBuffers[j];
+      irr::scene::IMeshBuffer *pBuffer=aBuffers[j];
       pBuffer->append(p->getVertices(),p->getVertexCount(),p->getIndices(),p->getIndexCount());
       pBuffer->recalculateBoundingBox();
       p->drop();
@@ -43,27 +41,27 @@ void CRoadLoader::addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMe
   }
 }
 
-CRoadLoader::CRoadLoader(IrrlichtDevice *pDevice) {
+CRoadLoader::CRoadLoader(irr::IrrlichtDevice *pDevice) {
   m_pDevice=pDevice;
   m_sCurrentRoad="";
   m_pSurface=NULL;
-  m_vOfffset=core::vector3df(0.0f,0.0f,0.0f);
+  m_vOfffset=irr::core::vector3df(0.0f,0.0f,0.0f);
   m_bShrinkNode=false;
 }
 
-bool CRoadLoader::loadRoad(const core::stringc sName) {
+bool CRoadLoader::loadRoad(const irr::core::stringc sName) {
   m_lConnections.clear();
   m_lSegments.clear();
 
   m_sCurrentRoad=sName;
 
   bool bRet=true;
-  io::IReadFile *pFile=m_pDevice->getFileSystem()->createAndOpenFile(sName.c_str());
+  irr::io::IReadFile *pFile=m_pDevice->getFileSystem()->createAndOpenFile(sName.c_str());
 
   if (pFile) {
-    io::IXMLReader *pReader=m_pDevice->getFileSystem()->createXMLReader(pFile);
+    irr::io::IXMLReader *pReader=m_pDevice->getFileSystem()->createXMLReader(pFile);
     if (pReader) {
-      u32 iState=0,
+      irr::u32 iState=0,
           iSegTex=0,
           iConTex=0,
           iGndTex=0;
@@ -72,21 +70,21 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
       CConnection *pCon=NULL;
 
       while (pReader->read()) {
-        if (pReader->getNodeType()==io::EXN_ELEMENT) {
-          if (core::stringw(pReader->getNodeName())==L"Segment"   ) iState=1;
-          if (core::stringw(pReader->getNodeName())==L"Connection") iState=2;
-          if (core::stringw(pReader->getNodeName())==L"Materials" ) iState=3;
-          if (core::stringw(pReader->getNodeName())==L"Surface"   ) iState=6;
-          if (core::stringw(pReader->getNodeName())==L"Parameters") iState=9;
+        if (pReader->getNodeType()==irr::io::EXN_ELEMENT) {
+          if (irr::core::stringw(pReader->getNodeName())==L"Segment"   ) iState=1;
+          if (irr::core::stringw(pReader->getNodeName())==L"Connection") iState=2;
+          if (irr::core::stringw(pReader->getNodeName())==L"Materials" ) iState=3;
+          if (irr::core::stringw(pReader->getNodeName())==L"Surface"   ) iState=6;
+          if (irr::core::stringw(pReader->getNodeName())==L"Parameters") iState=9;
 
-          if (iState==1 && core::stringw(pReader->getNodeName())==L"TextureParams") iState=4;
-          if (iState==2 && core::stringw(pReader->getNodeName())==L"TextureParams") iState=5;
-          if (iState==6 && core::stringw(pReader->getNodeName())==L"TextureParams") iState=7;
+          if (iState==1 && irr::core::stringw(pReader->getNodeName())==L"TextureParams") iState=4;
+          if (iState==2 && irr::core::stringw(pReader->getNodeName())==L"TextureParams") iState=5;
+          if (iState==6 && irr::core::stringw(pReader->getNodeName())==L"TextureParams") iState=7;
 
-          if (core::stringw(pReader->getNodeName())==L"attributes") {
+          if (irr::core::stringw(pReader->getNodeName())==L"attributes") {
             //Load a segment
             if (iState==1) {
-              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               pSeg=new CSegment(m_pDevice);
               m_lSegments.push_back(pSeg);
@@ -97,13 +95,13 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load a connection
             if (iState==2) {
-              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               pCon=new CConnection(m_pDevice,NULL);
               iConTex=0;
               pCon->load(pAttr);
 
-              core::list<CSegment *>::Iterator it;
+              irr::core::list<CSegment *>::Iterator it;
               for (it=m_lSegments.begin(); it!=m_lSegments.end(); it++) {
                 CSegment *p=*it;
                 if (p->getName()==pCon->getSegment1Name()) pCon->setSegment1NoInit(p);
@@ -117,7 +115,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             //Load texture parameters of a segment
             if (iState==4) {
               if (pSeg!=NULL && iSegTex<_SEGMENT_NUMBER_OF_BUFFERS) {
-                io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+                irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pSeg->getTextureParameters(iSegTex)->load(pAttr);
                 pSeg->update();
@@ -128,7 +126,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             //Load texture parameters of a connection
             if (iState==5) {
               if (pCon!=NULL && iConTex<_CONNECTION_NUMBER_OF_BUFFERS) {
-                io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+                irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
                 pAttr->read(pReader,true);
                 pCon->getTextureParameters(iConTex)->load(pAttr);
                 pCon->update();
@@ -138,7 +136,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load surface data
             if (iState==6) {
-              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               if (m_pSurface==NULL) m_pSurface=new CSurface(m_pDevice,NULL);
               m_pSurface->load(pAttr);
@@ -148,7 +146,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
 
             //Load texture parameters of the surface
             if (iState==7) {
-              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               m_pSurface->getTextureParameters(iGndTex)->load(pAttr);
               m_pSurface->recalcMeshBuffer();
@@ -156,7 +154,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
             }
 
             if (iState==9) {
-              io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+              irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
               pAttr->read(pReader,true);
               m_bShrinkNode=pAttr->getAttributeAsBool("shrinknode");
               pAttr->drop();
@@ -164,10 +162,10 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
           }
         }
 
-        if (pReader->getNodeType()==io::EXN_ELEMENT_END) {
+        if (pReader->getNodeType()==irr::io::EXN_ELEMENT_END) {
           switch (iState) {
             case 1:
-              if (core::stringw(pReader->getNodeName())==L"Segment") {
+              if (irr::core::stringw(pReader->getNodeName())==L"Segment") {
                 iState=0;
                 pSeg=NULL;
                 iSegTex=0;
@@ -175,7 +173,7 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
               break;
 
             case 2:
-              if (core::stringw(pReader->getNodeName())==L"Connection") {
+              if (irr::core::stringw(pReader->getNodeName())==L"Connection") {
                 iState=0;
                 pCon=NULL;
                 iConTex=0;
@@ -183,39 +181,39 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
               break;
 
             case 3:
-              if (core::stringw(pReader->getNodeName())==L"Materials") iState=0;
+              if (irr::core::stringw(pReader->getNodeName())==L"Materials") iState=0;
               break;
 
             case 4:
-              if (core::stringw(pReader->getNodeName())==L"TextureParams") {
+              if (irr::core::stringw(pReader->getNodeName())==L"TextureParams") {
                 iState=1;
                 iSegTex++;
               }
               break;
 
             case 5:
-              if (core::stringw(pReader->getNodeName())==L"TextureParams") {
+              if (irr::core::stringw(pReader->getNodeName())==L"TextureParams") {
                 iState=2;
                 iConTex++;
               }
               break;
 
             case 6:
-              if (core::stringw(pReader->getNodeName())==L"Surface") {
+              if (irr::core::stringw(pReader->getNodeName())==L"Surface") {
                 iState=0;
                 m_pSurface->recalcMeshBuffer();
               }
               break;
 
             case 7:
-              if (core::stringw(pReader->getNodeName())==L"TextureParams") {
+              if (irr::core::stringw(pReader->getNodeName())==L"TextureParams") {
                 iState=6;
                 iGndTex++;
               }
               break;
 
             case 9:
-              if (core::stringw(pReader->getNodeName())==L"Parameters") {
+              if (irr::core::stringw(pReader->getNodeName())==L"Parameters") {
                 iState=0;
               }
           }
@@ -225,8 +223,8 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
       m_sCurrentRoad=sName;
       pReader->drop();
 
-      core::list<CSegment    *>::Iterator sit;
-      core::list<CConnection *>::Iterator cit;
+      irr::core::list<CSegment    *>::Iterator sit;
+      irr::core::list<CConnection *>::Iterator cit;
 
       for (sit=m_lSegments   .begin(); sit!=m_lSegments   .end(); sit++) (*sit)->update();
       for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) (*cit)->update();
@@ -252,9 +250,9 @@ bool CRoadLoader::loadRoad(const core::stringc sName) {
  * @see CTextureParameters::save
  */
 void CRoadLoader::saveRoad() {
-  io::IWriteFile *pFile=m_pDevice->getFileSystem()->createAndWriteFile(m_sCurrentRoad.c_str(),false);
+  irr::io::IWriteFile *pFile=m_pDevice->getFileSystem()->createAndWriteFile(m_sCurrentRoad.c_str(),false);
   if (pFile) {
-    io::IXMLWriter *pWriter=m_pDevice->getFileSystem()->createXMLWriter(pFile);
+    irr::io::IXMLWriter *pWriter=m_pDevice->getFileSystem()->createXMLWriter(pFile);
     if (pWriter) {
       pWriter->writeXMLHeader();
       pWriter->writeElement(L"BulletByteRoadCreator",false);
@@ -263,7 +261,7 @@ void CRoadLoader::saveRoad() {
       pWriter->writeElement(L"Parameters",false);
       pWriter->writeLineBreak();
 
-      io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+      irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
       pAttr->addBool("shrinknode",m_bShrinkNode);
       pAttr->write(pWriter);
       pAttr->drop();
@@ -273,25 +271,25 @@ void CRoadLoader::saveRoad() {
       pWriter->writeLineBreak();
 
       //Write the segments
-      core::list<CSegment *>::Iterator sit;
+      irr::core::list<CSegment *>::Iterator sit;
       for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
         CSegment *p=*sit;
         pWriter->writeElement(L"Segment",false);
         pWriter->writeLineBreak();
-        io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+        irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
         p->save(pAttr);
         pAttr->write(pWriter);
         pAttr->drop();
 
         //Write the segment texture parameters
-        for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
-          core::stringw s=L"TextureParams";
+        for (irr::u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
+          irr::core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
           pWriter->writeLineBreak();
 
           CTextureParameters *t=p->getTextureParameters(i);
-          io::IAttributes *pTexAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+          irr::io::IAttributes *pTexAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
           t->save(pTexAttr);
           pTexAttr->write(pWriter);
           pTexAttr->drop();
@@ -305,25 +303,25 @@ void CRoadLoader::saveRoad() {
       }
 
       //Write the connections
-      core::list<CConnection *>::Iterator cit;
+      irr::core::list<CConnection *>::Iterator cit;
       for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
         CConnection *p=*cit;
         pWriter->writeElement(L"Connection",false);
         pWriter->writeLineBreak();
-        io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+        irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
         p->save(pAttr);
         pAttr->write(pWriter);
         pAttr->drop();
 
         //Write the connection's texture parameters
-        for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
-          core::stringw s=L"TextureParams";
+        for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+          irr::core::stringw s=L"TextureParams";
 
           pWriter->writeElement(s.c_str(),false);
           pWriter->writeLineBreak();
 
           CTextureParameters *t=p->getTextureParameters(i);
-          io::IAttributes *pTexAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+          irr::io::IAttributes *pTexAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
           t->save(pTexAttr);
           pTexAttr->write(pWriter);
           pTexAttr->drop();
@@ -338,20 +336,20 @@ void CRoadLoader::saveRoad() {
       if (m_pSurface->isVisible()) {
         pWriter->writeElement(L"Surface",false);
         pWriter->writeLineBreak();
-        io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+        irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
         m_pSurface->save(pAttr);
         pAttr->write(pWriter);
         pAttr->drop();
 
-        for (u32 i=0; i<2; i++) {
+        for (irr::u32 i=0; i<2; i++) {
           CTextureParameters *p=m_pSurface->getTextureParameters(i);
           if (p!=NULL) {
-            core::stringw s=L"TextureParams";
+            irr::core::stringw s=L"TextureParams";
 
             pWriter->writeElement(s.c_str(),false);
             pWriter->writeLineBreak();
 
-            io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
+            irr::io::IAttributes *pAttr=m_pDevice->getFileSystem()->createEmptyAttributes();
             p->save(pAttr);
             pAttr->write(pWriter);
             pAttr->drop();
@@ -383,7 +381,7 @@ void CRoadLoader::destroyRoad() {
   #else
     while (m_lSegments.size()>0) {
   #endif
-    core::list<CSegment *>::Iterator it=m_lSegments.begin();
+    irr::core::list<CSegment *>::Iterator it=m_lSegments.begin();
     CSegment *p=*it;
     m_lSegments.erase(it);
     delete p;
@@ -395,39 +393,39 @@ void CRoadLoader::destroyRoad() {
   #else
     while (m_lConnections.size()>0) {
   #endif
-    core::list<CConnection *>::Iterator it=m_lConnections.begin();
+    irr::core::list<CConnection *>::Iterator it=m_lConnections.begin();
     CConnection *p=*it;
     m_lConnections.erase(it);
     delete p;
   }
 }
 
-core::list<CSegment    *> &CRoadLoader::getSegments   () { return m_lSegments   ; }
-core::list<CConnection *> &CRoadLoader::getConnections() { return m_lConnections; }
+irr::core::list<CSegment    *> &CRoadLoader::getSegments   () { return m_lSegments   ; }
+irr::core::list<CConnection *> &CRoadLoader::getConnections() { return m_lConnections; }
 
-const core::stringc CRoadLoader::getCurrentRoadName() { return m_sCurrentRoad; }
-void CRoadLoader::setCurrentRoadName(const core::stringc s) { m_sCurrentRoad=s; }
+const irr::core::stringc CRoadLoader::getCurrentRoadName() { return m_sCurrentRoad; }
+void CRoadLoader::setCurrentRoadName(const irr::core::stringc s) { m_sCurrentRoad=s; }
 
-scene::IAnimatedMesh *CRoadLoader::createMesh() {
-  core::array<core::aabbox3df> aBoxes;
-  core::array<scene::IMeshBuffer *> aBuffers;
+irr::scene::IAnimatedMesh *CRoadLoader::createMesh() {
+  irr::core::array<irr::core::aabbox3df> aBoxes;
+  irr::core::array<irr::scene::IMeshBuffer *> aBuffers;
 
   aBuffers.clear();
 
-  core::vector3df vCenterPos=core::vector3df(0.0f,0.0f,0.0f);
+  irr::core::vector3df vCenterPos=irr::core::vector3df(0.0f,0.0f,0.0f);
 
-  core::list<CSegment *>::Iterator sit;
+  irr::core::list<CSegment *>::Iterator sit;
   for (sit=m_lSegments.begin(); sit!=m_lSegments.end(); sit++) {
     CSegment *pSeg=*sit;
     vCenterPos+=pSeg->getPosition();
-    for (u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
+    for (irr::u32 i=0; i<_SEGMENT_NUMBER_OF_BUFFERS; i++) {
       bool bDoIt=true;
-      for (u32 iTex=0; iTex<pSeg->getTextureCount() && bDoIt; iTex++) {
+      for (irr::u32 iTex=0; iTex<pSeg->getTextureCount() && bDoIt; iTex++) {
         if (pSeg->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
       }
 
       if (bDoIt) {
-        scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
+        irr::scene::IMeshBuffer *p=pSeg->getMeshBuffer(i);
         if (p && p->getVertexCount()>0) {
           aBoxes.push_back(p->getBoundingBox());
           addBufferToArray(p,aBuffers);
@@ -442,21 +440,21 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
     vCenterPos/=m_lSegments.size();
   #endif
 
-  vCenterPos.X=(f32)abs((s32)vCenterPos.X);
-  vCenterPos.Y=(f32)abs((s32)vCenterPos.Y);
-  vCenterPos.Z=(f32)abs((s32)vCenterPos.Z);
+  vCenterPos.X=(irr::f32)abs((irr::s32)vCenterPos.X);
+  vCenterPos.Y=(irr::f32)abs((irr::s32)vCenterPos.Y);
+  vCenterPos.Z=(irr::f32)abs((irr::s32)vCenterPos.Z);
 
-  core::list<CConnection *>::Iterator cit;
+  irr::core::list<CConnection *>::Iterator cit;
   for (cit=m_lConnections.begin(); cit!=m_lConnections.end(); cit++) {
     CConnection *pCon=*cit;
-    for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+    for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
       bool bDoIt=true;
-      for (u32 iTex=0; iTex<pCon->getTextureCount() && bDoIt; iTex++) {
+      for (irr::u32 iTex=0; iTex<pCon->getTextureCount() && bDoIt; iTex++) {
         if (pCon->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
       }
 
       if (bDoIt) {
-        scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
+        irr::scene::IMeshBuffer *p=pCon->getMeshBuffer(i);
         if (p!=NULL && p->getVertexCount()>0) {
           addBufferToArray(p,aBuffers);
         }
@@ -465,15 +463,15 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
   }
 
   if (m_pSurface!=NULL && m_pSurface->isVisible()) {
-    for (u32 i=0; i<2; i++) {
+    for (irr::u32 i=0; i<2; i++) {
       bool bDoIt=true;
 
-      for (u32 iTex=0; iTex<m_pSurface->getTextureCount() && bDoIt; iTex++) {
+      for (irr::u32 iTex=0; iTex<m_pSurface->getTextureCount() && bDoIt; iTex++) {
         if (m_pSurface->getTextureParameters(iTex)->getTexture()=="") bDoIt=false;
       }
 
       if (bDoIt) {
-        scene::IMeshBuffer *p=m_pSurface->getMeshBuffer(i);
+        irr::scene::IMeshBuffer *p=m_pSurface->getMeshBuffer(i);
         if (p!=NULL && p->getVertexCount()>0) {
           addBufferToArray(p,aBuffers);
         }
@@ -481,10 +479,10 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
     }
   }
 
-  for (u32 i=0; i<aBuffers.size(); i++) {
-    scene::IMeshBuffer *p=aBuffers[i];
-    for (u32 j=0; j<p->getVertexCount(); j++) {
-      ((video::S3DVertex *)p->getVertices())[j].Color=video::SColor(0xFF,0xFF,0xFF,0xFF);
+  for (irr::u32 i=0; i<aBuffers.size(); i++) {
+    irr::scene::IMeshBuffer *p=aBuffers[i];
+    for (irr::u32 j=0; j<p->getVertexCount(); j++) {
+      ((irr::video::S3DVertex *)p->getVertices())[j].Color=irr::video::SColor(0xFF,0xFF,0xFF,0xFF);
     }
   }
 
@@ -492,35 +490,35 @@ scene::IAnimatedMesh *CRoadLoader::createMesh() {
     printf("Shrink!\n");
     m_vOfffset=vCenterPos;
     #ifndef _ROAD_CREATOR_TOOL
-      for (u32 i=0; i<aBuffers.size(); i++) {
-        scene::IMeshBuffer *p=aBuffers[i];
-        for (u32 j=0; j<p->getVertexCount(); j++) {
+      for (irr::u32 i=0; i<aBuffers.size(); i++) {
+        irr::scene::IMeshBuffer *p=aBuffers[i];
+        for (irr::u32 j=0; j<p->getVertexCount(); j++) {
           p->getPosition(j)=p->getPosition(j)-m_vOfffset;
         }
       }
     #endif
 	}
 
-  scene::SMesh *pMesh=new scene::SMesh();
-  for (u32 i=0; i<aBuffers.size(); i++) {
+  irr::scene::SMesh *pMesh=new irr::scene::SMesh();
+  for (irr::u32 i=0; i<aBuffers.size(); i++) {
     aBuffers[i]->recalculateBoundingBox();
     aBoxes.push_back(aBuffers[i]->getBoundingBox());
     pMesh->addMeshBuffer(aBuffers[i]);
   }
 
-  core::aabbox3df cBox=pMesh->getBoundingBox();
+  irr::core::aabbox3df cBox=pMesh->getBoundingBox();
 
-  for (u32 i=0; i<aBoxes.size(); i++) cBox.addInternalBox(aBoxes[i]);
+  for (irr::u32 i=0; i<aBoxes.size(); i++) cBox.addInternalBox(aBoxes[i]);
   pMesh->setBoundingBox(cBox);
 
-	scene::SAnimatedMesh *pAnimatedMesh=new scene::SAnimatedMesh();
+	irr::scene::SAnimatedMesh *pAnimatedMesh=new irr::scene::SAnimatedMesh();
 	pAnimatedMesh->addMesh(pMesh);
 
   return pAnimatedMesh;
 }
 
 bool CRoadLoader::deleteConnection(CConnection *pToDelete) {
-  core::list<CConnection *>::Iterator it;
+  irr::core::list<CConnection *>::Iterator it;
   for (it=m_lConnections.begin(); it!=m_lConnections.end(); it++) {
     CConnection *p=*it;
     if (p==pToDelete) {
@@ -533,7 +531,7 @@ bool CRoadLoader::deleteConnection(CConnection *pToDelete) {
 }
 
 bool CRoadLoader::deleteSegment(CSegment *pToDelete) {
-  core::list<CSegment *>::Iterator it;
+  irr::core::list<CSegment *>::Iterator it;
   for (it=m_lSegments.begin(); it!=m_lSegments.end(); it++) {
     CSegment *p=*it;
     if (p==pToDelete) {

@@ -11,8 +11,6 @@
   #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-using namespace irr;
-
 CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);

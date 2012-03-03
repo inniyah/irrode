@@ -8,8 +8,6 @@
   #include <CEventVehicleState.h>
   #include <CAeroVehicle.h>
 
-using namespace irr;
-
 class CIrrOdeCarTrack;
 class CTargetSelector;
 class CCockpitPlane;

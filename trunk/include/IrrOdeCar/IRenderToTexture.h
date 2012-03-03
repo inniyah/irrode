@@ -3,28 +3,26 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
 class IRenderToTexture {
   protected:
-    IrrlichtDevice *m_pDevice;
-    gui::IGUIEnvironment *m_pGuienv;
-    video::IVideoDriver  *m_pDrv;
-    scene::ISceneManager *m_pSmgr;
-    core::stringc         m_sName;
-    video::ITexture      *m_pTarget;
+    irr::IrrlichtDevice *m_pDevice;
+    irr::gui::IGUIEnvironment *m_pGuienv;
+    irr::video::IVideoDriver  *m_pDrv;
+    irr::scene::ISceneManager *m_pSmgr;
+    irr::core::stringc         m_sName;
+    irr::video::ITexture      *m_pTarget;
 
-    u32 processTextureReplace(scene::ISceneNode *pNode) {
-      u32 iRet=0;
+    irr::u32 processTextureReplace(irr::scene::ISceneNode *pNode) {
+      irr::u32 iRet=0;
 
-      core::list<scene::ISceneNode *> lChildren=pNode->getChildren();
-      core::list<scene::ISceneNode *>::Iterator it;
+      irr::core::list<irr::scene::ISceneNode *> lChildren=pNode->getChildren();
+      irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
-      for (u32 i=0; i<pNode->getMaterialCount(); i++) {
-        for (u32 j=0; j<4; j++) {
-          video::ITexture *p=pNode->getMaterial(i).getTexture(j);
+      for (irr::u32 i=0; i<pNode->getMaterialCount(); i++) {
+        for (irr::u32 j=0; j<4; j++) {
+          irr::video::ITexture *p=pNode->getMaterial(i).getTexture(j);
           if (p!=NULL) {
-            core::stringc s=pNode->getMaterial(i).getTexture(j)->getName();
+            irr::core::stringc s=pNode->getMaterial(i).getTexture(j)->getName();
             s.make_lower();
             if (s.find(m_sName.c_str())!=-1) {
               pNode->getMaterial(i).setTexture(j,m_pTarget);
@@ -38,11 +36,11 @@ class IRenderToTexture {
       return iRet;
     }
 
-    void startRttUpdate() { m_pDrv->setRenderTarget(m_pTarget,true,true,video::SColor(0xFF,0xFF,0xD0,0x80)); }
-    void endRttUpdate  () { m_pDrv->setRenderTarget(video::ERT_FRAME_BUFFER); }
+    void startRttUpdate() { m_pDrv->setRenderTarget(m_pTarget,true,true,irr::video::SColor(0xFF,0xFF,0xD0,0x80)); }
+    void endRttUpdate  () { m_pDrv->setRenderTarget(irr::video::ERT_FRAME_BUFFER); }
 
   public:
-    IRenderToTexture(IrrlichtDevice *pDevice, const char *sName, core::dimension2du cSize) {
+    IRenderToTexture(irr::IrrlichtDevice *pDevice, const char *sName, irr::core::dimension2du cSize) {
       m_pDevice=pDevice;
 
       m_pGuienv=m_pDevice->getGUIEnvironment();
@@ -52,7 +50,7 @@ class IRenderToTexture {
       m_sName=sName;
       m_sName.make_lower();
 
-      m_pTarget=m_pDrv->addRenderTargetTexture(cSize,"rt",video::ECF_A8R8G8B8);
+      m_pTarget=m_pDrv->addRenderTargetTexture(cSize,"rt",irr::video::ECF_A8R8G8B8);
     }
 
     virtual ~IRenderToTexture() {
@@ -61,7 +59,7 @@ class IRenderToTexture {
 
     virtual void update(bool bPlane)=0;
 
-    video::ITexture *getTexture() {
+    irr::video::ITexture *getTexture() {
       return m_pTarget;
     }
 };

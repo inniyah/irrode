@@ -2,8 +2,6 @@
   #include <IrrOde.h>
   #include <irrlicht.h>
 
-using namespace irr;
-
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
                                  irr::ode::CIrrOdeAeroDrag     *pAero,
                                  irr::ode::CIrrOdeTorqueMotor  *pTorque,
@@ -28,6 +26,8 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_fHeliCheckMax=0.0f;
 
   m_pAutoPilotInfo=NULL;
+  m_iTime = 0;
+  m_iLastEvent = 0;
 }
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -437,4 +437,13 @@ void CAutoPilot::setState(eAutoPilotState iState) {
 
 void CAutoPilot::setAutoPilotInfo(gui::IGUIStaticText *pInfo) {
   m_pAutoPilotInfo=pInfo;
+}
+
+bool CAutoPilot::onEvent(ode::IIrrOdeEvent *pEvent) {
+
+  return true;
+}
+
+bool CAutoPilot::handlesEvent(ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType() == ode::eIrrOdeEventStep;
 }

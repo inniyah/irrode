@@ -8,8 +8,6 @@
 
 class CIrrCC;
 
-using namespace irr;
-
 class CController : public CIrrOdeCarState, public IEventReceiver {
   protected:
     IGUITabControl *m_pTabCtrl;

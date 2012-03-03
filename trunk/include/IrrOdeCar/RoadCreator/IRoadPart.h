@@ -3,18 +3,16 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
 class CTextureParameters;
 
-static video::ITexture *s_pEmptyTex=NULL;
+static irr::video::ITexture *s_pEmptyTex=NULL;
 
 class IRoadPart {
   protected:
-    s32 m_iMeshBufferToDraw;
-    video::IVideoDriver *m_pDrv;
+    irr::s32 m_iMeshBufferToDraw;
+    irr::video::IVideoDriver *m_pDrv;
 
-    video::ITexture *getTexture(const c8* sPath) {
+    irr::video::ITexture *getTexture(const irr::c8 *sPath) {
       if (sPath[0]=='\0')
         return s_pEmptyTex;
       else
@@ -22,7 +20,7 @@ class IRoadPart {
     }
 
   public:
-    IRoadPart(video::IVideoDriver *pDrv) {
+    IRoadPart(irr::video::IVideoDriver *pDrv) {
       m_iMeshBufferToDraw=-1;
       m_pDrv=pDrv;
       if (s_pEmptyTex==NULL) s_pEmptyTex=m_pDrv->getTexture("");
@@ -30,15 +28,15 @@ class IRoadPart {
 
     virtual void recalcMeshBuffer()=0;
 
-    virtual u32 getTextureCount()=0;
-    virtual CTextureParameters *getTextureParameters(u32 i)=0;
-    virtual scene::IMeshBuffer *getMeshBuffer(u32 i)=0;
+    virtual irr::u32 getTextureCount()=0;
+    virtual CTextureParameters *getTextureParameters(irr::u32 i)=0;
+    virtual irr::scene::IMeshBuffer *getMeshBuffer(irr::u32 i)=0;
     virtual void render()=0;
-    virtual void save(io::IAttributes *out)=0;
-    virtual void load(io::IAttributes *in )=0;
-    virtual s32 getNumberOfMeshBuffers()=0;
+    virtual void save(irr::io::IAttributes *out)=0;
+    virtual void load(irr::io::IAttributes *in )=0;
+    virtual irr::s32 getNumberOfMeshBuffers()=0;
 
-    virtual void renderMeshBuffer(s32 iNum) {
+    virtual void renderMeshBuffer(irr::s32 iNum) {
       m_iMeshBufferToDraw=iNum;
     }
 };

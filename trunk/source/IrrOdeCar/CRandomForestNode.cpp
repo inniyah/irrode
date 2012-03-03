@@ -311,12 +311,12 @@ void CRandomForest::deserializeAttributes(irr::io::IAttributes *in, irr::io::SAt
     sprintf(s,"poly_%i",i);
     if (in->existsAttribute(s)) {
       irr::core::vector3df v=in->getAttributeAsVector3d(s);
-      this->addToPolygon(core::position2di(v.X,v.Z));
+      this->addToPolygon(irr::core::position2di(v.X,v.Z));
     }
     else m_aPoly.push_back(irr::core::position2di(0.0f,0.0f));
 
     if (i==0) {
-      m_cBox.reset(core::vector3df(m_aPoly[m_aPoly.size()-1].X,0.0f,m_aPoly[m_aPoly.size()-1].Y)+getAbsolutePosition());
+      m_cBox.reset(irr::core::vector3df(m_aPoly[m_aPoly.size()-1].X,0.0f,m_aPoly[m_aPoly.size()-1].Y)+getAbsolutePosition());
     }
   }
 
@@ -358,7 +358,7 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
   for (irr::u32 i=0; i<m_aPoly.size(); i++) {
     irr::c8 s[0xFF];
     sprintf(s,"poly_%i",i);
-    core::position2di p=m_aPoly[i];
+    irr::core::position2di p=m_aPoly[i];
     out->addVector3d(s,irr::core::vector3df(p.X,0.0f,p.Y));
   }
 
@@ -368,8 +368,8 @@ void CRandomForest::serializeAttributes(irr::io::IAttributes *out, irr::io::SAtt
 
 void CRandomForest::render() {
   #ifdef _IRREDIT_PLUGIN
-    core::list<scene::ISceneNode *> lChild=getChildren();
-    core::list<scene::ISceneNode *>::Iterator it;
+    irr::core::list<scene::ISceneNode *> lChild=getChildren();
+    irr::core::list<scene::ISceneNode *>::Iterator it;
 
     for (it=lChild.begin(); it!=lChild.end(); it++) (*it)->render();
     if (m_pMesh && m_pMesh->getMesh(0) && m_pMesh->getMesh(0)->getMeshBuffer(0)) {
@@ -540,8 +540,8 @@ irr::scene::ESCENE_NODE_TYPE CRandomForestFactory::getCreateableSceneNodeType (i
 }
 
 const irr::c8 *CRandomForestFactory::getCreateableSceneNodeTypeName(irr::scene::ESCENE_NODE_TYPE type) const {
-	static c8 sName[]="RandomForestNode";
-	return type==(scene::ESCENE_NODE_TYPE)RANDOM_FOREST_ID?sName:NULL;
+	static irr::c8 sName[]="RandomForestNode";
+	return type==(irr::scene::ESCENE_NODE_TYPE)RANDOM_FOREST_ID?sName:NULL;
 }
 
 const irr::c8 *CRandomForestFactory::getCreateableSceneNodeTypeName(irr::u32 idx) const {

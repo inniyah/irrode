@@ -7,8 +7,6 @@
 
   #include "CIrrOdeCarState.h"
 
-using namespace irr;
-
 enum eHeliControls {
   eHeliYawLeft,
   eHeliYawRight,

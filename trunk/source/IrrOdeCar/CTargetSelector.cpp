@@ -2,8 +2,6 @@
   #include <CTargetSelector.h>
   #include <irrode.h>
 
-using namespace irr;
-
 CTargetSelector::CTargetSelector(ode::CIrrOdeBody *pCarrier, IrrlichtDevice *pDevice, core::vector3df vForeward) {
   m_pDevice=pDevice;
   m_pCarrier=pCarrier;

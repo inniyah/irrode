@@ -6,8 +6,6 @@
 
 class CIrrCC;
 
-using namespace irr;
-
 /**
  * This class is the base class for all states that are used in this demo. It has three virtual methods
  * that need to be overriden by the actual states, activate, deactivate and update.

@@ -11,24 +11,22 @@ namespace irr {
   }
 }
 
-using namespace irr;
-
 class CTargetSelector {
   protected:
     irr::ode::CIrrOdeBody *m_pCarrier,     /**<! the body that carries the selector */
                           *m_pTarget,      /**<! the selected target */
                           *m_pOption;      /**<! the optional target */
 
-    IrrlichtDevice *m_pDevice;
-    core::vector3df m_vForeward;
+    irr::IrrlichtDevice *m_pDevice;
+    irr::core::vector3df m_vForeward;
     irr::ode::CIrrOdeManager *m_pManager;
-    scene::ISceneCollisionManager *m_pColMgr;
-    video::IVideoDriver *m_pDrv;
+    irr::scene::ISceneCollisionManager *m_pColMgr;
+    irr::video::IVideoDriver *m_pDrv;
 
-    core::list<irr::ode::CIrrOdeBody *> m_lOptions;
+    irr::core::list<irr::ode::CIrrOdeBody *> m_lOptions;
 
   public:
-    CTargetSelector(irr::ode::CIrrOdeBody *pCarrier, IrrlichtDevice *pDevice, core::vector3df vForeward);
+    CTargetSelector(irr::ode::CIrrOdeBody *pCarrier, irr::IrrlichtDevice *pDevice, irr::core::vector3df vForeward);
 
     void update();
     void highlightTargets();

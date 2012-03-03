@@ -6,8 +6,6 @@
 
 #define _SEGMENT_NUMBER_OF_BUFFERS 18
 
-using namespace irr;
-
 class INotification;
 class CMaterialManager;
 class CTextureParameters;
@@ -21,7 +19,7 @@ class CTextureParameters;
  */
 class CSegment : public IRoadPart {
   protected:
-    f32 m_fWidth,       /**<! width of the road segment */
+    irr::f32 m_fWidth,       /**<! width of the road segment */
         m_fLength,      /**<! length of the road segment */
         m_fBaseOffset,  /**<! height of the road segment */
         m_fWallHeight,  /**<! height of the walls */
@@ -33,7 +31,7 @@ class CSegment : public IRoadPart {
          m_bWalls[4],   /**<! create walls? */
          m_bCorner[4];  /**<! create corner marks? */
 
-    core::vector3df m_vPosition,      /**<! position of the segment */
+    irr::core::vector3df m_vPosition,      /**<! position of the segment */
                     m_vDirection,     /**<! direction of the segment */
                     m_vNormal,        /**<! normal (upwards) of the segment */
                     m_vPoints[4],     /**<! the 4 points that define the upper polygon of the segment */
@@ -41,14 +39,14 @@ class CSegment : public IRoadPart {
                     m_vBaseNorm;      /**<! the basement normal */
 
 
-    IrrlichtDevice *m_pDevice;
-    io::IFileSystem *m_pFs;
-    video::IVideoDriver *m_pDrv;    /**<! the videodriver */
-    core::stringc m_sName;          /**<! name of the segment */
+    irr::IrrlichtDevice *m_pDevice;
+    irr::io::IFileSystem *m_pFs;
+    irr::video::IVideoDriver *m_pDrv;    /**<! the videodriver */
+    irr::core::stringc m_sName;          /**<! name of the segment */
 
-    core::list<INotification *> m_lNotify;  /**<! list of objects that get notifications on changes of the segment */
+    irr::core::list<INotification *> m_lNotify;  /**<! list of objects that get notifications on changes of the segment */
 
-    scene::IMeshBuffer *m_pBuffer[_SEGMENT_NUMBER_OF_BUFFERS];      /**<! meshbuffers of the segment */
+    irr::scene::IMeshBuffer *m_pBuffer[_SEGMENT_NUMBER_OF_BUFFERS];      /**<! meshbuffers of the segment */
     CTextureParameters *m_pTexParams[_SEGMENT_NUMBER_OF_BUFFERS],   /**<! texture parameters of the segment */
                        *m_pTexInit[_SEGMENT_NUMBER_OF_BUFFERS];
 
@@ -80,9 +78,9 @@ class CSegment : public IRoadPart {
      * @param pTex the texture parameters to be used
      * @param vert the output vertex array
      */
-    void fillVertexArray(core::vector3df vec[], CTextureParameters *pTex, video::S3DVertex *vert, bool bTop, core::vector3df vNorm=core::vector3df(0,0,0));
+    void fillVertexArray(irr::core::vector3df vec[], CTextureParameters *pTex, irr::video::S3DVertex *vert, bool bTop, irr::core::vector3df vNorm=irr::core::vector3df(0,0,0));
 
-    core::array<core::vector3df> vTemp[_SEGMENT_NUMBER_OF_BUFFERS];
+    irr::core::array<irr::core::vector3df> vTemp[_SEGMENT_NUMBER_OF_BUFFERS];
   public:
     /**
      * The construtor. This one is used by the GUI of the editor
@@ -91,26 +89,26 @@ class CSegment : public IRoadPart {
      * @param pDrv the Irrlicht video driver
      * @param pInitParam the initial texture parameters
      */
-    CSegment(core::stringc sName, core::vector3df vPosition, IrrlichtDevice *pDevice, CTextureParameters *pInitParam);
+    CSegment(irr::core::stringc sName, irr::core::vector3df vPosition, irr::IrrlichtDevice *pDevice, CTextureParameters *pInitParam);
     /**
      * The construtor. This one is used by the road loading routine
      * @param pDrv the Irrlicht video driver
      */
-    CSegment(IrrlichtDevice *pDevice);
+    CSegment(irr::IrrlichtDevice *pDevice);
 
     /**
      * The destructor
      */
     virtual ~CSegment();
 
-    void setWidth (f32 f);  /**<! set the width of the segment */
-    void setLength(f32 f);  /**<! set the length of the segment */
+    void setWidth (irr::f32 f);  /**<! set the width of the segment */
+    void setLength(irr::f32 f);  /**<! set the length of the segment */
 
-    f32 getWidth ();  /**<! get the width of the segment */
-    f32 getLength();  /**<! get the length of the segment */
+    irr::f32 getWidth ();  /**<! get the width of the segment */
+    irr::f32 getLength();  /**<! get the length of the segment */
 
-    void setBaseOffset(f32 f);  /**<! set the base offset of the segment */
-    f32 getBaseOffset();        /**<! get the base offset of the segment */
+    void setBaseOffset(irr::f32 f);  /**<! set the base offset of the segment */
+    irr::f32 getBaseOffset();        /**<! get the base offset of the segment */
 
     void setLevelBase(bool b);  /**<! set the base level flag of the segment */
     bool getLevelBase();        /**<! get the base level flag of the segment */
@@ -118,54 +116,54 @@ class CSegment : public IRoadPart {
     void setNormalBase(bool b);
     bool getNormalBase();
 
-    const core::vector3df &getNormalBaseVector() { return m_vBaseNorm; }
+    const irr::core::vector3df &getNormalBaseVector() { return m_vBaseNorm; }
 
-    void setPosition (core::vector3df v); /**<! set the position of the segment */
-    void setDirection(core::vector3df v); /**<! set direction of the segment */
-    void setNormal   (core::vector3df v); /**<! set normal of the segment */
+    void setPosition (irr::core::vector3df v); /**<! set the position of the segment */
+    void setDirection(irr::core::vector3df v); /**<! set direction of the segment */
+    void setNormal   (irr::core::vector3df v); /**<! set normal of the segment */
 
-    const core::vector3df &getPosition ();  /**<! get the position of the segment */
-    const core::vector3df &getDirection();  /**<! get the direction of the segment */
-    const core::vector3df &getNormal   ();  /**<! get the normal of the segment */
+    const irr::core::vector3df &getPosition ();  /**<! get the position of the segment */
+    const irr::core::vector3df &getDirection();  /**<! get the direction of the segment */
+    const irr::core::vector3df &getNormal   ();  /**<! get the normal of the segment */
 
-    void setName(const core::stringc &sName); /**<! set the name of the segment */
+    void setName(const irr::core::stringc &sName); /**<! set the name of the segment */
 
-    const core::stringc &getName();   /**<! get the name of the segment */
+    const irr::core::stringc &getName();   /**<! get the name of the segment */
 
     virtual void render();  /**<! render the segment (for editor use only) */
 
-    const core::vector3df &getPoint(u32 i);   /**<! get one of the upper points of the segment */
+    const irr::core::vector3df &getPoint(irr::u32 i);   /**<! get one of the upper points of the segment */
 
-    virtual void save(io::IAttributes *out);  /**<! save the segment */
-    virtual void load(io::IAttributes *in);   /**<! load the segment */
+    virtual void save(irr::io::IAttributes *out);  /**<! save the segment */
+    virtual void load(irr::io::IAttributes *in);   /**<! load the segment */
 
     void addNotify(INotification *p);     /**<! add a notifier that will be notified on changes of the segment */
     void delNotify(INotification *p);     /**<! remove a notifier */
 
     void update();  /**<! update the meshbuffers */
 
-    virtual CTextureParameters *getTextureParameters(u32 i);  /**<! get one of the texture parameter objects */
+    virtual CTextureParameters *getTextureParameters(irr::u32 i);  /**<! get one of the texture parameter objects */
 
-    virtual u32 getTextureCount() { return 6; }
+    virtual irr::u32 getTextureCount() { return 6; }
 
-    virtual scene::IMeshBuffer *getMeshBuffer(u32 i);   /**<! get one of the meshbuffers */
+    virtual irr::scene::IMeshBuffer *getMeshBuffer(irr::u32 i);   /**<! get one of the meshbuffers */
 
-    void setCornerFlag(u32 idx, bool b) { if (idx<4) { m_bCorner[idx]=b; attributeChanged(); } }
-    void setWallFlag(u32 idx, bool b) { if (idx<4) { m_bWalls[idx]=b; attributeChanged(); } }
-    void setWallHeight(f32 f) { m_fWallHeight=f; attributeChanged(); }
-    void setWallWidth(f32 f) { m_fWallWidth=f; attributeChanged(); }
+    void setCornerFlag(irr::u32 idx, bool b) { if (idx<4) { m_bCorner[idx]=b; attributeChanged(); } }
+    void setWallFlag(irr::u32 idx, bool b) { if (idx<4) { m_bWalls[idx]=b; attributeChanged(); } }
+    void setWallHeight(irr::f32 f) { m_fWallHeight=f; attributeChanged(); }
+    void setWallWidth(irr::f32 f) { m_fWallWidth=f; attributeChanged(); }
 
-    bool getCornerFlag(u32 idx) { return idx<4?m_bCorner[idx]:false; }
-    bool getWallFlag(u32 idx) { return idx<4?m_bWalls[idx]:false; }
-    f32 getWallHeight() { return m_fWallHeight; }
-    f32 getWallWidth() { return m_fWallWidth; }
+    bool getCornerFlag(irr::u32 idx) { return idx<4?m_bCorner[idx]:false; }
+    bool getWallFlag(irr::u32 idx) { return idx<4?m_bWalls[idx]:false; }
+    irr::f32 getWallHeight() { return m_fWallHeight; }
+    irr::f32 getWallWidth() { return m_fWallWidth; }
 
-    const core::vector3df &getWallNormal() { return m_vWallNorm; }
+    const irr::core::vector3df &getWallNormal() { return m_vWallNorm; }
 
-    virtual s32 getNumberOfMeshBuffers() { return _SEGMENT_NUMBER_OF_BUFFERS; }
-    
+    virtual irr::s32 getNumberOfMeshBuffers() { return _SEGMENT_NUMBER_OF_BUFFERS; }
+
     CSegment *clone();
-    
+
     void setNormalWall(bool b);
     bool getNormalWall();
 };

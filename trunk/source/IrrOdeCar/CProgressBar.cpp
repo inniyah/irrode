@@ -1,6 +1,6 @@
   #include "CProgressBar.h"
 
-CProgressBar::CProgressBar(gui::IGUIEnvironment * guienv,const core::rect<s32>& rectangle,s32 id,gui::IGUIElement * parent) : gui::IGUIElement(gui::EGUIET_ELEMENT,guienv,parent,id,rectangle){
+CProgressBar::CProgressBar(irr::gui::IGUIEnvironment * guienv,const irr::core::rect<irr::s32>& rectangle, irr::s32 id, irr::gui::IGUIElement * parent) : irr::gui::IGUIElement(irr::gui::EGUIET_ELEMENT,guienv,parent,id,rectangle){
    total = rectangle.LowerRightCorner.X - rectangle.UpperLeftCorner.X;
    gui = guienv;
    bar = rectangle;
@@ -18,7 +18,7 @@ void CProgressBar::setColors(irr::video::SColor progress,irr::video::SColor fill
    fillcolor = progress;
    emptycolor = filling;
 }
-void CProgressBar::addBorder(irr::s32 size,irr::video::SColor color)
+void CProgressBar::addBorder(irr::s32 size, irr::video::SColor color)
 {
    bordercolor = color;
    border = bar;
@@ -32,7 +32,7 @@ void CProgressBar::setProgress(irr::u32 progress)
    if(progress > 100)
       progress = 0;
 
-   u32 xpercentage;
+   irr::u32 xpercentage;
    xpercentage = (progress * total)/100; //Reducing to the bar size
    tofill.UpperLeftCorner.set(bar.UpperLeftCorner.X,bar.UpperLeftCorner.Y);
    tofill.LowerRightCorner.set(bar.UpperLeftCorner.X+xpercentage,bar.LowerRightCorner.Y);

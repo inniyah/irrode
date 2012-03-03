@@ -2,6 +2,7 @@
   #define _C_AUTO_PILOT_PLANE
 
   #include <irrlicht.h>
+  #include <event/IIrrOdeEventListener.h>
 
 namespace irr {
   namespace ode {
@@ -13,7 +14,7 @@ namespace irr {
   }
 }
 
-class CAutoPilot {
+class CAutoPilot : public irr::ode::IIrrOdeEventListener {
   public:
     enum eAutoPilotState {
       eApPlaneLowAlt,
@@ -34,7 +35,9 @@ class CAutoPilot {
     irr::core::vector2df m_vCpVel;
 
     eAutoPilotState m_iState;
-    irr::u32  m_iHeliCheckCount;
+    irr::u32  m_iHeliCheckCount,
+              m_iTime,
+              m_iLastEvent;
     irr::f32  m_fApDist,
              *m_fHeliDistLeft,
              *m_fHeliDistRight,
@@ -96,6 +99,9 @@ class CAutoPilot {
     void setLinkYawRoll(bool b) { m_bLinkYawRoll=b; }
 
     void setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo);
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif

@@ -10,8 +10,6 @@
 
   #include <irrCC.h>
 
-using namespace irr;
-
 void findNodesOfType(ISceneNode *pParent, irr::scene::ESCENE_NODE_TYPE iType, array<ISceneNode *> &aNodes) {
   list<irr::scene::ISceneNode *> children=pParent->getChildren();
   list<irr::scene::ISceneNode *>::Iterator it;
@@ -264,7 +262,6 @@ bool CCar::OnEvent(const SEvent &event) {
 bool CCar::onEvent(ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     m_iCurStep++;
-    if (m_iNextCp!=-1 && m_iLastLapStep!=0) m_pCockpit->setCurrentLapTime((((float)m_iCurStep)-(float)m_iLastLapStep)*0.016f);
     if (m_bGasLastStep && !m_bGasStation) {
       const core::vector3df v=m_pCarBody->getPosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);

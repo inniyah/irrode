@@ -4,8 +4,6 @@
   #include <irrlicht.h>
   #include <CConfigFileManager.h>
 
-using namespace irr;
-
 /**
  * @class CIrrCC
  * @brief The central class of IrrConfigController
@@ -14,7 +12,7 @@ using namespace irr;
  * can be grouped into several sets, but this does only influence the creation of the GUI.
  * @author Christian Keimel / dustbin::games
  */
-class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFileReader {
+class CIrrCC : public irr::IEventReceiver, public IConfigFileWriter, public IConfigFileReader {
   public:
     enum eControllerType {
       eCtrlAxis,            //the controller is an axis
@@ -45,23 +43,23 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      */
     class CIrrCCItem {
       private:
-        core::stringw keyCodeToString(EKEY_CODE e); /**< helper function to convert a keycode to a string */
-        IrrlichtDevice  *m_pDevice;                 /**< the Irrlicht device */
-        gui::IGUIEnvironment *m_pGuiEnv;            /**< the Irrlicht gui environment */
-        gui::ICursorControl  *m_pCrsCtrl;           /**< the cursor control */
-        gui::IGUIStaticText  *m_pCtrlText;          /**< the static text that displays the control */
-        gui::IGUITab         *m_pGuiElement;        /**< the GUI element that contains the control */
+        irr::core::stringw keyCodeToString(irr::EKEY_CODE e); /**< helper function to convert a keycode to a string */
+        irr::IrrlichtDevice  *m_pDevice;                 /**< the Irrlicht device */
+        irr::gui::IGUIEnvironment *m_pGuiEnv;            /**< the Irrlicht gui environment */
+        irr::gui::ICursorControl  *m_pCrsCtrl;           /**< the cursor control */
+        irr::gui::IGUIStaticText  *m_pCtrlText;          /**< the static text that displays the control */
+        irr::gui::IGUITab         *m_pGuiElement;        /**< the GUI element that contains the control */
 
         void updateMouse();
 
       public:
         IrrConfigControlTypes m_iType;    /**< type of control, e.g. key or joystick */
 
-        core::stringw m_sName;            /**< name of the control */
-        EKEY_CODE m_eKey;                 /**< the key code of the control */
+        irr::core::stringw m_sName;            /**< name of the control */
+        irr::EKEY_CODE m_eKey;                 /**< the key code of the control */
         eControllerType m_eType;          /**< type of control */
 
-        u32 m_iSet,                 /**< The set of the control. */
+        irr::u32 m_iSet,                 /**< The set of the control. */
             m_iIdx,                 /**< The index of the control in CIrrCC::m_aItems */
             m_iMouseAxis,           /**< This control's mouse axis */
             m_iMouseBtn,            /**< This control's mouse button */
@@ -69,11 +67,11 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
             m_iJoyButton,           /**< This control's joystick button */
             m_iFaderStep,           /**< time step for fader */
             m_iFaderLastStep;       /**< the last step time of the fader */
-        u8  m_iJoyId;               /**< This control's joystick .. irrlicht joystick ID */
-        u16 m_iPov;                 /**< This control's POV position */
-        s32 m_iMouseDirection,      /**< This control's mouse direction */
+        irr::u8  m_iJoyId;               /**< This control's joystick .. irrlicht joystick ID */
+        irr::u16 m_iPov;                 /**< This control's POV position */
+        irr::s32 m_iMouseDirection,      /**< This control's mouse direction */
             m_iJoyDirection;        /**< This control's joystick direction */
-        f32 m_fValue,               /**< This control's value. Should be queried using CIrrCCItem::get() */
+        irr::f32 m_fValue,               /**< This control's value. Should be queried using CIrrCCItem::get() */
             m_fDetectedValue,       /**< The last detected value. CIrrCCItem::set does not influence this */
             m_fMouseSensitivity,    /**< This control's mouse sensitivity */
             m_fFaderDiff,           /**< increase / decrease per time step for fader */
@@ -90,7 +88,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param pDevice irrlicht device for the item
          * @param iSet set of the item
          */
-        CIrrCCItem(core::stringw sName, IrrlichtDevice *pDevice, u32 iSet);
+        CIrrCCItem(irr::core::stringw sName, irr::IrrlichtDevice *pDevice, irr::u32 iSet);
 
         /**
          * The item's destructor
@@ -103,26 +101,26 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param cPos position of the item's element
          * @param cEditPos position of the item's static text that can change
          */
-        gui::IGUITab *getGuiElement(gui::IGUIElement *pParent, core::position2di cPos, core::position2di cEditPos);
+        irr::gui::IGUITab *getGuiElement(irr::gui::IGUIElement *pParent, irr::core::position2di cPos, irr::core::position2di cEditPos);
 
         /**
          * Set the item to "CC_TYPE_KEY" using the given key
          * @param e the key for this item
          */
-        void setKey(EKEY_CODE e);
+        void setKey(irr::EKEY_CODE e);
 
         /**
          * Set the item to "CC_TYPE_MOU" using the given mouse axis in the given direction
          * @param iAxis the mouse axis
          * @param iDirection the direction of this item
          */
-        void setMouseMove(u32 iAxis, s32 iDirection);
+        void setMouseMove(irr::u32 iAxis, irr::s32 iDirection);
 
         /**
          * Set the item to "CC_TYPE_MBT" using the given button number
          * @param iBtn button number to use (0=left, 1=right, 2=middle)
          */
-        void setMouseButton(u32 iBtn);
+        void setMouseButton(irr::u32 iBtn);
 
         /**
          * Set the item to "CC_TYPE_JOY" using the given joystick, axis and direction
@@ -130,21 +128,21 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param iAxis the axis for this item
          * @param iDirection the direction for this item
          */
-        void setJoyAxis(u8 id, u32 iAxis, s32 iDirection);
+        void setJoyAxis(irr::u8 id, irr::u32 iAxis, irr::s32 iDirection);
 
         /**
          * Set the item to "CC_TYPE_JBT" using the given joystick and joystick button
          * @param id the irrlicht joystick id
          * @param iBtn the joystick button to use
          */
-        void setJoyButton(u8 id, u32 iBtn);
+        void setJoyButton(irr::u8 id, irr::u32 iBtn);
 
         /**
          * Set the item to "CC_TYPE_POV" using the given joystick and POV position
          * @param id the irrlicht joystick id
          * @param iPov the POV position for this item
          */
-        void setPov(u8 id, u16 iPov);
+        void setPov(irr::u8 id, irr::u16 iPov);
 
         /**
          * Update the item's text. This method is called after the control has changed
@@ -155,7 +153,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * Get the item's text
          * @return the item's text
          */
-        gui::IGUIStaticText *getCtrlText();
+        irr::gui::IGUIStaticText *getCtrlText();
 
         /**
          * Does this item have a conflict with another item?
@@ -180,27 +178,27 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * Set the item's mouse sensitivity. This is use for items that use mouse movement as control
          * @param f the item's mouse sensitivity
          */
-        void setMouseSensitivity(f32 f);
+        void setMouseSensitivity(irr::f32 f);
 
         /**
          * Get the item's current position. You could also just take the item's public "m_fValue" property,
          * but mouse movement items calculate this value in this method
          */
-        f32 get();
+        irr::f32 get();
 
-        f32 getRaw();
+        irr::f32 getRaw();
 
         /**
          * Set the item's value. Can be called from outside to reset e.g. a button state
          * @param f the new value
          */
-        void set(f32 f);
+        void set(irr::f32 f);
 
         /**
          * Set the item's value. Is called by CIrrCC::OnEvent
          * @param f the new value
          */
-        void setWithDetected(f32 f);
+        void setWithDetected(irr::f32 f);
     };
 
     /**
@@ -209,15 +207,15 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      */
     class CJoyState {
       public:
-        u16 iAxis[6];   /**< the axis positions of the joystick */
-        u32 iButtons;   /**< the button states of the joystick  */
-        u16 iPov;       /**< the POV position of the joystick   */
+        irr::u16 iAxis[6];   /**< the axis positions of the joystick */
+        irr::u32 iButtons;   /**< the button states of the joystick  */
+        irr::u16 iPov;       /**< the POV position of the joystick   */
 
         /**
          * Constructor
          */
         CJoyState() {
-          for (u32 i=0; i<6; i++) iAxis[i]=0;
+          for (irr::u32 i=0; i<6; i++) iAxis[i]=0;
           iButtons=0;
           iPov=0;
         }
@@ -227,23 +225,23 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
          * @param iBtn the button number
          * @return "true" if the button was pressed, "false" otherwise
          */
-        bool buttonPressed(u32 iBtn) {
-          u32 i=1<<iBtn;
+        bool buttonPressed(irr::u32 iBtn) {
+          irr::u32 i=1<<iBtn;
           return (iButtons&i)!=0;
         }
     };
 
-    IrrlichtDevice *m_pDevice;                  /**< the Irrlicht device */
-    u32 m_iGuiItemHeight;                       /**< the height of the items using the current font */
-    s32 m_iFocusedIndex;                        /**< index of the currently focused GUI element */
-    f32 m_fMouseSensitivity;                    /**< the mouse sensitivity */
-    gui::IGUIStaticText *m_pFocused;            /**< the focused text element */
-    gui::ICursorControl *m_pCrsCtrl;            /**< the cursor control object */
-    core::position2di m_cMousePos;              /**< the position of the mouse */
-    core::array<CIrrCCItem *> m_aItems;         /**< the array with the control items */
-    core::array<core::stringw> m_aMaxLenText;   /**< the texts with the maximum length of all sets */
-    core::array<SJoystickInfo> m_aJoysticks;    /**< the joystick info array */
-    core::array<CJoyState *> m_aJoyState;       /**< array with the current joystick states */
+    irr::IrrlichtDevice *m_pDevice;                  /**< the Irrlicht device */
+    irr::u32 m_iGuiItemHeight;                       /**< the height of the items using the current font */
+    irr::s32 m_iFocusedIndex;                        /**< index of the currently focused GUI element */
+    irr::f32 m_fMouseSensitivity;                    /**< the mouse sensitivity */
+    irr::gui::IGUIStaticText *m_pFocused;            /**< the focused text element */
+    irr::gui::ICursorControl *m_pCrsCtrl;            /**< the cursor control object */
+    irr::core::position2di m_cMousePos;              /**< the position of the mouse */
+    irr::core::array<CIrrCCItem *> m_aItems;         /**< the array with the control items */
+    irr::core::array<irr::core::stringw> m_aMaxLenText;   /**< the texts with the maximum length of all sets */
+    irr::core::array<irr::SJoystickInfo> m_aJoysticks;    /**< the joystick info array */
+    irr::core::array<CJoyState *> m_aJoyState;       /**< array with the current joystick states */
     bool m_bAllowMouse,                         /**< is mouse movement allowed for items? */
          m_bAllowFKeys,                         /**< are "Fxx" keys allowed for items? */
          m_bAllowJoystick,                      /**< is joystick allows for items? */
@@ -255,7 +253,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * The constructor
      * @param pDevice the irrlicht device
      */
-    CIrrCC(IrrlichtDevice *pDevice);
+    CIrrCC(irr::IrrlichtDevice *pDevice);
 
     /**
      * destructor
@@ -270,7 +268,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param bIsButton is this a button or part of an axis?
      * @return index of the item
      */
-    u32 addItem(u32 iSet, core::stringw sName, EKEY_CODE eDefault, eControllerType eType);
+    irr::u32 addItem(irr::u32 iSet, irr::core::stringw sName, irr::EKEY_CODE eDefault, eControllerType eType);
 
     /**
      * Create a gui to configure the control items
@@ -278,7 +276,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param pParent parent GUI element
      * @param cPos position of the newly created gui
      */
-    void addGui(u32 iSet, gui::IGUIElement *pParent, core::position2di cPos);
+    void addGui(irr::u32 iSet, irr::gui::IGUIElement *pParent, irr::core::position2di cPos);
 
     /**
      * Set the "allow mouse" flag
@@ -302,23 +300,23 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * Set the mouse sensitivity
      * @param f new value for the mouse sensitivity
      */
-    void setMouseSensitivity(f32 f);
+    void setMouseSensitivity(irr::f32 f);
 
     /**
      * Get the status of a specific item. This value is always between "0" and "1" (except for mouse movement)
      * @param idx index of the item
      * @return status of the item
      */
-    f32 get(u32 idx);
+    irr::f32 get(irr::u32 idx);
 
-    void set(u32 idx, f32 f);
+    void set(irr::u32 idx, irr::f32 f);
 
     /**
      * This method must be called from the GUI's event receiver. It handles configuration of the control items
      * @param event the event to be handled
      * @return "true" if the event was processed, "false" otherwise
      */
-    bool ConfigEvent(const SEvent &event);
+    bool ConfigEvent(const irr::SEvent &event);
 
     void reset();
 
@@ -328,7 +326,7 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param event the event to be handled
      * @return "true" if the event was processed, "false" otherwise
      */
-    virtual bool OnEvent (const SEvent &event);
+    virtual bool OnEvent (const irr::SEvent &event);
 
     /**
      * decide whether or not the various defined sets cause conflicts or not
@@ -350,17 +348,17 @@ class CIrrCC : public IEventReceiver, public IConfigFileWriter, public IConfigFi
      * @param idx2 the second index of the axis (value returned by CIrrCC::addItem)
      * @see eControllerType
      */
-    void createAxis(u32 idx1, u32 idx2);
+    void createAxis(irr::u32 idx1, irr::u32 idx2);
 
-    void createFader(u32 idx1, u32 idx2, u32 iStep, f32 iInc);
+    void createFader(irr::u32 idx1, irr::u32 idx2, irr::u32 iStep, irr::f32 iInc);
 
-    virtual void writeConfig(io::IXMLWriter *pXml);
-    virtual void readConfig(io::IXMLReaderUTF8 *pXml);
+    virtual void writeConfig(irr::io::IXMLWriter *pXml);
+    virtual void readConfig(irr::io::IXMLReaderUTF8 *pXml);
 
-    const wchar_t *getSettingsText(u32 iSet);
+    const wchar_t *getSettingsText(irr::u32 iSet);
 
-    void dumpState(f32 *fBuffer);
-    void restoreState(f32 *fBuffer);
+    void dumpState(irr::f32 *fBuffer);
+    void restoreState(irr::f32 *fBuffer);
 };
 
 #endif

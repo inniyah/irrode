@@ -5,8 +5,6 @@
 
   #include <irrklang.h>
 
-using namespace irr;
-
 CCustomEventReceiver::CCustomEventReceiver() {
   m_pDevice=NULL;
   m_pOdeManager=NULL;
