@@ -11,7 +11,7 @@
   #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
+CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -24,7 +24,7 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   m_bLeftMissile=true;
 
   m_iNextCp=-1;
-  ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
+  irr::scene::ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
   if (pCheckRoot!=NULL) {
     irr::core::list<irr::scene::ISceneNode *> lChildren=pCheckRoot->getChildren();
     irr::core::list<irr::scene::ISceneNode *>::Iterator it;
@@ -34,8 +34,8 @@ CPlane::CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockp
   }
   else printf("no checkpoints for plane found!\n");
 
-  for (u32 i=0; i<2; i++) {
-    c8 s[0xFF];
+  for (irr::u32 i=0; i<2; i++) {
+    irr::c8 s[0xFF];
     sprintf(s,"axis%i",i+1);
     m_pAxes[i]=(irr::ode::CIrrOdeJointHinge *)m_pBody->getChildByName(s,m_pBody);
     printf("%s: %i\n",s,(int)m_pAxes[i]);
@@ -56,39 +56,39 @@ CPlane::~CPlane() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
-u32 CPlane::update() {
+irr::u32 CPlane::update() {
   //call the superclass's update method
-  u32 iRet=CIrrOdeCarState::update();
+  irr::u32 iRet=CIrrOdeCarState::update();
 
-  vector3df rot=m_pBody->getRotation();
+  irr::core::vector3df rot=m_pBody->getRotation();
 
   //get the parameters for the camera
-  vector3df pos,tgt,up=m_pBody->getRotation().rotationToDirection(vector3df(0,0.1,0));
+  irr::core::vector3df pos,tgt,up=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0));
 
   if (m_bInternal) {
-    core::vector2df lookAt=core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
-                    lookUp=core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
+    irr::core::vector2df lookAt=irr::core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
+                         lookUp=irr::core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
 
-    pos=rot.rotationToDirection(vector3df(0,1.1,-0.6)),
-    up =rot.rotationToDirection(vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(vector3df(lookAt.X,1.1+lookUp.Y,lookAt.Y));
+    pos=rot.rotationToDirection(irr::core::vector3df(0,1.1,-0.6)),
+    up =rot.rotationToDirection(irr::core::vector3df(0,0.1,0));
+    tgt=rot.rotationToDirection(irr::core::vector3df(lookAt.X,1.1+lookUp.Y,lookAt.Y));
   }
   else {
-    core::vector2df lookAt=core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
-                    lookUp=core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
+    irr::core::vector2df lookAt=irr::core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
+                         lookUp=irr::core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
 
-    pos=rot.rotationToDirection(vector3df(lookAt.X,5.0f+lookUp.Y,lookAt.Y)),
-    up =rot.rotationToDirection(vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(vector3df(0,5,0));
+    pos=rot.rotationToDirection(irr::core::vector3df(lookAt.X,5.0f+lookUp.Y,lookAt.Y)),
+    up =rot.rotationToDirection(irr::core::vector3df(0,0.1,0));
+    tgt=rot.rotationToDirection(irr::core::vector3df(0,5,0));
   }
 
   CProjectileManager *ppm=CProjectileManager::getSharedInstance();
 
   //if we follow a bomb we focus the last dropped bomb ...
   if (m_bWeaponCam && ppm->getLast()!=NULL) {
-    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(vector3df(0,5,10));
+    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(irr::core::vector3df(0,5,10));
     m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
-    m_pCam->setUpVector(vector3df(0,1,0));
+    m_pCam->setUpVector(irr::core::vector3df(0,1,0));
     m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
   }
   else {  //... otherwise we focus the plane
@@ -100,12 +100,12 @@ u32 CPlane::update() {
   return iRet;
 }
 
-void CPlane::odeStep(u32 iStep) {
+void CPlane::odeStep(irr::u32 iStep) {
   if (m_bActive) {
     if (m_bFirePrimary) {
       m_iLastShot1=iStep;
       //We add a new bomb...
-      vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
+      irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
                 rot=m_pBody->getRotation(),vel=m_pBody->getLinearVelocity();
 
       m_bLeftMissile=!m_bLeftMissile;
@@ -120,9 +120,9 @@ void CPlane::odeStep(u32 iStep) {
     if (m_bFireSecondary) {
       m_iLastShot2=iStep;
       //We add a new bullet...
-      vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(vector3df(0.2f,1.5f,-11.0f)),
+      irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.2f,1.5f,-11.0f)),
                 rot=m_pBody->getRotation(),
-                vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(vector3df(0.0f,0.0f,-350.0f));
+                vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,-350.0f));
 
       new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
       m_iShotsFired++;
@@ -130,16 +130,16 @@ void CPlane::odeStep(u32 iStep) {
     }
 
     if (m_pCockpit!=NULL) {
-      core::vector3df vPos=m_pBody->getPosition();
-      f32 fSpeed=m_pBody->getLinearVelocity().getLength();
+      irr::core::vector3df vPos=m_pBody->getPosition();
+      irr::f32 fSpeed=m_pBody->getLinearVelocity().getLength();
 
       m_pCockpit->setAltitude(vPos.Y);
       m_pCockpit->setSpeed(fSpeed);
       m_pCockpit->setPower(100.0f*m_fThrust);
       m_pCockpit->setVelVert(m_pBody->getLinearVelocity().Y);
 
-      core::vector3df v=m_pBody->getRotation().rotationToDirection(m_pAero->getForeward());
-      core::vector2df vDir=core::vector2df(v.X,v.Z);
+      irr::core::vector3df v=m_pBody->getRotation().rotationToDirection(m_pAero->getForeward());
+      irr::core::vector2df vDir=irr::core::vector2df(v.X,v.Z);
 
       if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
 
@@ -149,12 +149,12 @@ void CPlane::odeStep(u32 iStep) {
       m_pCockpit->setWarnStatePlane(3,fSpeed<5.0f?0:fSpeed<30.0f?3:fSpeed<45.0f?2:1);
 
       v=m_pBody->getAbsoluteTransformation().getRotationDegrees();
-      m_pCockpit->setHorizon(v,v.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f)));
+      m_pCockpit->setHorizon(v,v.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f)));
 
       irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
 
       if (pTarget!=NULL) {
-        core::stringw s=core::stringw(pTarget->getName());
+        irr::core::stringw s=irr::core::stringw(pTarget->getName());
         m_pCockpit->setTargetName(s.c_str());
         m_pCockpit->setTargetDist((vPos-pTarget->getPosition()).getLength());
       }
@@ -174,10 +174,10 @@ void CPlane::odeStep(u32 iStep) {
       m_pTab->setVisible(true);
     }
 
-    core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
-                    cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(core::vector3df(1.0f,1.35f,2.5f)),
-                    cTgt=cPos+cRot.rotationToDirection(core::vector3df(0.0f,0.0f,1.0f)),
-                    cUp=cRot.rotationToDirection(core::vector3df(0.0f,1.0f,0.0f));
+    irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
+                         cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.35f,2.5f)),
+                         cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
+                         cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
 
     if (m_pRView) {
       m_pRView->setCameraParameters(cPos,cTgt,cUp);
@@ -190,14 +190,14 @@ void CPlane::odeStep(u32 iStep) {
     m_bDataChanged=false;
   }
 
-  for (u32 i=0; i<2; i++) {
+  for (irr::u32 i=0; i<2; i++) {
     if (m_pAxes[i]) {
-      f32 f=m_pAxes[i]->getHingeAngleRate(),fImpulse=m_fAngleRate[i]-f;
+      irr::f32 f=m_pAxes[i]->getHingeAngleRate(),fImpulse=m_fAngleRate[i]-f;
       if (fImpulse<0.0f) fImpulse=-fImpulse;
       if (fImpulse>15.0f) {
-        f32 fVol=(fImpulse-15.0f)/75.0f;
+        irr::f32 fVol=(fImpulse-15.0f)/75.0f;
         if (fVol>1.0f) fVol=1.0f;
-        core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
+        irr::core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
         CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
         irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
       }
@@ -206,12 +206,12 @@ void CPlane::odeStep(u32 iStep) {
   }
 
   if (m_pSteerAxis) {
-    f32 f=m_pSteerAxis->getHingeAngle2Rate(),fImpulse=m_fAngleRate[2]-f;;
+    irr::f32 f=m_pSteerAxis->getHingeAngle2Rate(),fImpulse=m_fAngleRate[2]-f;;
     if (fImpulse<0.0f) fImpulse=-fImpulse;
     if (fImpulse>15.0f) {
-      f32 fVol=(fImpulse-15.0f)/75.0f;
+      irr::f32 fVol=(fImpulse-15.0f)/75.0f;
       if (fVol>1.0f) fVol=1.0f;
-      core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
+      irr::core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
       irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
     }

@@ -4,7 +4,7 @@
   #include <IrrOde.h>
   #include <observer/CIrrOdeRePlayer.h>
 
-class CReplayerStateReplay : public ode::IIrrOdeEventListener, public IState, public IEventReceiver {
+class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IState, public irr::IEventReceiver {
   protected:
     enum eCameraMode {
       eCamFree,
@@ -14,7 +14,7 @@ class CReplayerStateReplay : public ode::IIrrOdeEventListener, public IState, pu
     irr::gui::IGUIStaticText *m_pLblBodies,
                              *m_pLblPaused,
                              *m_pLblFinished;
-    array<ode::CIrrOdeBody *> m_aBodies;
+    irr::core::array<irr::ode::CIrrOdeBody *> m_aBodies;
     irr::ode::CIrrOdeManager *m_pOdeManager;
     irr::ode::CIrrOdeRePlayer *m_pPlayer;
     irr::IrrlichtDevice *m_pDevice;
@@ -22,34 +22,34 @@ class CReplayerStateReplay : public ode::IIrrOdeEventListener, public IState, pu
     irr::gui::IGUIFont *m_pFont;
     irr::gui::ICursorControl *m_pCrsCtrl;
     irr::scene::ISceneNode *m_pFocusedNode;
-    ISceneManager *m_pSmgr;
-    u32 m_iRet,
-        m_iCamMode,
-        m_iFocusedNode;
-    f32 m_fCamDist,
-        m_fCamHeight;
-    c8 m_sReplay[0xFF];
+    irr::scene::ISceneManager *m_pSmgr;
+    irr::u32 m_iRet,
+             m_iCamMode,
+             m_iFocusedNode;
+    irr::f32 m_fCamDist,
+             m_fCamHeight;
+    irr::c8 m_sReplay[0xFF];
     eCameraMode m_eCamMode;
 
-    core::vector3df m_vCamTarget,
-                    m_vCamRotation,
-                    m_vCamMove;
+    irr::core::vector3df m_vCamTarget,
+                         m_vCamRotation,
+                         m_vCamMove;
 
     irr::scene::ICameraSceneNode *m_pCam,*m_pFreeCam;
 
     bool m_bSceneLoaded;
 
     void updateBodyList();
-    void removeNode(ISceneNode *pNode);
+    void removeNode(irr::scene::ISceneNode *pNode);
 
   public:
-    CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const c8 *sReplay);
+    CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay);
     virtual ~CReplayerStateReplay() { }
     virtual void activate();
     virtual void deactivate();
-    virtual u32 update();
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool OnEvent(const SEvent &event);
+    virtual irr::u32 update();
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool OnEvent(const irr::SEvent &event);
 };
 

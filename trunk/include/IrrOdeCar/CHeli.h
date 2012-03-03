@@ -33,28 +33,28 @@ class CProjectile;
 class CAutoPilot;
 class CRearView;
 
-class CHeli : public CAeroVehicle, public ode::IIrrOdeEventWriter {
+class CHeli : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeft;
-    f32 m_fSound;
-    s32 m_iNodeId,
+    irr::f32 m_fSound;
+    irr::s32 m_iNodeId,
         m_iOldHitsTaken,
         m_iOldHitsScored;
 
   public:
-    CHeli(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CHeli();
 
-    virtual u32 update();
+    virtual irr::u32 update();
 
-    virtual const stringw &getButton() { static core::stringw s=L"heli"; return s; }
+    virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }
 
     virtual void drawSpecifics();
 
-    virtual void odeStep(u32 iStep);
+    virtual void odeStep(irr::u32 iStep);
 
-    virtual ode::IIrrOdeEvent *writeEvent();
-    virtual ode::eEventWriterType getEventWriterType();
+    virtual irr::ode::IIrrOdeEvent *writeEvent();
+    virtual irr::ode::eEventWriterType getEventWriterType();
 
     virtual void activate();
 };

@@ -15,31 +15,31 @@ class CProjectile;
 class CAutoPilot;
 class CRearView;
 
-class CPlane : public CAeroVehicle, public ode::IIrrOdeEventWriter {
+class CPlane : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeftMissile;
-    ode::CIrrOdeJointHinge *m_pAxes[2];
-    ode::CIrrOdeJointHinge2 *m_pSteerAxis;
-    f32 m_fAngleRate[3];
-    s32 m_iOldHitsTaken,
-        m_iOldHitsScored;
+    irr::ode::CIrrOdeJointHinge *m_pAxes[2];
+    irr::ode::CIrrOdeJointHinge2 *m_pSteerAxis;
+    irr::f32 m_fAngleRate[3];
+    irr::s32 m_iOldHitsTaken,
+             m_iOldHitsScored;
 
     CIrrOdeCarTrack *m_pLap;
 
   public:
-    CPlane(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CPlane();
 
-    virtual void odeStep(u32 iStep);
+    virtual void odeStep(irr::u32 iStep);
 
-    virtual u32 update();
+    virtual irr::u32 update();
 
-    virtual const stringw &getButton() { static core::stringw s=L"plane"; return s; }
+    virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"plane"; return s; }
 
     virtual void drawSpecifics();
 
-    virtual ode::IIrrOdeEvent *writeEvent();
-    virtual ode::eEventWriterType getEventWriterType();
+    virtual irr::ode::IIrrOdeEvent *writeEvent();
+    virtual irr::ode::eEventWriterType getEventWriterType();
 
     virtual void activate();
 };

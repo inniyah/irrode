@@ -1,25 +1,25 @@
   #include "CIrrOdeCarState.h"
 
-static IGUIStaticText *g_pRecording=NULL,
-                      *g_pSaveFile=NULL;
-static ode::CIrrOdeRecorder *g_pRecorder=NULL;
-static u32 g_iCount=0;
+static irr::gui::IGUIStaticText *g_pRecording=NULL,
+                                *g_pSaveFile=NULL;
+static irr::ode::CIrrOdeRecorder *g_pRecorder=NULL;
+static irr::u32 g_iCount=0;
 
-CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const c8 *sHelpFile, CIrrCC *pCtrl) {
+CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const irr::c8 *sHelpFile, CIrrCC *pCtrl) {
   //initialize the members
   m_pDevice=pDevice;
   m_pSmgr=m_pDevice->getSceneManager();
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_bActive=false;
 
-  m_vCamVelocity=core::vector3df(0.0f,0.0f,0.0f);
+  m_vCamVelocity=irr::core::vector3df(0.0f,0.0f,0.0f);
 
   m_pController=pCtrl;
 
   //create the help text
-  m_pHelp=pDevice->getGUIEnvironment()->addStaticText(L"Help",rect<s32>(5,5,635,475),true);
+  m_pHelp=pDevice->getGUIEnvironment()->addStaticText(L"Help",irr::core::rect<irr::s32>(5,5,635,475),true);
   m_pHelp->setDrawBackground(true);
-  m_pHelp->setBackgroundColor(SColor(0x80,0xFF,0xFF,0xFF));
+  m_pHelp->setBackgroundColor(irr::video::SColor(0x80,0xFF,0xFF,0xFF));
   m_pHelp->setVisible(false);
 
   strcpy(m_sHelpFile,sHelpFile);
@@ -30,18 +30,18 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   m_bSwitchToMenu=false;
 
   if (g_pRecording==NULL) {
-    dimension2d<u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
-    rect<s32> cRect=rect<s32>(cSize.Width/2-100,5,cSize.Width/2+100,20);
+    irr::core::dimension2d<irr::u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
+    irr::core::rect<irr::s32> cRect=irr::core::rect<irr::s32>(cSize.Width/2-100,5,cSize.Width/2+100,20);
     g_pRecording=m_pGuiEnv->addStaticText(L"Recording",cRect,true,true,0,-1,true);
-    g_pRecording->setTextAlignment(EGUIA_CENTER,EGUIA_CENTER);
+    g_pRecording->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
     g_pRecording->setVisible(false);
   }
 
   if (g_pSaveFile==NULL) {
-    dimension2d<u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
-    rect<s32> cRect=rect<s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
+    irr::core::dimension2d<irr::u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
+    irr::core::rect<irr::s32> cRect=irr::core::rect<irr::s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
     g_pSaveFile=m_pGuiEnv->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
-    g_pSaveFile->setTextAlignment(EGUIA_CENTER,EGUIA_CENTER);
+    g_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
     g_pSaveFile->setVisible(false);
   }
 
@@ -50,20 +50,20 @@ CIrrOdeCarState::CIrrOdeCarState(IrrlichtDevice *pDevice, const wchar_t *sVehicl
   m_bInitialized=false;
 }
 
-bool CIrrOdeCarState::OnEvent(const SEvent &event) {
-  if (event.EventType==EET_KEY_INPUT_EVENT) {
+bool CIrrOdeCarState::OnEvent(const irr::SEvent &event) {
+  if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
     if (event.KeyInput.PressedDown) {
       switch (event.KeyInput.Key) {
         //if F1 is pressed the help text should be toggled
-        case KEY_F1:
+        case irr::KEY_F1:
           m_bHelp=!m_bHelp;
           return true;
           break;
 
-        case KEY_F2:
+        case irr::KEY_F2:
           if (g_pRecorder==NULL) {
             printf("starting recording...\n");
-            g_pRecorder=new ode::CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
+            g_pRecorder=new irr::ode::CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
             g_pRecorder->startRecording();
             g_pRecording->setVisible(true);
           }
@@ -80,7 +80,7 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu
-        case KEY_TAB:
+        case irr::KEY_TAB:
           m_bSwitchToMenu=true;
           return true;
           break;
@@ -94,8 +94,8 @@ bool CIrrOdeCarState::OnEvent(const SEvent &event) {
   return false;
 }
 
-u32 CIrrOdeCarState::update() {
-  int iRet=0;
+irr::u32 CIrrOdeCarState::update() {
+  irr::u32 iRet=0;
 
   //If the menu should be activated we return 1 (index of the menu+1)
   if (m_bSwitchToMenu && m_bActive) iRet=1;
@@ -128,6 +128,6 @@ void CIrrOdeCarState::loadHelpFile() {
   else sprintf(sHelp,"Can't open \"%s\".",m_sHelpFile);
 
   memset(sHelp,10000,0);
-  stringw sw(sHelp);
+  irr::core::stringw sw(sHelp);
   m_pHelp->setText(sw.c_str());
 }

@@ -9,26 +9,18 @@
 
   #include <irrklang.h>
 
-using namespace irr;
-
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 //Note: move the IrrOde lib to be the first linked lib if you get
 //the unresolved external of the IdentityMaterial
 
 int main(int argc, char** argv) {
-  irr::IrrlichtDevice *device =createDevice(EDT_OPENGL,dimension2d<u32>(1024,768),24,false,false,false,0);
+  irr::IrrlichtDevice *device =irr::createDevice(irr::video::EDT_OPENGL,irr::core::dimension2d<irr::u32>(1024,768),24,false,false,false,0);
   irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
   device->setWindowCaption(L"IrrOdeRePlayer");
 
-  IVideoDriver* driver = device->getVideoDriver();
-  ISceneManager* smgr = device->getSceneManager();
-  IGUIEnvironment* guienv = device->getGUIEnvironment();
+  irr::video::IVideoDriver  *driver = device->getVideoDriver();
+  irr::scene::ISceneManager *smgr   = device->getSceneManager();
+  irr::gui::IGUIEnvironment *guienv = device->getGUIEnvironment();
 
   irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
   irr::ode::CIrrOdeSceneNodeFactory cFactory(smgr);
@@ -50,15 +42,15 @@ int main(int argc, char** argv) {
   IState *pActiveState=new CReplayerStateReplay(device,"../../data/replay/car.rec");
   pActiveState->activate();
 
-  u32 iRet=0;
-  s32 lastFPS=-1;
+  irr::u32 iRet=0;
+  irr::s32 lastFPS=-1;
 
   while(iRet==0 && device->run()) {
     iRet=pActiveState->update();
 
-    core::vector3df vPos=smgr->getActiveCamera()->getPosition(),
-                    vTgt=smgr->getActiveCamera()->getTarget(),
-                    vUp =smgr->getActiveCamera()->getUpVector();
+    irr::core::vector3df vPos=smgr->getActiveCamera()->getPosition(),
+                         vTgt=smgr->getActiveCamera()->getTarget(),
+                         vUp =smgr->getActiveCamera()->getUpVector();
 
     irrklang::vec3df vLstPos=irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),
                      vLstTgt=irrklang::vec3df(vTgt.X,vTgt.Y,vTgt.Z),
@@ -67,7 +59,7 @@ int main(int argc, char** argv) {
     pSndEngine->setListenerPosition(vLstPos,vLstTgt,irrklang::vec3df(0.0f,0.0f,0.0f),vLstUp);
     pSndEngine->setRolloffFactor(0.125f);
 
-    driver->beginScene(true, true, SColor(0,200,200,200));
+    driver->beginScene(true, true, irr::video::SColor(0,200,200,200));
 
     smgr->drawAll();
     guienv->drawAll();
@@ -76,7 +68,7 @@ int main(int argc, char** argv) {
     int fps = driver->getFPS();
 
     if (lastFPS != fps) {
-      core::stringw s="IrrOdeRePlayer - ";
+      irr::core::stringw s="IrrOdeRePlayer - ";
       s+=fps;
       s+=" Frames per Second";
       device->setWindowCaption(s.c_str());

@@ -7,44 +7,42 @@
   #include <IRunner.h>
   #include <IState.h>
 
-using namespace irr; 
-
 /**
  * @class CTestFastMoving
  * Test with a fast moving cannonball
  */
-class CTestFastMoving : public IState, public IEventReceiver, public ode::IIrrOdeEventListener {
+class CTestFastMoving : public IState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
     typedef struct SCannonBall {
-      s32 iTtl;
-      ode::CIrrOdeBody *pBody;
+      irr::s32 iTtl;
+      irr::ode::CIrrOdeBody *pBody;
     }
     SCannonBall;
-    
-    gui::IGUIButton *m_pFire,
-                    *m_pFireFast;
-    
-    ode::CIrrOdeBody  *m_pTemplate;
-    ode::CIrrOdeWorld *m_pWorld;
-    
-    core::array<SCannonBall *> m_aBalls;
-    
+
+    irr::gui::IGUIButton *m_pFire,
+                         *m_pFireFast;
+
+    irr::ode::CIrrOdeBody  *m_pTemplate;
+    irr::ode::CIrrOdeWorld *m_pWorld;
+
+    irr::core::array<SCannonBall *> m_aBalls;
+
     void fire(bool bFast);
-    
+
   public:
-    CTestFastMoving(IrrlichtDevice *pDevice, IRunner *pRunner);
-    
+    CTestFastMoving(irr::IrrlichtDevice *pDevice, IRunner *pRunner);
+
     virtual ~CTestFastMoving() {
     }
-    
+
     virtual void activate();
     virtual void deactivate();
-    virtual s32 update();
-    
-    virtual bool OnEvent(const SEvent &event);
+    virtual irr::s32 update();
 
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool OnEvent(const irr::SEvent &event);
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif

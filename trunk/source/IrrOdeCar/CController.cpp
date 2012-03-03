@@ -1,9 +1,9 @@
   #include <CController.h>
   #include <irrCC.h>
 
-CController::CController(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Controller Setup","../../data/irrOdeCarControllerHelp.txt",pCtrl) {
-  m_pTabCtrl=pDevice->getGUIEnvironment()->addTabControl(rect<s32>(5,5,635,595),NULL,true,true,-1);
-  IGUITab *pTab[4];
+CController::CController(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Controller Setup","../../data/irrOdeCarControllerHelp.txt",pCtrl) {
+  m_pTabCtrl=pDevice->getGUIEnvironment()->addTabControl(irr::core::rect<irr::s32>(5,5,635,595),NULL,true,true,-1);
+  irr::gui::IGUITab *pTab[4];
 
   pTab[0]=m_pTabCtrl->addTab(L"Car");
   pTab[1]=m_pTabCtrl->addTab(L"Tank");
@@ -11,9 +11,9 @@ CController::CController(IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarSta
 
   m_pTabCtrl->setVisible(false);
 
-  pCtrl->addGui(0,pTab[0],position2di(15,15));
-  pCtrl->addGui(1,pTab[1],position2di(15,15));
-  pCtrl->addGui(2,pTab[2],position2di(15,15));
+  pCtrl->addGui(0,pTab[0],irr::core::position2di(15,15));
+  pCtrl->addGui(1,pTab[1],irr::core::position2di(15,15));
+  pCtrl->addGui(2,pTab[2],irr::core::position2di(15,15));
 }
 
 CController::~CController() {
@@ -34,12 +34,12 @@ void CController::deactivate() {
   m_pDevice->getCursorControl()->setVisible(false);
 }
 
-u32 CController::update() {
-  u32 iRet=CIrrOdeCarState::update();
+irr::u32 CController::update() {
+  irr::u32 iRet=CIrrOdeCarState::update();
   return iRet;
 }
 
-bool CController::OnEvent(const SEvent &event) {
+bool CController::OnEvent(const irr::SEvent &event) {
   return CIrrOdeCarState::OnEvent(event) || m_pController->ConfigEvent(event);
 }
 

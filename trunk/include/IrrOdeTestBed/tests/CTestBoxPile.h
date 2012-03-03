@@ -7,22 +7,20 @@
   #include <IRunner.h>
   #include <IState.h>
 
-using namespace irr; 
-
 /**
  * @class CTestBoxPile
  * Load test with a pile of boxes
  */
 class CTestBoxPile : public IState {
   public:
-    CTestBoxPile(IrrlichtDevice *pDevice, IRunner *pRunner);
-    
+    CTestBoxPile(irr::IrrlichtDevice *pDevice, IRunner *pRunner);
+
     virtual ~CTestBoxPile() {
     }
-    
+
     virtual void activate();
     virtual void deactivate();
-    virtual s32 update();
+    virtual irr::s32 update();
 };
 
 #endif

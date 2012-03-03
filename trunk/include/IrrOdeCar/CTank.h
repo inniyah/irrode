@@ -28,59 +28,59 @@ enum eTankCtrl {
 
 class CProjectile;
 
-class CTank : public CIrrOdeCarState, public IEventReceiver, public irr::ode::IIrrOdeEventListener, public ode::IIrrOdeEventWriter {
+class CTank : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bBrake,
          m_bFollowTurret,
          m_bFastCollision,
          m_bFollowBullet;
-    ITexture *m_pTextures[2];
+    irr::video::ITexture *m_pTextures[2];
 
-    IGUIStaticText *m_pInfo;
-    f32 m_fCannonAngle,
-        m_fTurretAngle;
+    irr::gui::IGUIStaticText *m_pInfo;
+    irr::f32 m_fCannonAngle,
+             m_fTurretAngle;
 
-    ode::CIrrOdeWorld *m_pWorld;
-    ode::CIrrOdeMotor *m_pMotor[4];
-    ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
-    ode::CIrrOdeMotor *m_pTurretMotor;
-    ode::CIrrOdeServo *m_pCannonServo;
+    irr::ode::CIrrOdeWorld *m_pWorld;
+    irr::ode::CIrrOdeMotor *m_pMotor[4];
+    irr::ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
+    irr::ode::CIrrOdeMotor *m_pTurretMotor;
+    irr::ode::CIrrOdeServo *m_pCannonServo;
 
-    scene::ICameraSceneNode *m_pCam;
+    irr::scene::ICameraSceneNode *m_pCam;
 
-    list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
+    irr::core::list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
     irr::ode::CIrrOdeJointHinge *m_pCannonHinge,
                                 *m_pTurretHinge;
     irr::s8 m_aAxesAngles[4];
 
-    const u32 *m_pCtrls;
-    u32 m_iLastShot;
-    f32 m_fSound;
+    const irr::u32 *m_pCtrls;
+    irr::u32 m_iLastShot;
+    irr::f32 m_fSound;
 
     int getSteer();
     int getAcc  ();
 
   public:
-    CTank(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl);
+    CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl);
     virtual ~CTank();
 
     virtual void activate();
     virtual void deactivate();
-    virtual u32 update();
+    virtual irr::u32 update();
 
-    virtual bool OnEvent(const SEvent &event);
+    virtual bool OnEvent(const irr::SEvent &event);
 
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
-    void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+    void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
-    virtual const stringw &getButton() { static core::stringw s=L"tank"; return s; }
+    virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"tank"; return s; }
 
     virtual void drawSpecifics() { }
 
-    virtual ode::IIrrOdeEvent *writeEvent();
-    virtual ode::eEventWriterType getEventWriterType();
+    virtual irr::ode::IIrrOdeEvent *writeEvent();
+    virtual irr::ode::eEventWriterType getEventWriterType();
 };
 
 #endif

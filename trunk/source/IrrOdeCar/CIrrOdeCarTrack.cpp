@@ -15,7 +15,7 @@ CIrrOdeCarTrack::CIrrOdeCarTrack(irr::ode::CIrrOdeBody *pBody) {
 CIrrOdeCarTrack::~CIrrOdeCarTrack() {
 }
 
-bool CIrrOdeCarTrack::onEvent(ode::IIrrOdeEvent *pEvent) {
+bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     m_iCurStep++;
   }
@@ -29,7 +29,7 @@ bool CIrrOdeCarTrack::onEvent(ode::IIrrOdeEvent *pEvent) {
 
     if (pTrig->getBodyId()==m_iBodyId) {
       if (pTrig->getTriggerId()>=100) {
-        s32 iId = pTrig->getTriggerId() % 100;
+        irr::s32 iId = pTrig->getTriggerId() % 100;
         if (iId==0) {
           if (m_iNextCp==-1) {
             CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
@@ -77,6 +77,6 @@ bool CIrrOdeCarTrack::onEvent(ode::IIrrOdeEvent *pEvent) {
   return true;
 }
 
-bool CIrrOdeCarTrack::handlesEvent(ode::IIrrOdeEvent *pEvent) {
+bool CIrrOdeCarTrack::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventTrigger || pEvent->getType()==irr::ode::eIrrOdeEventStep;
 }
