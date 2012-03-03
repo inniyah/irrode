@@ -7,29 +7,27 @@
   #include <IRunner.h>
   #include <IState.h>
 
-using namespace irr;
-
 /**
  * @class CTestTrigger
  * Test for the trigger feature
  */
-class CTestTrigger : public IState, public ode::IIrrOdeEventListener {
+class CTestTrigger : public IState, public irr::ode::IIrrOdeEventListener {
   protected:
     bool m_bTrigger[3];
-    gui::IGUIStaticText *m_lblTrigger[3];
+    irr::gui::IGUIStaticText *m_lblTrigger[3];
 
   public:
-    CTestTrigger(IrrlichtDevice *pDevice, IRunner *pRunner);
+    CTestTrigger(irr::IrrlichtDevice *pDevice, IRunner *pRunner);
 
     virtual ~CTestTrigger() {
     }
 
     virtual void activate();
     virtual void deactivate();
-    virtual s32 update();
+    virtual irr::s32 update();
 
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif

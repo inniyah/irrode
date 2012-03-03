@@ -7,36 +7,34 @@
   #include <IRunner.h>
   #include <IState.h>
 
-using namespace irr;
-
 /**
  * @class CTestCloneRemove
  * Test clone and remove functionality
  */
-class CTestCloneRemove : public IState, public IEventReceiver {
+class CTestCloneRemove : public IState, public irr::IEventReceiver {
   protected:
-    gui::IGUIButton *m_btnRemoveStatic,
-                    *m_btnRemoveDynamic,
-                    *m_btnClone,
-                    *m_btnRemovecloned;
+    irr::gui::IGUIButton *m_btnRemoveStatic,
+                         *m_btnRemoveDynamic,
+                         *m_btnClone,
+                         *m_btnRemovecloned;
 
-    core::list<ode::CIrrOdeBody *> m_lCloned;
+    irr::core::list<irr::ode::CIrrOdeBody *> m_lCloned;
 
-    ode::CIrrOdeWorld *m_pWorld;
-    ode::CIrrOdeBody  *m_pTemplate;
-    scene::ISceneNode *m_pStatic,
-                      *m_pDynamic;
+    irr::ode::CIrrOdeWorld *m_pWorld;
+    irr::ode::CIrrOdeBody  *m_pTemplate;
+    irr::scene::ISceneNode *m_pStatic,
+                           *m_pDynamic;
   public:
-    CTestCloneRemove(IrrlichtDevice *pDevice, IRunner *pRunner);
+    CTestCloneRemove(irr::IrrlichtDevice *pDevice, IRunner *pRunner);
 
     virtual ~CTestCloneRemove() {
     }
 
     virtual void activate();
     virtual void deactivate();
-    virtual s32 update();
+    virtual irr::s32 update();
 
-    virtual bool OnEvent(const SEvent &event);
+    virtual bool OnEvent(const irr::SEvent &event);
 };
 
 #endif

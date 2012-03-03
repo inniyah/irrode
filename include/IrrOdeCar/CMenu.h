@@ -6,39 +6,39 @@
 
   #include "CIrrOdeCarState.h"
 
-class CMenu : public CIrrOdeCarState, public IEventReceiver {
+class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
   protected:
-    list<IGUIButton *> m_aButtons;  /*!< a list of buttons */
-    u32 m_iMenuSelect;              /*!< this member is used to store state changes */
-    dimension2di m_cDim;
-    position2di m_cPos;
-    u32 m_iIdx;
-    s32 m_iMouseX,m_iMouseY;
-    f32 m_fAngleH,m_fAngleV;
+    irr::core::list<irr::gui::IGUIButton *> m_aButtons;  /*!< a list of buttons */
+    irr::u32 m_iMenuSelect;                              /*!< this member is used to store state changes */
+    irr::core::dimension2di m_cDim;
+    irr::core::position2di m_cPos;
+    irr::u32 m_iIdx;
+    irr::s32 m_iMouseX,m_iMouseY;
+    irr::f32 m_fAngleH,m_fAngleV;
     bool m_bLeftBtn;
-    core::vector3df m_vCamLookAt;
+    irr::core::vector3df m_vCamLookAt;
 
   public:
     /**
      * constructor
      * @param pDevice the Irrlicht device
      */
-    CMenu(IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    CMenu(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl);
     virtual ~CMenu();   /*!< the destructor */
 
     virtual void activate();    /*!< state activation */
     virtual void deactivate();  /*!< state deactivation */
-    virtual u32 update();       /*!< state update */
+    virtual irr::u32 update();  /*!< state update */
 
-    virtual bool OnEvent(const SEvent &event);  /*!< the Irrlicht event receiver */
+    virtual bool OnEvent(const irr::SEvent &event);  /*!< the Irrlicht event receiver */
 
-    void setBtnEnabled(u32 iNum, bool b);
+    void setBtnEnabled(irr::u32 iNum, bool b);
 
-    virtual stringc &getButtonText() { static stringc s=stringc("menu"); return s; }
+    virtual irr::core::stringc &getButtonText() { static irr::core::stringc s=irr::core::stringc("menu"); return s; }
 
     void addButtonForState(CIrrOdeCarState *pState);
 
-    virtual const stringw &getButton() { static core::stringw s=L""; return s; }
+    virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L""; return s; }
 
     virtual void drawSpecifics() { }
 };

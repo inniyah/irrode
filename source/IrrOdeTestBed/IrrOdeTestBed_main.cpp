@@ -16,15 +16,13 @@
   #include <tests/CTestCloneRemove.h>
   #include <tests/CTestSlipstream.h>
 
-using namespace irr;
-
-class CRunner : public IRunner, public IEventReceiver {
+class CRunner : public IRunner, public irr::IEventReceiver {
   protected:
-    core::array<IState *> m_aStates;
-    u32 m_iActive;
-    s32 m_iRet;
+    irr::core::array<IState *> m_aStates;
+    irr::u32 m_iActive;
+    irr::s32 m_iRet;
 
-    IEventReceiver *m_pReceiver;
+    irr::IEventReceiver *m_pReceiver;
 
   public:
     CRunner() : IRunner(L"IrrOde Testbed") {
@@ -50,21 +48,21 @@ class CRunner : public IRunner, public IEventReceiver {
     virtual ~CRunner() {
     }
 
-    virtual s32 update() {
+    virtual irr::s32 update() {
       return m_iRet;
     }
 
     virtual void run() {
       m_pOdeMngr->install(m_pDevice);
 
-      ode::CIrrOdeSceneNodeFactory *pFactory=new ode::CIrrOdeSceneNodeFactory(m_pSmgr);
+      irr::ode::CIrrOdeSceneNodeFactory *pFactory=new irr::ode::CIrrOdeSceneNodeFactory(m_pSmgr);
       m_pSmgr->registerSceneNodeFactory(pFactory);
 
       m_aStates[m_iActive]->activate();
 
       //let's run the loop
       while(m_pDevice->run()) {
-        s32 iRet=m_aStates[m_iActive]->update();
+        irr::s32 iRet=m_aStates[m_iActive]->update();
         if (iRet!=0) {
           m_aStates[m_iActive]->deactivate();
           m_iActive=iRet;
@@ -72,7 +70,7 @@ class CRunner : public IRunner, public IEventReceiver {
         }
 
         //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
-        m_pDrv->beginScene(true, true, SColor(0,128,128,160));
+        m_pDrv->beginScene(true, true, irr::video::SColor(0,128,128,160));
 
         m_pSmgr->drawAll();
         m_pGui->drawAll();
@@ -83,11 +81,11 @@ class CRunner : public IRunner, public IEventReceiver {
       m_aStates[m_iActive]->deactivate();
     }
 
-    virtual bool OnEvent(const SEvent &event) {
+    virtual bool OnEvent(const irr::SEvent &event) {
       bool bRet=false;
 
-      if (event.EventType==EET_KEY_INPUT_EVENT) {
-        if (!event.KeyInput.PressedDown && event.KeyInput.Key==KEY_ESCAPE && m_iActive!=0) {
+      if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
+        if (!event.KeyInput.PressedDown && event.KeyInput.Key==irr::KEY_ESCAPE && m_iActive!=0) {
           m_aStates[m_iActive]->deactivate();
           m_iActive=0;
           m_aStates[m_iActive]->activate();

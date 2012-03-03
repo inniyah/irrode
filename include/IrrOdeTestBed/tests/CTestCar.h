@@ -7,37 +7,35 @@
   #include <IRunner.h>
   #include <IState.h>
 
-using namespace irr; 
-
 /**
  * @class CTestCar
  * Test with a user-controlled car
  */
-class CTestCar: public IState, public IEventReceiver, public ode::IIrrOdeEventListener {
+class CTestCar: public IState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
-    ode::CIrrOdeBody *m_pObject;
-    
-    ode::CIrrOdeMotor *m_pEngine[2];
-    ode::CIrrOdeServo *m_pSteer[2];
-    
-    scene::ICameraSceneNode *m_pCam;
-    
-    gui::IGUIStaticText *m_pInfo;
-    
+    irr::ode::CIrrOdeBody *m_pObject;
+
+    irr::ode::CIrrOdeMotor *m_pEngine[2];
+    irr::ode::CIrrOdeServo *m_pSteer[2];
+
+    irr::scene::ICameraSceneNode *m_pCam;
+
+    irr::gui::IGUIStaticText *m_pInfo;
+
   public:
-    CTestCar(IrrlichtDevice *pDevice, IRunner *pRunner);
-    
+    CTestCar(irr::IrrlichtDevice *pDevice, IRunner *pRunner);
+
     virtual ~CTestCar() {
     }
-    
+
     virtual void activate();
     virtual void deactivate();
-    virtual s32 update();
-    
-    virtual bool OnEvent(const SEvent &event);
+    virtual irr::s32 update();
 
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool OnEvent(const irr::SEvent &event);
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif
