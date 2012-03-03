@@ -38,19 +38,20 @@ enum eAerealControls {
 class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
     irr::f32 m_fPitch,
-        m_fRoll,
-        m_fYaw,
-        m_fThrust,
-        m_fCamAngleH,
-        m_fCamAngleV,
-        m_fApDist;
+             m_fRoll,
+             m_fYaw,
+             m_fThrust,
+             m_fCamAngleH,
+             m_fCamAngleV,
+             m_fApDist;
 
     irr::s32 m_iNextCp,
-        m_aCtrlBuffer[0xFF];
+             m_aCtrlBuffer[0xFF];
 
     irr::u32 m_iLastShot1,
-        m_iLastShot2,
-        m_iShotsFired;
+             m_iLastShot2,
+             m_iShotsFired,
+             m_iApInfoMode;
 
     bool m_bInternal,
          m_bWeaponCam,
@@ -75,6 +76,7 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
 
     irr::scene::ICameraSceneNode *m_pCam;
     irr::scene::ITerrainSceneNode *m_pTerrain;
+    irr::scene::ISceneNode *m_pApTarget;
 
     CAutoPilot *m_pAutoPilot;
     CTargetSelector *m_pTargetSelector;

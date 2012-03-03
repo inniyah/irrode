@@ -113,7 +113,7 @@ void CPlane::odeStep(irr::u32 iStep) {
       CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
       p->setTarget(m_pTargetSelector->getTarget());
       m_iShotsFired++;
-      m_pCockpit->setShotsFired(m_iShotsFired);
+      if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
       m_bFirePrimary=false;
     }
 
@@ -163,8 +163,10 @@ void CPlane::odeStep(irr::u32 iStep) {
         m_pCockpit->setTargetDist(0.0f);
       }
 
-      if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
-      if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+      if (m_bActive) {
+        if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
+        if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+      }
 
       m_iOldHitsTaken  = m_iHitsTaken ;
       m_iOldHitsScored = m_iHitsScored;

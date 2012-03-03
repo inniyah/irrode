@@ -28,7 +28,8 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
                                   *m_pPlaneWarnings,
                                   *m_pHeliWarnings,
                                   *m_pWeaponInfo,
-                                  *m_pLapInfo;
+                                  *m_pLapInfo,
+                                  *m_pApInfo;
     irr::gui::IGUIStaticText      *m_pLblTgtDist,
                                   *m_pLblTgtName,
                                   *m_pLblShots,
@@ -36,8 +37,13 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
                                   *m_pLblHitsTaken,
                                   *m_stCurLap,
                                   *m_stLastLap,
-                                  *m_stSplit;
-    irr::scene::ISceneNode        *m_pHorizon;
+                                  *m_stSplit,
+                                  *m_stAutoPilot,
+                                  *m_stApNextCp,
+                                  *m_stApState;
+    irr::scene::ISceneNode        *m_pHorizon,
+                                  *m_pApTarget;
+    irr::ode::CIrrOdeBody         *m_pObject;
     irr::scene::ICameraSceneNode  *m_pCam;
     irr::gui::CGUINeedleIndicator *m_pInstruments[6];
 
@@ -51,6 +57,8 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
              m_iLapStart;
     irr::s32 m_iBodyId;
     bool m_bLapStarted;
+
+    void updateApState(irr::s32 iApState);
 
   public:
     CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName);
@@ -76,10 +84,14 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     void setHitsScored(irr::s32 iHits);
     void setHitsTaken(irr::s32 iHits);
 
-    void activate(irr::ode::CIrrOdeBody *p) { if (p!=NULL) m_iBodyId = p->getID(); else m_iBodyId = -1; m_iInfoMode = 0; }
+    void activate(irr::ode::CIrrOdeBody *p, irr::u32 iInfoMode, irr::scene::ISceneNode *pApTarget, irr::s32 iApState);
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
+
+    irr::u32 getInfoMode() { return m_iInfoMode; }
+
+    irr::scene::ISceneNode *getApTarget() { return m_pApTarget; }
 };
 
 #endif

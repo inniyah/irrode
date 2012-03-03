@@ -1,6 +1,7 @@
   #include <CAutoPilot.h>
   #include <IrrOde.h>
   #include <irrlicht.h>
+  #include <CEventVehicleState.h>
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
                                  irr::ode::CIrrOdeAeroDrag     *pAero,
@@ -14,7 +15,7 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_pTorque=pTorque;
   m_pMotor=pMotor;
 
-  setState(eApPlaneCruise);
+  m_iState = eApPlaneCruise;
 
   m_bEnabled=false;
   m_bLinkYawRoll=false;
@@ -26,8 +27,6 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_fHeliCheckMax=0.0f;
 
   m_pAutoPilotInfo=NULL;
-  m_iTime = 0;
-  m_iLastEvent = 0;
 }
 
 CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
@@ -43,7 +42,7 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_pTorque=pTorque;
   m_pMotor=pMotor;
 
-  setState(eApHeliCruise);
+  m_iState = eApHeliCruise;
 
   m_bEnabled=false;
   m_bLinkYawRoll=false;
@@ -71,6 +70,9 @@ CAutoPilot::~CAutoPilot() {
 
 void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
   m_pTarget=pTarget;
+
+  CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, m_pTarget!=NULL?m_pTarget->getID():-1, m_iState);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
 
   if (pTarget!=NULL) {
     if (pTarget->getType()==irr::ode::IRR_ODE_BODY_ID)
@@ -433,17 +435,19 @@ void CAutoPilot::setState(eAutoPilotState iState) {
     case eApMissile    : printf("\"eApMissile\"\n"    ); break;
   }
   m_iState=iState;
+
+  if (m_iState != eApMissile) {
+    CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, m_pTarget->getID(), m_iState);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  }
 }
 
 void CAutoPilot::setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo) {
   m_pAutoPilotInfo=pInfo;
 }
 
-bool CAutoPilot::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-
-  return true;
-}
-
-bool CAutoPilot::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == irr::ode::eIrrOdeEventStep;
+void CAutoPilot::setEnabled(bool b) {
+  m_bEnabled=b;
+  CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, -1, m_iState);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
 }
