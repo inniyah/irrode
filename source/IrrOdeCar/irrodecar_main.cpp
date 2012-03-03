@@ -23,8 +23,6 @@
   #include <CCockpitCar.h>
   #include <CRoadMeshLoader.h>
 
-using namespace irr;
-
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
     g_fMaxFog=2100.0f;

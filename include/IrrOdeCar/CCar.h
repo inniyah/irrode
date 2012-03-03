@@ -12,8 +12,6 @@ class CCockpitCar;
 class CIrrOdeCarTrack;
 class CAdvancedParticleSystemNode;
 
-using namespace irr;
-
 enum eCarCtrl {
   eCarForeward,
   eCarBackward,

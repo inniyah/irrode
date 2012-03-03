@@ -10,8 +10,6 @@ namespace irrklang {
   class ISound;
 }
 
-using namespace irr;
-
 enum eTankCtrl {
   eTankForeward,
   eTankBackward,

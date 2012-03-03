@@ -2,27 +2,24 @@
   #include <CConnection.h>
   #include <CSegment.h>
 
-  #define _RED video::SColor(0xFF,0xFF,0xE0,0xE0)
-  #define _GREEN video::SColor(0xFF,0xE0,0xFF,0xE0)
-  #define _BLUE video::SColor(0xFF,0xE0,0xE0,0xFF)
+  #define _RED irr::video::SColor(0xFF,0xFF,0xE0,0xE0)
+  #define _GREEN irr::video::SColor(0xFF,0xE0,0xFF,0xE0)
+  #define _BLUE irr::video::SColor(0xFF,0xE0,0xE0,0xFF)
 
-using namespace irr;
-
-
-void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, core::vector3df *p1, core::vector3df vNormBase, core::vector3df vNormWall) {
-  for (u32 j=0; j<_CONNECTION_NUMBER_OF_BUFFERS; j++) {
+void CConnection::addToTempVectorBuffer(irr::core::array<irr::core::vector3df> *vTemp, irr::core::vector3df *p1, irr::core::vector3df vNormBase, irr::core::vector3df vNormWall) {
+  for (irr::u32 j=0; j<_CONNECTION_NUMBER_OF_BUFFERS; j++) {
     switch (j) {
       //Road
       case 0: {
-          core::vector3df point1=p1[0],point2=p1[1];
+          irr::core::vector3df point1=p1[0],point2=p1[1];
           if (m_bWalls[0]) {
-            core::vector3df vDir=p1[0]-p1[1];
+            irr::core::vector3df vDir=p1[0]-p1[1];
             vDir.normalize();
             point1=p1[0]-m_fWallWidth*vDir;
           }
 
           if (m_bWalls[1]) {
-            core::vector3df vDir=p1[0]-p1[1];
+            irr::core::vector3df vDir=p1[0]-p1[1];
             vDir.normalize();
             point2=p1[1]+m_fWallWidth*vDir;
           }
@@ -68,7 +65,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
       //Left inner wall
       case 6:
         if (m_bWalls[0]) {
-          core::vector3df vDir=p1[0]-p1[1];
+          irr::core::vector3df vDir=p1[0]-p1[1];
           vDir.normalize();
           vTemp[6].push_back(p1[0]-m_fWallWidth*vDir);
           vTemp[6].push_back(p1[0]-m_fWallWidth*vDir-m_fWallHeight*vNormWall);
@@ -78,7 +75,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
       //Right inner wall
       case 7:
         if (m_bWalls[1]) {
-          core::vector3df vDir=p1[1]-p1[0];
+          irr::core::vector3df vDir=p1[1]-p1[0];
           vDir.normalize();
           vTemp[7].push_back(p1[1]-m_fWallWidth*vDir);
           vTemp[7].push_back(p1[1]-m_fWallWidth*vDir-m_fWallHeight*vNormWall);
@@ -104,7 +101,7 @@ void CConnection::addToTempVectorBuffer(core::array<core::vector3df> *vTemp, cor
   }
 }
 
-void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::vector3df> vTemp, u32 iIdx) {
+void CConnection::fillMeshBuffer(irr::scene::IMeshBuffer *pBuffer, irr::core::array<irr::core::vector3df> vTemp, irr::u32 iIdx) {
   if (pBuffer==NULL || vTemp.size()<4) return;
 
   bool bFlip=iIdx==1 || iIdx==2 || iIdx==5 || iIdx==6 || iIdx==9;
@@ -112,15 +109,15 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
   bool bFlipNorm=iIdx==1 || iIdx==2 || iIdx==5 || iIdx==6 || iIdx==9;
   if (m_bFlipVertices) bFlipNorm=!bFlipNorm;
 
-  core::array<video::S3DVertex> aVerts;
-  core::array<u16> aIndices;
+  irr::core::array<irr::video::S3DVertex> aVerts;
+  irr::core::array<irr::u16> aIndices;
 
-  f32 fWidth=(vTemp[0]-vTemp[1]).getLength(),fTex=0.0f;
+  irr::f32 fWidth=(vTemp[0]-vTemp[1]).getLength(),fTex=0.0f;
 
   bool bColor=false;
 
-  for (u32 i=0; i<vTemp.size(); i++) {
-    core::vector3df v1,v2;
+  for (irr::u32 i=0; i<vTemp.size(); i++) {
+    irr::core::vector3df v1,v2;
 
     if (i<vTemp.size()-2) {
       if (i%2) {
@@ -143,20 +140,20 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
       }
     }
 
-    core::vector3df vNorm=v1.crossProduct(v2);
+    irr::core::vector3df vNorm=v1.crossProduct(v2);
     vNorm.normalize();
     if (bFlipNorm) vNorm=-vNorm;
     if (i>=vTemp.size()-2) vNorm=-vNorm;
     bFlipNorm=!bFlipNorm;
 
-    video::SColor cCol=bColor?video::SColor(0xFF,0xFF,0xFF,0xFF):video::SColor(0xFF,0xFF,0,0);
-    core::vector2df vTex;
+    irr::video::SColor cCol=bColor?irr::video::SColor(0xFF,0xFF,0xFF,0xFF):irr::video::SColor(0xFF,0xFF,0,0);
+    irr::core::vector2df vTex;
 
     switch (m_pTexParams[iIdx]->getRotate()) {
-      case 1: vTex=core::vector2df( fTex         , i%2?1.0f:0.0f); break;
-      case 2: vTex=core::vector2df( i%2?1.0f:0.0f,-fTex         ); break;
-      case 3: vTex=core::vector2df(-fTex         , i%2?1.0f:0.0f); break;
-      default: vTex=core::vector2df(i%2?1.0f:0.0f, fTex         ); break;
+      case 1: vTex=irr::core::vector2df( fTex         , i%2?1.0f:0.0f); break;
+      case 2: vTex=irr::core::vector2df( i%2?1.0f:0.0f,-fTex         ); break;
+      case 3: vTex=irr::core::vector2df(-fTex         , i%2?1.0f:0.0f); break;
+      default: vTex=irr::core::vector2df(i%2?1.0f:0.0f, fTex         ); break;
     }
 
     vTex.X*=m_pTexParams[iIdx]->getScaleX();
@@ -164,7 +161,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
     vTex.X+=m_pTexParams[iIdx]->getOffsetX();
     vTex.Y+=m_pTexParams[iIdx]->getOffsetY();
 
-    video::S3DVertex v=video::S3DVertex(vTemp[i],vNorm,cCol,vTex);
+    irr::video::S3DVertex v=irr::video::S3DVertex(vTemp[i],vNorm,cCol,vTex);
     aVerts.push_back(v);
     if (i%2) {
       fTex+=m_pTexParams[iIdx]->getStretch()?1.0f/vTemp.size():v2.getLength()/fWidth;
@@ -172,7 +169,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
     }
   }
 
-  for (u16 i=0; i<vTemp.size()-2; i+=2) {
+  for (irr::u16 i=0; i<vTemp.size()-2; i+=2) {
     if (bFlip) {
       aIndices.push_back(i  );
       aIndices.push_back(i+2);
@@ -196,7 +193,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
   pBuffer->append(aVerts.const_pointer(),aVerts.size(),aIndices.const_pointer(),aIndices.size());
 
   if (pBuffer->getVertexCount()>0) {
-    video::ITexture *pTex=getTexture(m_pTexParams[iIdx]->getTexture().c_str());
+    irr::video::ITexture *pTex=getTexture(m_pTexParams[iIdx]->getTexture().c_str());
     m_pMeshBuffer[iIdx]->getMaterial().setTexture(0,pTex);
   }
 }
@@ -207,7 +204,7 @@ void CConnection::fillMeshBuffer(scene::IMeshBuffer *pBuffer, core::array<core::
  */
 void CConnection::recalcMeshBuffer() {
   //Delete all meshbuffers allocated previously
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+  for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
     //if (m_pMeshBuffer[i]!=NULL)  m_pMeshBuffer[i]->drop();
     m_pMeshBuffer[i]=NULL;
   }
@@ -218,7 +215,7 @@ void CConnection::recalcMeshBuffer() {
   //Return without doing any further things if the connection is not connected
   if (m_pSegment1==NULL || m_pSegment2==NULL) return;
 
-  core::vector3df p1[2],p2[2];
+  irr::core::vector3df p1[2],p2[2];
 
   //initialize the beginning and the ending point of the first line that is calculated
   switch (m_iSegment1Border) {
@@ -237,12 +234,12 @@ void CConnection::recalcMeshBuffer() {
   }
 
   if (m_bFlipConnection) {
-    core::vector3df v=p2[1];
+    irr::core::vector3df v=p2[1];
     p2[1]=p2[0];
     p2[0]=v;
   }
 
-  core::vector3df vBezierL[4],vBezierR[4];
+  irr::core::vector3df vBezierL[4],vBezierR[4];
 
   switch (m_eType) {
     case eBezier1:
@@ -261,17 +258,17 @@ void CConnection::recalcMeshBuffer() {
       break;
   }
 
-  core::array<core::vector3df> vTemp[_CONNECTION_NUMBER_OF_BUFFERS];
-  core::vector3df vNormBase=m_pSegment1->getNormalBaseVector(),
+  irr::core::array<irr::core::vector3df> vTemp[_CONNECTION_NUMBER_OF_BUFFERS];
+  irr::core::vector3df vNormBase=m_pSegment1->getNormalBaseVector(),
                   vNormWall=m_pSegment1->getWallNormal();
   //if (m_bFlipVertices) vNorm=-vNorm;
 
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) vTemp[i].clear();
+  for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) vTemp[i].clear();
 
-  for (u32 i=1; i<=m_iSteps; i++) {
+  for (irr::u32 i=1; i<=m_iSteps; i++) {
     addToTempVectorBuffer(vTemp,p1,vNormBase,-vNormWall);
 
-    f32 fStep=((f32)i)*(1.0f/((f32)m_iSteps));
+    irr::f32 fStep=((irr::f32)i)*(1.0f/((irr::f32)m_iSteps));
 
     switch (m_eType) {
       case eBezier1:
@@ -290,7 +287,7 @@ void CConnection::recalcMeshBuffer() {
         break;
     }
 
-    core::vector3df v1=p1[0]-p1[1],v2=p1[0]-vTemp[0][vTemp[0].size()-1];
+    irr::core::vector3df v1=p1[0]-p1[1],v2=p1[0]-vTemp[0][vTemp[0].size()-1];
     vNormBase=v1.crossProduct(v2);
     vNormWall=-vNormBase;
     vNormBase.normalize();
@@ -305,8 +302,8 @@ void CConnection::recalcMeshBuffer() {
                         m_bFlipVertices? m_pSegment2->getNormalBaseVector(): m_pSegment2->getNormalBaseVector(),
                         m_bFlipVertices?-m_pSegment2->getWallNormal      ():-m_pSegment2->getWallNormal());
 
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
-    if (m_pMeshBuffer[i]==NULL) m_pMeshBuffer[i]=new scene::SMeshBuffer();
+  for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+    if (m_pMeshBuffer[i]==NULL) m_pMeshBuffer[i]=new irr::scene::SMeshBuffer();
     fillMeshBuffer(m_pMeshBuffer[i],vTemp[i],i);
   }
 }
@@ -323,7 +320,7 @@ void CConnection::recalcMeshBuffer() {
 void CConnection::calculateHelpPoints() {
   if (m_pSegment1==NULL || m_pSegment2==NULL) return;
 
-  core::vector3df v[4],v2[2];
+  irr::core::vector3df v[4],v2[2];
 
   switch (m_iSegment1Border) {
     case 0: v[0]=m_pSegment1->getPoint(0); v[1]=m_pSegment1->getPoint(1); v2[0]=m_pSegment1->getPoint(3); break;
@@ -346,27 +343,27 @@ void CConnection::calculateHelpPoints() {
 
     case eBezier2:
       if (m_bFlipConnection) {
-        core::vector3df vDir=v2[0]-v[0],
+        irr::core::vector3df vDir=v2[0]-v[0],
                         vLen=v[0]-v[2];
 
-        f32 fLen=vLen.getLength();
+        irr::f32 fLen=vLen.getLength();
 
         vDir.normalize();
 
-        core::line3df cLine[2]={
-                        core::line3df(v[0],v[0]-fLen*vDir),
-                        core::line3df(v[1],v[1]-fLen*vDir)
+        irr::core::line3df cLine[2]={
+                        irr::core::line3df(v[0],v[0]-fLen*vDir),
+                        irr::core::line3df(v[1],v[1]-fLen*vDir)
                       };
 
         vDir=v2[1]-v[2];
         vDir.normalize();
 
-        core::vector3df vMinDist[2]={ core::vector3df(0.0f), core::vector3df(0.0f) };
-        f32 fMinDist[2]={ 1000.0f*fLen, 1000.0f*fLen };
+        irr::core::vector3df vMinDist[2]={ irr::core::vector3df(0.0f), irr::core::vector3df(0.0f) };
+        irr::f32 fMinDist[2]={ 1000.0f*fLen, 1000.0f*fLen };
 
-        for (u32 i=0; i<2; i++)
-          for (f32 f=0.0f; f<fLen; f+=0.01f) {
-            core::vector3df vDummy=v[i+2]-f*vDir;
+        for (irr::u32 i=0; i<2; i++)
+          for (irr::f32 f=0.0f; f<fLen; f+=0.01f) {
+            irr::core::vector3df vDummy=v[i+2]-f*vDir;
             if (cLine[i==0?1:0].getClosestPoint(vDummy).getDistanceFrom(vDummy)<fMinDist[i]) {
               fMinDist[i]=cLine[i==0?1:0].getClosestPoint(vDummy).getDistanceFrom(vDummy);
               vMinDist[i]=vDummy;
@@ -377,38 +374,38 @@ void CConnection::calculateHelpPoints() {
         m_vHelpPoints[0]=cLine[0].start+(m_fHpOff[2]*(vMinDist[1]-cLine[0].start));
       }
       else {
-        core::vector3df vDir=v2[1]-v[2],
+        irr::core::vector3df vDir=v2[1]-v[2],
                         vLen=v[0]-v[2];
 
-        f32 fLen=vLen.getLength();
+        irr::f32 fLen=vLen.getLength();
 
         vDir.normalize();
 
-        core::line3df cLine[2]={
-                        core::line3df(v[2],v[2]-fLen*vDir),
-                        core::line3df(v[3],v[3]-fLen*vDir)
+        irr::core::line3df cLine[2]={
+                        irr::core::line3df(v[2],v[2]-fLen*vDir),
+                        irr::core::line3df(v[3],v[3]-fLen*vDir)
                       };
 
-        m_pDrv->draw3DLine(cLine[0].start,cLine[0].end,video::SColor(0xFF,0xFF,0,0));
-        m_pDrv->draw3DLine(cLine[1].start,cLine[1].end,video::SColor(0xFF,0xFF,0,0));
+        m_pDrv->draw3DLine(cLine[0].start,cLine[0].end,irr::video::SColor(0xFF,0xFF,0,0));
+        m_pDrv->draw3DLine(cLine[1].start,cLine[1].end,irr::video::SColor(0xFF,0xFF,0,0));
 
         vDir=v2[0]-v[0];
         vDir.normalize();
 
-        core::vector3df vMinDist[2]={ core::vector3df(0.0f), core::vector3df(0.0f) };
-        f32 fMinDist[2]={ 1000.0f*fLen, 1000.0f*fLen };
+        irr::core::vector3df vMinDist[2]={ irr::core::vector3df(0.0f), irr::core::vector3df(0.0f) };
+        irr::f32 fMinDist[2]={ 1000.0f*fLen, 1000.0f*fLen };
 
-        for (u32 i=0; i<2; i++)
-          for (f32 f=0.0f; f<fLen; f+=0.01f) {
-            core::vector3df vDummy=v[i]-f*vDir;
+        for (irr::u32 i=0; i<2; i++)
+          for (irr::f32 f=0.0f; f<fLen; f+=0.01f) {
+            irr::core::vector3df vDummy=v[i]-f*vDir;
             if (cLine[i].getClosestPoint(vDummy).getDistanceFrom(vDummy)<fMinDist[i]) {
               fMinDist[i]=cLine[i].getClosestPoint(vDummy).getDistanceFrom(vDummy);
               vMinDist[i]=vDummy;
             }
           }
 
-        m_pDrv->draw3DLine(v[0],vMinDist[0],video::SColor(0xFF,0,0xFF,0));
-        m_pDrv->draw3DLine(v[1],vMinDist[1],video::SColor(0xFF,0,0xFF,0));
+        m_pDrv->draw3DLine(v[0],vMinDist[0],irr::video::SColor(0xFF,0,0xFF,0));
+        m_pDrv->draw3DLine(v[1],vMinDist[1],irr::video::SColor(0xFF,0,0xFF,0));
 
         //m_vHelpPoints[0]=vMinDist[0];
         //m_vHelpPoints[2]=vMinDist[1];
@@ -420,9 +417,9 @@ void CConnection::calculateHelpPoints() {
       break;
 
     case eBezier3: {
-        core::vector3df vDir=v2[0]-v[0],vLen=v[0]-v[2];
+        irr::core::vector3df vDir=v2[0]-v[0],vLen=v[0]-v[2];
         vLen.Y=0;
-        f32 fLen=vLen.getLength()/2.0f;
+        irr::f32 fLen=vLen.getLength()/2.0f;
 
         vDir.normalize();
 
@@ -453,7 +450,7 @@ void CConnection::calculateHelpPoints() {
  * @see recalcMeshBuffer
  * @see render
  */
-core::vector3df CConnection::getBezier1(core::vector3df p[], f32 fStep) {
+irr::core::vector3df CConnection::getBezier1(irr::core::vector3df p[], irr::f32 fStep) {
   return (1-fStep)*p[0]+fStep*p[1];
 }
 
@@ -465,7 +462,7 @@ core::vector3df CConnection::getBezier1(core::vector3df p[], f32 fStep) {
  * @see recalcMeshBuffer
  * @see render
  */
-core::vector3df CConnection::getBezier2(core::vector3df p[], f32 fStep) {
+irr::core::vector3df CConnection::getBezier2(irr::core::vector3df p[], irr::f32 fStep) {
   return ((1-fStep)*(1-fStep))*p[0]+2*fStep*(1-fStep)*p[1]+fStep*fStep*p[2];
 }
 
@@ -477,7 +474,7 @@ core::vector3df CConnection::getBezier2(core::vector3df p[], f32 fStep) {
  * @see recalcMeshBuffer
  * @see render
  */
-core::vector3df CConnection::getBezier3(core::vector3df p[], f32 fStep) {
+irr::core::vector3df CConnection::getBezier3(irr::core::vector3df p[], irr::f32 fStep) {
   return (-p[0]+3*p[1]-3*p[2]+p[3])*fStep*fStep*fStep+(3*p[0]-6*p[1]+3*p[2])*fStep*fStep+(-3*p[0]+3*p[1])*fStep+p[0];
 }
 
@@ -485,7 +482,7 @@ core::vector3df CConnection::getBezier3(core::vector3df p[], f32 fStep) {
  * Constructor
  * @param pDrv used Irrlicht videodriver
  */
-CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTexture) : IRoadPart(pDevice->getVideoDriver()) {
+CConnection::CConnection(irr::IrrlichtDevice *pDevice, CTextureParameters *pInitTexture) : IRoadPart(pDevice->getVideoDriver()) {
   //initialize the segments
   m_pSegment1=NULL;
   m_pSegment2=NULL;
@@ -509,10 +506,10 @@ CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTextu
   m_bSelected      =false;
 
   //Initialize the helppoints
-  m_vHelpPoints[0]=core::vector3df(0.0f,0.0f,0.0f);
-  m_vHelpPoints[1]=core::vector3df(0.0f,0.0f,0.0f);
-  m_vHelpPoints[2]=core::vector3df(0.0f,0.0f,0.0f);
-  m_vHelpPoints[3]=core::vector3df(0.0f,0.0f,0.0f);
+  m_vHelpPoints[0]=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vHelpPoints[1]=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vHelpPoints[2]=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vHelpPoints[3]=irr::core::vector3df(0.0f,0.0f,0.0f);
 
   //Default: 10 steps, offset 3.0
   m_iSteps=10;
@@ -523,7 +520,7 @@ CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTextu
   m_eType=eBezier1;
 
   //initialize the meshbuffer members and initialize the texture parameter objects
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
+  for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++) {
     m_pMeshBuffer[i]=NULL;
     m_pTexParams[i]=new CTextureParameters();
     if (pInitTexture) pInitTexture[i].copyTo(m_pTexParams[i]);
@@ -531,10 +528,10 @@ CConnection::CConnection(IrrlichtDevice *pDevice, CTextureParameters *pInitTextu
 
   m_fRoadWidth=0.0f;
 
-  for (u32 i=0; i<4; i++) m_fHpOff[i]=1.0f;
+  for (irr::u32 i=0; i<4; i++) m_fHpOff[i]=1.0f;
 
   m_fWallHeight=10.0f;
-  for (u32 i=0; i<2; i++) m_bWalls[i]=false;
+  for (irr::u32 i=0; i<2; i++) m_bWalls[i]=false;
 }
 
 /**
@@ -546,7 +543,7 @@ CConnection::~CConnection() {
   if (m_pSegment2!=NULL) m_pSegment2->delNotify(this);
 
   //Delete the texture parameters and the meshbuffers
-  for (u32 i=0; i<6; i++) {
+  for (irr::u32 i=0; i<6; i++) {
     if (m_pMeshBuffer[i]!=NULL) m_pMeshBuffer[i]->drop();
     delete m_pTexParams[i];
   }
@@ -575,21 +572,21 @@ void CConnection::setSegment2NoInit(CSegment *p) {
   attributesChanged(m_pSegment2);
 }
 
-void CConnection::setSegment1Border(u32 i) { if (i<4) m_iSegment1Border=i; calculateHelpPoints(); update(); }
-void CConnection::setSegment2Border(u32 i) { if (i<4) m_iSegment2Border=i; calculateHelpPoints(); update(); }
+void CConnection::setSegment1Border(irr::u32 i) { if (i<4) m_iSegment1Border=i; calculateHelpPoints(); update(); }
+void CConnection::setSegment2Border(irr::u32 i) { if (i<4) m_iSegment2Border=i; calculateHelpPoints(); update(); }
 
 void CConnection::setType(eConnectionType eType) { m_eType=eType; calculateHelpPoints(); }
 
-void CConnection::setNumberOfSteps(u32 i) { m_iSteps=i; update(); }
+void CConnection::setNumberOfSteps(irr::u32 i) { m_iSteps=i; update(); }
 
-void CConnection::setOffset(f32 f) {
+void CConnection::setOffset(irr::f32 f) {
   m_fOffset=f;
   update();
 }
 
-f32 CConnection::getOffset() { return m_fOffset; }
+irr::f32 CConnection::getOffset() { return m_fOffset; }
 
-void CConnection::setHelpPoint(u32 i, core::vector3df v) {
+void CConnection::setHelpPoint(irr::u32 i, irr::core::vector3df v) {
   if (i<4) {
     m_vHelpPoints[i]=v;
     update();
@@ -603,15 +600,15 @@ void CConnection::setSelected      (bool b) { m_bSelected      =b; }
 CSegment *CConnection::getSegment1() { return m_pSegment1; }
 CSegment *CConnection::getSegment2() { return m_pSegment2; }
 
-u32 CConnection::getSegment1Border() { return m_iSegment1Border; }
-u32 CConnection::getSegment2Border() { return m_iSegment2Border; }
+irr::u32 CConnection::getSegment1Border() { return m_iSegment1Border; }
+irr::u32 CConnection::getSegment2Border() { return m_iSegment2Border; }
 
 CConnection::eConnectionType CConnection::getConnectionType() { return m_eType; }
 
-u32 CConnection::getNumberOfSteps() { return m_iSteps; }
+irr::u32 CConnection::getNumberOfSteps() { return m_iSteps; }
 
-core::vector3df CConnection::getHelpPoint(u32 i) {
-  static core::vector3df vErr=core::vector3df(0.0f,0.0f,0.0f);
+irr::core::vector3df CConnection::getHelpPoint(irr::u32 i) {
+  static irr::core::vector3df vErr=irr::core::vector3df(0.0f,0.0f,0.0f);
   return i<4?m_vHelpPoints[i]:vErr;
 }
 
@@ -623,47 +620,47 @@ void CConnection::render() {
   switch (m_eType) {
     case eBezier1: break;
     case eBezier2: {
-        video::SMaterial cMat;
+        irr::video::SMaterial cMat;
         cMat.Lighting=false;
         m_pDrv->setMaterial(cMat);
 
         if (m_bSelected)
-          for (u32 i=0; i<2; i++) {
-            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],video::SColor(0xFF,0xFF,0xFF,0xFF));
-            m_pDrv->draw3DLine(m_vDraw[i+3],m_vDraw[i+4],video::SColor(0xFF,0xFF,0xFF,0xFF));
+          for (irr::u32 i=0; i<2; i++) {
+            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],irr::video::SColor(0xFF,0xFF,0xFF,0xFF));
+            m_pDrv->draw3DLine(m_vDraw[i+3],m_vDraw[i+4],irr::video::SColor(0xFF,0xFF,0xFF,0xFF));
           }
       }
       break;
 
     case eBezier3: {
-        video::SMaterial cMat;
+        irr::video::SMaterial cMat;
         cMat.Lighting=false;
         m_pDrv->setMaterial(cMat);
 
         if (m_bSelected)
-          for (u32 i=0; i<3; i++) {
-            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],video::SColor(0xFF,0xFF,0xFF,0xFF));
-            m_pDrv->draw3DLine(m_vDraw[i+4],m_vDraw[i+5],video::SColor(0xFF,0xFF,0xFF,0xFF));
+          for (irr::u32 i=0; i<3; i++) {
+            m_pDrv->draw3DLine(m_vDraw[i  ],m_vDraw[i+1],irr::video::SColor(0xFF,0xFF,0xFF,0xFF));
+            m_pDrv->draw3DLine(m_vDraw[i+4],m_vDraw[i+5],irr::video::SColor(0xFF,0xFF,0xFF,0xFF));
           }
       }
       break;
   }
 
   //Render the meshbuffers
-  for (u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++)
-    if (m_pMeshBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(s32)i)) {
-      video::SMaterial cMat;
+  for (irr::u32 i=0; i<_CONNECTION_NUMBER_OF_BUFFERS; i++)
+    if (m_pMeshBuffer[i]!=NULL && (m_iMeshBufferToDraw==-1 || m_iMeshBufferToDraw==(irr::s32)i)) {
+      irr::video::SMaterial cMat;
       cMat.Lighting=false;
       //cMat.Wireframe=true;
 
       //draw the normals
-      for (u32 j=0; j<m_pMeshBuffer[i]->getVertexCount(); j++) {
-        core::vector3df pos=m_pMeshBuffer[i]->getPosition(j),
+      for (irr::u32 j=0; j<m_pMeshBuffer[i]->getVertexCount(); j++) {
+        irr::core::vector3df pos=m_pMeshBuffer[i]->getPosition(j),
                         normal=m_pMeshBuffer[i]->getNormal(j);
 
         m_pDrv->setMaterial(cMat);
-        m_pDrv->setTransform(video::ETS_WORLD,core::CMatrix4<f32>());
-        m_pDrv->draw3DLine(pos,pos+normal,video::SColor(0xFF,0xFF,0xFF,0xFF));
+        m_pDrv->setTransform(irr::video::ETS_WORLD,irr::core::CMatrix4<irr::f32>());
+        m_pDrv->draw3DLine(pos,pos+normal,irr::video::SColor(0xFF,0xFF,0xFF,0xFF));
       }
 
       //draw the meshbuffers
@@ -677,7 +674,7 @@ void CConnection::render() {
   if (!m_bSelected) return;
 
   //draw the bounding box to indicate we're selected
-  m_pDrv->draw3DBox(m_cBox,video::SColor(0xFF,0x60,0x60,0xFF));
+  m_pDrv->draw3DBox(m_cBox,irr::video::SColor(0xFF,0x60,0x60,0xFF));
 
   if (m_pSegment1==NULL || m_pSegment2==NULL) return;
 
@@ -687,30 +684,30 @@ void CConnection::render() {
     case eBezier1: break;
 
     case eBezier2: {
-        core::vector3df size=core::vector3df(0.5f,0.5f,0.5f);
-        s32 iSelect[]={ 1, 3 },iIdx[]={ 0, 2 };
+        irr::core::vector3df size=irr::core::vector3df(0.5f,0.5f,0.5f);
+        irr::s32 iSelect[]={ 1, 3 },iIdx[]={ 0, 2 };
 
-        for (u32 i=0; i<2; i++) {
-          core::aabbox3df box=core::aabbox3df(m_vHelpPoints[iIdx[i]]-size,m_vHelpPoints[iIdx[i]]+size);
-          m_pDrv->draw3DBox(box,m_iSelectedPoint==iSelect[i]?video::SColor(0xFF,0xFF,0xFF,0):video::SColor(0xFF,0,0,0xFF));
+        for (irr::u32 i=0; i<2; i++) {
+          irr::core::aabbox3df box=irr::core::aabbox3df(m_vHelpPoints[iIdx[i]]-size,m_vHelpPoints[iIdx[i]]+size);
+          m_pDrv->draw3DBox(box,m_iSelectedPoint==iSelect[i]?irr::video::SColor(0xFF,0xFF,0xFF,0):irr::video::SColor(0xFF,0,0,0xFF));
         }
       }
       break;
 
     case eBezier3: {
-        core::vector3df size=core::vector3df(0.5f,0.5f,0.5f);
-        s32 iSelect[]={ 1, 2, 3, 0 };
+        irr::core::vector3df size=irr::core::vector3df(0.5f,0.5f,0.5f);
+        irr::s32 iSelect[]={ 1, 2, 3, 0 };
 
-        for (u32 i=0; i<4; i++) {
-          core::aabbox3df box=core::aabbox3df(m_vHelpPoints[i]-size,m_vHelpPoints[i]+size);
-          m_pDrv->draw3DBox(box,m_iSelectedPoint==iSelect[i]?video::SColor(0xFF,0xFF,0xFF,0):video::SColor(0xFF,0,0,0xFF));
+        for (irr::u32 i=0; i<4; i++) {
+          irr::core::aabbox3df box=irr::core::aabbox3df(m_vHelpPoints[i]-size,m_vHelpPoints[i]+size);
+          m_pDrv->draw3DBox(box,m_iSelectedPoint==iSelect[i]?irr::video::SColor(0xFF,0xFF,0xFF,0):irr::video::SColor(0xFF,0,0,0xFF));
         }
       }
       break;
   }
 }
 
-void CConnection::setSelectedPoint(s32 iPoint) {
+void CConnection::setSelectedPoint(irr::s32 iPoint) {
   m_iSelectedPoint=iPoint;
 }
 
@@ -718,7 +715,7 @@ void CConnection::setSelectedPoint(s32 iPoint) {
  * Save the segment
  * @param out the attribute object to fill
  */
-void CConnection::save(io::IAttributes *out) {
+void CConnection::save(irr::io::IAttributes *out) {
   out->addString("Segment1",m_pSegment1->getName().c_str());
   out->addString("Segment2",m_pSegment2->getName().c_str());
 
@@ -730,21 +727,21 @@ void CConnection::save(io::IAttributes *out) {
   out->addBool("FlipC",m_bFlipConnection);
   out->addBool("FlipV",m_bFlipVertices  );
 
-  for (u32 i=0; i<4; i++) {
-    core::stringc s="HelpPoint"; s+=i;
+  for (irr::u32 i=0; i<4; i++) {
+    irr::core::stringc s="HelpPoint"; s+=i;
     out->addVector3d(s.c_str(),m_vHelpPoints[i]);
   }
 
-  for (u32 i=0; i<4; i++) {
-    core::stringc s="HpOffset"; s+=i;
+  for (irr::u32 i=0; i<4; i++) {
+    irr::core::stringc s="HpOffset"; s+=i;
     out->addFloat(s.c_str(),m_fHpOff[i]);
   }
 
   out->addFloat("WallHeight",m_fWallHeight);
   out->addFloat("WallWidth" ,m_fWallWidth );
 
-  for (u32 i=0; i<2; i++) {
-    core::stringc s="CreateWall"; s+=i;
+  for (irr::u32 i=0; i<2; i++) {
+    irr::core::stringc s="CreateWall"; s+=i;
     out->addBool(s.c_str(),m_bWalls[i]);
   }
 }
@@ -753,7 +750,7 @@ void CConnection::save(io::IAttributes *out) {
  * Load the segment
  * @param in the attribute object with the necessary data
  */
-void CConnection::load(io::IAttributes *in) {
+void CConnection::load(irr::io::IAttributes *in) {
   m_sSegment1=in->getAttributeAsString("Segment1");
   m_sSegment2=in->getAttributeAsString("Segment2");
 
@@ -765,27 +762,27 @@ void CConnection::load(io::IAttributes *in) {
   m_bFlipConnection=in->getAttributeAsBool("FlipC");
   m_bFlipVertices  =in->getAttributeAsBool("FlipV");
 
-  for (u32 i=0; i<4; i++) {
-    core::stringc s="HelpPoint"; s+=i;
+  for (irr::u32 i=0; i<4; i++) {
+    irr::core::stringc s="HelpPoint"; s+=i;
     m_vHelpPoints[i]=in->getAttributeAsVector3d(s.c_str());
   }
 
-  for (u32 i=0; i<4; i++) {
-    core::stringc s="HpOffset"; s+=i;
+  for (irr::u32 i=0; i<4; i++) {
+    irr::core::stringc s="HpOffset"; s+=i;
     if (in->existsAttribute(s.c_str())) m_fHpOff[i]=in->getAttributeAsFloat(s.c_str());
   }
 
   m_fWallHeight=in->getAttributeAsFloat("WallHeight");
   m_fWallWidth =in->getAttributeAsFloat("WallWidth" );
 
-  for (u32 i=0; i<2; i++) {
-    core::stringc s="CreateWall"; s+=i;
+  for (irr::u32 i=0; i<2; i++) {
+    irr::core::stringc s="CreateWall"; s+=i;
     m_bWalls[i]=in->getAttributeAsBool(s.c_str());
   }
 }
 
-const core::stringc &CConnection::getSegment1Name() { return m_sSegment1; }
-const core::stringc &CConnection::getSegment2Name() { return m_sSegment2; }
+const irr::core::stringc &CConnection::getSegment1Name() { return m_sSegment1; }
+const irr::core::stringc &CConnection::getSegment2Name() { return m_sSegment2; }
 
 void CConnection::attributesChanged(CSegment *p) {
   update();
@@ -805,10 +802,10 @@ void CConnection::update() {
   recalcMeshBuffer();
 }
 
-CTextureParameters *CConnection::getTextureParameters(u32 i) {
+CTextureParameters *CConnection::getTextureParameters(irr::u32 i) {
   return i<_CONNECTION_NUMBER_OF_BUFFERS?m_pTexParams[i]:NULL;
 }
 
-scene::IMeshBuffer *CConnection::getMeshBuffer(u32 i) {
+irr::scene::IMeshBuffer *CConnection::getMeshBuffer(irr::u32 i) {
   return i<_CONNECTION_NUMBER_OF_BUFFERS?m_pMeshBuffer[i]:NULL;
 }

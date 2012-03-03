@@ -5,8 +5,6 @@
   #include <CIrrOdeCarState.h>
   #include <IrrOde.h>
 
-using namespace irr;
-
 class CRearView;
 class CAutoPilot;
 class CCockpitPlane;

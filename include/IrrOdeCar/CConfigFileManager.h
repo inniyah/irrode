@@ -3,8 +3,6 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
 /**
  * This interface must be implemented by all classes that read from the global config file
  * @author Christian Keimel / dustbin::games
@@ -14,7 +12,7 @@ class IConfigFileReader {
 	  /**
 		 * Implement this method to read from the global config file
 		 */
-    virtual void readConfig(io::IXMLReaderUTF8 *pXml)=0;
+    virtual void readConfig(irr::io::IXMLReaderUTF8 *pXml)=0;
 };
 
 /**
@@ -26,7 +24,7 @@ class IConfigFileWriter {
 	  /**
 		 * Implement this method to write your section to the global config file
 		 */
-    virtual void writeConfig(io::IXMLWriter *pXml)=0;
+    virtual void writeConfig(irr::io::IXMLWriter *pXml)=0;
 };
 
 /**
@@ -35,8 +33,8 @@ class IConfigFileWriter {
  */
 class CConfigFileManager {
   protected:
-    core::list<IConfigFileReader *> m_lReaders;		/**< list of all config file readers */
-    core::list<IConfigFileWriter *> m_lWriters;		/**< list of all config file writers */
+    irr::core::list<IConfigFileReader *> m_lReaders;		/**< list of all config file readers */
+    irr::core::list<IConfigFileWriter *> m_lWriters;		/**< list of all config file writers */
 
   public:
 	  /**
@@ -79,14 +77,14 @@ class CConfigFileManager {
 		 * @param pDevice the Irrlicht device to use
 		 * @param sFileName the name of the config file to load
 		 */
-    void loadConfig(IrrlichtDevice *pDevice, const c8 *sFileName);
+    void loadConfig(irr::IrrlichtDevice *pDevice, const irr::c8 *sFileName);
 
 		/**
 		 * write a configuration file
 		 * @param pDevice the Irrlicht device to use
 		 * @param sFileName the name of the config file to write
 		 */
-    void writeConfig(IrrlichtDevice *pDevice, const c8 *sFileName);
+    void writeConfig(irr::IrrlichtDevice *pDevice, const irr::c8 *sFileName);
 };
 
 #endif

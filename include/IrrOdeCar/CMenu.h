@@ -6,8 +6,6 @@
 
   #include "CIrrOdeCarState.h"
 
-using namespace irr;
-
 class CMenu : public CIrrOdeCarState, public IEventReceiver {
   protected:
     list<IGUIButton *> m_aButtons;  /*!< a list of buttons */

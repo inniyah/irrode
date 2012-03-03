@@ -3,8 +3,6 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
 const int RANDOM_FOREST_ID=MAKE_IRR_ID('r','a','f','o');
 
 class CRandomForest : public irr::scene::ISceneNode {

@@ -3,20 +3,18 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
-class CRoadMeshLoader : public scene::IMeshLoader {
+class CRoadMeshLoader : public irr::scene::IMeshLoader {
   protected:
-    IrrlichtDevice *m_pDevice;
+    irr::IrrlichtDevice *m_pDevice;
 
   public:
-    CRoadMeshLoader(IrrlichtDevice *pDevice) { m_pDevice=pDevice; }
+    CRoadMeshLoader(irr::IrrlichtDevice *pDevice) { m_pDevice=pDevice; }
 
-    virtual scene::IAnimatedMesh *createMesh(io::IReadFile *file);
+    virtual irr::scene::IAnimatedMesh *createMesh(irr::io::IReadFile *file);
     #ifdef _IRREDIT_PLUGIN
-      virtual bool isALoadableFileExtension (const c8 *filename) const;
+      virtual bool isALoadableFileExtension (const irr::c8 *filename) const;
     #else
-      virtual bool isALoadableFileExtension (const io::path &filename) const;
+      virtual bool isALoadableFileExtension (const irr::io::path &filename) const;
     #endif
     virtual ~CRoadMeshLoader() { }
 };

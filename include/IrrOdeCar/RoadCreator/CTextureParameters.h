@@ -3,8 +3,6 @@
 
   #include <irrlicht.h>
 
-using namespace irr;
-
 /**
  * @class CTextureParameters
  * @author Christian Keimel / bulletbyte.de
@@ -12,13 +10,13 @@ using namespace irr;
  */
 class CTextureParameters {
   protected:
-    core::stringc m_sTexture;   /**<! the texture */
-    u32 m_iRotate;              /**<! the texture rotation (0=0 degrees, 1=90 degrees, 2=180 degrees, 3=270 degrees) */
-    f32 m_fOffsetX,             /**<! X-offset of the texture */
-        m_fOffsetY,             /**<! Y-offset of the texture */
-        m_fScaleX,              /**<! X-scale of the texture */
-        m_fScaleY;              /**<! Y-scale of the texture */
-    bool m_bStretch;            /**<! flag to stretch the texture to fit */
+    irr::core::stringc m_sTexture;   /**<! the texture */
+    irr::u32 m_iRotate;              /**<! the texture rotation (0=0 degrees, 1=90 degrees, 2=180 degrees, 3=270 degrees) */
+    irr::f32 m_fOffsetX,             /**<! X-offset of the texture */
+             m_fOffsetY,             /**<! Y-offset of the texture */
+             m_fScaleX,              /**<! X-scale of the texture */
+             m_fScaleY;              /**<! Y-scale of the texture */
+    bool     m_bStretch;            /**<! flag to stretch the texture to fit */
 
   public:
     /**
@@ -38,7 +36,7 @@ class CTextureParameters {
      * Set the texture file
      * @param sTexture the texture
      */
-    void setTexture(const core::stringc &sTexture) {
+    void setTexture(const irr::core::stringc &sTexture) {
       m_sTexture=sTexture;
     }
 
@@ -46,7 +44,7 @@ class CTextureParameters {
      * Set the texture rotation
      * @param i the texture rotation (0=0 degrees, 1=90 degrees, 2=180 degrees, 3=270 degrees)
      */
-    void setRotate(u32 i) {
+    void setRotate(irr::u32 i) {
       m_iRotate=i;
     }
 
@@ -54,11 +52,11 @@ class CTextureParameters {
      * Set the offset of the texture
      * @param f the offset of the texture
      */
-    void setOffsetX(f32 f) {
+    void setOffsetX(irr::f32 f) {
       m_fOffsetX=f;
     }
 
-    void setOffsetY(f32 f) {
+    void setOffsetY(irr::f32 f) {
       m_fOffsetY=f;
     }
 
@@ -66,11 +64,11 @@ class CTextureParameters {
      * Set the scale of the texture
      * @param f the new scale of the texture
      */
-    void setScaleX(f32 f) {
+    void setScaleX(irr::f32 f) {
       m_fScaleX=f;
     }
 
-    void setScaleY(f32 f) {
+    void setScaleY(irr::f32 f) {
       m_fScaleY=f;
     }
 
@@ -86,7 +84,7 @@ class CTextureParameters {
      * Get the file path of the texture
      * @return the file path of the texture
      */
-    const core::stringc &getTexture() {
+    const irr::core::stringc &getTexture() {
       return m_sTexture;
     }
 
@@ -94,7 +92,7 @@ class CTextureParameters {
      * Get the rotation of the texture
      * @return the rotation of the texture (0=0 degrees, 1=90 degrees, 2=180 degrees, 3=270 degrees)
      */
-    u32 getRotate() {
+    irr::u32 getRotate() {
       return m_iRotate;
     }
 
@@ -102,11 +100,11 @@ class CTextureParameters {
      * Get the offset of the texture
      * @return the offset of the texture
      */
-    f32 getOffsetX() {
+    irr::f32 getOffsetX() {
       return m_fOffsetX;
     }
 
-    f32 getOffsetY() {
+    irr::f32 getOffsetY() {
       return m_fOffsetY;
     }
 
@@ -114,11 +112,11 @@ class CTextureParameters {
      * Get the scale of the texture
      * @return the scale of the texture
      */
-    f32 getScaleX() {
+    irr::f32 getScaleX() {
       return m_fScaleX;
     }
 
-    f32 getScaleY() {
+    irr::f32 getScaleY() {
       return m_fScaleY;
     }
 
@@ -134,7 +132,7 @@ class CTextureParameters {
      * Save the texture parameters to an attribute object
      * @param out the attribute object
      */
-    void save(io::IAttributes *out) {
+    void save(irr::io::IAttributes *out) {
       out->addString("Texture",m_sTexture.c_str());
 
       out->addInt("Rotate",m_iRotate);
@@ -151,7 +149,7 @@ class CTextureParameters {
      * Load the texture parameters from an attribute object
      * @param out the attribute object
      */
-    void load(io::IAttributes *in) {
+    void load(irr::io::IAttributes *in) {
       m_sTexture=in->getAttributeAsString("Texture");
 
       m_iRotate=in->getAttributeAsInt("Rotate");

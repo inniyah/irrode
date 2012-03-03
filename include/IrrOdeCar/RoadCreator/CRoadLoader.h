@@ -5,45 +5,43 @@
   #include <CSurface.h>
   #include <CTextureParameters.h>
 
-using namespace irr;
-
 class CSegment;
 class CSurface;
 class CConnection;
 
 class CRoadLoader {
   protected:
-    IrrlichtDevice *m_pDevice;
+    irr::IrrlichtDevice *m_pDevice;
 
-    core::list<CSegment *> m_lSegments;         /**<! list of road segments */
-    core::list<CConnection *> m_lConnections;   /**<! list of connections */
+    irr::core::list<CSegment *> m_lSegments;         /**<! list of road segments */
+    irr::core::list<CConnection *> m_lConnections;   /**<! list of connections */
 
     CSurface *m_pSurface;
-    
-    core::vector3df m_vOfffset;     /**<! the Offset of the node (only relevant when shrinking the node) */
+
+    irr::core::vector3df m_vOfffset;     /**<! the Offset of the node (only relevant when shrinking the node) */
     bool m_bShrinkNode;
-    
+
     CTextureParameters m_aSurfaceDefaults[_SURFACE_NUMBER_OF_BUFFERS];
 
-    core::stringc m_sCurrentRoad;               /**<! the currently opened road */
+    irr::core::stringc m_sCurrentRoad;               /**<! the currently opened road */
 
-    void addBufferToArray(scene::IMeshBuffer *p, core::array<scene::IMeshBuffer *> &aBuffers);
+    void addBufferToArray(irr::scene::IMeshBuffer *p, irr::core::array<irr::scene::IMeshBuffer *> &aBuffers);
 
-    bool sameMaterial(const video::SMaterial &m1, const video::SMaterial &m2);
+    bool sameMaterial(const irr::video::SMaterial &m1, const irr::video::SMaterial &m2);
 
   public:
-    CRoadLoader(IrrlichtDevice *pDevice);
-    
+    CRoadLoader(irr::IrrlichtDevice *pDevice);
+
     ~CRoadLoader() {
       if (m_pSurface!=NULL) delete m_pSurface;
     }
-    
+
     void setSurfaceDefaultParameters(CTextureParameters *p) {
       if (p==NULL) return;
-      for (u32 i=0; i<_SURFACE_NUMBER_OF_BUFFERS; i++) p[i].copyTo(&m_aSurfaceDefaults[i]);
+      for (irr::u32 i=0; i<_SURFACE_NUMBER_OF_BUFFERS; i++) p[i].copyTo(&m_aSurfaceDefaults[i]);
     }
 
-    bool loadRoad(const core::stringc sName);
+    bool loadRoad(const irr::core::stringc sName);
 
     /**
      * This method saves a road to a file
@@ -59,26 +57,26 @@ class CRoadLoader {
      */
     void destroyRoad();
 
-    core::list<CSegment    *> &getSegments   ();
-    core::list<CConnection *> &getConnections();
+    irr::core::list<CSegment    *> &getSegments   ();
+    irr::core::list<CConnection *> &getConnections();
 
-    const core::stringc getCurrentRoadName();
-    void setCurrentRoadName(const core::stringc s);
+    const irr::core::stringc getCurrentRoadName();
+    void setCurrentRoadName(const irr::core::stringc s);
 
-    scene::IAnimatedMesh *createMesh();
+    irr::scene::IAnimatedMesh *createMesh();
 
     bool deleteConnection(CConnection *pToDelete);
 
     bool deleteSegment(CSegment *pToDelete);
 
-    CSurface *getSurface() { 
+    CSurface *getSurface() {
       if (m_pSurface==NULL) m_pSurface=new CSurface(m_pDevice,m_aSurfaceDefaults);
-      return m_pSurface; 
+      return m_pSurface;
     }
-    
+
     void shrinkNode(bool b) { m_bShrinkNode=b; }
     bool didShrinkNode() { return m_bShrinkNode; }
-    const core::vector3df &getOffset() { return m_vOfffset; }
+    const irr::core::vector3df &getOffset() { return m_vOfffset; }
 };
 
 #endif
