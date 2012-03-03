@@ -12,6 +12,7 @@
 #define EVENT_HELI_STATE_ID irr::ode::eIrrOdeEventUser+5
 #define EVENT_INST_FOREST_ID irr::ode::eIrrOdeEventUser+6
 #define EVENT_LAP_TIME_ID irr::ode::eIrrOdeEventUser+7
+#define EVENT_AUTOPILOT_ID irr::ode::eIrrOdeEventUser+8
 
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
@@ -246,5 +247,65 @@ class CEventLapTime : public irr::ode::IIrrOdeEvent {
     irr::s32 getCpId() { return m_iCp; }
 
     irr::f32 getTime() { return m_fTime; }
+};
+
+class CEventAutoPilot : public irr::ode::IIrrOdeEvent {
+  private:
+    bool m_bActive;
+    irr::s32 m_iNextCp,
+             m_iState,
+             m_iObject;
+
+  public:
+    CEventAutoPilot(irr::s32 iObject, bool bActive, irr::s32 iNextCp, irr::s32 iState) {
+      m_iObject = iObject;
+      m_bActive = bActive;
+      m_iNextCp = iNextCp;
+      m_iState = iState;
+    }
+
+    CEventAutoPilot(irr::ode::CSerializer *pData) {
+      pData->resetBufferPos();
+      irr::u16 iCode = pData->getU16();
+      if (iCode == EVENT_AUTOPILOT_ID) {
+        m_iObject = pData->getS32();
+        m_bActive = pData->getU8()!=0;
+        m_iNextCp = pData->getS32();
+        m_iState = pData->getS32();
+      }
+    }
+
+    virtual irr::u16 getType() { return EVENT_AUTOPILOT_ID; }
+
+    virtual const irr::c8 *toString() {
+      strcpy(m_sString, "CEventAutoPilot");
+      return m_sString;
+    }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+        m_pSerializer->addU16(EVENT_AUTOPILOT_ID);
+        m_pSerializer->addS32(m_iObject);
+        m_pSerializer->addU8(m_bActive ? 1 : 0);
+        m_pSerializer->addS32(m_iNextCp);
+        m_pSerializer->addS32(m_iState);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::ode::IIrrOdeEvent *clone() {
+      return new CEventAutoPilot(m_iObject, m_bActive, m_iNextCp, m_iState);
+    }
+
+    virtual bool isObservable() { return true; }
+
+    irr::s32 getObject() { return m_iObject; }
+
+    bool isActive() { return m_bActive; }
+
+    irr::s32 getNextCp() { return m_iNextCp; }
+
+    irr::s32 getState() { return m_iState; }
 };
 #endif

@@ -12,8 +12,6 @@
 CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
-  m_pAutoPilot->setState(CAutoPilot::eApHeliLowAlt);
-
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
 
   m_bLeft=false;
@@ -88,7 +86,7 @@ void CHeli::odeStep(irr::u32 iStep) {
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
       m_iShotsFired++;
-      m_pCockpit->setShotsFired(m_iShotsFired);
+      if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
     }
 
     if (m_pCockpit!=NULL) {
@@ -122,8 +120,10 @@ void CHeli::odeStep(irr::u32 iStep) {
         m_pCockpit->setTargetDist(0.0f);
       }
 
-      if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
-      if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+      if (m_bActive) {
+        if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
+        if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+      }
 
       m_iOldHitsTaken  = m_iHitsTaken ;
       m_iOldHitsScored = m_iHitsScored;

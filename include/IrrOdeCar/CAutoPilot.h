@@ -14,7 +14,7 @@ namespace irr {
   }
 }
 
-class CAutoPilot : public irr::ode::IIrrOdeEventListener {
+class CAutoPilot {
   public:
     enum eAutoPilotState {
       eApPlaneLowAlt,
@@ -35,9 +35,7 @@ class CAutoPilot : public irr::ode::IIrrOdeEventListener {
     irr::core::vector2df m_vCpVel;
 
     eAutoPilotState m_iState;
-    irr::u32  m_iHeliCheckCount,
-              m_iTime,
-              m_iLastEvent;
+    irr::u32  m_iHeliCheckCount;
     irr::f32  m_fApDist,
              *m_fHeliDistLeft,
              *m_fHeliDistRight,
@@ -93,15 +91,12 @@ class CAutoPilot : public irr::ode::IIrrOdeEventListener {
 
     void step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f32 &fThrust);
 
-    void setEnabled(bool b) { m_bEnabled=b; }
+    void setEnabled(bool b);
     bool isEnabled() { return m_bEnabled; }
 
     void setLinkYawRoll(bool b) { m_bLinkYawRoll=b; }
 
     void setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo);
-
-    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif

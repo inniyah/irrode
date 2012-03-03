@@ -3,15 +3,19 @@
   #include <CGUINeedleIndicator.h>
   #include <CEventVehicleState.h>
   #include <CIrrOdeManager.h>
+  #include <CAutoPilot.h>
   #include <event/IIrrOdeEventQueue.h>
 
 CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
   m_iTime = 0;
   m_iLapStart = 0;
+  m_pObject = NULL;
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 	irr::scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
+
+	m_pApTarget = NULL;
 
 	pCam->setPosition(irr::core::vector3df(0,0,20));
 	pCam->setTarget(irr::core::vector3df(0,0,0));
@@ -172,8 +176,19 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName) : 
   m_stSplit  ->setOverrideFont(pFont);
   m_stLastLap->setOverrideFont(pFont);
 
+  m_pApInfo = m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,195,135), pTab);
+  m_stAutoPilot = m_pGuienv->addStaticText(L"Auto Pilot", irr::core::rect<irr::s32>(irr::core::position2di(5,10), irr::core::dimension2di(190,20)),false,true,m_pApInfo);
+  m_stApNextCp  = m_pGuienv->addStaticText(L"Auto Pilot", irr::core::rect<irr::s32>(irr::core::position2di(5,35), irr::core::dimension2di(190,20)),false,true,m_pApInfo);
+  m_stApState   = m_pGuienv->addStaticText(L"Auto Pilot", irr::core::rect<irr::s32>(irr::core::position2di(5,60), irr::core::dimension2di(190,20)),false,true,m_pApInfo);
+
+  m_stAutoPilot->setOverrideFont(pFont);
+  m_stApState  ->setOverrideFont(pFont);
+  m_stApNextCp ->setOverrideFont(pFont);
+
+  printf("1\n");
   m_pWeaponInfo->setVisible(false);
-  m_pLapInfo->setVisible(false);
+  m_pLapInfo   ->setVisible(false);
+  m_pApInfo    ->setVisible(false);
 
   m_pGuienv->addImage(m_pDrv->getTexture("../../data/dustbin.png"),irr::core::position2di(169,96),true,pTab);
   m_pTab->setVisible(false);
@@ -230,14 +245,30 @@ void CCockpitPlane::update(bool bPlane) {
   switch (m_iInfoMode) {
     case 0:
       m_pWeaponInfo->setVisible(true);
-      m_pLapInfo->setVisible(false);
+      m_pLapInfo   ->setVisible(false);
+      m_pApInfo    ->setVisible(false);
       break;
 
     case 1:
       m_pWeaponInfo->setVisible(false);
-      m_pLapInfo->setVisible(true);
+      m_pLapInfo   ->setVisible(true);
+      m_pApInfo    ->setVisible(false);
+      break;
+
+    case 2:
+      m_pWeaponInfo->setVisible(false);
+      m_pLapInfo   ->setVisible(false);
+      m_pApInfo    ->setVisible(true);
       break;
   }
+
+  if (m_pApTarget != NULL && m_pObject != NULL) {
+    irr::f32 f = m_pApTarget->getAbsolutePosition().getDistanceFrom(m_pObject->getAbsolutePosition());
+    wchar_t s[0xFF];
+    swprintf(s,0xFF,L"Target: %i (%.2f)", m_pApTarget->getID()-99999, f);
+    m_stApNextCp->setText(s);
+  }
+  else m_stApNextCp->setText(L"");
 
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
@@ -265,8 +296,9 @@ void CCockpitPlane::setHorizon(irr::core::vector3df vRot, irr::core::vector3df v
 void CCockpitPlane::setTargetName(const wchar_t *sName) {
   m_pLblTgtName->setText(sName);
 
-  m_pLapInfo->setVisible(false);
   m_pWeaponInfo->setVisible(true);
+  m_pLapInfo   ->setVisible(false);
+  m_pApInfo    ->setVisible(false);
 }
 
 void CCockpitPlane::setTargetDist(irr::f32 fDist) {
@@ -337,9 +369,38 @@ bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_iTime++;
   }
 
+  if (pEvent->getType() == EVENT_AUTOPILOT_ID) {
+    CEventAutoPilot *p=(CEventAutoPilot *)pEvent;
+
+    if (p->getObject() == m_iBodyId) {
+      m_iInfoMode = 2;
+      m_pApTarget = p->getNextCp()!=-1 ? m_pSmgr->getSceneNodeFromId(p->getNextCp()) : NULL;
+      m_stAutoPilot->setText(p->isActive()?L"Autopilot enabled":L"Autopilot disabled");
+
+      updateApState(p->getState());
+    }
+  }
+
   return true;
 }
 
+void CCockpitPlane::updateApState(irr::s32 iApState) {
+  switch (iApState) {
+    case CAutoPilot::eApPlaneLowAlt: m_stApState->setText(L"\"State: PlaneLowAlt\"\n"); break;
+    case CAutoPilot::eApPlaneCruise: m_stApState->setText(L"\"State: PlaneCruise\"\n"); break;
+    case CAutoPilot::eApHeliLowAlt : m_stApState->setText(L"\"State: HeliLowAlt\"\n" ); break;
+    case CAutoPilot::eApHeliCruise : m_stApState->setText(L"\"State: HeliCruise\"\n" ); break;
+  }
+}
+
 bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == irr::ode::eIrrOdeEventStep;
+  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == EVENT_AUTOPILOT_ID;
+}
+
+void CCockpitPlane::activate(irr::ode::CIrrOdeBody *p, irr::u32 iInfoMode, irr::scene::ISceneNode *pApTarget, irr::s32 iApState) {
+  m_pObject = p;
+  if (p!=NULL) m_iBodyId = p->getID(); else m_iBodyId = -1;
+  m_pApTarget = pApTarget;
+  m_iInfoMode = iInfoMode;
+  updateApState(iApState);
 }

@@ -25,6 +25,8 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
     m_bFirePrimary=false;
     m_bFireSecondary=false;
     m_bDataChanged=false;
+    m_iApInfoMode = 0;
+    m_pApTarget = NULL;
 
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -103,14 +105,24 @@ void CAeroVehicle::activate() {
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
   m_pController->restoreState((irr::f32 *)m_aCtrlBuffer);
-  if (m_pCockpit) m_pCockpit->activate(m_pBody);
+  if (m_pCockpit) {
+    m_pCockpit->setHitsScored(m_iHitsScored);
+    m_pCockpit->setHitsTaken(m_iHitsTaken);
+    m_pCockpit->setShotsFired(m_iShotsFired);
+
+    m_pCockpit->activate(m_pBody, m_iApInfoMode, m_pApTarget, m_pAutoPilot->getState());
+  }
 }
 
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
   m_pTab->setVisible(false);
   m_bActive=false;
-  if (m_pCockpit) m_pCockpit->activate(NULL);
+  if (m_pCockpit) {
+    m_iApInfoMode = m_pCockpit->getInfoMode();
+    m_pApTarget = m_pCockpit->getApTarget();
+    m_pCockpit->activate(NULL, 0, NULL, -1);
+  }
 }
 
 bool CAeroVehicle::OnEvent(const irr::SEvent &event) {
