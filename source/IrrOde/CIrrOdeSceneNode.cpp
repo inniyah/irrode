@@ -9,11 +9,11 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                   const vector3df &position, const vector3df &rotation, const vector3df &scale) :
-                                   ISceneNode(parent, mgr, id, position, rotation, scale) {
+CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                   const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
+                                   irr::scene::ISceneNode(parent, mgr, id, position, rotation, scale) {
 
-  m_cMat.setFlag(EMF_LIGHTING,false);
+  m_cMat.setFlag(irr::video::EMF_LIGHTING,false);
 
   m_pSceneManager=mgr;
   m_pVideoDriver=mgr->getVideoDriver();
@@ -23,8 +23,8 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_pOdeManager=CIrrOdeManager::getSharedInstance();
   m_pOdeDevice=m_pOdeManager->getOdeDevice();
 
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (m_pWorld || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  if (m_pWorld || this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
     m_pOdeManager->addOdeSceneNode(this);
   }
   else printf("no world!\n");
@@ -61,7 +61,7 @@ CIrrOdeSceneNode::~CIrrOdeSceneNode() {
  * Retrieve the scene node's bounding box
  * @return the scene node's bounding box
  */
-const aabbox3df &CIrrOdeSceneNode::getBoundingBox() const {
+const irr::core::aabbox3df &CIrrOdeSceneNode::getBoundingBox() const {
   return m_cBoundingBox;
 }
 
@@ -70,8 +70,8 @@ const aabbox3df &CIrrOdeSceneNode::getBoundingBox() const {
  * @param iType the node type of the ancestor
  * @return the first ancestor of the given type or "NULL" if no node of the type was found
  */
-ISceneNode *CIrrOdeSceneNode::getAncestorOfType(ESCENE_NODE_TYPE iType) {
-  ISceneNode *pNode=this->getParent();
+irr::scene::ISceneNode *CIrrOdeSceneNode::getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType) {
+  irr::scene::ISceneNode *pNode=this->getParent();
   while (pNode!=NULL && pNode->getType()!=iType) pNode=pNode->getParent();
   return pNode;
 }
@@ -90,19 +90,19 @@ bool CIrrOdeSceneNode::physicsInitialized() {
  * @return the c8 string
  */
 const c8 *CIrrOdeSceneNode::nodeNameToC8(const wchar_t *sName) {
-  static stringc sC8Name;
-  sC8Name=stringc(sName);
+  static irr::core::stringc sC8Name;
+  sC8Name=irr::core::stringc(sName);
   return sC8Name.c_str();
 }
 
-void CIrrOdeSceneNode::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
-  ISceneNode::serializeAttributes(out,options);
+void CIrrOdeSceneNode::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
+  irr::scene::ISceneNode::serializeAttributes(out,options);
   out->addString("OdeClassName",m_sOdeClassName.c_str());
   out->addInt("Ident",m_iIdent);
 }
 
-void CIrrOdeSceneNode::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
-  ISceneNode::deserializeAttributes(in,options);
+void CIrrOdeSceneNode::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
+  irr::scene::ISceneNode::deserializeAttributes(in,options);
   m_sOdeClassName=in->getAttributeAsString("OdeClassName");
   m_iIdent=in->getAttributeAsInt("Ident");
   m_pOdeManager->updateNextId(getID());
@@ -112,7 +112,7 @@ void CIrrOdeSceneNode::deserializeAttributes(IAttributes* in, SAttributeReadWrit
  * Get the irrOde classname of this node
  * @return the ODE classname of this node
  */
-stringc CIrrOdeSceneNode::getOdeClassname() {
+irr::core::stringc CIrrOdeSceneNode::getOdeClassname() {
   return m_sOdeClassName;
 }
 
@@ -120,7 +120,7 @@ stringc CIrrOdeSceneNode::getOdeClassname() {
  * Change the irrOde classname of this node
  * @param sClassName the new ODE classname of this node
  */
-void CIrrOdeSceneNode::setOdeClassname(stringc sClassName) {
+void CIrrOdeSceneNode::setOdeClassname(irr::core::stringc sClassName) {
   m_sOdeClassName=sClassName;
 }
 
@@ -144,7 +144,7 @@ u32 CIrrOdeSceneNode::getMaterialCount() {
   return 1;
 }
 
-SMaterial &CIrrOdeSceneNode::getMaterial(u32 iIdx) {
+irr::video::SMaterial &CIrrOdeSceneNode::getMaterial(u32 iIdx) {
   return m_cMat;
 }
 
@@ -154,7 +154,7 @@ void CIrrOdeSceneNode::render() {
 	  matrix4 tmpMatrix;
 	  tmpMatrix.setTranslation(AbsoluteTransformation.getTranslation());
       m_pVideoDriver->setMaterial(m_cMat);
-      m_pVideoDriver->setTransform(video::ETS_WORLD,tmpMatrix);
+      m_pVideoDriver->setTransform(irr::video::ETS_WORLD,tmpMatrix);
       m_pSceneManager->getVideoDriver()->drawMeshBuffer(m_pMesh->getMesh(0)->getMeshBuffer(0));
     }
   #endif
@@ -172,23 +172,23 @@ void CIrrOdeSceneNode::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDest->setRotation(getRotation());
 }
 
-void CIrrOdeSceneNode::addChild (ISceneNode *child) {
-  ISceneNode::addChild(child);
-  vector3df pos=child->getPosition();
+void CIrrOdeSceneNode::addChild (irr::scene::ISceneNode *child) {
+  irr::scene::ISceneNode::addChild(child);
+  irr::core::vector3df pos=child->getPosition();
   m_cBoundingBox.addInternalPoint(pos);
 }
 
 void CIrrOdeSceneNode::remove() {
-  ISceneNode::remove();
+  irr::scene::ISceneNode::remove();
   if (this->getReferenceCount()==1) removeFromPhysics();
   m_pOdeManager->removeOdeSceneNode(this);
 }
 
-ISceneManager *CIrrOdeSceneNode::getSceneManager() {
+irr::scene::ISceneManager *CIrrOdeSceneNode::getSceneManager() {
   return m_pSceneManager;
 }
 
-ITriangleSelector *CIrrOdeSceneNode::getTriangleSelector() {
+irr::scene::ITriangleSelector *CIrrOdeSceneNode::getTriangleSelector() {
   return m_pSelector;
 }
 
@@ -204,8 +204,8 @@ void *CIrrOdeSceneNode::getUserData() {
   void CIrrOdeSceneNode::setDrawEditorMesh(bool b) { m_bDrawEditorMesh=b; }
 #endif
 
-void CIrrOdeSceneNode::setParent(ISceneNode *newParent) {
-  CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+void CIrrOdeSceneNode::setParent(irr::scene::ISceneNode *newParent) {
+  CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
   #ifdef _IRREDIT_PLUGIN
     if (pWorld!=NULL) {
       pWorld->removeOdeChildNode(this);
@@ -214,10 +214,10 @@ void CIrrOdeSceneNode::setParent(ISceneNode *newParent) {
 
   m_pOdeManager->removeOdeSceneNode(this);
 
-  ISceneNode::setParent(newParent);
+  irr::scene::ISceneNode::setParent(newParent);
 
-  pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (pWorld!=NULL || this->getType()==(ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
+  pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  if (pWorld!=NULL || this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
 
   #ifdef _IRREDIT_PLUGIN
     if (pWorld!=NULL) {
@@ -235,22 +235,22 @@ void CIrrOdeSceneNode::removeFromPhysics() {
   m_pOdeManager->removeOdeSceneNode(this);
 }
 
-void CIrrOdeSceneNode::cloneChildren(ISceneNode *pNewParent, ISceneManager *pNewManager) {
-  list<ISceneNode *> children=getChildren();
-  list<ISceneNode *>::Iterator it;
+void CIrrOdeSceneNode::cloneChildren(irr::scene::ISceneNode *pNewParent, irr::scene::ISceneManager *pNewManager) {
+  irr::core::list<irr::scene::ISceneNode *> children=getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
   for (it=children.begin(); it!=children.end(); it++)
     (*it)->clone(pNewParent,pNewManager);
 }
 
-scene::ISceneNode *CIrrOdeSceneNode::getChildByName(const c8 *sName, scene::ISceneNode *pParent) {
+irr::scene::ISceneNode *CIrrOdeSceneNode::getChildByName(const c8 *sName, irr::scene::ISceneNode *pParent) {
   if (!strcmp(sName,pParent->getName())) return pParent;
 
-  list<ISceneNode *> children=pParent->getChildren();
-  list<ISceneNode *>::Iterator it;
+  irr::core::list<irr::scene::ISceneNode *> children=pParent->getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
   for (it=children.begin(); it!=children.end(); it++) {
-    scene::ISceneNode *pRet=getChildByName(sName,*it);
+    irr::scene::ISceneNode *pRet=getChildByName(sName,*it);
     if (pRet!=NULL) return pRet;
   }
 

@@ -9,7 +9,7 @@ CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CIrrOdeBody *pBody) : IIrrOdeEv
   m_pBody=pBody;
 }
 
-CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
+CIrrOdeEventBodyCreated::CIrrOdeEventBodyCreated(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventBodyCreated) {
     u32 id=pData->getU32();

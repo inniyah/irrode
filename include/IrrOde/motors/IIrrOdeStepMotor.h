@@ -22,13 +22,13 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
     bool m_bIsActive;       /*!< is this motor active? */
 
   public:
-    IIrrOdeStepMotor(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                     const vector3df &position=core::vector3df(0,0,0),
-		                 const vector3df &rotation = core::vector3df(0,0,0),
-		                 const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f)) : CIrrOdeSceneNode(parent,mgr,id,position,rotation,scale) {
-      m_pBody=(CIrrOdeBody *)getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
+    IIrrOdeStepMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                     const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f)) : CIrrOdeSceneNode(parent,mgr,id,position,rotation,scale) {
+      m_pBody=(CIrrOdeBody *)getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
       if (m_pBody!=NULL) m_pBody->addStepMotor(this);
-      CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+      CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
       if (pWorld!=NULL) CIrrOdeManager::getSharedInstance()->addStepMotor(this);
       m_fMaxPower=0.0f;
       m_fPower=0.0f;
@@ -39,7 +39,7 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
       CIrrOdeManager::getSharedInstance()->removeStepMotor(this);
     }
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
       CIrrOdeSceneNode::serializeAttributes(out,options);
 
       out->addBool("active",m_bIsActive);
@@ -47,7 +47,7 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
       out->addFloat("power",m_fPower);
     }
 
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
       CIrrOdeSceneNode::deserializeAttributes(in,options);
 
       m_bIsActive=in->getAttributeAsBool("active");
@@ -61,7 +61,7 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
       if (m_bPhysicsInitialized) return;
       CIrrOdeSceneNode::initPhysics();
 
-      ISceneNode *pParent=getParent();
+      irr::scene::ISceneNode *pParent=getParent();
       if (pParent->getType()==IRR_ODE_BODY_ID)
         m_pBody=reinterpret_cast<CIrrOdeBody *>(pParent);
       else
@@ -93,9 +93,9 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
     virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
 
     /**
-     * This method is called to see whether or not an event is handled by this listener
+     * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
-     * @return "true" if the listener handles the event, "false" otherwise
+     * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 };

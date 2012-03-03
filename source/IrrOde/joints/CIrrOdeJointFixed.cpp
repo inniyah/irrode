@@ -5,8 +5,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeJointFixed::CIrrOdeJointFixed(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                     const vector3df &position,const vector3df &rotation,const vector3df &scale) :
+CIrrOdeJointFixed::CIrrOdeJointFixed(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                     const irr::core::vector3df &position,const irr::core::vector3df &rotation,const irr::core::vector3df &scale) :
                                      CIrrOdeJoint(parent, mgr, id, position, rotation, scale) {
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -23,17 +23,17 @@ CIrrOdeJointFixed::~CIrrOdeJointFixed() {
 
 void CIrrOdeJointFixed::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeJointFixed::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_JOINT_INFO
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->setTransform(video::ETS_WORLD, core::matrix4());
-    vector3df pos1=m_pBody1?m_pBody1->getAbsolutePosition():getAbsolutePosition();
-    vector3df pos2=m_pBody2?m_pBody2->getAbsolutePosition():getAbsolutePosition();
-    m_pVideoDriver->draw3DLine(pos1,pos2,SColor(128,0,0xFF,0xFF));
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD, core::matrix4());
+    irr::core::vector3df pos1=m_pBody1?m_pBody1->getAbsolutePosition():getAbsolutePosition();
+    irr::core::vector3df pos2=m_pBody2?m_pBody2->getAbsolutePosition():getAbsolutePosition();
+    m_pVideoDriver->draw3DLine(pos1,pos2,irr::video::SColor(128,0,0xFF,0xFF));
   #endif
 }
 
@@ -56,24 +56,24 @@ s32 CIrrOdeJointFixed::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeJointFixed::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_JOINT_FIXED_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeJointFixed::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_FIXED_ID;
 }
 
 const wchar_t *CIrrOdeJointFixed::getTypeName() {
   return IRR_ODE_JOINT_FIXED_NAME;
 }
 
-void CIrrOdeJointFixed::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeJointFixed::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeJoint::serializeAttributes(out,options);
 }
 
-void CIrrOdeJointFixed::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeJointFixed::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeJoint::deserializeAttributes(in,options);
 }
 
 
-ISceneNode *CIrrOdeJointFixed::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeJointFixed::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeJointFixed *pRet=new CIrrOdeJointFixed(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

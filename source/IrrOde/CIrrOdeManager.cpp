@@ -71,7 +71,7 @@ void CIrrOdeManager::initODE() {
 }
 
 void CIrrOdeManager::addWorld(CIrrOdeWorld *pWorld) {
-  list<CIrrOdeWorld *>::Iterator it;
+  irr::core::list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
     if ((*it)==pWorld)
       return;
@@ -80,7 +80,7 @@ void CIrrOdeManager::addWorld(CIrrOdeWorld *pWorld) {
 }
 
 void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
-  list<CIrrOdeWorld *>::Iterator it;
+  irr::core::list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
     if ((*it)==pWorld) {
       m_lWorlds.erase(it);
@@ -97,11 +97,11 @@ void CIrrOdeManager::closeODE() {
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
   m_pQueue->postEvent(pEvent);
 
-  list<CIrrOdeWorld *>::Iterator wit;
+  irr::core::list<CIrrOdeWorld *>::Iterator wit;
   for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) (*wit)->setPhysicsInitialized(false);
-  list<CIrrOdeSceneNode *>::Iterator nit;
+  irr::core::list<CIrrOdeSceneNode *>::Iterator nit;
   for (nit=m_pSceneNodes.begin(); nit!=m_pSceneNodes.end(); nit++) (*nit)->setPhysicsInitialized(false);
-  list<IIrrOdeStepMotor *>::Iterator mit;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator mit;
   for (mit=m_lStepMotors.begin(); mit!=m_lStepMotors.end(); mit++) (*mit)->setPhysicsInitialized(false);
 
   m_pSceneNodes.clear();
@@ -142,10 +142,10 @@ void CIrrOdeManager::step() {
   f32 fStep=((f32)(thisStep-m_iLastStep))/1000;
   m_iFrameNo++;
 
-  list<CIrrOdeWorld *>::Iterator it;
+  irr::core::list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->step(fStep);
 
-  core::list<IIrrOdeEventWriter *>::Iterator cit;
+  irr::core::list<IIrrOdeEventWriter *>::Iterator cit;
   for (cit=m_lChanged.begin(); cit!=m_lChanged.end(); cit++) {
     IIrrOdeEvent *p=m_pOdeDevice->writeEventFor(*cit);
     if (p==NULL) p=(*cit)->writeEvent();
@@ -168,7 +168,7 @@ void CIrrOdeManager::addOdeSceneNode(CIrrOdeSceneNode *pNode) {
  * Remove an ODE scene node
  */
 void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
-  list<CIrrOdeSceneNode *>::Iterator it;
+  irr::core::list<CIrrOdeSceneNode *>::Iterator it;
   for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
     if ((*it)==pNode) {
       m_pSceneNodes.erase(it);
@@ -177,7 +177,7 @@ void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
 }
 
 void CIrrOdeManager::removeEventWriter(IIrrOdeEventWriter *p) {
-  core::list<IIrrOdeEventWriter *>::Iterator it;
+  irr::core::list<IIrrOdeEventWriter *>::Iterator it;
   for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++)
     if (*it==p) {
       m_lChanged.erase(it);
@@ -208,34 +208,34 @@ void CIrrOdeManager::initPhysics() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
 
-  list<CIrrOdeWorld *>::Iterator itw;
+  irr::core::list<CIrrOdeWorld *>::Iterator itw;
   for (itw=m_lWorlds.begin(); itw!=m_lWorlds.end(); itw++)
     (*itw)->initPhysics();
 
-  core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
 
   m_bPhysicsInitialized=true;
 }
 
-list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
+irr::core::list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
   return m_pSceneNodes;
 }
 
-core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
+irr::core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
   return m_lWorlds;
 }
 
-static core::array<core::stringc> g_aParamNames;
-static core::array<const c8 *> g_aC8ParamNames;
+static irr::core::array<irr::core::stringc> g_aParamNames;
+static irr::core::array<const c8 *> g_aC8ParamNames;
 
 void CIrrOdeManager::updateSurfaceParameterList() {
   g_aParamNames.clear();
   g_aC8ParamNames.clear();
 
-  list<CIrrOdeSurfaceParameters *>::Iterator it;
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
   for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++) {
-    core::stringc s=((*it)->getName());
+    irr::core::stringc s=((*it)->getName());
     if (s!="") {
       bool bAdd=true;
       for (u32 i=0; i<g_aParamNames.size() && bAdd; i++) if (g_aParamNames[i]==s) bAdd=false;
@@ -253,7 +253,7 @@ void CIrrOdeManager::addSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
 }
 
 void CIrrOdeManager::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
-  list<CIrrOdeSurfaceParameters *>::Iterator it;
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
   for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
     if ((*it)==pParam) {
       m_lParamList.erase(it);
@@ -262,11 +262,11 @@ void CIrrOdeManager::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
     }
 }
 
-CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
-	list<CIrrOdeSurfaceParameters *>::Iterator it;
+CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(irr::core::stringw sName) {
+	irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
 
 	#ifdef _TRACE_INIT_PHYSICS
-	  printf("\tsearching for surface parameters \"%s\" ... ",stringc(sName).c_str());
+	  printf("\tsearching for surface parameters \"%s\" ... ",irr::core::stringc(sName).c_str());
   #endif
 
 	if (sName=="") {
@@ -277,7 +277,7 @@ CIrrOdeSurfaceParameters *CIrrOdeManager::getSurfaceParameter(stringw sName) {
 	}
 
 	for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
-		if (sName==stringw((*it)->getName())) {
+		if (sName==irr::core::stringw((*it)->getName())) {
 		  #ifdef _TRACE_INIT_PHYSICS
 		    printf("OK\n");
       #endif
@@ -295,24 +295,24 @@ const c8 *const *CIrrOdeManager::getSurfaceParameterList() {
 }
 
 void CIrrOdeManager::addStepMotor(IIrrOdeStepMotor *pMotor) {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) return;
   m_lStepMotors.push_back(pMotor);
 }
 
 void CIrrOdeManager::removeStepMotor(IIrrOdeStepMotor *pMotor) {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
 }
 
 void CIrrOdeManager::stepStepMotors() {
-  list<IIrrOdeStepMotor *>::Iterator it;
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->step();
 }
 
 void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
   if (!m_bPhysicsInitialized) {
-    list<CIrrOdeSceneNode *>::Iterator it;
+    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
     bool b=false;
     for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end() && !b; it++)
       if (*it==pNode) b=true;
@@ -326,13 +326,13 @@ void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
 }
 
 CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) {
-  list<CIrrOdeWorld *>::Iterator wit;
+  irr::core::list<CIrrOdeWorld *>::Iterator wit;
   for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) {
 		CIrrOdeWorld *p=*wit;
 		if (!wcscmp(sName,p->getParamName())) return p;
 	}
 
-	list<CIrrOdeSceneNode *>::Iterator it;
+	irr::core::list<CIrrOdeSceneNode *>::Iterator it;
 	for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++) {
 		if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
 			CIrrOdeBody *p=reinterpret_cast<CIrrOdeBody *>(*it);
@@ -343,8 +343,8 @@ CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) 
 	return NULL;
 }
 
-ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr) {
-  ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
+irr::scene::ISceneNode *CIrrOdeManager::cloneTree(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr) {
+  irr::scene::ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
 
   CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
   m_pQueue->postEvent(pEvent);
@@ -352,8 +352,8 @@ ISceneNode *CIrrOdeManager::cloneTree(ISceneNode *pSource, ISceneNode *newParent
   return pRet;
 }
 
-ISceneNode *CIrrOdeManager::cloneOdeNode(ISceneNode *pSource, ISceneNode *newParent, ISceneManager *newSmgr, s32 iNewId) {
-  ISceneNode *pRet=pSource->clone(newParent,newSmgr);
+irr::scene::ISceneNode *CIrrOdeManager::cloneOdeNode(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr, s32 iNewId) {
+  irr::scene::ISceneNode *pRet=pSource->clone(newParent,newSmgr);
   pRet->setID(iNewId==-1?getNextId():iNewId);
   pRet->setParent(newParent);
 
@@ -361,9 +361,9 @@ ISceneNode *CIrrOdeManager::cloneOdeNode(ISceneNode *pSource, ISceneNode *newPar
 }
 
 
-void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
-  list<ISceneNode *> ch=pNode->getChildren();
-  list<ISceneNode *>::Iterator it;
+void CIrrOdeManager::removeTreeFromPhysics(irr::scene::ISceneNode *pNode) {
+  irr::core::list<irr::scene::ISceneNode *> ch=pNode->getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
   for (it=ch.begin(); it!=ch.end(); it++) {
     if (isRegisteredOdeSceneNode(*it)) {
@@ -374,7 +374,7 @@ void CIrrOdeManager::removeTreeFromPhysics(ISceneNode *pNode) {
   }
 }
 
-void CIrrOdeManager::removeSceneNode(ISceneNode *pNode) {
+void CIrrOdeManager::removeSceneNode(irr::scene::ISceneNode *pNode) {
   CIrrOdeEventNodeRemoved *p=new CIrrOdeEventNodeRemoved(pNode);
   m_pQueue->postEvent(p);
 }
@@ -391,7 +391,7 @@ bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmg
 }
 
 bool CIrrOdeManager::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
-  core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
+  irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
 
   for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
     if ((*it)==pNode)
@@ -424,7 +424,7 @@ bool CIrrOdeManager::onEvent(IIrrOdeEvent *pEvt) {
 
   if (pEvt->getType()==eIrrOdeEventNodeRemoved) {
     CIrrOdeEventNodeRemoved *pNr=(CIrrOdeEventNodeRemoved *)pEvt;
-    ISceneNode *pNode=pNr->getRemovedNode();
+    irr::scene::ISceneNode *pNode=pNr->getRemovedNode();
     if (pNode==NULL && pNr->getRemovedNodeId()!=-1) {
       pNode=m_pSmgr->getSceneNodeFromId(pNr->getRemovedNodeId());
     }
@@ -449,7 +449,7 @@ bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
 }
 
 void CIrrOdeManager::objectChanged(IIrrOdeEventWriter *p) {
-  core::list<IIrrOdeEventWriter *>::Iterator it;
+  irr::core::list<IIrrOdeEventWriter *>::Iterator it;
   for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++) if (*it==p) return;
   m_lChanged.push_back(p);
 }

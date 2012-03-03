@@ -34,30 +34,30 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
     CIrrOdeBody *m_pBody;         /**< the IrrODE body the geom is attached to */
     CIrrOdeWorld *m_pWorld;       /**< the IrrOde world the geom is in */
     CIrrOdeSpace *m_pSpace;       /**< the IrrOde space the geom is in */
-    vector3df m_cMassTranslate;   /**< the translation of the geom's mass */
-    vector3df m_cCenterOfGravity; /**< the geom's center of gravity    */
-    vector3df m_cInertia1;
-    vector3df m_cInertia2;
-    vector3df m_cOffsetPos;
-    vector3df m_cOffsetRot;
+    irr::core::vector3df m_cMassTranslate;   /**< the translation of the geom's mass */
+    irr::core::vector3df m_cCenterOfGravity; /**< the geom's center of gravity    */
+    irr::core::vector3df m_cInertia1;
+    irr::core::vector3df m_cInertia2;
+    irr::core::vector3df m_cOffsetPos;
+    irr::core::vector3df m_cOffsetRot;
 
-    array<CIrrOdeSurfaceParameters *> m_aParams;
-    array<core::stringc> m_aParamNames;
+    irr::core::array<CIrrOdeSurfaceParameters *> m_aParams;
+    irr::core::array<irr::core::stringc> m_aParamNames;
 
   public:
     /**
      * The constructor (standard irrlicht scenenode)
      * @param parent the parent node
-     * @param mgr the ISceneManager
+     * @param mgr the irr::scene::ISceneManager
      * @param id the ID of the node
      * @param position the position of the node
      * @param rotation the rotation of the node
      * @param scale the scale of the node
      */
-    CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                const vector3df &position=core::vector3df(0,0,0),
-		            const vector3df &rotation = core::vector3df(0,0,0),
-		            const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeGeom(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		            const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		            const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     /** the destructor */
     virtual ~CIrrOdeGeom();
@@ -115,7 +115,7 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 
     /**
      * Set the name of a surface parameter. The parameter will
-     * be taken from the list loaded by the CIrrOdeWorld object
+     * be taken from the irr::core::list loaded by the CIrrOdeWorld object
      * upon physics initialization
      * @param iIdx index of the paramter to set
      * @param s the name of the paramter set
@@ -126,8 +126,8 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
 
     CIrrOdeWorld *getWorld();
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     /**
      * set the mass parameters
@@ -136,27 +136,27 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
      * @param i1
      * @param i2
      */
-    void setMassParameters(f32 fMass, vector3df c, vector3df i1, vector3df i2);
+    void setMassParameters(f32 fMass, irr::core::vector3df c, irr::core::vector3df i1, irr::core::vector3df i2);
 
 		/**
 		 * the "setPosition" method is overridden to make sure the IrrOdeGeom nodes always have a relative position of (0,0,0)
 		 * @param newpos the new position. Will be discarded and set to (0,0,0)
 		 */
-		virtual void setPosition(const vector3df &newpos);
+		virtual void setPosition(const irr::core::vector3df &newpos);
 
     /**
      * Translate the center of gravity to a new position
      * @param pos the new position
      */
-    void setMassTranslation(vector3df pos);
+    void setMassTranslation(irr::core::vector3df pos);
 
     virtual void initPhysics();
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
-    void setOffsetPosition(vector3df pPos);
-    void setOffsetQuaternion(vector3df pRot);
+    void setOffsetPosition(irr::core::vector3df pPos);
+    void setOffsetQuaternion(irr::core::vector3df pRot);
 
     /**
      * Set whether or not this geom collides with other geoms
@@ -190,9 +190,9 @@ class CIrrOdeGeom : public CIrrOdeSceneNode {
     virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
 
     /**
-     * This method is called to see whether or not an event is handled by this listener
+     * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
-     * @return "true" if the listener handles the event, "false" otherwise
+     * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 

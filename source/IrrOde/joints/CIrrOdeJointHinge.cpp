@@ -6,10 +6,10 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeJointHinge::CIrrOdeJointHinge(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                     const vector3df &position,const vector3df &rotation,const vector3df &scale) :
+CIrrOdeJointHinge::CIrrOdeJointHinge(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                     const irr::core::vector3df &position,const irr::core::vector3df &rotation,const irr::core::vector3df &scale) :
                                      CIrrOdeJoint(parent, mgr, id, position, rotation, scale) {
-  m_pAxis=vector3df(0,0,1);
+  m_pAxis=irr::core::vector3df(0,0,1);
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
 	  c8 sFileName[1024];
@@ -28,22 +28,22 @@ CIrrOdeJointHinge::~CIrrOdeJointHinge() {
 
 void CIrrOdeJointHinge::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeJointHinge::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_JOINT_INFO
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->setTransform(video::ETS_WORLD, core::matrix4());
-    vector3df axisStart=getAbsolutePosition()-1*getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_pAxis);
-    vector3df axisEnd=axisStart+10*getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_pAxis);
-    m_pVideoDriver->draw3DLine(axisStart,axisEnd,SColor(128,0xFF,0,0));
-    vector3df pos1=m_pBody1?m_pBody1->getAbsolutePosition():getAbsolutePosition();
-    vector3df pos2=m_pBody2?m_pBody2->getAbsolutePosition():getAbsolutePosition();
-    m_pVideoDriver->draw3DLine(pos1,getAbsolutePosition(),SColor(128,0,0xFF,0));
-    m_pVideoDriver->setTransform(video::ETS_WORLD, core::matrix4());
-    m_pVideoDriver->draw3DLine(pos2,getAbsolutePosition(),SColor(128,0,0,0xFF));
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD, core::matrix4());
+    irr::core::vector3df axisStart=getAbsolutePosition()-1*getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_pAxis);
+    irr::core::vector3df axisEnd=axisStart+10*getAbsoluteTransformation().getRotationDegrees().rotationToDirection(m_pAxis);
+    m_pVideoDriver->draw3DLine(axisStart,axisEnd,irr::video::SColor(128,0xFF,0,0));
+    irr::core::vector3df pos1=m_pBody1?m_pBody1->getAbsolutePosition():getAbsolutePosition();
+    irr::core::vector3df pos2=m_pBody2?m_pBody2->getAbsolutePosition():getAbsolutePosition();
+    m_pVideoDriver->draw3DLine(pos1,getAbsolutePosition(),irr::video::SColor(128,0,0xFF,0));
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD, core::matrix4());
+    m_pVideoDriver->draw3DLine(pos2,getAbsolutePosition(),irr::video::SColor(128,0,0,0xFF));
   #endif
 }
 
@@ -58,7 +58,7 @@ void CIrrOdeJointHinge::initPhysics() {
   if (getParent()->getID()==IRR_ODE_BODY_ID)
     setBody1(reinterpret_cast<CIrrOdeBody *>(getParent()));
 
-  vector3df rot=getAbsoluteTransformation().getRotationDegrees(),
+  irr::core::vector3df rot=getAbsoluteTransformation().getRotationDegrees(),
             axis=rot.rotationToDirection(m_pAxis);
 
   m_pOdeDevice->jointAttach(m_iJointId,m_pBody1,m_pBody2);
@@ -84,27 +84,27 @@ s32 CIrrOdeJointHinge::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeJointHinge::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeJointHinge::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_JOINT_HINGE_ID;
 }
 
 const wchar_t *CIrrOdeJointHinge::getTypeName() {
   return IRR_ODE_JOINT_HINGE_NAME;
 }
 
-void CIrrOdeJointHinge::setHingeAxis(vector3df pAxis) {
+void CIrrOdeJointHinge::setHingeAxis(irr::core::vector3df pAxis) {
   m_pAxis=pAxis.normalize();
 }
 
-vector3df CIrrOdeJointHinge::getHingeAxis() {
+irr::core::vector3df CIrrOdeJointHinge::getHingeAxis() {
   return m_pAxis;
 }
 
-vector3df CIrrOdeJointHinge::getAnchor1() {
+irr::core::vector3df CIrrOdeJointHinge::getAnchor1() {
   return m_pAnchor1;
 }
 
-vector3df CIrrOdeJointHinge::getAnchor2() {
+irr::core::vector3df CIrrOdeJointHinge::getAnchor2() {
   return m_pAnchor2;
 }
 
@@ -133,17 +133,17 @@ f32 CIrrOdeJointHinge::getParameter(u16 iGroup, eJointParameter iParam) {
   return m_iJointId?m_pOdeDevice->jointGetHingeParam(m_iJointId,iParam):0.0f;
 }
 
-void CIrrOdeJointHinge::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeJointHinge::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeJoint::serializeAttributes(out,options);
   out->addVector3d("Axis",m_pAxis);
 }
 
-void CIrrOdeJointHinge::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeJointHinge::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeJoint::deserializeAttributes(in,options);
   m_pAxis=in->getAttributeAsVector3d("Axis");
 }
 
-ISceneNode *CIrrOdeJointHinge::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeJointHinge::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeJointHinge *pRet=new CIrrOdeJointHinge(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

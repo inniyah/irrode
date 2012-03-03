@@ -14,10 +14,10 @@ class CIrrOdeGeomPlane : public CIrrOdeGeom {
     f32 m_fA,m_fB,m_fC,m_fD;
 
   public:
-    CIrrOdeGeomPlane(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                     const vector3df &position=core::vector3df(0,0,0),
-		                 const vector3df &rotation = core::vector3df(0,0,0),
-		                 const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeGeomPlane(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                     const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     void setParams(f32 fA, f32 fB, f32 fC, f32 fD);
     virtual void render();
@@ -25,16 +25,16 @@ class CIrrOdeGeomPlane : public CIrrOdeGeom {
     virtual void initPhysics();
 
     virtual s32 getID() const;
-    virtual ESCENE_NODE_TYPE getType() const;
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const;
     virtual const wchar_t *getTypeName();
 
     virtual void setMassTotal(f32 fMass);
 
-  	virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+  	virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
   	virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 };
 
 } //namespace ode

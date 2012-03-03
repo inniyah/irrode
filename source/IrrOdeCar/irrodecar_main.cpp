@@ -100,7 +100,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pText=m_pGuienv->addStaticText(L"",rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),true);
       m_pText->setBackgroundColor(SColor(192,192,192,192));
       m_pText->setDrawBackground(true);
-      m_pText->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
+      m_pText->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
 
       irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     }

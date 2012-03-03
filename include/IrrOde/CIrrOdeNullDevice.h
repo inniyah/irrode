@@ -7,7 +7,7 @@
   #include <CIrrOdeBody.h>
   #include <geom/CIrrOdeGeom.h>
 
-  #define _VEC static vector3df v=vector3df(0.0f,0.0f,0.0f); return v
+  #define _VEC static irr::core::vector3df v=irr::core::vector3df(0.0f,0.0f,0.0f); return v
 
 namespace irr {
 namespace ode {
@@ -64,7 +64,7 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual s32 worldGetQuickStepNumIterations(u32 iWorld) { return 0; }
     virtual void worldSetQuickStepW(u32 iWorld, f32 f) { }
     virtual f32 worldGetQuickStepW(u32 iWorld) { return 0; }
-    virtual void worldSetGravity(u32 iWorld, vector3df cGravity) { }
+    virtual void worldSetGravity(u32 iWorld, irr::core::vector3df cGravity) { }
     virtual void worldSetERP(u32 iWorld, f32 fErp) { }
     virtual f32 worldGetERP(u32 iWorld) { return 0.0f; }
     virtual void worldSetCFM(u32 iWorld, f32 fCfm) { }
@@ -83,58 +83,58 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void jointSetData(u32 iJoint, void *pData) { }
     virtual void jointDestroy(u32 iJoint) { }
 
-    virtual void jointSetBallAnchor(u32 iJoint, vector3df pos) { }
-    virtual vector3df jointGetBallAnchor(u32 iJoint) { static vector3df v=vector3df(0,0,0); return v; }
-    virtual vector3df jointGetBallAnchor2(u32 iJoint) { static vector3df v=vector3df(0,0,0); return v; }
+    virtual void jointSetBallAnchor(u32 iJoint, irr::core::vector3df pos) { }
+    virtual irr::core::vector3df jointGetBallAnchor(u32 iJoint) { static irr::core::vector3df v=irr::core::vector3df(0,0,0); return v; }
+    virtual irr::core::vector3df jointGetBallAnchor2(u32 iJoint) { static irr::core::vector3df v=irr::core::vector3df(0,0,0); return v; }
 
     virtual void jointSetFixed(u32 iJoint) { }
 
-    virtual void jointSetHingeAnchor(u32 iJoint, vector3df p) { }
-    virtual void jointSetHingeAxis(u32 iJoint, vector3df a) { }
-    virtual vector3df jointGetHingeAxis(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetHingeAnchor1(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetHingeAnchor2(u32 iJoint) { _VEC; }
+    virtual void jointSetHingeAnchor(u32 iJoint, irr::core::vector3df p) { }
+    virtual void jointSetHingeAxis(u32 iJoint, irr::core::vector3df a) { }
+    virtual irr::core::vector3df jointGetHingeAxis(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetHingeAnchor1(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetHingeAnchor2(u32 iJoint) { _VEC; }
     virtual f32 jointGetHingeAngle(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetHingeAngleRate(u32 iJoint) {  return 0.0f; }
     virtual void jointSetHingeParam(u32 iJoint, s32 iParam, f32 iValue) { }
     virtual f32 jointGetHingeParam(u32 iJoint, s32 iParam) { return 0.0f; }
 
-    virtual void jointSetHinge2Anchor(u32 iJoint, vector3df a) { }
-    virtual void jointSetHinge2Axis1(u32 iJoint, vector3df a) { }
-    virtual void jointSetHinge2Axis2(u32 iJoint, vector3df a) { }
-    virtual vector3df jointGetHinge2Axis1(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetHinge2Axis2(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetHinge2Anchor(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetHinge2Anchor2(u32 iJoint) { _VEC; }
+    virtual void jointSetHinge2Anchor(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetHinge2Axis1(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetHinge2Axis2(u32 iJoint, irr::core::vector3df a) { }
+    virtual irr::core::vector3df jointGetHinge2Axis1(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetHinge2Axis2(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetHinge2Anchor(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetHinge2Anchor2(u32 iJoint) { _VEC; }
     virtual f32 jointGetHinge2Angle1(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetHinge2Angle1Rate(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetHinge2Angle2Rate(u32 iJoint) { return 0.0f; }
     virtual void jointSetHinge2Param(u32 iJoint, u32 iGroup, s32 iParam, f32 iValue) { }
     virtual f32 jointGetHinge2Param(u32 iJoint, u32 iGroup, s32 iParam) { return 0.0f; }
 
-    virtual void jointSetPistonAnchor(u32 iJoint, vector3df a) { }
-    virtual void jointSetPistonAxis(u32 iJoint, vector3df a) { }
+    virtual void jointSetPistonAnchor(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetPistonAxis(u32 iJoint, irr::core::vector3df a) { }
     virtual f32 jointGetPistonPosition(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetPistonPositionRate(u32 iJoint) { return 0.0f; }
     virtual void jointSetPistonParam(u32 iJoint, u32 iGroup, s32 iParam, f32 fValue) { }
     virtual f32 jointGetPistonParam(u32 iJoint, u32 iGroup, s32 iParam) { return 0.0f; }
-    virtual vector3df jointGetPistonAnchor(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetPistonAxis(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetPistonAnchor(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetPistonAxis(u32 iJoint) { _VEC; }
 
-    virtual void jointSetSliderAxis(u32 iJoint, vector3df a) { }
-    virtual vector3df jointGetSliderAxis(u32 iJoint) { _VEC; }
+    virtual void jointSetSliderAxis(u32 iJoint, irr::core::vector3df a) { }
+    virtual irr::core::vector3df jointGetSliderAxis(u32 iJoint) { _VEC; }
     virtual f32 jointGetSliderPosition(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetSliderPositionRate(u32 iJoint) { return 0.0f; }
     virtual void jointSetSliderParam(u32 iJoint, s32 iParam, f32 fValue) { }
     virtual f32 jointGetSliderParam(u32 iJoint, s32 iParam) { return 0.0f; }
 
-    virtual void jointSetUniversalAnchor(u32 iJoint, vector3df a) { }
-    virtual void jointSetUniversalAxis1(u32 iJoint, vector3df a) { }
-    virtual void jointSetUniversalAxis2(u32 iJoint, vector3df a) { }
-    virtual vector3df jointGetUniversalAnchor(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetUniversalAnchor2(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetUniversalAxis1(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetUniversalAxis2(u32 iJoint) { _VEC; }
+    virtual void jointSetUniversalAnchor(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetUniversalAxis1(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetUniversalAxis2(u32 iJoint, irr::core::vector3df a) { }
+    virtual irr::core::vector3df jointGetUniversalAnchor(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetUniversalAnchor2(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetUniversalAxis1(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetUniversalAxis2(u32 iJoint) { _VEC; }
     virtual void jointSetUniversalParam(u32 iJoint, u32 iGroup, s32 iParam, f32 fValue) { }
     virtual f32 jointGetUniversalParam(u32 iJoint, u32 iGroup, s32 iParam) { return 0.0f; }
     virtual f32 jointGetUniversalAngle1(u32 iJoint) { return 0.0f; }
@@ -142,12 +142,12 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual f32 jointGetUniversalAngle1Rate(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetUniversalAngle2Rate(u32 iJoint) { return 0.0f; }
 
-    virtual void jointSetPrAxis1(u32 iJoint, vector3df a) { }
-    virtual void jointSetPrAxis2(u32 iJoint, vector3df a) { }
-    virtual void jointSetPrAnchor(u32 iJoint, vector3df a) { }
-    virtual vector3df jointGetPrAxis1(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetPrAxis2(u32 iJoint) { _VEC; }
-    virtual vector3df jointGetPrAnchor(u32 iJoint) { _VEC; }
+    virtual void jointSetPrAxis1(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetPrAxis2(u32 iJoint, irr::core::vector3df a) { }
+    virtual void jointSetPrAnchor(u32 iJoint, irr::core::vector3df a) { }
+    virtual irr::core::vector3df jointGetPrAxis1(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetPrAxis2(u32 iJoint) { _VEC; }
+    virtual irr::core::vector3df jointGetPrAnchor(u32 iJoint) { _VEC; }
     virtual f32 jointGetPrPosition(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetPrAngle(u32 iJoint) { return 0.0f; }
     virtual f32 jointGetPrAngleRate(u32 iJoint) { return 0.0f; }
@@ -156,11 +156,11 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
 
     virtual u32 bodyCreate(u32 iWorld) { return 1; }
     virtual void bodyDestroy(u32 iBody) { }
-    virtual void bodySetPosition(u32 iBody, vector3df pos) { }
-    virtual vector3df bodyGetPosition(u32 iBody) { _VEC; }
-    virtual vector3df bodyGetRotation(u32 iBody) { _VEC; }
+    virtual void bodySetPosition(u32 iBody, irr::core::vector3df pos) { }
+    virtual irr::core::vector3df bodyGetPosition(u32 iBody) { _VEC; }
+    virtual irr::core::vector3df bodyGetRotation(u32 iBody) { _VEC; }
     virtual void bodySetQuaternion(u32 iBody, core::quaternion rot) { }
-    virtual void bodySetRotation(u32 iBody, vector3df rot) { }
+    virtual void bodySetRotation(u32 iBody, irr::core::vector3df rot) { }
     virtual void bodySetData(u32 iBody, void *pData) { }
     virtual void bodySetLinearDamping(u32 iBody, f32 f) { }
     virtual f32 bodyGetLinearDamping(u32 iBody) { return 0.0f; }
@@ -184,37 +184,37 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual f32 bodyGetAutoDisableTime(u32 iBody) { return 0.0f; }
     virtual void bodySetFiniteRotationMode(u32 iBody, bool b) { }
     virtual bool bodyGetFiniteRotationMode(u32 iBody) { return false; }
-    virtual void bodySetFiniteRotationAxis(u32 iBody, vector3df v) { }
-    virtual const vector3df bodyGetFiniteRotationAxis(u32 iBody) { static vector3df v=vector3df(0,0,0); return v; }
+    virtual void bodySetFiniteRotationAxis(u32 iBody, irr::core::vector3df v) { }
+    virtual const irr::core::vector3df bodyGetFiniteRotationAxis(u32 iBody) { static irr::core::vector3df v=irr::core::vector3df(0,0,0); return v; }
     virtual void bodySetGravityMode(u32 iBody, s32 i) { }
     virtual s32 bodyGetGravityMode(u32 iBody) { return 0; }
     virtual CIrrOdeGeom *bodyGetFirstGeom(u32 iBody) { return NULL; }
     virtual CIrrOdeGeom *bodyGetNextGeom(CIrrOdeGeom *pPrev) { return NULL; }
     virtual bool bodyIsEnabled(u32 iBody) { return false; }
-    virtual void bodyAddForce(u32 iBody, vector3df f) { }
-    virtual void bodyAddForceAtPosition(u32 iBody, vector3df f, vector3df p) { }
-    virtual void bodyAddTorque(u32 iBody, vector3df t) { }
-    virtual void bodySetTorque(u32 iBody, vector3df t) { }
+    virtual void bodyAddForce(u32 iBody, irr::core::vector3df f) { }
+    virtual void bodyAddForceAtPosition(u32 iBody, irr::core::vector3df f, irr::core::vector3df p) { }
+    virtual void bodyAddTorque(u32 iBody, irr::core::vector3df t) { }
+    virtual void bodySetTorque(u32 iBody, irr::core::vector3df t) { }
     virtual void bodyEnable(u32 iBody) { }
     virtual void bodyDisable(u32 iBody) { }
-    virtual void bodySetLinearVelocity(u32 iBody, vector3df v) { }
-    virtual vector3df bodyGetLinearVelocity(u32 iBody) { _VEC; }
-    virtual void bodySetAngularVelocity(u32 iBody, vector3df v) { }
-    virtual vector3df bodyGetAngularVelocity(u32 iBody) { _VEC; }
-    virtual vector3df bodyGetPointVel(u32 iBody, vector3df vPos) { _VEC; }
-    virtual vector3df bodyGetRelPointVel(u32 iBody, vector3df vPos) { _VEC; }
-    virtual vector3df bodyGetRelPointPos(u32 iBody, vector3df vPos) { _VEC; }
-    virtual vector3df bodyGetPosRelPoint(u32 iBody, vector3df vPos) { _VEC; }
-    virtual vector3df bodyVectorFromWorld(u32 iBody, vector3df vPos) { _VEC; }
+    virtual void bodySetLinearVelocity(u32 iBody, irr::core::vector3df v) { }
+    virtual irr::core::vector3df bodyGetLinearVelocity(u32 iBody) { _VEC; }
+    virtual void bodySetAngularVelocity(u32 iBody, irr::core::vector3df v) { }
+    virtual irr::core::vector3df bodyGetAngularVelocity(u32 iBody) { _VEC; }
+    virtual irr::core::vector3df bodyGetPointVel(u32 iBody, irr::core::vector3df vPos) { _VEC; }
+    virtual irr::core::vector3df bodyGetRelPointVel(u32 iBody, irr::core::vector3df vPos) { _VEC; }
+    virtual irr::core::vector3df bodyGetRelPointPos(u32 iBody, irr::core::vector3df vPos) { _VEC; }
+    virtual irr::core::vector3df bodyGetPosRelPoint(u32 iBody, irr::core::vector3df vPos) { _VEC; }
+    virtual irr::core::vector3df bodyVectorFromWorld(u32 iBody, irr::core::vector3df vPos) { _VEC; }
 
     virtual void bodySetMass(u32 iBody, u32 iMass) { }
 
     virtual void geomSetBody(u32 iGeom, CIrrOdeBody *pBody) { }
     virtual void geomDestroy(u32 iGeom) { }
-    virtual void geomSetRotation(u32 iGeom, vector3df rot) { }
+    virtual void geomSetRotation(u32 iGeom, irr::core::vector3df rot) { }
     virtual void geomSetData(u32 iGeom, void *pData) { }
-    virtual void geomSetOffsetPosition(u32 iGeom, vector3df offset) { }
-    virtual void geomSetOffsetQuaternion(u32 iGeom, vector3df rot) { }
+    virtual void geomSetOffsetPosition(u32 iGeom, irr::core::vector3df offset) { }
+    virtual void geomSetOffsetQuaternion(u32 iGeom, irr::core::vector3df rot) { }
     virtual u32 geomCreateBox(u32 iSpace, f32 fWidth, f32 fHeight, f32 fDepth) { return 1; }
     virtual u32 geomCreateCapsule(u32 iSpace, f32 fRadius, f32 fLength) { return 1; }
     virtual u32 geomCreateCylinder(u32 iSpace, f32 fRadius, f32 fLength) { return 1; }
@@ -234,18 +234,18 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual u32 geomGetCategoryBits(u32 iGeom) { return 0; }
     virtual u32 geomGetCollisionBits(u32 iGeom) { return 0; }
 
-    virtual void geomSetPosition(u32 iGeom, vector3df pos) { }
-    virtual void geomRaySetData(u32 iGeom, vector3df pos, vector3df dir, f32 fLength) { }
+    virtual void geomSetPosition(u32 iGeom, irr::core::vector3df pos) { }
+    virtual void geomRaySetData(u32 iGeom, irr::core::vector3df pos, irr::core::vector3df dir, f32 fLength) { }
 
     virtual u32 geomTrimeshDataCreate() { return 1; }
-    virtual void geomTrimeshDataBuildSimple(u32 iData, ISceneNode *pNode) { }
-    virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, ISceneNode *pNode, u32 iBuffer) { }
+    virtual void geomTrimeshDataBuildSimple(u32 iData, irr::scene::ISceneNode *pNode) { }
+    virtual void geomTrimeshDataBuildFromMeshBuffer(u32 iData, irr::scene::ISceneNode *pNode, u32 iBuffer) { }
 
     virtual u32 massCreate() { return 1; }
     virtual void massAdd(u32 iDst, u32 iSrc) { }
     virtual void massSetZero(u32 iMass) { }
-    virtual void massSetParameters(u32 iMass, f32 fMass, vector3df c, vector3df i1, vector3df i2) { }
-    virtual void massTranslate(u32 iMass, vector3df pos) { }
+    virtual void massSetParameters(u32 iMass, f32 fMass, irr::core::vector3df c, irr::core::vector3df i1, irr::core::vector3df i2) { }
+    virtual void massTranslate(u32 iMass, irr::core::vector3df pos) { }
     virtual void massSetBoxTotal(u32 iMass, f32 fMass, f32 lx, f32 ly, f32 lz) { }
     virtual void massSetCapsuleTotal(u32 iMass, f32 fMass, s32 iDirection, f32 fRadius, f32 fLength) { }
     virtual void massSetCylinderTotal(u32 iMass, f32 fMass, s32 iDirection, f32 fRadius, f32 fLength) { }
@@ -253,14 +253,14 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
 
     virtual u32 spaceCreateSimple(u32 iParent) { return 1; }
     virtual u32 spaceCreateHash(u32 iParent) { return 1; }
-    virtual u32 spaceCreateQuadTree(u32 iParent, vector3df center, vector3df extends, s32 iDepth) { return 1; }
+    virtual u32 spaceCreateQuadTree(u32 iParent, irr::core::vector3df center, irr::core::vector3df extends, s32 iDepth) { return 1; }
     virtual void spaceDestroy(u32 iSpace) { }
 
     virtual u32 jointGroupCreate(s32 iMaxSize) { return 1; }
     virtual void jointGroupDestroy(u32 iJointGroup) { }
     virtual void jointGroupEmtpy(u32 iJointGroup) { }
 
-    virtual void trimeshDrawDebug(u32 iData, IVideoDriver *pDrv) { }
+    virtual void trimeshDrawDebug(u32 iData, irr::video::IVideoDriver *pDrv) { }
 
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits) { }
 

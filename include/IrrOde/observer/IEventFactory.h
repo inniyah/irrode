@@ -6,13 +6,6 @@
 namespace irr {
 namespace ode {
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
-
 class CIrrOdeEventFactory;
 
 /**
@@ -29,7 +22,7 @@ class IIrrOdeEventFactory {
      * @param pSmgr the scene manager to use
      * @see CSerializer
      */
-    virtual IIrrOdeEvent *createMessage(CSerializer *pData, ISceneManager *pSmgr)=0;
+    virtual IIrrOdeEvent *createMessage(CSerializer *pData, irr::scene::ISceneManager *pSmgr)=0;
 };
 
 }

@@ -13,8 +13,8 @@ const c8 *const g_sSpaceTypes[]={
   NULL
 };
 
-CIrrOdeSpace::CIrrOdeSpace(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                           const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeSpace::CIrrOdeSpace(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                           const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                            CIrrOdeSceneNode(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -23,14 +23,14 @@ CIrrOdeSpace::CIrrOdeSpace(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   m_iSpaceId=0;
   m_iType=eIrrOdeSpaceSimple;
-  m_pParentSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
-  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+  m_pParentSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
   if (m_pWorld) m_pWorld->addSpace(this);
 
   if (!m_pParentSpace) if (m_pWorld && m_pWorld->getSpace()!=this) m_pParentSpace=m_pWorld->getSpace();
 
-  m_cCenter=vector3df(0,0,0);
-  m_cExtents=vector3df(0,0,0);
+  m_cCenter=irr::core::vector3df(0,0,0);
+  m_cExtents=irr::core::vector3df(0,0,0);
   m_iDepth=0;
 
   #ifdef _IRREDIT_PLUGIN
@@ -91,7 +91,7 @@ _IRR_ODE_SPACE_TYPE CIrrOdeSpace::getSpaceType() {
   return m_iType;
 }
 
-void CIrrOdeSpace::setQuadTreeParams(vector3df cCenter, vector3df cExtents, s32 iDepth){
+void CIrrOdeSpace::setQuadTreeParams(irr::core::vector3df cCenter, irr::core::vector3df cExtents, s32 iDepth){
   m_cCenter=cCenter;
   m_cExtents=cExtents;
   m_iDepth=iDepth;
@@ -107,11 +107,11 @@ void CIrrOdeSpace::render() {
 
 void CIrrOdeSpace::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
-ESCENE_NODE_TYPE CIrrOdeSpace::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeSpace::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID;
 }
 
 const wchar_t *CIrrOdeSpace::getTypeName() {
@@ -126,7 +126,7 @@ _IRR_ODE_SPACE_TYPE CIrrOdeSpace::getType() {
   return m_iType;
 }
 
-void CIrrOdeSpace::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeSpace::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
   out->addEnum("SpaceType",m_iType,g_sSpaceTypes);
@@ -137,7 +137,7 @@ void CIrrOdeSpace::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
   out->addVector3d("Extents",m_cExtents);
 }
 
-void CIrrOdeSpace::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeSpace::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
   m_iType =(_IRR_ODE_SPACE_TYPE)in->getAttributeAsEnumeration("SpaceType",g_sSpaceTypes);//in->getAttributeAsInt("SpaceType");
@@ -151,11 +151,11 @@ CIrrOdeSpace *CIrrOdeSpace::getParentSpace() {
   return m_pParentSpace;
 }
 
-vector3df &CIrrOdeSpace::getCenter() {
+irr::core::vector3df &CIrrOdeSpace::getCenter() {
   return m_cCenter;
 }
 
-vector3df &CIrrOdeSpace::getExtents() {
+irr::core::vector3df &CIrrOdeSpace::getExtents() {
   return m_cExtents;
 }
 
@@ -163,7 +163,7 @@ s32 CIrrOdeSpace::getDepth() {
   return m_iDepth;
 }
 
-ISceneNode *CIrrOdeSpace::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeSpace::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeSpace *pRet=new CIrrOdeSpace(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

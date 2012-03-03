@@ -11,7 +11,7 @@ CIrrOdeEventActivationChanged::CIrrOdeEventActivationChanged(CIrrOdeBody *pBody,
   m_bActive=bActive;
 }
 
-CIrrOdeEventActivationChanged::CIrrOdeEventActivationChanged(CSerializer *pData, ISceneManager *pSmgr) : IIrrOdeEvent() {
+CIrrOdeEventActivationChanged::CIrrOdeEventActivationChanged(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
   pData->resetBufferPos();
   if (pData->getU16()==eIrrOdeEventActivationChanged) {
     u32 bodyId=pData->getU32();

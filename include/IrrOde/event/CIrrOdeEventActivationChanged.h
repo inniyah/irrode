@@ -20,7 +20,7 @@ class CIrrOdeEventActivationChanged : public IIrrOdeEvent {
 
   public:
     CIrrOdeEventActivationChanged(CIrrOdeBody *pBody, bool bActive);
-    CIrrOdeEventActivationChanged(CSerializer *pData, ISceneManager *pSmgr);
+    CIrrOdeEventActivationChanged(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
     CIrrOdeEventActivationChanged(IIrrOdeEvent *pIn);
 
     virtual u16 getType();

@@ -4,10 +4,10 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeMotor::CIrrOdeMotor(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                           const vector3df &position,
-		                       const vector3df &rotation,
-          		             const vector3df &scale) : IIrrOdeMotor(parent, mgr, id, position, rotation, scale) {
+CIrrOdeMotor::CIrrOdeMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                           const irr::core::vector3df &position,
+		                       const irr::core::vector3df &rotation,
+          		             const irr::core::vector3df &scale) : IIrrOdeMotor(parent, mgr, id, position, rotation, scale) {
 
   m_iAxis=0;
   m_fVelocity=0.0f;
@@ -79,7 +79,7 @@ CIrrOdeJoint *CIrrOdeMotor::getJoint() {
   return m_pJoint;
 }
 
-void CIrrOdeMotor::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeMotor::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
   out->addInt("Axis",m_iAxis);
@@ -88,7 +88,7 @@ void CIrrOdeMotor::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
   out->addBool("Enabled",m_bEnabled);
 }
 
-void CIrrOdeMotor::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options) {
+void CIrrOdeMotor::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
   m_iAxis=in->getAttributeAsInt("Axis");
@@ -100,15 +100,15 @@ void CIrrOdeMotor::deserializeAttributes(io::IAttributes* in, io::SAttributeRead
 void CIrrOdeMotor::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_BOUNDING_BOXES
-    m_pVideoDriver->setTransform(video::ETS_WORLD,AbsoluteTransformation);
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD,AbsoluteTransformation);
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->draw3DBox(m_cBoundingBox,SColor(100,0x40,0x40,0x40));
+    m_pVideoDriver->draw3DBox(m_cBoundingBox,irr::video::SColor(100,0x40,0x40,0x40));
   #endif
 }
 
 void CIrrOdeMotor::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeMotor::initPhysics() {
@@ -132,15 +132,15 @@ s32 CIrrOdeMotor::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeMotor::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_MOTOR_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeMotor::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_MOTOR_ID;
 }
 
 const wchar_t *CIrrOdeMotor::getTypeName() {
   return IRR_ODE_MOTOR_NAME;
 }
 
-ISceneNode *CIrrOdeMotor::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeMotor::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
 	CIrrOdeMotor *pRet=new CIrrOdeMotor(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
@@ -157,8 +157,8 @@ void CIrrOdeMotor::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setEnabled(m_bEnabled);
 }
 
-void CIrrOdeMotor::setPosition(const vector3df &newpos) {
-	ISceneNode::setPosition(vector3df(0.0f,0.0f,0.0f));
+void CIrrOdeMotor::setPosition(const irr::core::vector3df &newpos) {
+	irr::scene::ISceneNode::setPosition(irr::core::vector3df(0.0f,0.0f,0.0f));
 }
 
 } //namespace ode

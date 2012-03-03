@@ -15,10 +15,10 @@ namespace ode {
 class CIrrOdeEventNodeRemoved : public IIrrOdeEvent {
   protected:
     s32 m_iNodeId;              /**<! node id of the removed node */
-    scene::ISceneNode *m_pNode; /**<! the removed node */
+    irr::scene::ISceneNode *m_pNode; /**<! the removed node */
 
   public:
-    CIrrOdeEventNodeRemoved(scene::ISceneNode *pNode);
+    CIrrOdeEventNodeRemoved(irr::scene::ISceneNode *pNode);
     CIrrOdeEventNodeRemoved(s32 iNodeId);
     CIrrOdeEventNodeRemoved(CSerializer *pData);
     CIrrOdeEventNodeRemoved(IIrrOdeEvent *pEvt);
@@ -29,7 +29,7 @@ class CIrrOdeEventNodeRemoved : public IIrrOdeEvent {
      * Get the removed node
      * @return the removed node. If this method returns NULL you have to get the node from the id
      */
-    scene::ISceneNode *getRemovedNode();
+    irr::scene::ISceneNode *getRemovedNode();
 
     /**
      * Get the removed node's ID

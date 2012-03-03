@@ -15,24 +15,24 @@ const wchar_t IRR_ODE_IMPULSE_MOTOR_NAME[0xFF]=L"CIrrOdeImpulseMotor";
  */
 class CIrrOdeImpulseMotor : public IIrrOdeStepMotor {
   protected:
-    vector3df m_vForeward;
+    irr::core::vector3df m_vForeward;
 
   public:
-    CIrrOdeImpulseMotor(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                        const vector3df &position=core::vector3df(0,0,0),
-                        const vector3df &rotation = core::vector3df(0,0,0),
-                        const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeImpulseMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                        const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+                        const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+                        const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
     virtual void step();
     virtual const wchar_t *getTypeName();
 
-    virtual ESCENE_NODE_TYPE getType() const { return (ESCENE_NODE_TYPE)IRR_ODE_IMPULSE_MOTOR_ID; }
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const { return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_IMPULSE_MOTOR_ID; }
 
-    void setForeward(vector3df v) { m_vForeward=v; }
-    vector3df getForeward() { return m_vForeward; }
+    void setForeward(irr::core::vector3df v) { m_vForeward=v; }
+    irr::core::vector3df getForeward() { return m_vForeward; }
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
-    virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
+    virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
 };
 
   } //namespace ode

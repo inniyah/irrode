@@ -44,10 +44,10 @@ class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
          m_bSerializeEvents;
 
   public:
-    CIrrOdeJoint(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                 const vector3df &position=core::vector3df(0,0,0),
-		             const vector3df &rotation = core::vector3df(0,0,0),
-		             const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeJoint(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                 const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeJoint();
 
@@ -63,10 +63,10 @@ class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
 
     virtual f32 getParameter(u16 iGroup, eJointParameter iParam);
     virtual void setParameter(u16 iGroup, eJointParameter iParam, f32 fValue);
-    virtual void setPosition(const vector3df &newPos);
+    virtual void setPosition(const irr::core::vector3df &newPos);
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
@@ -82,9 +82,9 @@ class CIrrOdeJoint : public CIrrOdeSceneNode, public IIrrOdeEventWriter {
     virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
 
     /**
-     * This method is called to see whether or not an event is handled by this listener
+     * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
-     * @return "true" if the listener handles the event, "false" otherwise
+     * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 

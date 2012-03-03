@@ -9,7 +9,7 @@ namespace irr {
       m_fSliderPositionRate=fSliderPositionRate;
     }
 
-    CIrrOdeEventJointSlider::CIrrOdeEventJointSlider(CSerializer *pData, ISceneManager *pSmgr) : CIrrOdeEventJoint() {
+    CIrrOdeEventJointSlider::CIrrOdeEventJointSlider(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : CIrrOdeEventJoint() {
       m_fSliderPosition=0.0f;
       m_fSliderPositionRate=0.0f;
 

@@ -15,16 +15,16 @@ class CIrrOdeEventTrigger : public IIrrOdeEvent {
   protected:
     s32 m_iTriggerId,
         m_iBodyId;
-    core::vector3df m_vPos;
+    irr::core::vector3df m_vPos;
 
   public:
     CIrrOdeEventTrigger() {
       m_iTriggerId=-1;
       m_iBodyId=-1;
-      m_vPos=core::vector3df(0.0f,0.0f,0.0f);
+      m_vPos=irr::core::vector3df(0.0f,0.0f,0.0f);
     }
 
-    CIrrOdeEventTrigger(s32 iTrigger, s32 iBody, core::vector3df vPos) {
+    CIrrOdeEventTrigger(s32 iTrigger, s32 iBody, irr::core::vector3df vPos) {
       m_iTriggerId=iTrigger;
       m_iBodyId=iBody;
       m_vPos=vPos;
@@ -51,7 +51,7 @@ class CIrrOdeEventTrigger : public IIrrOdeEvent {
 
     s32 getBodyId() { return m_iBodyId; }
 
-    const core::vector3df &getPosition() { return m_vPos; }
+    const irr::core::vector3df &getPosition() { return m_vPos; }
 
     virtual CSerializer *serialize() {
       if (m_pSerializer==NULL) {

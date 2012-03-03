@@ -27,23 +27,23 @@ class CIrrOdeWorld : public CIrrOdeDampable {
 
     CIrrOdeSpace *m_pWorldSpace;
 
-    vector3df m_cGravity;
-    list<CIrrOdeBody *> m_pBodies;
-    list<CIrrOdeGeom *> m_pGeoms;
-    list<CIrrOdeSpace *> m_pSpaces;
+    irr::core::vector3df m_cGravity;
+    irr::core::list<CIrrOdeBody *> m_pBodies;
+    irr::core::list<CIrrOdeGeom *> m_pGeoms;
+    irr::core::list<CIrrOdeSpace *> m_pSpaces;
     #ifdef _IRREDIT_PLUGIN
-      list<CIrrOdeSceneNode *> m_pChildNodes;
+      irr::core::list<CIrrOdeSceneNode *> m_pChildNodes;
     #endif
 
-	stringw m_sSurfaceFile;
+	irr::core::stringw m_sSurfaceFile;
 
-	void loadParameter(IXMLReader *pReader);
+	void loadParameter(irr::io::IXMLReader *pReader);
 	u32 loadFromFile(const wchar_t *sName);
   public:
-    CIrrOdeWorld(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                 const vector3df &position=core::vector3df(0,0,0),
-		             const vector3df &rotation = core::vector3df(0,0,0),
-		             const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                 const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		             const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeWorld();
 
@@ -94,8 +94,8 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     void step(f32 fTime);
     void quickStep(f32 fTime);
 
-    void setGravity(vector3df cGravity);
-    vector3df &getGravity();
+    void setGravity(irr::core::vector3df cGravity);
+    irr::core::vector3df &getGravity();
     void setERP(f32 fERP);
     f32 getERP();
     void setCFM(f32 CFM);
@@ -106,22 +106,22 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual void render();
     virtual void OnRegisterSceneNode();
 
-    ESCENE_NODE_TYPE getType() const;
+    irr::scene::ESCENE_NODE_TYPE getType() const;
     virtual const wchar_t *getTypeName();
 
     u32 getJointGroupId();
 
-    list<CIrrOdeBody *> &getBodyList();
+    irr::core::list<CIrrOdeBody *> &getBodyList();
 
     CIrrOdeSpace *getSpace();
     void setSpace(CIrrOdeSpace *pWorldSpace);
     void setContactCalculator(IIrrOdeContactParameters *pCalculator);
     IIrrOdeContactParameters *getContactCalculator();
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
-  	virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+  	virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
     virtual void removeFromPhysics();
 
@@ -149,9 +149,9 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual bool onEvent(IIrrOdeEvent *pEvent) { return false; }
 
     /**
-     * This method is called to see whether or not an event is handled by this listener
+     * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
-     * @return "true" if the listener handles the event, "false" otherwise
+     * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 };

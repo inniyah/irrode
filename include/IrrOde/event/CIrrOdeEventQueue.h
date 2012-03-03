@@ -13,8 +13,8 @@ class CIrrOdeManager;
 
 class CIrrOdeEventQueue : public IIrrOdeEventQueue {
   protected:
-    core::list<irr::ode::IIrrOdeEventListener *> m_pListeners;  /**< the event listeners */
-    core::list<irr::ode::IIrrOdeEvent *> m_lEventQueue;
+    irr::core::list<irr::ode::IIrrOdeEventListener *> m_pListeners;  /**< the event irr::core::listeners */
+    irr::core::list<irr::ode::IIrrOdeEvent *> m_lEventQueue;
 
   public:
     CIrrOdeEventQueue();

@@ -16,10 +16,10 @@ class CIrrOdeGeomHeightfield : public CIrrOdeGeom {
     u32 m_iWidthSamples,m_iDepthSamples;
 
   public:
-    CIrrOdeGeomHeightfield(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                       const vector3df &position=core::vector3df(0,0,0),
-		                   const vector3df &rotation = core::vector3df(0,0,0),
-		                   const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeGeomHeightfield(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                       const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		                   const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		                   const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeGeomHeightfield();
 
@@ -31,7 +31,7 @@ class CIrrOdeGeomHeightfield : public CIrrOdeGeom {
     virtual void OnRegisterSceneNode();
     virtual void initPhysics();
 
-    virtual ESCENE_NODE_TYPE getType() const;
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const;
     virtual s32 getID() const;
     virtual const wchar_t *getTypeName();
 
@@ -43,11 +43,11 @@ class CIrrOdeGeomHeightfield : public CIrrOdeGeom {
     void setWidthSamples(u32 iWidthSamples);
     void setDepthSamples(u32 iDepthSamples);
 
-  	virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+  	virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
   	virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true);
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     u32 getWidthSamples();
     u32 getDepthSamples();

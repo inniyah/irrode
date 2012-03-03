@@ -51,8 +51,8 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
 
   m_iHeliCheckCount=2;
 
-  m_fHeliDistLeft =(f32 *)malloc(5*sizeof(f32));
-  m_fHeliDistRight=(f32 *)malloc(5*sizeof(f32));
+  m_fHeliDistLeft =(irr::f32 *)malloc(5*sizeof(irr::f32));
+  m_fHeliDistRight=(irr::f32 *)malloc(5*sizeof(irr::f32));
 
   m_fHeliDistLeft[0]=45.0f; m_fHeliDistRight[0]=-45.0f;
   m_fHeliDistLeft[1]=10.0f; m_fHeliDistRight[1]=-10.0f;
@@ -60,7 +60,7 @@ CAutoPilot::CAutoPilot(irr::ode::CIrrOdeBody         *pPlane,
   m_fHeliCheckLength=500.0f;
 
   m_fHeliCheckMax=0.0f;
-  for (u32 i=0; i<m_iHeliCheckCount; i++) m_fHeliCheckMax+=(i+1)*m_fHeliCheckLength;
+  for (irr::u32 i=0; i<m_iHeliCheckCount; i++) m_fHeliCheckMax+=(i+1)*m_fHeliCheckLength;
   m_pAutoPilotInfo=NULL;
 }
 
@@ -80,8 +80,8 @@ void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
   }
 }
 
-irr::f32 CAutoPilot::getRollControl(f32 fYaw, wchar_t *sInfo) {
-  f32 fAngle=asin(m_vSideward2.Y)*180.0f/PI,fRoll=0.0f;
+irr::f32 CAutoPilot::getRollControl(irr::f32 fYaw, wchar_t *sInfo) {
+  irr::f32 fAngle=asin(m_vSideward2.Y)*180.0f/irr::core::PI,fRoll=0.0f;
   if (m_vUpward.Y<0) fAngle=-180.0f-fAngle;
 
   while (fAngle<-180.0f) fAngle+=360.0f;
@@ -94,25 +94,25 @@ irr::f32 CAutoPilot::getRollControl(f32 fYaw, wchar_t *sInfo) {
 
   if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nRoll angle: %.2f\napplied control: %.2f\n",sInfo,fAngle,fRoll);
 
-  core::vector2df vAhf=25.0f*core::vector2df(1.0f,0.0f).rotateBy(fAngle);
+  irr::core::vector2df vAhf=25.0f*irr::core::vector2df(1.0f,0.0f).rotateBy(fAngle);
 
   return fRoll;
 }
 
 void CAutoPilot::updateApDist() {
-  core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
-                  vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z);
+  irr::core::vector2df vPlane=irr::core::vector2df(m_vPosition.X,m_vPosition.Z),
+                       vPoint=irr::core::vector2df(m_vCheckPos.X,m_vCheckPos.Z);
 
   m_fApDist=(vPlane-vPoint).getLength();
 }
 
 irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
-  f32 fYaw=0.0f;
+  irr::f32 fYaw=0.0f;
 
-  core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
-                  vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
-                  vVeloc=core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z),
-                  vForew=core::vector2df(m_vForeward.X,m_vForeward.Z);
+  irr::core::vector2df vPlane=irr::core::vector2df(m_vPosition.X,m_vPosition.Z),
+                       vPoint=irr::core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
+                       vVeloc=irr::core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z),
+                       vForew=irr::core::vector2df(m_vForeward.X,m_vForeward.Z);
 
   m_vCpVel=vPoint-vPlane;
 
@@ -131,10 +131,10 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
   vVeloc.normalize();
   m_vCpVel.normalize();
 
-  f32 fSteer=b?vVeloc.getAngleWith(m_vCpVel):vForew.getAngleWith(m_vCpVel);
+  irr::f32 fSteer=b?vVeloc.getAngleWith(m_vCpVel):vForew.getAngleWith(m_vCpVel);
 
   if (vxy.getLength()-vxz.getLength()<0.0f) fSteer=180-fSteer;
-  f32 fOrient=b?(vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X):(vForew.X*m_vCpVel.Y-vForew.Y*m_vCpVel.X);
+  irr::f32 fOrient=b?(vVeloc.X*m_vCpVel.Y-vVeloc.Y*m_vCpVel.X):(vForew.X*m_vCpVel.Y-vForew.Y*m_vCpVel.X);
   if (fOrient>0.0f) fSteer=-fSteer;
 
   if (sInfo!=NULL) swprintf(sInfo,4096,L"%s\nSteer to target: %.2f\n",sInfo,fSteer);
@@ -142,8 +142,8 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
   m_vVATransformed=m_vInvRot.rotationToDirection(m_vVelocityAng);
 
   if (b && (m_vVATransformed.Y>0.1f || m_vVATransformed.Y<-0.1f)) {
-    f32 fSign=m_vVATransformed.Y>0.0f?1.0f:0.0f;
-    f32 fMinus=50.0f*m_vVATransformed.Y;
+    irr::f32 fSign=m_vVATransformed.Y>0.0f?1.0f:0.0f;
+    irr::f32 fMinus=50.0f*m_vVATransformed.Y;
     fMinus*=fSign*fMinus;
     if (fSteer>0 && fMinus>fSteer) fMinus=fSteer;
     if (fSteer<0 && fMinus<fSteer) fMinus=fSteer;
@@ -158,8 +158,8 @@ irr::f32 CAutoPilot::getYawControl(bool b, wchar_t *sInfo) {
   return fYaw;
 }
 
-irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo, f32 fPitchTarget) {
-  f32 f=asin(m_vForeward.Y)*180.0f/M_PI,fPitch=0.0f;
+irr::f32 CAutoPilot::getHeliPitch(wchar_t *sInfo, irr::f32 fPitchTarget) {
+  irr::f32 f=asin(m_vForeward.Y)*180.0f/M_PI,fPitch=0.0f;
 
   if (m_iState==eApHeliLowAlt) {
     fPitch=-f/10.0f;
@@ -195,7 +195,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
   m_vSideward2=m_vRotation.rotationToDirection(m_pAero->getSideward()),
   m_vVelocityLin=m_pPlane->getLinearVelocity();
   m_vVelocityAng=m_pPlane->getAngularVelocity();
-  m_vCheckPos=m_pTarget!=NULL?m_pTarget->getPosition():core::vector3df(0.0f,0.0f,0.0f);
+  m_vCheckPos=m_pTarget!=NULL?m_pTarget->getPosition():irr::core::vector3df(0.0f,0.0f,0.0f);
 
   m_vSideward.Y=0.0f;
 
@@ -212,9 +212,9 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
         if (m_bEnabled) {
           swprintf(sInfo,4096,L"AutoPilot active\nState: \"PlaneCruise\"\n");
 
-          core::vector2df vPlane=core::vector2df(m_vPosition.X,m_vPosition.Z),
-                          vPoint=core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
-                          vVeloc=core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z);
+          irr::core::vector2df vPlane=irr::core::vector2df(m_vPosition.X,m_vPosition.Z),
+                               vPoint=irr::core::vector2df(m_vCheckPos.X,m_vCheckPos.Z),
+                               vVeloc=irr::core::vector2df(m_vVelocityLin.X,m_vVelocityLin.Z);
 
           m_vCpVel=vPoint-vPlane;
 
@@ -223,7 +223,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
           vVeloc.normalize();
           m_vCpVel.normalize();
 
-          f32 fDiffY=(1050-m_vPosition.Y)/10.0f;
+          irr::f32 fDiffY=(1050-m_vPosition.Y)/10.0f;
 
           if (fDiffY> m_vVelocityLin.getLength()/5.0f) fDiffY= m_vVelocityLin.getLength()/5.0f;
           if (fDiffY<-m_vVelocityLin.getLength()/5.0f) fDiffY=-m_vVelocityLin.getLength()/5.0f;
@@ -252,7 +252,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
           fRoll=getRollControl(fYaw,sInfo);
 
-          f32 fDiffY=(1200-m_vPosition.Y)/10.0f;
+          irr::f32 fDiffY=(1200-m_vPosition.Y)/10.0f;
 
           if (fDiffY> m_vVelocityLin.getLength()/2.5f) fDiffY= m_vVelocityLin.getLength()/2.5f;
           if (fDiffY<-m_vVelocityLin.getLength()/2.5f) fDiffY=-m_vVelocityLin.getLength()/2.5f;
@@ -280,13 +280,13 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
 
       case eApHeliCruise:
         if (m_bEnabled) {
-          f32 fPitchTarget=-15.0f;
+          irr::f32 fPitchTarget=-15.0f;
           swprintf(sInfo,4096,L"AutoPilot active\nState:\"HeliCruise\"\n");
           swprintf(sInfo,4096,L"%s\nAngular Velocity: %.2f, %.2f, %.2f\n",sInfo,m_vVATransformed.X,m_vVATransformed.Y,m_vVATransformed.Z);
 
-          core::vector3df vRot=m_pPlane->getRotation(),
-                          vDir=vRot.rotationToDirection(m_pAero->getForeward()),
-                          vPos=m_pPlane->getPosition();
+          irr::core::vector3df vRot=m_pPlane->getRotation(),
+                               vDir=vRot.rotationToDirection(m_pAero->getForeward()),
+                               vPos=m_pPlane->getPosition();
 
           if (m_vPosition.Y<450.0f) {
             setState(eApHeliLowAlt);
@@ -302,29 +302,29 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
                 fThrust=1.0f-((m_vPosition.Y-550.0f)/50.0f)-m_vVelocityLin.Y/15.0f;
 
           if (m_pRay!=NULL) {
-            f32 fLeft=0.0f,fRight=0.0f;
+            irr::f32 fLeft=0.0f,fRight=0.0f;
 
             vDir.normalize();
 
-            core::vector2df vStart =core::vector2df( 10.0f*vDir.X, 10.0f*vDir.Z),
-                            vCenter=core::vector2df(250.0f*vDir.X,250.0f*vDir.Z);
+            irr::core::vector2df vStart =irr::core::vector2df( 10.0f*vDir.X, 10.0f*vDir.Z),
+                                 vCenter=irr::core::vector2df(250.0f*vDir.X,250.0f*vDir.Z);
 
-            for (u32 j=0; j<2; j++) {
-              f32 fDist[]={ 500.0f, 500.0f, 500.0f, 500.0f, 500.0f },
+            for (irr::u32 j=0; j<2; j++) {
+              irr::f32 fDist[]={ 500.0f, 500.0f, 500.0f, 500.0f, 500.0f },
                   fFact=1.0f;
 
-              for (u32 i=0; i<m_iHeliCheckCount; i++) {
-                core::array<core::vector3df> aHits;
-                core::vector2df v=vCenter,vEnd=v.rotateBy(j==0?m_fHeliDistLeft[i]:m_fHeliDistRight[i]);
-                core::vector3df v1=vPos+core::vector3df(vStart.X,0.0f,vStart.Y),
-                                v2=     core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
+              for (irr::u32 i=0; i<m_iHeliCheckCount; i++) {
+                irr::core::array<irr::core::vector3df> aHits;
+                irr::core::vector2df v=vCenter,vEnd=v.rotateBy(j==0?m_fHeliDistLeft[i]:m_fHeliDistRight[i]);
+                irr::core::vector3df v1=vPos+irr::core::vector3df(vStart.X,0.0f,vStart.Y),
+                                     v2=     irr::core::vector3df(  vEnd.X,0.0f,  vEnd.Y);
 
                 m_pRay->set(v1,v2,m_fHeliCheckLength);
                 m_pRay->checkWithWorld(aHits);
 
-                for (u32 k=0; k<aHits.size(); k++) {
-                  core::vector3df vDist=m_vPosition-aHits[k];
-                  f32 f=vDist.getLength();
+                for (irr::u32 k=0; k<aHits.size(); k++) {
+                  irr::core::vector3df vDist=m_vPosition-aHits[k];
+                  irr::f32 f=vDist.getLength();
                   if (f<fDist[i]) fDist[i]=f;
                 }
 
@@ -359,19 +359,19 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
             }
 
             {
-              core::array<core::vector3df> aHits;
-              m_pRay->set(m_vPosition-core::vector3df(0.0f,5.0f,0.0f),core::vector3df(0.0f,-1.0f,0.0f),250.0f);
+              irr::core::array<irr::core::vector3df> aHits;
+              m_pRay->set(m_vPosition-irr::core::vector3df(0.0f,5.0f,0.0f),irr::core::vector3df(0.0f,-1.0f,0.0f),250.0f);
               m_pRay->checkWithWorld(aHits);
               if (aHits.size()>0) {
-                f32 fHeight=250.0f;
-                for (u32 i=0; i<aHits.size(); i++) {
-                  core::vector3df vDist=m_vPosition-aHits[i];
-                  f32 f=vDist.getLength();
+                irr::f32 fHeight=250.0f;
+                for (irr::u32 i=0; i<aHits.size(); i++) {
+                  irr::core::vector3df vDist=m_vPosition-aHits[i];
+                  irr::f32 f=vDist.getLength();
                   if (f<fHeight) fHeight=f;
                 }
 
                 if (fHeight<250.0f) {
-                  f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-250.0f)/50.0f*fMaxAddPower;
+                  irr::f32 fMaxAddPower=1.0f-fThrust,fAdd=-(fHeight-250.0f)/50.0f*fMaxAddPower;
                   if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
                   fThrust+=fAdd;
                   swprintf(sInfo,4096,L"%s\nLow alt detected: %.2f\nPower Plus %.2f%%\n",sInfo,fHeight,100.0f*fAdd);
@@ -380,7 +380,7 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
             }
 
             if (m_vVelocityLin.Y<-10.0f) {
-              f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f*fMaxAddPower;
+              irr::f32 fMaxAddPower=1.0f-fThrust,fAdd=-(m_vVelocityLin.Y+10.0f)/5.0f*fMaxAddPower;
               if (fThrust+fAdd>1.0f) fAdd=1.0f-fThrust;
               fThrust+=fAdd;
               swprintf(sInfo,4096,L"%s\nHigh sink rate detected\nPower Plus: %.2f%%\n",sInfo,100.0f*fAdd);
@@ -399,14 +399,14 @@ void CAutoPilot::step(irr::f32 &fYaw, irr::f32 &fPitch, irr::f32 &fRoll, irr::f3
         if (m_bEnabled && m_pTarget!=NULL) {
 
           if (m_pTargetBody!=NULL) {
-            f32 fFact=m_fApDist>1000.0f?3.0f:3.0f*(m_fApDist/1000.0f);
+            irr::f32 fFact=m_fApDist>1000.0f?3.0f:3.0f*(m_fApDist/1000.0f);
             m_vCheckPos+=fFact*m_pTargetBody->getLinearVelocity();
           }
 
           irr::core::line3df cLine=irr::core::line3df(m_pPlane->getPosition(),m_pPlane->getPosition()+3000.0f*m_vVelocityLin);
           irr::core::vector3df vNear=cLine.getClosestPoint(m_vCheckPos);
 
-          f32 f=m_pTarget->getPosition().Y-vNear.Y;
+          irr::f32 f=m_pTarget->getPosition().Y-vNear.Y;
           if ((f>0.0f && m_vVATransformed.X>0.001f) || (f<0.0f && m_vVATransformed.X<-0.001f))  f-=100.0f*m_vVATransformed.X;
           fPitch=f;
 
@@ -435,15 +435,15 @@ void CAutoPilot::setState(eAutoPilotState iState) {
   m_iState=iState;
 }
 
-void CAutoPilot::setAutoPilotInfo(gui::IGUIStaticText *pInfo) {
+void CAutoPilot::setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo) {
   m_pAutoPilotInfo=pInfo;
 }
 
-bool CAutoPilot::onEvent(ode::IIrrOdeEvent *pEvent) {
+bool CAutoPilot::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
   return true;
 }
 
-bool CAutoPilot::handlesEvent(ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == ode::eIrrOdeEventStep;
+bool CAutoPilot::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep;
 }

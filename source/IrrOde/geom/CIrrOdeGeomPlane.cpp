@@ -8,8 +8,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomPlane::CIrrOdeGeomPlane(ISceneNode *parent,ISceneManager *mgr,s32 id, const vector3df &position,
-		                               const vector3df &rotation, const vector3df &scale)
+CIrrOdeGeomPlane::CIrrOdeGeomPlane(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id, const irr::core::vector3df &position,
+		                               const irr::core::vector3df &rotation, const irr::core::vector3df &scale)
 		                               : CIrrOdeGeom(parent,mgr,id,position,rotation,scale) {
 
   #ifdef _IRREDIT_PLUGIN
@@ -23,7 +23,7 @@ CIrrOdeGeomPlane::CIrrOdeGeomPlane(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
 void CIrrOdeGeomPlane::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomPlane::render() {
@@ -35,7 +35,7 @@ void CIrrOdeGeomPlane::initPhysics() {
   m_pOdeDevice->geomSetData(m_iGeomId,this);
 
   updateAbsolutePosition();
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   #ifdef _TRACE_INIT_PHYSICS
@@ -49,8 +49,8 @@ s32 CIrrOdeGeomPlane::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomPlane::getType() const {
-  return (ESCENE_NODE_TYPE )IRR_ODE_GEOM_PLANE_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomPlane::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE )IRR_ODE_GEOM_PLANE_ID;
 }
 
 const wchar_t *CIrrOdeGeomPlane::getTypeName() {
@@ -60,7 +60,7 @@ const wchar_t *CIrrOdeGeomPlane::getTypeName() {
 void CIrrOdeGeomPlane::setMassTotal(f32 fMass) {
 }
 
-void CIrrOdeGeomPlane::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomPlane::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
 
   out->addFloat("paramA",m_fA);
@@ -69,7 +69,7 @@ void CIrrOdeGeomPlane::serializeAttributes(IAttributes* out, SAttributeReadWrite
   out->addFloat("paramD",m_fD);
 }
 
-void CIrrOdeGeomPlane::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomPlane::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
 
   m_fA=in->getAttributeAsFloat("paramA");
@@ -78,7 +78,7 @@ void CIrrOdeGeomPlane::deserializeAttributes(IAttributes* in, SAttributeReadWrit
   m_fD=in->getAttributeAsFloat("paramD");
 }
 
-ISceneNode *CIrrOdeGeomPlane::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomPlane::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeGeomPlane *pRet=new CIrrOdeGeomPlane(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

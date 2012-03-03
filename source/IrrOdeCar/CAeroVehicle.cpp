@@ -7,13 +7,13 @@
   #include <CRearView.h>
   #include <irrklang.h>
 
-CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
   if (m_pBody!=NULL) {
     m_pBody->setUserData(this);
-    m_pTerrain=reinterpret_cast<ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
+    m_pTerrain=reinterpret_cast<irr::scene::ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
     m_pCam=m_pSmgr->addCameraSceneNode();
     m_pCam->setNearValue(0.1f);
@@ -28,7 +28,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
 
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
-    m_pTab=m_pGuiEnv->addTab(core::rect<s32>(0,0,500,500));
+    m_pTab=m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0,0,500,500));
     m_pTab->setVisible(false);
 
     m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pBody->getStepMotorFromName("aero_motor" );
@@ -37,8 +37,8 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
 
     m_pRay=(irr::ode::CIrrOdeGeomRay *)m_pBody->getGeomFromName("aero_ray");
 
-    for (u32 i=0; i<2; i++) {
-      c8 s[0xFF];
+    for (irr::u32 i=0; i<2; i++) {
+      irr::c8 s[0xFF];
       sprintf(s,"brake%i",i);
       m_pBrakes[i]=dynamic_cast<irr::ode::CIrrOdeMotor *>(m_pBody->getMotorFromName(s));
     }
@@ -60,7 +60,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_bInitialized=true;
 
     m_iNextCp=-1;
-    ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
+    irr::scene::ISceneNode *pCheckRoot=m_pSmgr->getSceneNodeFromName("planepoints");
     if (pCheckRoot!=NULL) {
       irr::core::list<irr::scene::ISceneNode *> lChildren=pCheckRoot->getChildren();
       irr::core::list<irr::scene::ISceneNode *>::Iterator it;
@@ -74,7 +74,7 @@ CAeroVehicle::CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *p
     m_pRView=pRView;
   }
 
-  for (u32 i=0; i<0xFF; i++) m_aCtrlBuffer[i]=0.0f;
+  for (irr::u32 i=0; i<0xFF; i++) m_aCtrlBuffer[i]=0.0f;
 }
 
 CAeroVehicle::~CAeroVehicle() {
@@ -90,9 +90,9 @@ void CAeroVehicle::activate() {
   m_bSwitchToMenu=false;
   m_bActive=true;
 
-  vector3df pos=m_pBody->getRotation().rotationToDirection(vector3df(0,5,15)),
-            up =m_pBody->getRotation().rotationToDirection(vector3df(0,0.1,0)),
-            tgt=m_pBody->getRotation().rotationToDirection(vector3df(0,1  ,0));
+  irr::core::vector3df pos=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,5,15)),
+                       up =m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0)),
+                       tgt=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,1  ,0));
 
   m_pCam->setPosition(m_pBody->getPosition()+pos);
   m_pCam->setUpVector(up);
@@ -102,18 +102,18 @@ void CAeroVehicle::activate() {
   wchar_t s[1024];
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
-  m_pController->restoreState((f32 *)m_aCtrlBuffer);
+  m_pController->restoreState((irr::f32 *)m_aCtrlBuffer);
   if (m_pCockpit) m_pCockpit->activate(m_pBody);
 }
 
 void CAeroVehicle::deactivate() {
-  m_pController->dumpState((f32 *)m_aCtrlBuffer);
+  m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
   m_pTab->setVisible(false);
   m_bActive=false;
   if (m_pCockpit) m_pCockpit->activate(NULL);
 }
 
-bool CAeroVehicle::OnEvent(const SEvent &event) {
+bool CAeroVehicle::OnEvent(const irr::SEvent &event) {
   bool bRet=m_pController->OnEvent(event);
   bRet|=CIrrOdeCarState::OnEvent(event);
   return bRet;
@@ -122,15 +122,15 @@ bool CAeroVehicle::OnEvent(const SEvent &event) {
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
-    vector3df vPos=m_pBody->getAbsolutePosition();
-    f32 fMinHeight=50,
+    irr::core::vector3df vPos=m_pBody->getAbsolutePosition();
+    irr::f32 fMinHeight=50,
         fMaxHeight=3000,
         fAltFact=vPos.Y<fMinHeight?1.0f:vPos.Y>fMaxHeight?0.0f:1-((vPos.Y-fMinHeight)/(fMaxHeight-fMinHeight)),
         fVel=m_pAero->getForewardVel(),
         fVelFact=fVel<100.0f?1.0f:fVel>180.0f?0.2f:1.0f-((fVel-100.0f)/100.0f);
 
     if (m_bActive) {
-      f32 fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
+      irr::f32 fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
       if (fThrust<m_fThrust-0.001 || fThrust>m_fThrust+0.001) {
         m_bDataChanged=true;
         m_fThrust=fThrust;
@@ -142,7 +142,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_bDataChanged=true;
       }
 
-      f32 f;
+      irr::f32 f;
 
       f=m_pController->get(m_pCtrls[eAeroPitchUp ]); if (f!=m_fPitch) { m_bDataChanged=true; m_fPitch=f; }
       f=m_pController->get(m_pCtrls[eAeroRollLeft]); if (f!=m_fRoll ) { m_bDataChanged=true; m_fRoll =f; }
@@ -178,7 +178,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
 
       if (m_pController->get(m_pCtrls[eAeroFlip])) {
-        m_pBody->addForceAtPosition(m_pBody->getPosition()+vector3df(0.0f,1.5f,0.0f),vector3df(0.0f,15.0f,0.0f));
+        m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
       }
 
       if (m_pController->get(m_pCtrls[eAeroAutoPilot])) {
@@ -237,7 +237,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
       m_fApDist=m_pAutoPilot->getApDist();
       if (m_fApDist<100.0f) {
-        s32 iNext=m_iNextCp;
+        irr::s32 iNext=m_iNextCp;
         while (iNext==m_iNextCp) {
           iNext=rand()%m_aCheckPoints.size();
           printf("next checkpoint (%s): %i\n",m_pBody->getName(),iNext);
@@ -253,7 +253,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_pTorque->setPower(fVelFact);
     m_pAero  ->setPower(fAltFact);
 
-    f32 fPitch,fRoll,fYaw;
+    irr::f32 fPitch,fRoll,fYaw;
 
     if (m_pAutoPilot->isEnabled()) {
       fPitch=m_fPitch;

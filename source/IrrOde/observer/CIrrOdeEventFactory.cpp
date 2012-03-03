@@ -21,7 +21,7 @@ namespace ode {
 CIrrOdeDefaultEventFactory::CIrrOdeDefaultEventFactory() {
 }
 
-IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, ISceneManager *pSmgr) {
+IIrrOdeEvent *CIrrOdeDefaultEventFactory::createMessage(CSerializer *pData, irr::scene::ISceneManager *pSmgr) {
   pData->resetBufferPos();
   u16 iCode=pData->getU16();
   switch (iCode) {
@@ -50,7 +50,7 @@ CIrrOdeEventFactory::CIrrOdeEventFactory() {
 
 CIrrOdeEventFactory::~CIrrOdeEventFactory() {
   while (m_lFactories.getSize()>0) {
-    list<IIrrOdeEventFactory *>::Iterator it=m_lFactories.begin();
+    irr::core::list<IIrrOdeEventFactory *>::Iterator it=m_lFactories.begin();
     IIrrOdeEventFactory *p=*it;
     m_lFactories.erase(it);
     delete p;
@@ -62,8 +62,8 @@ CIrrOdeEventFactory *CIrrOdeEventFactory::getSharedEventFactory() {
   return &cFactory;
 }
 
-IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, ISceneManager *pSmgr) {
-  list<IIrrOdeEventFactory *>::Iterator it;
+IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, irr::scene::ISceneManager *pSmgr) {
+  irr::core::list<IIrrOdeEventFactory *>::Iterator it;
   pData->resetBufferPos();
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++) {
     IIrrOdeEvent *evt=(*it)->createMessage(pData,pSmgr);
@@ -73,13 +73,13 @@ IIrrOdeEvent *CIrrOdeEventFactory::createMessage(CSerializer *pData, ISceneManag
 }
 
 void CIrrOdeEventFactory::registerEventFactory(IIrrOdeEventFactory *p) {
-  list<IIrrOdeEventFactory *>::Iterator it;
+  irr::core::list<IIrrOdeEventFactory *>::Iterator it;
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++) if (*it==p) return;
   m_lFactories.push_back(p);
 }
 
 void CIrrOdeEventFactory::removeEventFactory(IIrrOdeEventFactory *p) {
-  list<IIrrOdeEventFactory *>::Iterator it;
+  irr::core::list<IIrrOdeEventFactory *>::Iterator it;
   for (it=m_lFactories.begin(); it!=m_lFactories.end(); it++)
     if (*it==p) {
       IIrrOdeEventFactory *pFactory=*it;
@@ -89,7 +89,7 @@ void CIrrOdeEventFactory::removeEventFactory(IIrrOdeEventFactory *p) {
     }
 }
 
-void CIrrOdeEventFactory::setSceneManager(ISceneManager *pSmgr) {
+void CIrrOdeEventFactory::setSceneManager(irr::scene::ISceneManager *pSmgr) {
   m_pSmgr=pSmgr;
 }
 

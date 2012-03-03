@@ -19,12 +19,6 @@
 namespace irr {
 namespace ode {
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 class CIrrOdeManager;
 class IIrrOdeDevice;
 class CIrrOdeWorld;
@@ -33,42 +27,42 @@ class CIrrOdeWorld;
  * @class CIrrOdeSceneNode
  * This class is the base class for all scene nodes provided by IrrODE
  */
-class CIrrOdeSceneNode : public scene::ISceneNode, public ode::IIrrOdeEventListener {
+class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEventListener {
   protected:
-    aabbox3df m_cBoundingBox;               /**< the bounding box of the scene node */
-    ISceneManager *m_pSceneManager;         /**< the scene manager */
-    IVideoDriver *m_pVideoDriver;           /**< the video driver */
+    irr::core::aabbox3df m_cBoundingBox;               /**< the bounding box of the scene node */
+    irr::scene::ISceneManager *m_pSceneManager;         /**< the scene manager */
+    irr::video::IVideoDriver *m_pVideoDriver;           /**< the video driver */
     bool m_bPhysicsInitialized;             /**< is the physics of this node alread initialized? */
-    stringc m_sOdeClassName;                /**< this node's irrODE classname */
+    irr::core::stringc m_sOdeClassName;                /**< this node's irrODE classname */
     s32 m_iIdent;                           /**< this node's irrODE ID */
     CIrrOdeManager *m_pOdeManager;          /**< the ODE manager */
     IIrrOdeDevice *m_pOdeDevice;            /**< the ODE device */
     CIrrOdeWorld *m_pWorld;                 /**< world of this node */
 
-    SMaterial m_cMat;                /**< the material of the node */
-    ITriangleSelector *m_pSelector;
+    irr::video::SMaterial m_cMat;                /**< the material of the node */
+    irr::scene::ITriangleSelector *m_pSelector;
 
     void *m_pUserData;
 
-    ISceneNode *getAncestorOfType(ESCENE_NODE_TYPE iType);  /**< retrieve an ancestor of a given type */
+    irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);  /**< retrieve an ancestor of a given type */
 
     #ifdef _IRREDIT_PLUGIN
-      IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit when compiled as plugin */
+      irr::scene::IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit when compiled as plugin */
   	  c8 m_sResources[1024];    /**> the path name of the resources when copiled as plugin */
   	  bool m_bDrawEditorMesh;
     #endif
 
-    void cloneChildren(ISceneNode *pNewParent, ISceneManager *pNewManager);
+    void cloneChildren(irr::scene::ISceneNode *pNewParent, irr::scene::ISceneManager *pNewManager);
   public:
-    CIrrOdeSceneNode(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                     const vector3df &position=core::vector3df(0,0,0),
-		                 const vector3df &rotation = core::vector3df(0,0,0),
-		                 const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                     const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		                 const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeSceneNode();
 
     virtual void initPhysics(); /*!< init the dynamic object. Implemented by subclasses */
-    virtual const aabbox3df &getBoundingBox() const;
+    virtual const irr::core::aabbox3df &getBoundingBox() const;
 
     /**
      * Get the type name of the node
@@ -80,18 +74,18 @@ class CIrrOdeSceneNode : public scene::ISceneNode, public ode::IIrrOdeEventListe
 
     static const c8 *nodeNameToC8(const wchar_t *sName); /*!< a little helper that converts wchar_t* to c8* */
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
-    stringc getOdeClassname();                /*!< set the IrrODE classname */
-    void setOdeClassname(stringc sClassName); /*!< get the IrrODE classname */
+    irr::core::stringc getOdeClassname();                /*!< set the IrrODE classname */
+    void setOdeClassname(irr::core::stringc sClassName); /*!< get the IrrODE classname */
 
     int getIdent();             /*!< get the IrrODE identifier */
     void setIdent(int iIdent);  /*!< set the IrrODE identifier */
 
     virtual u32 getMaterialCount();
-    virtual SMaterial &getMaterial(u32 iIdx);
-    virtual void 	addChild (ISceneNode *child);
+    virtual irr::video::SMaterial &getMaterial(u32 iIdx);
+    virtual void 	addChild (irr::scene::ISceneNode *child);
 
     virtual void render();
     virtual void removeFromPhysics();  /**< remove the node from physics */
@@ -99,9 +93,9 @@ class CIrrOdeSceneNode : public scene::ISceneNode, public ode::IIrrOdeEventListe
 
     virtual void remove();
 
-    ISceneManager *getSceneManager();
+    irr::scene::ISceneManager *getSceneManager();
 
-    ITriangleSelector *getTriangleSelector();
+    irr::scene::ITriangleSelector *getTriangleSelector();
 
     void setUserData(void *p);
     void *getUserData();
@@ -111,9 +105,9 @@ class CIrrOdeSceneNode : public scene::ISceneNode, public ode::IIrrOdeEventListe
       void setDrawEditorMesh(bool b);
     #endif
 
-    virtual void setParent(ISceneNode *newParent);
+    virtual void setParent(irr::scene::ISceneNode *newParent);
 
-    scene::ISceneNode *getChildByName(const c8 *sName, scene::ISceneNode *pParent);
+    irr::scene::ISceneNode *getChildByName(const c8 *sName, irr::scene::ISceneNode *pParent);
 };
 
 } //namespace ode

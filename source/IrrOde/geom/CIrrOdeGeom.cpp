@@ -7,9 +7,9 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                         const vector3df &position, const vector3df &rotation, const vector3df &scale) :
-                         CIrrOdeSceneNode(parent, mgr, id, vector3df(0.0f,0.0f,0.0f), rotation, scale) {
+CIrrOdeGeom::CIrrOdeGeom(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                         const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
+                         CIrrOdeSceneNode(parent, mgr, id, irr::core::vector3df(0.0f,0.0f,0.0f), rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeGeom constructor\n");
@@ -21,17 +21,17 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
   m_iTriggerId=-1;
 	m_iCollisionGroup=0;
 
-  m_cCenterOfGravity=vector3df(0.0f,0.0f,0.0f);
-  m_cInertia1=vector3df(0.0f,0.0f,0.0f);
-  m_cInertia2=vector3df(0.0f,0.0f,0.0f);
-  m_cMassTranslate=vector3df(0.0f,0.0f,0.0f);
-  m_cOffsetPos=vector3df(0.0f,0.0f,0.0f);
-  m_cOffsetRot=vector3df(0.0f,0.0f,0.0f);
+  m_cCenterOfGravity=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_cInertia1=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_cInertia2=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_cMassTranslate=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_cOffsetPos=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_cOffsetRot=irr::core::vector3df(0.0f,0.0f,0.0f);
 
   m_iMass=m_pOdeDevice->massCreate();
   m_pOdeDevice->massSetZero(m_iMass);
 
-	m_pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
+	m_pBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
 
   m_aParamNames.push_back("DefaultSurface");
 
@@ -44,7 +44,7 @@ CIrrOdeGeom::CIrrOdeGeom(ISceneNode *parent,ISceneManager *mgr,s32 id,
       m_pWorld=reinterpret_cast<CIrrOdeWorld *>(m_pBody->getWorld());
     }
     else {
-      m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
+      m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
       if (m_pWorld) m_pWorld->addGeom(this);
     }
     #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -97,7 +97,7 @@ CIrrOdeWorld *CIrrOdeGeom::getWorld() {
   return m_pWorld;
 }
 
-void CIrrOdeGeom::setMassParameters(f32 fMass, vector3df c, vector3df i1, vector3df i2) {
+void CIrrOdeGeom::setMassParameters(f32 fMass, irr::core::vector3df c, irr::core::vector3df i1, irr::core::vector3df i2) {
   m_cCenterOfGravity=c;
   m_cInertia1=i1;
   m_cInertia2=i2;
@@ -106,7 +106,7 @@ void CIrrOdeGeom::setMassParameters(f32 fMass, vector3df c, vector3df i1, vector
   m_pOdeDevice->massSetParameters(m_iMass,fMass,c,i1,i2);
 }
 
-void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeom::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
 	if (!m_pBody)
@@ -130,7 +130,7 @@ void CIrrOdeGeom::serializeAttributes(IAttributes* out, SAttributeReadWriteOptio
 	if (m_bTrigger) out->addInt("triggerId",m_iTriggerId);
 }
 
-void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeom::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
   for (u32 i=0; i<getSurfaceParametersCount(); i++) {
     c8 s[0xFF];
@@ -153,7 +153,7 @@ void CIrrOdeGeom::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpti
 	if (m_bTrigger) m_iTriggerId=in->getAttributeAsInt("triggerId");
 }
 
-void CIrrOdeGeom::setMassTranslation(vector3df pos) {
+void CIrrOdeGeom::setMassTranslation(irr::core::vector3df pos) {
   m_cMassTranslate=pos;
   if (m_iGeomId) m_pOdeDevice->massTranslate(m_iMass,pos);
 }
@@ -170,7 +170,7 @@ void CIrrOdeGeom::initPhysics() {
     if (m_cMassTranslate.getLength()!=0.0f) m_pOdeDevice->massTranslate(m_iMass,m_cMassTranslate);
 
     m_cOffsetPos=getParent()->getPosition();
-    if (m_cOffsetPos!=vector3df(0.0f,0.0f,0.0f)) {
+    if (m_cOffsetPos!=irr::core::vector3df(0.0f,0.0f,0.0f)) {
       #ifdef _TRACE_INIT_PHYSICS
         printf("CIrrOdeGeom::initPhysics: offset position of geom set to (%.2f, %.2f, %.2f)\n",m_cOffsetPos.X,m_cOffsetPos.Y,m_cOffsetPos.Z);
       #endif
@@ -179,7 +179,7 @@ void CIrrOdeGeom::initPhysics() {
     }
 
     m_cOffsetRot=getParent()->getRotation();
-    if (m_cOffsetRot!=vector3df(0.0f,0.0f,0.0f)) {
+    if (m_cOffsetRot!=irr::core::vector3df(0.0f,0.0f,0.0f)) {
       #ifdef _TRACE_INIT_PHYSICS
         printf("CIrrOdeGeom::initPhysics: offset rotation of geom set to (%.2f, %.2f, %.2f)\n",m_cOffsetRot.X,m_cOffsetRot.Y,m_cOffsetRot.Z);
       #endif
@@ -187,13 +187,13 @@ void CIrrOdeGeom::initPhysics() {
     }
   }
   else {
-    vector3df rot=getParent()->getRotation();
+    irr::core::vector3df rot=getParent()->getRotation();
     m_pOdeDevice->geomSetRotation(m_iGeomId,rot);
   }
 
   m_aParams.clear();
   for (u32 i=0; i<m_aParamNames.size(); i++) {
-    CIrrOdeSurfaceParameters *p=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(stringw(m_aParamNames[i]));
+    CIrrOdeSurfaceParameters *p=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(irr::core::stringw(m_aParamNames[i]));
     m_aParams.push_back(p);
     if (p==NULL) printf("*ERROR* unable to find surface parameter \"%s\"!\n",m_aParamNames[i].c_str());
   }
@@ -256,7 +256,7 @@ void CIrrOdeGeom::removeFromPhysics() {
     }
 }
 
-void CIrrOdeGeom::setOffsetPosition(vector3df pPos) {
+void CIrrOdeGeom::setOffsetPosition(irr::core::vector3df pPos) {
   m_cOffsetPos=pPos;
   if (m_iGeomId) {
     #ifdef _TRACE_INIT_PHYSICS
@@ -266,7 +266,7 @@ void CIrrOdeGeom::setOffsetPosition(vector3df pPos) {
   }
 }
 
-void CIrrOdeGeom::setOffsetQuaternion(vector3df pRot) {
+void CIrrOdeGeom::setOffsetQuaternion(irr::core::vector3df pRot) {
   m_cOffsetRot=pRot;
   if (m_iGeomId) {
     #ifdef _TRACE_INIT_PHYSICS
@@ -276,8 +276,8 @@ void CIrrOdeGeom::setOffsetQuaternion(vector3df pRot) {
   }
 }
 
-void CIrrOdeGeom::setPosition(const vector3df &newpos) {
-	ISceneNode::setPosition(vector3df(0.0f,0.0f,0.0f));
+void CIrrOdeGeom::setPosition(const irr::core::vector3df &newpos) {
+	irr::scene::ISceneNode::setPosition(irr::core::vector3df(0.0f,0.0f,0.0f));
 }
 
 void CIrrOdeGeom::setCollide(bool b) {

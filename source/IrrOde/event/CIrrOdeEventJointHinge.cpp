@@ -9,7 +9,7 @@ namespace irr {
       m_fAngleRate=fAngleRate;
     }
 
-    CIrrOdeEventJointHinge::CIrrOdeEventJointHinge(CSerializer *pData, ISceneManager *pSmgr) : CIrrOdeEventJoint() {
+    CIrrOdeEventJointHinge::CIrrOdeEventJointHinge(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : CIrrOdeEventJoint() {
       m_fAngle=0.0f;
       m_fAngleRate=0.0f;
 

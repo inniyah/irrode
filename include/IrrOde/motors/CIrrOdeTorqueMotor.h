@@ -16,7 +16,7 @@ const wchar_t IRR_ODE_TORQUE_MOTOR_NAME[0xFF]=L"CIrrOdeTorqueMotor";
  */
 class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
   protected:
-    vector3df m_vRollAxis,      /*!< the roll axis */
+    irr::core::vector3df m_vRollAxis,      /*!< the roll axis */
               m_vPitchAxis,     /*!< the pitch axis */
               m_vYawAxis;       /*!< the yaw axis */
 
@@ -33,18 +33,18 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
         m_fRollFactor;    /*!< factor for the roll rotation */
 
   public:
-    CIrrOdeTorqueMotor(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                      const vector3df &position=core::vector3df(0,0,0),
-                      const vector3df &rotation = core::vector3df(0,0,0),
-                      const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeTorqueMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                      const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+                      const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+                      const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
     virtual void step();
     virtual const wchar_t *getTypeName();
 
-    virtual ESCENE_NODE_TYPE getType() const { return (ESCENE_NODE_TYPE)IRR_ODE_TORQUE_MOTOR_ID; }
+    virtual irr::scene::ESCENE_NODE_TYPE getType() const { return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_TORQUE_MOTOR_ID; }
 
-    void setRollAxis(vector3df v) { m_vRollAxis=v; }
-    void setPitchAxis(vector3df v) { m_vPitchAxis=v; }
-    void setYawAxis(vector3df v) { m_vYawAxis=v; }
+    void setRollAxis(irr::core::vector3df v) { m_vRollAxis=v; }
+    void setPitchAxis(irr::core::vector3df v) { m_vPitchAxis=v; }
+    void setYawAxis(irr::core::vector3df v) { m_vYawAxis=v; }
 
     void setRollFactor(f32 f) { m_fRollFactor=f; }
     void setPitchFactor(f32 f) { m_fPitchFactor=f; }
@@ -59,9 +59,9 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
     void setRoll(f32 f) { m_fRoll=f; }
     void setYaw(f32 f) { m_fYaw=f; }
 
-    vector3df getRollAxis() { return m_vRollAxis; }
-    vector3df getPitchAxis() { return m_vPitchAxis; }
-    vector3df getYawAxis() { return m_vYawAxis; }
+    irr::core::vector3df getRollAxis() { return m_vRollAxis; }
+    irr::core::vector3df getPitchAxis() { return m_vPitchAxis; }
+    irr::core::vector3df getYawAxis() { return m_vYawAxis; }
 
     bool isAeroRudder() { return m_bAeroRudder; }
 
@@ -74,9 +74,9 @@ class CIrrOdeTorqueMotor : public IIrrOdeStepMotor {
 
     f32 getForewardVel() { return m_fForewardVel; }
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
-    virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
+    virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
 
     /**
      * Set the factors for the torque forces

@@ -12,8 +12,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeWorld::CIrrOdeWorld(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                           const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeWorld::CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                           const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                            CIrrOdeDampable(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -22,11 +22,11 @@ CIrrOdeWorld::CIrrOdeWorld(ISceneNode *parent,ISceneManager *mgr,s32 id,
 
   m_iWorldId=0;
   m_iJointGroupId=0;
-  m_sSurfaceFile=stringw("");
+  m_sSurfaceFile=irr::core::stringw("");
 
   m_pWorldSpace=NULL;
 
-	m_cGravity=vector3df(0.0f,-10.0f,0.0f);
+	m_cGravity=irr::core::vector3df(0.0f,-10.0f,0.0f);
 	m_pOdeManager->addWorld(this);
 	m_bDrawEditorMesh=true;
   #ifdef _IRREDIT_PLUGIN
@@ -85,7 +85,7 @@ void CIrrOdeWorld::initPhysics() {
     printf("world created .. id=%i\n",(int)m_iWorldId);
   #endif
 
-  list<CIrrOdeSpace *>::Iterator s;
+  irr::core::list<CIrrOdeSpace *>::Iterator s;
   for (s=m_pSpaces.begin(); s!=m_pSpaces.end(); s++) {
     #ifdef _TRACE_INIT_PHYSICS
       printf("CIrrOdeWorld::initPhysics: init space\n");
@@ -94,7 +94,7 @@ void CIrrOdeWorld::initPhysics() {
     pSpace->initPhysics();
   }
 
-  list<CIrrOdeGeom *>::Iterator i;
+  irr::core::list<CIrrOdeGeom *>::Iterator i;
 
   for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++) {
     #ifdef _TRACE_INIT_PHYSICS
@@ -104,7 +104,7 @@ void CIrrOdeWorld::initPhysics() {
     pGeom->initPhysics();
   }
 
-  list<CIrrOdeBody *>::Iterator b,ib2;
+  irr::core::list<CIrrOdeBody *>::Iterator b,ib2;
   for (b=m_pBodies.begin(); b!=m_pBodies.end(); b++) {
     #ifdef _TRACE_INIT_PHYSICS
       printf("CIrrOdeWorld::initPhysics: init body\n");
@@ -142,7 +142,7 @@ void CIrrOdeWorld::addGeom(CIrrOdeGeom *pGeom) {
 }
 
 void CIrrOdeWorld::removeBody(CIrrOdeBody *pBody) {
-  list<CIrrOdeBody *>::Iterator i;
+  irr::core::list<CIrrOdeBody *>::Iterator i;
   for (i=m_pBodies.begin(); i!=m_pBodies.end(); i++)
     if ((*i)==pBody) {
       #ifdef _TRACE_INIT_PHYSICS
@@ -154,7 +154,7 @@ void CIrrOdeWorld::removeBody(CIrrOdeBody *pBody) {
 }
 
 void CIrrOdeWorld::removeGeom(CIrrOdeGeom *pGeom) {
-  list<CIrrOdeGeom *>::Iterator i;
+  irr::core::list<CIrrOdeGeom *>::Iterator i;
   for (i=m_pGeoms.begin(); i!=m_pGeoms.end(); i++)
     if ((*i)==pGeom) {
       #ifdef _TRACE_INIT_PHYSICS
@@ -305,7 +305,7 @@ f32 CIrrOdeWorld::getQuickStepSOR() {
 }
 
 void CIrrOdeWorld::frameUpdate() {
-  list<CIrrOdeBody *>::Iterator i;
+  irr::core::list<CIrrOdeBody *>::Iterator i;
   for (i=m_pBodies.begin(); i!=m_pBodies.end(); i++) (*i)->frameUpdate();
 }
 
@@ -318,11 +318,11 @@ void CIrrOdeWorld::quickStep(f32 fTime) {
 }
 
 void CIrrOdeWorld::resetCollisionAttributes() {
-  list<CIrrOdeBody *>::Iterator it;
+  irr::core::list<CIrrOdeBody *>::Iterator it;
   for (it=m_pBodies.begin(); it!=m_pBodies.end(); it++) {
     (*it)->setCollision(false);
     (*it)->setIsTouching(NULL);
-    (*it)->setCollisionPoint(vector3df(0.0f,0.0f,0.0f));
+    (*it)->setCollisionPoint(irr::core::vector3df(0.0f,0.0f,0.0f));
     (*it)->setCollisionMaterial(0);
   }
 }
@@ -333,19 +333,19 @@ void CIrrOdeWorld::render() {
 
 void CIrrOdeWorld::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
-ESCENE_NODE_TYPE CIrrOdeWorld::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeWorld::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID;
 }
 
-void CIrrOdeWorld::setGravity(vector3df cGravity) {
+void CIrrOdeWorld::setGravity(irr::core::vector3df cGravity) {
   m_cGravity=cGravity;
   if (m_iWorldId) m_pOdeDevice->worldSetGravity(m_iWorldId,m_cGravity);
 }
 
-vector3df &CIrrOdeWorld::getGravity() {
+irr::core::vector3df &CIrrOdeWorld::getGravity() {
   return m_cGravity;
 }
 
@@ -353,7 +353,7 @@ u32 CIrrOdeWorld::getJointGroupId() {
   return m_iJointGroupId;
 }
 
-list<CIrrOdeBody *> &CIrrOdeWorld::getBodyList() {
+irr::core::list<CIrrOdeBody *> &CIrrOdeWorld::getBodyList() {
   return m_pBodies;
 }
 
@@ -377,7 +377,7 @@ IIrrOdeContactParameters *CIrrOdeWorld::getContactCalculator() {
   return m_pOdeDevice->getContactCalculator();
 }
 
-void CIrrOdeWorld::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeWorld::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeDampable::serializeAttributes(out,options);
 
   out->addFloat("StepSize",m_pOdeDevice->getStepSize());
@@ -386,7 +386,7 @@ void CIrrOdeWorld::serializeAttributes(IAttributes* out, SAttributeReadWriteOpti
   out->addBool("DrawEditorMesh",m_bDrawEditorMesh);
 }
 
-void CIrrOdeWorld::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeWorld::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   #ifdef _IRREDIT_PLUGIN
     bool b=m_bDrawEditorMesh;
   #endif
@@ -396,21 +396,21 @@ void CIrrOdeWorld::deserializeAttributes(IAttributes* in, SAttributeReadWriteOpt
   m_pOdeDevice->setStepSize(m_fStepSize);
   m_cGravity=in->getAttributeAsVector3d("Gravity");
   m_sSurfaceFile=in->getAttributeAsString("surfaceDefinitions");
-  if (stringw("")!=m_sSurfaceFile) loadFromFile(m_sSurfaceFile.c_str());
+  if (irr::core::stringw("")!=m_sSurfaceFile) loadFromFile(m_sSurfaceFile.c_str());
   m_bDrawEditorMesh=in->getAttributeAsBool("DrawEditorMesh");
 
   #ifdef _IRREDIT_PLUGIN
     if (b!=m_bDrawEditorMesh) {
-      list<CIrrOdeSceneNode *>::Iterator it;
+      irr::core::list<CIrrOdeSceneNode *>::Iterator it;
       for (it=m_pChildNodes.begin(); it!=m_pChildNodes.end(); it++)
         (*it)->setDrawEditorMesh(m_bDrawEditorMesh);
     }
   #endif
 }
 
-ISceneNode *CIrrOdeWorld::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeWorld::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeWorld *pWorld=new CIrrOdeWorld(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
-  copyParams(pWorld); 
+  copyParams(pWorld);
   CIrrOdeSceneNode::cloneChildren(pWorld,newManager);
   return pWorld;
 }
@@ -450,23 +450,23 @@ void CIrrOdeWorld::removeFromPhysics() {
   }
 }
 
-void CIrrOdeWorld::loadParameter(IXMLReader *pReader) {
+void CIrrOdeWorld::loadParameter(irr::io::IXMLReader *pReader) {
   while (pReader->read()) {
     switch (pReader->getNodeType()) {
       case io::EXN_ELEMENT_END:
-        if (stringw("attributes")==pReader->getNodeName()) {
+        if (irr::core::stringw("attributes")==pReader->getNodeName()) {
           return;
         }
         break;
 
       case io::EXN_ELEMENT:
-        if (stringw("attributes")==pReader->getNodeName()) {
-          io::IAttributes *pAttr=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createEmptyAttributes(NULL);
+        if (irr::core::stringw("attributes")==pReader->getNodeName()) {
+          irr::io::IAttributes *pAttr=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createEmptyAttributes(NULL);
           pAttr->read(pReader);
           CIrrOdeSurfaceParameters *p=new CIrrOdeSurfaceParameters();
           p->setStatic(true);
           p->deserializeAttributes(pAttr,NULL,0);
-          core::stringc sName=core::stringc(p->getName());
+          irr::core::stringc sName=irr::core::stringc(p->getName());
           printf("%s\n",sName.c_str());
           CIrrOdeManager::getSharedInstance()->addSurfaceParameter(p);
         }
@@ -481,17 +481,17 @@ u32 CIrrOdeWorld::loadFromFile(const wchar_t *sName) {
   u32 iRet=0;
 
   printf("load from file!\n");
-  io::IReadFile *pRead=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createAndOpenFile(stringc(stringw(sName)).c_str());
+  io::IReadFile *pRead=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createAndOpenFile(irr::core::stringc(irr::core::stringw(sName)).c_str());
 
   if (!pRead) {
-    printf("unable to open \"%s\"\n",stringc(stringw(sName)).c_str());
+    printf("unable to open \"%s\"\n",irr::core::stringc(irr::core::stringw(sName)).c_str());
     return 0;
   }
 
-  io::IXMLReader *pReader=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createXMLReader(pRead);
+  irr::io::IXMLReader *pReader=m_pSceneManager->getGUIEnvironment()->getFileSystem()->createXMLReader(pRead);
 
   if (!pReader) {
-    printf("\"%s\" is an invalid XML file\n",stringc(stringw(sName)).c_str());
+    printf("\"%s\" is an invalid XML file\n",irr::core::stringc(irr::core::stringw(sName)).c_str());
     return 0;
   }
 
@@ -501,7 +501,7 @@ u32 CIrrOdeWorld::loadFromFile(const wchar_t *sName) {
         break;
 
       case io::EXN_ELEMENT:
-        if (stringw("parameters")==pReader->getNodeName()) {
+        if (irr::core::stringw("parameters")==pReader->getNodeName()) {
           printf("parameter!\n");
           iRet++;
           loadParameter(pReader);
@@ -515,24 +515,24 @@ u32 CIrrOdeWorld::loadFromFile(const wchar_t *sName) {
   pReader->drop();
   pRead->drop();
 
-  printf("%i surface parameter sets loaded from \"%s\"\n",iRet,stringc(stringw(sName)).c_str());
+  printf("%i surface parameter sets loaded from \"%s\"\n",iRet,irr::core::stringc(irr::core::stringw(sName)).c_str());
   return iRet;
 }
 
 u32 CIrrOdeWorld::setSurfaceXml(const wchar_t *sName) {
-	m_sSurfaceFile=stringw(sName);
+	m_sSurfaceFile=irr::core::stringw(sName);
 	return loadFromFile(sName);
 }
 
 #ifdef _IRREDIT_PLUGIN
   void CIrrOdeWorld::addOdeChildNode(CIrrOdeSceneNode *pNode) {
-    list<CIrrOdeSceneNode *>::Iterator it;
+    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
     for (it=m_pChildNodes.begin(); it!=m_pChildNodes.end(); it++) if (*it==pNode) return;
     m_pChildNodes.push_back(pNode);
   }
 
   void CIrrOdeWorld::removeOdeChildNode(CIrrOdeSceneNode *pNode) {
-    list<CIrrOdeSceneNode *>::Iterator it;
+    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
     for (it=m_pChildNodes.begin(); it!=m_pChildNodes.end(); it++)
       if (*it==pNode) {
         m_pChildNodes.erase(it);

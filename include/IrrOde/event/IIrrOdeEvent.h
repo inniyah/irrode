@@ -7,12 +7,6 @@
 namespace irr {
 namespace ode {
 
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /**
  * This enumeration holds the IDs of the IrrOde Events
  */

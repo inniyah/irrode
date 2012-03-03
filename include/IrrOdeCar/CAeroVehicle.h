@@ -35,9 +35,9 @@ enum eAerealControls {
   eAeroFlip
 };
 
-class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::IIrrOdeEventListener {
+class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   protected:
-    f32 m_fPitch,
+    irr::f32 m_fPitch,
         m_fRoll,
         m_fYaw,
         m_fThrust,
@@ -45,10 +45,10 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
         m_fCamAngleV,
         m_fApDist;
 
-    s32 m_iNextCp,
+    irr::s32 m_iNextCp,
         m_aCtrlBuffer[0xFF];
 
-    u32 m_iLastShot1,
+    irr::u32 m_iLastShot1,
         m_iLastShot2,
         m_iShotsFired;
 
@@ -61,7 +61,7 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
 
     CRearView *m_pRView;
 
-    IGUITab *m_pTab;
+    irr::gui::IGUITab *m_pTab;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pBody;
@@ -73,13 +73,13 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     irr::ode::CIrrOdeServo        *m_pSteer;
     irr::ode::CIrrOdeMotor        *m_pBrakes[2];
 
-    ICameraSceneNode *m_pCam;
-    ITerrainSceneNode *m_pTerrain;
+    irr::scene::ICameraSceneNode *m_pCam;
+    irr::scene::ITerrainSceneNode *m_pTerrain;
 
     CAutoPilot *m_pAutoPilot;
     CTargetSelector *m_pTargetSelector;
 
-    const u32 *m_pCtrls;
+    const irr::u32 *m_pCtrls;
 
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
@@ -87,21 +87,21 @@ class CAeroVehicle : public CIrrOdeCarState, public IEventReceiver, public ode::
     //irrklang::ISound *m_pSound;
 
   public:
-    CAeroVehicle(IrrlichtDevice *pDevice, ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CAeroVehicle();
 
     virtual void activate();
     virtual void deactivate();
     //virtual u32 update();
 
-    virtual bool OnEvent(const SEvent &event);
+    virtual bool OnEvent(const irr::SEvent &event);
 
-    virtual bool onEvent(ode::IIrrOdeEvent *pEvent);
-    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent);
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
-    void setCtrl(const u32 *pCtrl) { m_pCtrls=pCtrl; }
+    void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
-    virtual void odeStep(u32 iStep)=0;
+    virtual void odeStep(irr::u32 iStep)=0;
 };
 
 #endif

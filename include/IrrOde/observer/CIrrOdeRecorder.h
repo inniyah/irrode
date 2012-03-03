@@ -21,7 +21,7 @@ class CIrrOdeRecorder : public IIrrOdeEventListener {
     IrrlichtDevice *m_pDevice;
     bool m_bRecording;
     irr::core::list<IIrrOdeEvent *> m_lEvents;
-    stringc m_sAppName;
+    irr::core::stringc m_sAppName;
 
   public:
     /**

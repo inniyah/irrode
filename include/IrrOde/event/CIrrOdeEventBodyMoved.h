@@ -30,21 +30,21 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
     u16 m_iAngularDamping,
         m_iLinearDamping;
     u8 m_iFlags;              /**< flags */
-    vector3df m_vNewPos,      /**< the new position */
+    irr::core::vector3df m_vNewPos,      /**< the new position */
               m_vNewRot,      /**< the new rotation */
               m_vNewLinVel,   /**< the new linear velocity */
               m_vNewAngVel,   /**< the new angular velocity */
               m_vColPoint;    /**< the collision point */
 
   public:
-    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, vector3df &vPos, vector3df &vRot, vector3df &vLinVel, vector3df &vAngVel);
-    CIrrOdeEventBodyMoved(CSerializer *pData, ISceneManager *pSmgr);
+    CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, irr::core::vector3df &vPos, irr::core::vector3df &vRot, irr::core::vector3df &vLinVel, irr::core::vector3df &vAngVel);
+    CIrrOdeEventBodyMoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr);
     CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn);
 
-    vector3df &getNewPosition() { return m_vNewPos; }
-    vector3df &getNewRotation() { return m_vNewRot; }
-    vector3df &getNewLinearVelocity() { return m_vNewLinVel; }
-    vector3df &getNewAngularVelocity() { return m_vNewAngVel; }
+    irr::core::vector3df &getNewPosition() { return m_vNewPos; }
+    irr::core::vector3df &getNewRotation() { return m_vNewRot; }
+    irr::core::vector3df &getNewLinearVelocity() { return m_vNewLinVel; }
+    irr::core::vector3df &getNewAngularVelocity() { return m_vNewAngVel; }
 
     bool positionChanged() { return m_iFlags&siIrrOdeEventPosition; }
     bool rotationChanged() { return m_iFlags&siIrrOdeEventRotation; }
@@ -69,8 +69,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
     s32 getCollisionMaterial() { return m_iColMaterial; }
     void setCollisionMaterial(s32 i) { m_iColMaterial=i; }
 
-    vector3df getCollisionPoint() { return m_vColPoint; }
-    void setCollisionPoint(vector3df v) { m_vColPoint=v; }
+    irr::core::vector3df getCollisionPoint() { return m_vColPoint; }
+    void setCollisionPoint(irr::core::vector3df v) { m_vColPoint=v; }
 
     virtual CSerializer *serialize();
 

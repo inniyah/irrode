@@ -8,8 +8,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomSphere::CIrrOdeGeomSphere(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                     const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeGeomSphere::CIrrOdeGeomSphere(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                     const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                      CIrrOdeGeom(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -37,15 +37,15 @@ CIrrOdeGeomSphere::~CIrrOdeGeomSphere() {
 
 void CIrrOdeGeomSphere::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomSphere::render() {
   CIrrOdeSceneNode::render();
   #ifdef _DRAW_BOUNDING_BOXES
-    m_pVideoDriver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
+    m_pVideoDriver->setTransform(irr::video::ETS_WORLD, AbsoluteTransformation);
     m_pVideoDriver->setMaterial(m_cMat);
-    m_pVideoDriver->draw3DBox(m_cBoundingBox,SColor(100,0x40,0x40,0x40));
+    m_pVideoDriver->draw3DBox(m_cBoundingBox,irr::video::SColor(100,0x40,0x40,0x40));
   #endif
 }
 
@@ -53,21 +53,21 @@ void CIrrOdeGeomSphere::initPhysics() {
   if (m_bPhysicsInitialized) return;
 
   updateAbsolutePosition();
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
   if (m_fRadius==0.0f) {
-    IMesh *pMesh=NULL;
+    irr::scene::IMesh *pMesh=NULL;
 
-    ISceneNode *pNode=getParent();
+    irr::scene::ISceneNode *pNode=getParent();
 
     switch (pNode->getType()) {
-      case ESNT_MESH :
-        pMesh=(reinterpret_cast<IMeshSceneNode *>(pNode))->getMesh();
+      case irr::scene::ESNT_MESH :
+        pMesh=(reinterpret_cast<irr::scene::IMeshSceneNode *>(pNode))->getMesh();
         break;
 
-      case ESNT_ANIMATED_MESH:
-        pMesh=(reinterpret_cast<IAnimatedMeshSceneNode *>(pNode))->getMesh();
+      case irr::scene::ESNT_ANIMATED_MESH:
+        pMesh=(reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(pNode))->getMesh();
         break;
 
       default:
@@ -119,8 +119,8 @@ s32 CIrrOdeGeomSphere::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomSphere::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_GEOM_SPHERE_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomSphere::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_SPHERE_ID;
 }
 
 const wchar_t *CIrrOdeGeomSphere::getTypeName() {
@@ -139,17 +139,17 @@ f32 CIrrOdeGeomSphere::getRadius() {
   return m_fRadius;
 }
 
-void CIrrOdeGeomSphere::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomSphere::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
   out->addFloat("Radius",m_fRadius);
 }
 
-void CIrrOdeGeomSphere::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomSphere::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
   m_fRadius=in->getAttributeAsFloat("Radius");
 }
 
-ISceneNode *CIrrOdeGeomSphere::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomSphere::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeGeomSphere *pRet=new CIrrOdeGeomSphere(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);

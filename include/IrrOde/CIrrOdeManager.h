@@ -31,24 +31,24 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     bool m_bPhysicsInitialized; /**< was the initPhysics call already done? */
 
-    core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
-    core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
-    core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
+    irr::core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
+    irr::core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
+    irr::core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
 
     /**
-     * This is a list of all objects that want to post events
+     * This is a irr::core::list of all objects that want to post events
      * about their state change after the step has been done.
      */
-    core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
+    irr::core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
 
     IIrrOdeEventQueue *m_pQueue;
 
     ITimer *m_pTimer;                                           /**< the Irrlicht timer */
 
-    scene::ISceneManager *m_pSmgr;
+    irr::scene::ISceneManager *m_pSmgr;
     IrrlichtDevice *m_pDevice;
 
-		core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global list of surface parameters */
+		irr::core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global irr::core::list of surface parameters */
 		CIrrOdeSurfaceParameters m_cNullSurface;
 
 	  IIrrOdeDevice *m_pOdeDevice;
@@ -83,12 +83,12 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
     void initPhysics();																					/*!< init all dynamic objects */
-    core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a list of all registered IrrOde scene nodes */
-    core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a list of all registered IrrOde worlds */
+    irr::core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a irr::core::list of all registered IrrOde scene nodes */
+    irr::core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a irr::core::list of all registered IrrOde worlds */
 
 		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
 		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
-		CIrrOdeSurfaceParameters *getSurfaceParameter(core::stringw sName);
+		CIrrOdeSurfaceParameters *getSurfaceParameter(irr::core::stringw sName);
 
     const c8 *const *getSurfaceParameterList();
 
@@ -141,7 +141,7 @@ class CIrrOdeManager : public IIrrOdeEventListener {
      * @param pNode node to remove
      * @see CIrrOdeEventNodeRemoved
      */
-    void removeSceneNode(ISceneNode *pNode);
+    void removeSceneNode(irr::scene::ISceneNode *pNode);
 
     /**
      * This method encapsulates the "loadScene" method of the Irrlicht scene manager. It loads the

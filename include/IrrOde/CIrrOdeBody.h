@@ -29,11 +29,11 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     u32 m_iMass;                            /**< this body's ODE dMass */
     CIrrOdeWorld *m_pWorld;                 /**< this body's world */
     CIrrOdeBody *m_pParentBody;             /**< this body's parent body */
-    list<CIrrOdeGeom *> m_pGeoms;           /**< this body's geoms */
-    list<CIrrOdeJoint *> m_pJoints;         /**< this body's joints */
-    list<CIrrOdeBody *> m_pChildBodies;     /**< this body's child bodies connected by joints */
-    list<IIrrOdeStepMotor *> m_lStepMotors; /**< list of all step motors attached to the body */
-    list<IIrrOdeMotor *> m_lMotors;         /**< list of all motors and servos attached to the body */
+    irr::core::list<CIrrOdeGeom *> m_pGeoms;           /**< this body's geoms */
+    irr::core::list<CIrrOdeJoint *> m_pJoints;         /**< this body's joints */
+    irr::core::list<CIrrOdeBody *> m_pChildBodies;     /**< this body's child bodies connected by joints */
+    irr::core::list<IIrrOdeStepMotor *> m_lStepMotors; /**< irr::core::list of all step motors attached to the body */
+    irr::core::list<IIrrOdeMotor *> m_lMotors;         /**< irr::core::list of all motors and servos attached to the body */
     bool m_bEnabled,                        /**< is this body active or not? */
          m_bParamMaster,                    /**< is this body the parameter master, i.e. does it set the body parameters of other bodies with the same ODE classname? */
          m_bCollision,                      /**< did this body collide in the last simulation step? */
@@ -48,16 +48,16 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
 
     IIrrOdeEventQueue *m_pQueue;            /**< the event queue used to post all kinds of events */
 
-    vector3df m_vLinear,              /**< linear velocity of the body. Is updated when calling "getLinearVelocity" */
+    irr::core::vector3df m_vLinear,              /**< linear velocity of the body. Is updated when calling "getLinearVelocity" */
               m_vAngular,             /**< angular velocity of the body. Is updated when calling "getAngularVelocity" */
               m_vFiniteRotationAxis,  /**< the finite rotation mode axis */
               m_vCollisionPoint;      /**< point of the collision if the body collided */
 
   public:
-    CIrrOdeBody(ISceneNode *parent,ISceneManager *mgr,s32 id = -1,
-                const vector3df &position=core::vector3df(0,0,0),
-		            const vector3df &rotation = core::vector3df(0,0,0),
-		            const vector3df &scale = core::vector3df(1.0f, 1.0f, 1.0f));
+    CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
+                const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
+		            const irr::core::vector3df &rotation = irr::core::vector3df(0,0,0),
+		            const irr::core::vector3df &scale = irr::core::vector3df(1.0f, 1.0f, 1.0f));
 
     virtual ~CIrrOdeBody();
 
@@ -67,7 +67,7 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
      */
     u32 getBodyId();
 
-    virtual void addChild(ISceneNode *pChild);
+    virtual void addChild(irr::scene::ISceneNode *pChild);
 
     virtual void setLinearDamping(f32 fScale);                /**< set the linear damping of the body */
     virtual f32 getLinearDamping();                           /**< get the linear damping of the body */
@@ -95,8 +95,8 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
 
     void setFiniteRotationMode(bool bFlag);        /**< set finite rotation mode */
     bool getFiniteRotationMode();                  /**< get finite rotation mode */
-    void setFiniteRotationAxis(vector3df &pAxis);  /**< set finite rotation axis */
-    vector3df &getFiniteRotationAxis();            /**< get finite rotation axis */
+    void setFiniteRotationAxis(irr::core::vector3df &pAxis);  /**< set finite rotation axis */
+    irr::core::vector3df &getFiniteRotationAxis();            /**< get finite rotation axis */
     CIrrOdeWorld *getWorld();                      /**< get the assiciated CIrrOdeWorld object */
     void setGravityMode(int iMode);                /**< set the gravity mode */
     int getGravityMode();                          /**< get the gravity mode */
@@ -105,9 +105,9 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     void addGeom(CIrrOdeGeom *pGeom);              /**< add a geom to the body */
     void addJoint(CIrrOdeJoint *pJoint);           /**< add a joint to the body */
 
-    vector3df getPointVel(vector3df vPos);         /**< get the velocity at a specific position */
-    vector3df getRelPointVel(vector3df vPos);      /**< get the relative velocity at a specific position */
-    vector3df getRelPointPos(vector3df vPos);      /**< get the relative position of a specific position */
+    irr::core::vector3df getPointVel(irr::core::vector3df vPos);         /**< get the velocity at a specific position */
+    irr::core::vector3df getRelPointVel(irr::core::vector3df vPos);      /**< get the relative velocity at a specific position */
+    irr::core::vector3df getRelPointPos(irr::core::vector3df vPos);      /**< get the relative position of a specific position */
 
     void removeGeom(CIrrOdeGeom *pGeom);  /**< remove a geom from the body */
 
@@ -116,18 +116,18 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
 
     s32 getID();  /**< get the body's ID */
 
-    ESCENE_NODE_TYPE getType() const;    /**< get the body's object type */
+    irr::scene::ESCENE_NODE_TYPE getType() const;    /**< get the body's object type */
     const char *getTypeName() const;     /**< get the body's object type name */
     bool isEnabled();                    /**< is the body enabled? */
     void frameUpdate();                  /**< called each frame to check for activation changes */
 
-    void addForce(vector3df force);                          /**< add a force to the body */
-    void addForceAtPosition(vector3df pos, vector3df force); /**< add a force at a specific position to the body */
-    void addTorque(vector3df torque);                        /**< add a torque to the body */
-    void setTorque(vector3df torque);                        /**< set the body's torque */
+    void addForce(irr::core::vector3df force);                          /**< add a force to the body */
+    void addForceAtPosition(irr::core::vector3df pos, irr::core::vector3df force); /**< add a force at a specific position to the body */
+    void addTorque(irr::core::vector3df torque);                        /**< add a torque to the body */
+    void setTorque(irr::core::vector3df torque);                        /**< set the body's torque */
 
-    virtual void setPosition(const vector3df &newPos);  /**< set the body's position */
-    virtual void setRotation(const vector3df &newRot);  /**< set the body's rotation */
+    virtual void setPosition(const irr::core::vector3df &newPos);  /**< set the body's position */
+    virtual void setRotation(const irr::core::vector3df &newRot);  /**< set the body's rotation */
 
     CIrrOdeBody *getParentBody();  /**< get the parent body */
 
@@ -135,12 +135,12 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
 
     void addChildBody(CIrrOdeBody *pBody);  /**< add a child body */
 
-    list<CIrrOdeJoint *> getJoints();  /**< get a list of the body's joints */
+    irr::core::list<CIrrOdeJoint *> getJoints();  /**< get a irr::core::list of the body's joints */
 
-    virtual void serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const;
-    virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
+    virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const;
+    virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
-    virtual ISceneNode *clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+    virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
 
     void setParamMaster(bool b);  /**< set this body to be the parameter master for all bodies of the same OdeClassName */
     bool isParamMaster();         /**< is this body the parameter master? */
@@ -158,11 +158,11 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     void setIsTouching(CIrrOdeGeom *pTouch);
     CIrrOdeGeom *getTouched();
 
-    virtual void setLinearVelocity(vector3df newVel);     /**< update the node's linear velocity wihout affecing ODE */
-    virtual void setAngularVelocity(vector3df newVel);    /**< update the node's angular velocity without affecting ODE */
+    virtual void setLinearVelocity(irr::core::vector3df newVel);     /**< update the node's linear velocity wihout affecing ODE */
+    virtual void setAngularVelocity(irr::core::vector3df newVel);    /**< update the node's angular velocity without affecting ODE */
 
-    virtual vector3df getLinearVelocity();    /**< get the node's "linear velocity" attribute wihtout querying ODE */
-    virtual vector3df getAngularVelocity();   /**< get the node's "angular velocity" attribute wihtout querying ODE */
+    virtual irr::core::vector3df getLinearVelocity();    /**< get the node's "linear velocity" attribute wihtout querying ODE */
+    virtual irr::core::vector3df getAngularVelocity();   /**< get the node's "angular velocity" attribute wihtout querying ODE */
 
     void setNodeLinearDamping(f32 fScale);  /**< set the node's "linear damping" attribute without affecting ODE */
     void setNodeAngularDamping(f32 fScale); /**< set the node's "angular damping" attribute without affecting ODE */
@@ -170,8 +170,8 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     f32 getNodeLinearDamping();
     f32 getNodeAngularDamping();
 
-    void setCollisionPoint(vector3df vPoint);   /**< set the point of the collision */
-    vector3df getCollisionPoint();              /**< get the point of the collision */
+    void setCollisionPoint(irr::core::vector3df vPoint);   /**< set the point of the collision */
+    irr::core::vector3df getCollisionPoint();              /**< get the point of the collision */
 
     void setCollisionMaterial(s32 iIdx);    /**< set the index of the collision material */
     s32 getCollisionMaterial();             /**< get the index of the collision material */
@@ -201,7 +201,7 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
      * This is a callback method that is used for the "fast moving" ray. In this method the ray's position
      * and target are updated
      */
-    void bodyMoved(vector3df newPos);
+    void bodyMoved(irr::core::vector3df newPos);
 
     /**
      * add a step motor
@@ -221,12 +221,12 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
      */
     void removeStepMotor(IIrrOdeStepMotor *p);
 
-    void setOdeRotation(vector3df vRot);
+    void setOdeRotation(irr::core::vector3df vRot);
 
-    vector3df getPosRelPoint(vector3df vPos);
-    vector3df getVectorFromWorld(vector3df vPos);
+    irr::core::vector3df getPosRelPoint(irr::core::vector3df vPos);
+    irr::core::vector3df getVectorFromWorld(irr::core::vector3df vPos);
 
-    void getOdeRotation(vector3df &cRot);
+    void getOdeRotation(irr::core::vector3df &cRot);
 
     /**
      * Is the graphical representation of this body updated when the physics body moves? Can be false
@@ -242,10 +242,10 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
 		void setUpdateGraphics(bool b) { if (!m_bPhysicsInitialized) m_bUpdateGraphics=b; }
 
 		/**
-		 * Get a list of all child bodies attached to this one
-		 * @return list of all child bodies attached to this one
+		 * Get a irr::core::list of all child bodies attached to this one
+		 * @return irr::core::list of all child bodies attached to this one
 		 */
-    list<CIrrOdeBody *> &getChildBodies();
+    irr::core::list<CIrrOdeBody *> &getChildBodies();
 
     CIrrOdeGeom *getGeomFromName(const   c8 *sName);
     CIrrOdeJoint *getJointFromName(const c8 *sName);
@@ -260,9 +260,9 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     virtual bool onEvent(IIrrOdeEvent *pEvent);
 
     /**
-     * This method is called to see whether or not an event is handled by this listener
+     * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
-     * @return "true" if the listener handles the event, "false" otherwise
+     * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 

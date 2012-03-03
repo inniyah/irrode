@@ -2,7 +2,7 @@
 
 namespace irr { namespace ode {
 
-CIrrOdeEventNodeRemoved::CIrrOdeEventNodeRemoved(scene::ISceneNode *pNode) {
+CIrrOdeEventNodeRemoved::CIrrOdeEventNodeRemoved(irr::scene::ISceneNode *pNode) {
   m_pNode=pNode;
   m_iNodeId=pNode->getID();
 }
@@ -35,7 +35,7 @@ u16 CIrrOdeEventNodeRemoved::getType() {
   return eIrrOdeEventNodeRemoved;
 }
 
-scene::ISceneNode *CIrrOdeEventNodeRemoved::getRemovedNode() {
+irr::scene::ISceneNode *CIrrOdeEventNodeRemoved::getRemovedNode() {
   return m_pNode;
 }
 

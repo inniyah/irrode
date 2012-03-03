@@ -8,8 +8,8 @@
 namespace irr {
 namespace ode {
 
-CIrrOdeGeomHeightfield::CIrrOdeGeomHeightfield(ISceneNode *parent,ISceneManager *mgr,s32 id,
-                                       const vector3df &position, const vector3df &rotation, const vector3df &scale) :
+CIrrOdeGeomHeightfield::CIrrOdeGeomHeightfield(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
+                                       const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                        CIrrOdeGeom(parent, mgr, id, position, rotation, scale) {
 
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
@@ -37,7 +37,7 @@ CIrrOdeGeomHeightfield::~CIrrOdeGeomHeightfield() {
 
 void CIrrOdeGeomHeightfield::OnRegisterSceneNode() {
   if (IsVisible) SceneManager->registerNodeForRendering(this);
-  ISceneNode::OnRegisterSceneNode();
+  irr::scene::ISceneNode::OnRegisterSceneNode();
 }
 
 void CIrrOdeGeomHeightfield::render() {
@@ -45,7 +45,7 @@ void CIrrOdeGeomHeightfield::render() {
 }
 
 f32 CIrrOdeGeomHeightfield::getHeight(s32 x, s32 z) {
-  ITerrainSceneNode *pParentNode=reinterpret_cast<ITerrainSceneNode *>(getParent());
+  irr::scene::ITerrainSceneNode *pParentNode=reinterpret_cast<irr::scene::ITerrainSceneNode *>(getParent());
   return pParentNode->getHeight((f32)x,(f32)z);
 }
 
@@ -62,16 +62,16 @@ void CIrrOdeGeomHeightfield::initPhysics() {
 
   updateAbsolutePosition();
   m_cBoundingBox.reset(getAbsolutePosition());
-  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
+  m_pSpace=reinterpret_cast<CIrrOdeSpace *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_SPACE_ID));
   if (!m_pSpace) m_pSpace=m_pWorld->getSpace();
 
-  ITerrainSceneNode *pParentNode=reinterpret_cast<ITerrainSceneNode *>(getParent());
+  irr::scene::ITerrainSceneNode *pParentNode=reinterpret_cast<irr::scene::ITerrainSceneNode *>(getParent());
 
   m_fWidth=pParentNode->getBoundingBox().MaxEdge.X-pParentNode->getBoundingBox().MinEdge.X;
   m_fDepth=pParentNode->getBoundingBox().MaxEdge.Z-pParentNode->getBoundingBox().MinEdge.Z;
 
   //try to automagically calculate the width and depth of the heightmap from the vertex count
-  CDynamicMeshBuffer tmpMB(video::EVT_2TCOORDS, video::EIT_16BIT);
+  irr::scene::CDynamicMeshBuffer tmpMB(irr::video::EVT_2TCOORDS, irr::video::EIT_16BIT);
   pParentNode->getMeshBufferForLOD(tmpMB);
   u32 vc = tmpMB.getVertexCount();
   m_iWidthSamples = m_iDepthSamples = ((u32)sqrt((double)vc));
@@ -84,7 +84,7 @@ void CIrrOdeGeomHeightfield::initPhysics() {
   m_pOdeDevice->geomHeightfieldSetBounds(m_iDataId,-1000.0f,1000.0f);
   m_iGeomId=m_pOdeDevice->geomCreateHeightfield(m_pSpace->getSpaceId(),m_iDataId);
   pParentNode->updateAbsolutePosition();
-  vector3df pos=pParentNode->getPosition();
+  irr::core::vector3df pos=pParentNode->getPosition();
 
   pos.X+=m_fWidth/2;
   pos.Z+=m_fDepth/2;
@@ -104,8 +104,8 @@ s32 CIrrOdeGeomHeightfield::getID() const {
   return ID;
 }
 
-ESCENE_NODE_TYPE CIrrOdeGeomHeightfield::getType() const {
-  return (ESCENE_NODE_TYPE)IRR_ODE_GEOM_HEIGHTFIELD_ID;
+irr::scene::ESCENE_NODE_TYPE CIrrOdeGeomHeightfield::getType() const {
+  return (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_GEOM_HEIGHTFIELD_ID;
 }
 
 const wchar_t *CIrrOdeGeomHeightfield::getTypeName() {
@@ -115,7 +115,7 @@ const wchar_t *CIrrOdeGeomHeightfield::getTypeName() {
 void CIrrOdeGeomHeightfield::setMassTotal(f32 fMass) {
 }
 
-void CIrrOdeGeomHeightfield::serializeAttributes(IAttributes* out, SAttributeReadWriteOptions* options) const {
+void CIrrOdeGeomHeightfield::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeGeom::serializeAttributes(out,options);
 
   out->addFloat("Width"    ,m_fWidth    );
@@ -126,7 +126,7 @@ void CIrrOdeGeomHeightfield::serializeAttributes(IAttributes* out, SAttributeRea
   out->addInt("DepthSamples",m_iDepthSamples);
 }
 
-void CIrrOdeGeomHeightfield::deserializeAttributes(IAttributes* in, SAttributeReadWriteOptions* options) {
+void CIrrOdeGeomHeightfield::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeGeom::deserializeAttributes(in,options);
 
   m_fWidth    =in->getAttributeAsFloat("Width"    );
@@ -157,7 +157,7 @@ void CIrrOdeGeomHeightfield::setDepthSamples(u32 iDepthSamples) {
   m_iDepthSamples=iDepthSamples;
 }
 
-ISceneNode *CIrrOdeGeomHeightfield::clone(ISceneNode* newParent, ISceneManager* newManager) {
+irr::scene::ISceneNode *CIrrOdeGeomHeightfield::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
   CIrrOdeGeomHeightfield *pRet=new CIrrOdeGeomHeightfield(newParent?newParent:getParent(),newManager?newManager:m_pSceneManager);
   copyParams(pRet);
   CIrrOdeSceneNode::cloneChildren(pRet,newManager);
