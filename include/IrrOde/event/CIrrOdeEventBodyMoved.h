@@ -36,6 +36,8 @@ class CIrrOdeEventBodyMoved : public IIrrOdeEvent {
               m_vNewAngVel,   /**< the new angular velocity */
               m_vColPoint;    /**< the collision point */
 
+    irr::scene::ISceneManager *m_pSmgr;
+
   public:
     CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, irr::core::vector3df &vPos, irr::core::vector3df &vRot, irr::core::vector3df &vLinVel, irr::core::vector3df &vAngVel);
     CIrrOdeEventBodyMoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr);

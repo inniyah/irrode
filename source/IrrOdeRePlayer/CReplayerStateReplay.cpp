@@ -41,6 +41,8 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   strcpy(m_sReplay,sReplay);
   m_iRet=0;
   m_pFont=m_pDevice->getGUIEnvironment()->getFont("../../data/font2.xml");
+  m_iDirection = 0;
+  m_iPos = 0;
 }
 
 void CReplayerStateReplay::activate() {
@@ -102,18 +104,36 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       case eCamFollow:
         if (m_pFocusedNode!=NULL) {
-          m_pCam->setTarget(m_pFocusedNode->getAbsolutePosition());
+          irr::core::vector3df vDir, vCpo = irr::core::vector3df(0.0f, m_iPos==0?1.1f:1.35f, m_iPos==0?-0.6f:0.0f);
 
-          m_vCamRotation.Y+=15.0f*(pos.X-0.5f);
-          m_fCamHeight+=0.5f*(pos.Y-0.5f);
+          if (m_iPos==0) {
+            switch (m_iDirection) {
+              case 0: vDir = irr::core::vector3df( 0.0f,0.0f, 1.0f); break;
+              case 1: vDir = irr::core::vector3df( 1.0f,0.0f, 0.0f); break;
+              case 2: vDir = irr::core::vector3df( 0.0f,0.0f,-1.0f); break;
+              case 3: vDir = irr::core::vector3df(-1.0f,0.0f, 0.0f); break;
+            }
+          }
+          else {
+            switch (m_iDirection) {
+              case 0: vDir = irr::core::vector3df(-5.0f, 1.35f, 0.0f); break;
+              case 1: vDir = irr::core::vector3df( 0.0f, 1.35f,-5.0f); break;
+              case 2: vDir = irr::core::vector3df( 5.0f, 1.35f, 0.0f); break;
+              case 3: vDir = irr::core::vector3df( 0.0f, 1.35f, 5.0f); break;
+            }
+          }
 
-          if (m_fCamHeight> 1.0f) m_fCamHeight= 1.0f;
-          if (m_fCamHeight<-1.0f) m_fCamHeight=-1.0f;
+          irr::core::vector3df vPos = m_pFocusedNode->getPosition(),
+                               vRot = m_pFocusedNode->getRotation(),
+                               vTgt = vRot.rotationToDirection(vDir);
 
-          irr::core::vector3df v=irr::core::vector3df(1.0f,0.0f,0.0f);
-          v.rotateXZBy(m_vCamRotation.Y);
-          v.Y=m_fCamHeight;
-          m_pCam->setPosition(m_pFocusedNode->getAbsolutePosition()-m_fCamDist*v);
+          irr::core::vector3df pos=vRot.rotationToDirection(vCpo),
+                               up =vRot.rotationToDirection(irr::core::vector3df(0,0.1,0)),
+                               tgt=vRot.rotationToDirection(irr::core::vector3df(vTgt.X,1.0f,vTgt.Y));
+
+          m_pCam->setPosition(vPos+pos);
+          m_pCam->setTarget(vPos+pos-vTgt);
+          m_pCam->setUpVector(up);
         }
         break;
     }
@@ -179,6 +199,15 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
   if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
     if (!event.KeyInput.PressedDown) {
       switch (event.KeyInput.Key) {
+        case irr::KEY_RETURN:
+          m_iDirection++;
+          if (m_iDirection > 3) m_iDirection = 0;
+          break;
+
+        case irr::KEY_BACK:
+          m_iPos = m_iPos==0?1:0;
+          break;
+
         case irr::KEY_TAB:
           if (m_eCamMode==eCamFree) {
             if (m_pFocusedNode==NULL && m_aBodies.size()>0) {
@@ -248,8 +277,10 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
   }
 
   if (event.EventType==irr::EET_MOUSE_INPUT_EVENT)
-    if (event.MouseInput.Event==irr::EMIE_MOUSE_WHEEL)
-      m_fCamDist+=event.MouseInput.Wheel;
+    if (event.MouseInput.Event==irr::EMIE_MOUSE_WHEEL) {
+      printf("==> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
+      m_fCamDist+=0.25f*event.MouseInput.Wheel;
+    }
 
   return bRet;
 }
