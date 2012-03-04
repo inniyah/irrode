@@ -9,7 +9,7 @@
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
-CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
+CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pRView) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
@@ -22,6 +22,7 @@ CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC
 
   m_iOldHitsScored = -1;
   m_iOldHitsTaken = -1;
+  dataChanged();
 }
 
 CHeli::~CHeli() {
@@ -115,10 +116,7 @@ void CHeli::odeStep(irr::u32 iStep) {
       m_iOldHitsTaken  = m_iHitsTaken ;
       m_iOldHitsScored = m_iHitsScored;
 
-
-      m_pTab->setVisible(false);
       m_pCockpit->update(false);
-      m_pTab->setVisible(true);
     }
 
     irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
@@ -149,9 +147,4 @@ irr::ode::IIrrOdeEvent *CHeli::writeEvent() {
 
 irr::ode::eEventWriterType CHeli::getEventWriterType() {
   return irr::ode::eIrrOdeEventWriterUnknown;
-}
-
-void CHeli::activate() {
-  CAeroVehicle::activate();
-  dataChanged();
 }

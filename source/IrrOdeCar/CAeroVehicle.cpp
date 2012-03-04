@@ -7,7 +7,7 @@
   #include <CRearView.h>
   #include <irrklang.h>
 
-CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
@@ -26,13 +26,8 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
     m_bFireSecondary=false;
     m_bDataChanged=false;
     m_bBrakes = false;
-    m_iApInfoMode = 0;
-    m_pApTarget = NULL;
 
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-
-    m_pTab=m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0,0,500,500));
-    m_pTab->setVisible(false);
 
     m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pBody->getStepMotorFromName("aero_motor" );
     m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pBody->getStepMotorFromName("aero_torque");
@@ -72,8 +67,7 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
       printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
     }
     else printf("no checkpoints for helicopter found!\n");
-    m_fApDist=0.0f;
-    m_pCockpit=pCockpit;
+    m_pCockpit=NULL;
     m_pRView=pRView;
   }
 
@@ -89,7 +83,6 @@ void CAeroVehicle::activate() {
 
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
-  m_pTab->setVisible(true);
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -106,24 +99,11 @@ void CAeroVehicle::activate() {
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
   m_pController->restoreState((irr::f32 *)m_aCtrlBuffer);
-  if (m_pCockpit) {
-    m_pCockpit->setHitsScored(m_iHitsScored);
-    m_pCockpit->setHitsTaken(m_iHitsTaken);
-    m_pCockpit->setShotsFired(m_iShotsFired);
-
-    m_pCockpit->activate(m_pBody, m_iApInfoMode, m_pApTarget, m_pAutoPilot->getState());
-  }
 }
 
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
-  m_pTab->setVisible(false);
   m_bActive=false;
-  if (m_pCockpit) {
-    m_iApInfoMode = m_pCockpit->getInfoMode();
-    m_pApTarget = m_pCockpit->getApTarget();
-    m_pCockpit->activate(NULL, 0, NULL, -1);
-  }
 }
 
 bool CAeroVehicle::OnEvent(const irr::SEvent &event) {
@@ -253,14 +233,9 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_iNextCp=rand()%m_aCheckPoints.size();
         m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
       }
-      m_fApDist=m_pAutoPilot->getApDist();
-      if (m_fApDist<100.0f) {
-        irr::s32 iNext=m_iNextCp;
-        while (iNext==m_iNextCp) {
-          iNext=rand()%m_aCheckPoints.size();
-          printf("next checkpoint (%s): %i\n",m_pBody->getName(),iNext);
-        }
-        m_iNextCp=iNext;
+
+      if (m_pAutoPilot->getApDist() < 150.0f) {
+        m_iNextCp = rand()%m_aCheckPoints.size();
         m_pAutoPilot->setTarget(m_aCheckPoints[m_iNextCp]);
       }
     }

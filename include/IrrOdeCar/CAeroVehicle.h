@@ -42,16 +42,14 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
              m_fYaw,
              m_fThrust,
              m_fCamAngleH,
-             m_fCamAngleV,
-             m_fApDist;
+             m_fCamAngleV;
 
     irr::s32 m_iNextCp,
              m_aCtrlBuffer[0xFF];
 
     irr::u32 m_iLastShot1,
              m_iLastShot2,
-             m_iShotsFired,
-             m_iApInfoMode;
+             m_iShotsFired;
 
     bool m_bInternal,
          m_bWeaponCam,
@@ -62,8 +60,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
          m_bBrakes;
 
     CRearView *m_pRView;
-
-    irr::gui::IGUITab *m_pTab;
 
     irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pBody;
@@ -77,7 +73,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
 
     irr::scene::ICameraSceneNode *m_pCam;
     irr::scene::ITerrainSceneNode *m_pTerrain;
-    irr::scene::ISceneNode *m_pApTarget;
 
     CAutoPilot *m_pAutoPilot;
     CTargetSelector *m_pTargetSelector;
@@ -90,7 +85,7 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     //irrklang::ISound *m_pSound;
 
   public:
-    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
     virtual ~CAeroVehicle();
 
     virtual void activate();
@@ -105,6 +100,10 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual void odeStep(irr::u32 iStep)=0;
+
+    irr::ode::CIrrOdeBody *getBody() { return m_pBody; }
+
+    void setCockpit(CCockpitPlane *p) { m_pCockpit = p; }
 };
 
 #endif

@@ -6,13 +6,14 @@
   #include <CEventVehicleState.h>
   #include <CIrrOdeManager.h>
 
-CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_pTab=m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,512,512));
 
   m_iBodyId = -1;
   m_bLapStarted = false;
   m_iLapStart = 0;
   m_iTime = 0;
+  m_iBodyId = pBody!=NULL?pBody->getID():-1;
 
   m_pGuienv->addStaticText(L"The Car",irr::core::rect<irr::s32>(5,400,105,25),false,true,m_pTab);
 
@@ -50,8 +51,8 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName) : IRen
   m_stSplit  =m_pGuienv->addStaticText(L"Split Time" ,irr::core::rect<irr::s32>(irr::core::position2di(400,20),irr::core::dimension2di(100,13)),false,true,m_pTab);
   m_stLastLap=m_pGuienv->addStaticText(L"Last Lap"   ,irr::core::rect<irr::s32>(irr::core::position2di(400,35),irr::core::dimension2di(100,13)),false,true,m_pTab);
 
-  irr::u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
-  printf("**** CCockpitCar: replaced %i texture.\n",iReplace);
+  irr::u32 iReplace=processTextureReplace(pBody);
+  printf("**** CCockpitCar: replaced %i texture (%i, \"%s\").\n",iReplace,(int)pBody,pBody->getName());
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 }
@@ -65,7 +66,6 @@ void CCockpitCar::update(bool b) {
   m_pDiff->setValue(m_fDiff);
   m_pRpm->setValue(m_fRpm);
   m_stDifferential->setBackgroundColor(m_bDifferential?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0xD0,0xD0));
-
   startRttUpdate();
   m_pTab->setVisible(true);
   m_pGuienv->drawAll();
@@ -115,15 +115,18 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
   if (pEvent->getType() == EVENT_CAR_STATE_ID) {
     CEventCarState *p=(CEventCarState *)pEvent;
-    m_fRpm = -p->getRpm();
-    m_fDiff = p->getDiff();
-    m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
 
-    bool b = p->getFlags() & CEventCarState::eCarFlagBoost;
-    m_pBoostGray->setVisible(!b);
-    m_pBoostRed ->setVisible( b);
+    if (p->getNodeId() == m_iBodyId) {
+      m_fRpm = -p->getRpm();
+      m_fDiff = p->getDiff();
+      m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
 
-    m_fSpeed = p->getSpeed();
+      bool b = p->getFlags() & CEventCarState::eCarFlagBoost;
+      m_pBoostGray->setVisible(!b);
+      m_pBoostRed ->setVisible( b);
+
+      m_fSpeed = p->getSpeed();
+    }
   }
 
   return true;

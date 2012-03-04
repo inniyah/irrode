@@ -7,11 +7,12 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyMoved.h>
 
-CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
   m_iTime = 0;
   m_iLapStart = 0;
-  m_pObject = NULL;
+  m_pObject = pObject;
+  m_iBodyId = m_pObject->getID();
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 	irr::scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
@@ -201,7 +202,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName) : 
 
   m_iInfoMode = 0;
 
-  irr::u32 iReplace=processTextureReplace(m_pSmgr->getRootSceneNode());
+  irr::u32 iReplace=processTextureReplace(m_pObject);
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
@@ -274,14 +275,6 @@ void CCockpitPlane::update(bool bPlane) {
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
   endRttUpdate();
-}
-
-void CCockpitPlane::setWarnStatePlane(irr::u32 iWarn, irr::u32 iState) {
-  m_pWarnImgPlane[iWarn]->setImage(m_pWarnTexPlane[iWarn][iState]);
-}
-
-void CCockpitPlane::setWarnStateHeli(irr::u32 iWarn, irr::u32 iState) {
-  m_pWarnImgHeli[iWarn]->setImage(m_pWarnTexHeli[iWarn][iState]);
 }
 
 void CCockpitPlane::setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp) {
@@ -417,14 +410,18 @@ bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
   if (pEvent->getType() == EVENT_PLANE_STATE_ID) {
     CEventPlaneState *p=(CEventPlaneState *)pEvent;
-    m_pWarnImgPlane[0]->setImage(m_pWarnTexPlane[0][p->isAutoPilotOn()?1:0]);
-    m_pWarnImgPlane[2]->setImage(m_pWarnTexPlane[2][p->isBrakesOn   ()?2:1]);
-    m_fPower = p->getThrust();
+    if (p->getNodeId() == m_iBodyId) {
+      m_pWarnImgPlane[0]->setImage(m_pWarnTexPlane[0][p->isAutoPilotOn()?1:0]);
+      m_pWarnImgPlane[2]->setImage(m_pWarnTexPlane[2][p->isBrakesOn   ()?2:1]);
+      m_fPower = p->getThrust();
+    }
   }
 
   if (pEvent->getType() == EVENT_HELI_STATE_ID) {
     CEventHeliState *p=(CEventHeliState *)pEvent;
-    m_fPower = p->getThrust();
+    if (p->getNodeId() == m_iBodyId) {
+      m_fPower = p->getThrust();
+    }
   }
 
   return true;
@@ -446,12 +443,4 @@ bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
          pEvent->getType() == EVENT_LAP_TIME_ID               ||
          pEvent->getType() == EVENT_PLANE_STATE_ID            ||
          pEvent->getType() == EVENT_HELI_STATE_ID;
-}
-
-void CCockpitPlane::activate(irr::ode::CIrrOdeBody *p, irr::u32 iInfoMode, irr::scene::ISceneNode *pApTarget, irr::s32 iApState) {
-  m_pObject = p;
-  if (p!=NULL) m_iBodyId = p->getID(); else m_iBodyId = -1;
-  m_pApTarget = pApTarget;
-  m_iInfoMode = iInfoMode;
-  updateApState(iApState);
 }

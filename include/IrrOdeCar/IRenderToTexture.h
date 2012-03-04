@@ -3,6 +3,8 @@
 
   #include <irrlicht.h>
 
+static int s_iNum = 0;
+
 class IRenderToTexture {
   protected:
     irr::IrrlichtDevice *m_pDevice;
@@ -26,6 +28,7 @@ class IRenderToTexture {
             s.make_lower();
             if (s.find(m_sName.c_str())!=-1) {
               pNode->getMaterial(i).setTexture(j,m_pTarget);
+              printf("--> \"%s\" (%i)\n",pNode->getName(),(int)m_pTarget);
               iRet++;
             }
           }
@@ -50,7 +53,9 @@ class IRenderToTexture {
       m_sName=sName;
       m_sName.make_lower();
 
-      m_pTarget=m_pDrv->addRenderTargetTexture(cSize,"rt",irr::video::ECF_A8R8G8B8);
+      irr::c8 s[0xFF];
+      sprintf(s,"rt_%i_%s",s_iNum++,sName);
+      m_pTarget=m_pDrv->addRenderTargetTexture(cSize,s,irr::video::ECF_A8R8G8B8);
     }
 
     virtual ~IRenderToTexture() {
