@@ -32,6 +32,8 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_iNextCp=-1;
   m_iCurStep=0;
   m_iLastLapStep=0;
+  m_fSteer = 0.0f;
+  m_fSpeed = 0.0f;
 
   if (m_pCarBody) {
     m_iBodyId=m_pCarBody->getID();
@@ -120,9 +122,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     m_pCam=m_pSmgr->addCameraSceneNode();
     m_pCam->setNearValue(0.1f);
 
-    m_pTab=m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0,0,300,300));
-
-    m_pTab->setVisible(false);
     m_pCtrls=NULL;
 
     //we are an IrrOde event listener
@@ -151,7 +150,6 @@ CCar::~CCar() {
 //This method is called when the state is activated.
 void CCar::activate() {
   m_pSmgr->setActiveCamera(m_pCam);
-  m_pTab->setVisible(true);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
@@ -176,7 +174,6 @@ void CCar::activate() {
 }
 
 void CCar::deactivate() {
-  m_pTab->setVisible(false);
   m_bActive=false;
   m_pController->reset();
 
@@ -284,15 +281,12 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
 
       if (bBoost!=m_bBoost) {
-        m_pCockpit->setBoost(bBoost);
         m_bBoost=bBoost;
         bDataChanged=true;
       }
 
-      m_pCockpit->setRpm(-m_fRpm);
-
-      irr::f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]),
-               fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
+      irr::f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]);
+      m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
       if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
       //calculate the differential gear
@@ -324,8 +318,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         fFact[0]=1.0f;
         fFact[1]=1.0f;
       }
-
-      m_pCockpit->setDiff(-m_fDiff);
 
       if (fForeward!=0.0f) {
         irr::f32 fForce=fForeward<0.0f?-fForeward:fForeward;
@@ -377,10 +369,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pController->set(m_pCtrls[eCarInternal],0.0f);
       }
 
-      m_pCockpit->setSpeed(fSpeed);
-      m_pTab->setVisible(false);
       m_pCockpit->update(false);
-      m_pTab->setVisible(true);
 
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
                            cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.75f,0.0f)),
@@ -433,7 +422,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eCarDifferential])) {
         m_pController->set(m_pCtrls[eCarDifferential],0.0f);
         m_bDifferential=!m_bDifferential;
-        m_pCockpit->setDifferentialEnabled(m_bDifferential);
+        dataChanged();
       }
     }
 
@@ -551,7 +540,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     irr::f32 fFact = v.getLength()<10.0f?0.0f:v.getLength()>100.0f?0.1f:0.1f*(v.getLength()-10.0f)/90.0f;
     v.normalize();
 
-    irr::f32 f1 = v.dotProduct(f), f2 = 125.0f*v.dotProduct(s), f3 = 125.0f*v.dotProduct(u);
+    irr::f32 f2 = 125.0f*v.dotProduct(s), f3 = 125.0f*v.dotProduct(u);
 
     m_pCarBody->addForceAtPosition(p-2.0f*f,(-fFact*f2*s)+(-fFact*f3*u));
     m_pCarBody->addForceAtPosition(p+2.0f*f,( fFact*f2*s)+( fFact*f3*u));
@@ -582,14 +571,15 @@ bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   irr::u8 iFlags=0;
 
-  if (m_bBoost) iFlags|=CEventCarState::eCarFlagBoost;
-  if (m_bBrake) iFlags|=CEventCarState::eCarFlagBrake;
+  if (m_bBoost       ) iFlags|=CEventCarState::eCarFlagBoost;
+  if (m_bBrake       ) iFlags|=CEventCarState::eCarFlagBrake;
+  if (m_bDifferential) iFlags|=CEventCarState::eCarFlagDifferential;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags);
+                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed);
 
   return pEvent;
 }

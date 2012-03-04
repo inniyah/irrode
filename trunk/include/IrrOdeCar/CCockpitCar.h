@@ -46,16 +46,6 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
 
     virtual void update(bool b);
 
-    void setSpeed(irr::f32 fSpeed) { m_fSpeed=fSpeed; }
-
-    void setDiff(irr::f32 fDiff) { m_fDiff=fDiff; }
-
-    void setRpm(irr::f32 fRpm) { m_fRpm=fRpm; }
-
-    void setBoost(bool b);
-
-    void setDifferentialEnabled(bool b) { m_bDifferential=b; }
-
     void activate(irr::ode::CIrrOdeBody *pBody) {
       if (pBody != NULL) m_iBodyId = pBody->getID(); else m_iBodyId = -1;
     }
