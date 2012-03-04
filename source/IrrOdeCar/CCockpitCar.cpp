@@ -73,11 +73,6 @@ void CCockpitCar::update(bool b) {
   endRttUpdate();
 }
 
-void CCockpitCar::setBoost(bool b) {
-  m_pBoostGray->setVisible(!b);
-  m_pBoostRed ->setVisible( b);
-}
-
 bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   wchar_t s[0xFF];
 
@@ -118,9 +113,24 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_iTime++;
   }
 
+  if (pEvent->getType() == EVENT_CAR_STATE_ID) {
+    CEventCarState *p=(CEventCarState *)pEvent;
+    m_fRpm = -p->getRpm();
+    m_fDiff = p->getDiff();
+    m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
+
+    bool b = p->getFlags() & CEventCarState::eCarFlagBoost;
+    m_pBoostGray->setVisible(!b);
+    m_pBoostRed ->setVisible( b);
+
+    m_fSpeed = p->getSpeed();
+  }
+
   return true;
 }
 
 bool CCockpitCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == irr::ode::eIrrOdeEventStep;
+  return pEvent->getType() == EVENT_LAP_TIME_ID          ||
+         pEvent->getType() == irr::ode::eIrrOdeEventStep ||
+         pEvent->getType() == EVENT_CAR_STATE_ID;
 }

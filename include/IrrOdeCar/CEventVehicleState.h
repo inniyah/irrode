@@ -86,7 +86,8 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
     enum eCarFlags {
       eCarFlagBoost=1,
       eCarFlagBrake=2,
-      eCarFlagReverse=4
+      eCarFlagReverse=4,
+      eCarFlagDifferential=8
     };
 
   protected:
@@ -97,11 +98,12 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
              m_fRpm,
              m_fDiff,
              m_fSound,
-             m_fSteer;
+             m_fSteer,
+             m_fSpeed;
     irr::u8  m_iFlags;
   public:
     CEventCarState();
-    CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags);
+    CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed);
     CEventCarState(irr::ode::CSerializer *pData);
 
     virtual irr::u16 getType() { return EVENT_CAR_STATE_ID; }
@@ -118,6 +120,7 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
     irr::f32 getDiff() { return m_fDiff; }
     irr::f32 getEngineSound() { return m_fSound; }
     irr::f32 getSteer() { return m_fSteer; }
+    irr::f32 getSpeed() { return m_fSpeed; }
     irr::u8 getFlags() { return m_iFlags; }
 };
 
