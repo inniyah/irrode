@@ -22,7 +22,7 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
   }
 }
 
-CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitCar *pCockpit, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
@@ -126,7 +126,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
 
     //we are an IrrOde event listener
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-    m_pCockpit=pCockpit;
+    m_pCockpit=NULL;
     m_pRView=pRView;
 
     m_pLap = new CIrrOdeCarTrack(m_pCarBody);
@@ -169,8 +169,6 @@ void CCar::activate() {
   wchar_t s[0xFFFF];
   swprintf(s,0xFFFE,m_pHelp->getText(),m_pController->getSettingsText(0));
   m_pHelp->setText(s);
-
-  if (m_pCockpit) m_pCockpit->activate(m_pCarBody);
 }
 
 void CCar::deactivate() {
@@ -183,8 +181,6 @@ void CCar::deactivate() {
   }
 
   for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
-
-  if (m_pCockpit) m_pCockpit->activate(NULL);
 }
 
 //This method is called once for each rendered frame.
@@ -428,7 +424,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     irr::f32 fVel=m_pCarBody->getLinearVelocity().getLength();
     if ((m_fOldVel>2.0f && fVel<=2.0f) || (m_fOldVel<-2.0f && fVel>=-2.0f)) {
-      //printf("**** set parameter slip\n");
       for (irr::u32 i=0; i<2; i++) {
         m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[1]);
         m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[3]);
@@ -436,7 +431,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
 
     if ((m_fOldVel<2.0f && fVel>=2.0f) || (m_fOldVel>-2.0f && fVel<=-2.0f)) {
-      //printf("**** set parameter noslip\n");
       for (irr::u32 i=0; i<2; i++) {
         m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[0]);
         m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[2]);
@@ -473,7 +467,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (m_fRpm>fRpm) m_fRpm=fRpm;
     }
 
-    //Send an event if the car's state has changed
     irr::f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
     if (fRot<0.0f) {
       bDataChanged=true;

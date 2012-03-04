@@ -61,7 +61,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     void updateApState(irr::s32 iApState);
 
   public:
-    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName);
+    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject);
     virtual ~CCockpitPlane();
 
     virtual void update(bool bPlane);
@@ -70,17 +70,12 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
 
     void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
 
-    void setWarnStatePlane(irr::u32 iWarn, irr::u32 iState);
-    void setWarnStateHeli(irr::u32 iWarn, irr::u32 iState);
-
     void setTargetName(const wchar_t *sName);
     void setTargetDist(irr::f32 fDist);
 
     void setShotsFired(irr::s32 iShots);
     void setHitsScored(irr::s32 iHits);
     void setHitsTaken(irr::s32 iHits);
-
-    void activate(irr::ode::CIrrOdeBody *p, irr::u32 iInfoMode, irr::scene::ISceneNode *pApTarget, irr::s32 iApState);
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

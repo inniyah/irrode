@@ -41,14 +41,10 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
                         *m_pBoostGray;
 
   public:
-    CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName);
+    CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody);
     virtual ~CCockpitCar();
 
     virtual void update(bool b);
-
-    void activate(irr::ode::CIrrOdeBody *pBody) {
-      if (pBody != NULL) m_iBodyId = pBody->getID(); else m_iBodyId = -1;
-    }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

@@ -41,8 +41,6 @@ class CPlane : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
 
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
-
-    virtual void activate();
 };
 
 #endif

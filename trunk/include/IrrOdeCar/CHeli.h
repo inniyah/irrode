@@ -42,7 +42,7 @@ class CHeli : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
         m_iOldHitsScored;
 
   public:
-    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
     virtual ~CHeli();
 
     virtual irr::u32 update();
@@ -55,8 +55,6 @@ class CHeli : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
 
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
-
-    virtual void activate();
 };
 
 #endif

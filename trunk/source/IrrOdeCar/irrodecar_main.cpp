@@ -482,20 +482,21 @@ int main(int argc, char** argv) {
   CRearView *pRearView=NULL;
 
   smgr->addCameraSceneNode();
-  CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments");
   if (bRearCam) pRearView=new CRearView(device,"rearview.jpg",smgr->addCameraSceneNode());
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-    CPlane *p=new CPlane(device,*it,pController,pCockpit,pRearView);
+    CPlane *p=new CPlane(device,*it,pController,NULL,pRearView);
+    CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments",p->getBody());
     p->setCtrl((const u32 *)iCtrls[2]);
+    p->setCockpit(pCockpit);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }
 
-  CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg");
-
   for (it=lCars.begin(); it!=lCars.end(); it++) {
-    CCar *p=new CCar(device,*it,pController,pCarCockpit,pRearView);
+    CCar *p=new CCar(device,*it,pController,pRearView);
+    CCockpitCar *pCarCockpit=new CCockpitCar(device,"z_instru.jpg",p->getBody());
+    p->setCockpit(pCarCockpit);
     p->setCtrl((const u32 *)iCtrls[0]);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
@@ -509,8 +510,10 @@ int main(int argc, char** argv) {
   }
 
   for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-    CHeli *p=new CHeli(device,*it,pController,pCockpit,pRearView);
+    CHeli *p=new CHeli(device,*it,pController,pRearView);
+    CCockpitPlane *pCockpit=new CCockpitPlane(device,"instruments",p->getBody());
     p->setCtrl((const u32 *)iCtrls[2]);
+    p->setCockpit(pCockpit);
     aStates.push_back(p);
     theMenu->addButtonForState(p);
   }

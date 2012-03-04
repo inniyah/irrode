@@ -11,7 +11,7 @@
   #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pCockpit,pRView) {
+CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pRView) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -52,6 +52,7 @@ CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrr
   m_pLap = new CIrrOdeCarTrack(m_pBody);
 
   m_bAutoPilot = false;
+  dataChanged();
 }
 
 CPlane::~CPlane() {
@@ -154,9 +155,7 @@ void CPlane::odeStep(irr::u32 iStep) {
       m_iOldHitsTaken  = m_iHitsTaken ;
       m_iOldHitsScored = m_iHitsScored;
 
-      m_pTab->setVisible(false);
       m_pCockpit->update(true);
-      m_pTab->setVisible(true);
     }
 
     irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
@@ -220,9 +219,4 @@ irr::ode::IIrrOdeEvent *CPlane::writeEvent() {
 
 irr::ode::eEventWriterType CPlane::getEventWriterType() {
   return irr::ode::eIrrOdeEventWriterUnknown;
-}
-
-void CPlane::activate() {
-  CAeroVehicle::activate();
-  dataChanged();
 }
