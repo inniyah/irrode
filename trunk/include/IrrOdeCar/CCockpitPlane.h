@@ -66,11 +66,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
 
     virtual void update(bool bPlane);
 
-    void setAltitude(irr::f32 f) { m_fAltitude=f; }
-    void setSpeed   (irr::f32 f) { m_fSpeed   =f; }
     void setPower   (irr::f32 f) { m_fPower   =f; }
-    void setHeading (irr::f32 f) { m_fHeading =f; }
-    void setVelVert (irr::f32 f) { m_fVelVert =f; }
 
     void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
 

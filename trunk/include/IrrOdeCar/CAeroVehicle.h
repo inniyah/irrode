@@ -58,7 +58,8 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
          m_bFirePrimary,
          m_bFireSecondary,
          m_bThreeWheeler,
-         m_bDataChanged;
+         m_bDataChanged,
+         m_bBrakes;
 
     CRearView *m_pRView;
 
