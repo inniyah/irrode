@@ -17,7 +17,8 @@ class CRearView;
 
 class CPlane : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
-    bool m_bLeftMissile;
+    bool m_bLeftMissile,
+         m_bAutoPilot;
     irr::ode::CIrrOdeJointHinge *m_pAxes[2];
     irr::ode::CIrrOdeJointHinge2 *m_pSteerAxis;
     irr::f32 m_fAngleRate[3];

@@ -17,15 +17,20 @@
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
     irr::s32 m_iNodeId;
-    irr::s8 m_iYaw,
-            m_iRoll,
-            m_iPitch;
-    irr::f32 m_fSound;
-    bool m_bThreeWheeler;
+    irr::s8  m_iYaw,
+             m_iRoll,
+             m_iPitch;
+    irr::f32 m_fSound,
+             m_fThrust;
+    irr::u8  m_iFlags;
+
+    static const irr::u8 s_iThreeWheeler = 1,
+                         s_iBrakes       = 2,
+                         s_iAutoPilot    = 4;
 
   public:
     CEventPlaneState();
-    CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bThreeWheeler);
+    CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bThreeWheeler, bool bBrakes, bool bAp, irr::f32 fThrust);
     CEventPlaneState(irr::ode::CSerializer *pData);
 
     virtual ~CEventPlaneState() { }
@@ -40,9 +45,12 @@ class CEventPlaneState : public irr::ode::IIrrOdeEvent {
     irr::f32 getPitch() { return ((irr::f32)m_iPitch)/100.0f; }
     irr::f32 getRoll() { return ((irr::f32)m_iRoll)/100.0f; }
     irr::f32 getSound() { return m_fSound; }
+    irr::f32 getThrust() { return m_fThrust; }
     irr::s32 getNodeId() { return m_iNodeId; }
 
-    bool isThreeWheeler() { return m_bThreeWheeler; }
+    bool isThreeWheeler() { return m_iFlags & s_iThreeWheeler; }
+    bool isBrakesOn    () { return m_iFlags & s_iBrakes      ; }
+    bool isAutoPilotOn () { return m_iFlags & s_iAutoPilot   ; }
 };
 
 class CEventTankState : public irr::ode::IIrrOdeEvent {
@@ -148,11 +156,13 @@ class CEventFireSound : public irr::ode::IIrrOdeEvent {
 class CEventHeliState : public irr::ode::IIrrOdeEvent {
   protected:
     irr::s32 m_iNodeId;
-    irr::f32 m_fSound;
+    irr::f32 m_fSound,
+             m_fThrust;
+    bool m_bAutoPilot;
 
   public:
     CEventHeliState();
-    CEventHeliState(irr::s32 iNodeId, irr::f32 fSound);
+    CEventHeliState(irr::s32 iNodeId, irr::f32 fSound, bool bAutoPilot, irr::f32 fThrust);
     CEventHeliState(irr::ode::CSerializer *pData);
 
     virtual irr::u16 getType() { return EVENT_HELI_STATE_ID; }
@@ -162,7 +172,9 @@ class CEventHeliState : public irr::ode::IIrrOdeEvent {
     virtual irr::ode::IIrrOdeEvent *clone();
 
     irr::f32 getSound() { return m_fSound; }
+    irr::f32 getThrust() { return m_fThrust; }
     irr::s32 getNodeId() { return m_iNodeId; }
+    bool isAutoPilotOn() { return m_bAutoPilot; }
 };
 
 class CEventInstallRandomForestPlugin : public irr::ode::IIrrOdeEvent {
@@ -308,4 +320,5 @@ class CEventAutoPilot : public irr::ode::IIrrOdeEvent {
 
     irr::s32 getState() { return m_iState; }
 };
+
 #endif

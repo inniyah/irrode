@@ -92,21 +92,8 @@ void CHeli::odeStep(irr::u32 iStep) {
     if (m_pCockpit!=NULL) {
       irr::core::vector3df vPos=m_pBody->getPosition();
 
-      m_pCockpit->setAltitude(vPos.Y);
-      m_pCockpit->setSpeed(m_pAero->getForewardVel());
-      m_pCockpit->setPower(100.0f*m_fThrust);
-      m_pCockpit->setVelVert(m_pBody->getLinearVelocity().Y);
-
-      irr::core::vector3df v=m_pBody->getRotation().rotationToDirection(m_pAero->getForeward());
-      irr::core::vector2df vDir=irr::core::vector2df(v.X,v.Z);
-
-      if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
-
-      m_pCockpit->setWarnStateHeli(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApHeliLowAlt?2:1:0);
-      m_pCockpit->setWarnStateHeli(1,vPos.Y<200.0f?3:vPos.Y<400.0f?2:1);
-
-      v=m_pBody->getAbsoluteTransformation().getRotationDegrees();
-      m_pCockpit->setHorizon(v,v.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f)));
+      //m_pCockpit->setWarnStateHeli(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApHeliLowAlt?2:1:0);
+      //m_pCockpit->setWarnStateHeli(1,vPos.Y<200.0f?3:vPos.Y<400.0f?2:1);
 
       irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
 
@@ -157,7 +144,7 @@ void CHeli::drawSpecifics() {
 }
 
 irr::ode::IIrrOdeEvent *CHeli::writeEvent() {
-  return new CEventHeliState(m_iNodeId,m_fSound);
+  return new CEventHeliState(m_iNodeId,m_fSound,m_pAutoPilot->isEnabled(),m_fThrust);
 }
 
 irr::ode::eEventWriterType CHeli::getEventWriterType() {

@@ -5,6 +5,7 @@
   #include <CIrrOdeManager.h>
   #include <CAutoPilot.h>
   #include <event/IIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventBodyMoved.h>
 
 CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
@@ -220,7 +221,7 @@ void CCockpitPlane::update(bool bPlane) {
   m_pInstruments[0]->setValue(m_fSpeed);
   m_pInstruments[1]->setValue(m_fAltitude);
   m_pInstruments[2]->setValue(fDummy);
-  m_pInstruments[3]->setValue(m_fPower);
+  m_pInstruments[3]->setValue(100.0f*m_fPower);
   m_pInstruments[4]->setValue(m_fVelVert);
   m_pInstruments[5]->setValue(m_fSpeed);
 
@@ -381,6 +382,51 @@ bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved) {
+    irr::ode::CIrrOdeEventBodyMoved *p=(irr::ode::CIrrOdeEventBodyMoved *)pEvent;
+    if (p->getBodyId() == m_iBodyId) {
+      irr::ode::CIrrOdeBody *pBody = p->getBody();
+      if (pBody != NULL) {
+        irr::core::vector3df vPos = pBody->getAbsolutePosition(),
+                             vVel = pBody->getLinearVelocity(),
+                             vRot = pBody->getRotation(),
+                             vFor = vRot.rotationToDirection(irr::core::vector3df(0.0f,0.0f,-1.0f)),
+                             vNor = vVel;
+
+        m_fAltitude = vPos.Y;
+        m_fVelVert  = vVel.Y;
+
+        irr::core::vector2df vDir=irr::core::vector2df(vFor.X,vFor.Z);
+
+        if (vFor.getLength()>0.01f) m_fHeading = vDir.getAngle();
+
+        vNor.normalize();
+
+        m_fSpeed = vNor.dotProduct(vVel);
+
+        setHorizon(vRot, vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f)));
+
+        m_pWarnImgPlane[1]->setImage(m_pWarnTexPlane[1][vPos.Y<300.0f?3:vPos.Y<550.0f?2:1]);
+        m_pWarnImgPlane[3]->setImage(m_pWarnTexPlane[3][m_fSpeed<5.0f?0:m_fSpeed<30.0f?3:m_fSpeed<45.0f?2:1]);
+
+        m_pWarnImgHeli[1]->setImage(m_pWarnTexHeli[1][vPos.Y<200.0f?3:vPos.Y<400.0f?2:1]);
+      }
+      else printf("body == NULL @ CCockpitPlane\n");
+    }
+  }
+
+  if (pEvent->getType() == EVENT_PLANE_STATE_ID) {
+    CEventPlaneState *p=(CEventPlaneState *)pEvent;
+    m_pWarnImgPlane[0]->setImage(m_pWarnTexPlane[0][p->isAutoPilotOn()?1:0]);
+    m_pWarnImgPlane[2]->setImage(m_pWarnTexPlane[2][p->isBrakesOn   ()?2:1]);
+    m_fPower = p->getThrust();
+  }
+
+  if (pEvent->getType() == EVENT_HELI_STATE_ID) {
+    CEventHeliState *p=(CEventHeliState *)pEvent;
+    m_fPower = p->getThrust();
+  }
+
   return true;
 }
 
@@ -394,7 +440,12 @@ void CCockpitPlane::updateApState(irr::s32 iApState) {
 }
 
 bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == EVENT_LAP_TIME_ID || pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == EVENT_AUTOPILOT_ID;
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep      ||
+         pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved ||
+         pEvent->getType() == EVENT_AUTOPILOT_ID              ||
+         pEvent->getType() == EVENT_LAP_TIME_ID               ||
+         pEvent->getType() == EVENT_PLANE_STATE_ID            ||
+         pEvent->getType() == EVENT_HELI_STATE_ID;
 }
 
 void CCockpitPlane::activate(irr::ode::CIrrOdeBody *p, irr::u32 iInfoMode, irr::scene::ISceneNode *pApTarget, irr::s32 iApState) {

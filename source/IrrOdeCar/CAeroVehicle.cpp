@@ -25,6 +25,7 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
     m_bFirePrimary=false;
     m_bFireSecondary=false;
     m_bDataChanged=false;
+    m_bBrakes = false;
     m_iApInfoMode = 0;
     m_pApTarget = NULL;
 
@@ -171,6 +172,10 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_bFireSecondary=true;
       }
 
+      bool b = m_pController->get(m_pCtrls[eAeroBrake])>0.2f;
+      m_bDataChanged |= m_bBrakes != b;
+      m_bBrakes = b;
+
       if (m_pBrakes[0]!=NULL) {
         m_pBrakes[0]->setForce(100.0f*m_pController->get(m_pCtrls[eAeroBrake]));
       }
@@ -196,6 +201,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eAeroAutoPilot])) {
         m_pController->set(m_pCtrls[eAeroAutoPilot],0.0f);
         m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
+        m_bDataChanged = true;
       }
 
       if (m_pController->get(m_pCtrls[eAeroSelectTarget])) {

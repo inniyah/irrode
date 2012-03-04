@@ -50,6 +50,8 @@ CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrr
   m_iOldHitsTaken = -1;
 
   m_pLap = new CIrrOdeCarTrack(m_pBody);
+
+  m_bAutoPilot = false;
 }
 
 CPlane::~CPlane() {
@@ -131,25 +133,6 @@ void CPlane::odeStep(irr::u32 iStep) {
 
     if (m_pCockpit!=NULL) {
       irr::core::vector3df vPos=m_pBody->getPosition();
-      irr::f32 fSpeed=m_pBody->getLinearVelocity().getLength();
-
-      m_pCockpit->setAltitude(vPos.Y);
-      m_pCockpit->setSpeed(fSpeed);
-      m_pCockpit->setPower(100.0f*m_fThrust);
-      m_pCockpit->setVelVert(m_pBody->getLinearVelocity().Y);
-
-      irr::core::vector3df v=m_pBody->getRotation().rotationToDirection(m_pAero->getForeward());
-      irr::core::vector2df vDir=irr::core::vector2df(v.X,v.Z);
-
-      if (v.getLength()>0.01f) m_pCockpit->setHeading(vDir.getAngle());
-
-      m_pCockpit->setWarnStatePlane(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApPlaneLowAlt?2:1:0);
-      m_pCockpit->setWarnStatePlane(1,vPos.Y<300.0f?3:vPos.Y<550.0f?2:1);
-      m_pCockpit->setWarnStatePlane(2,m_pBrakes[0]->getForce()>20.0f?2:1);
-      m_pCockpit->setWarnStatePlane(3,fSpeed<5.0f?0:fSpeed<30.0f?3:fSpeed<45.0f?2:1);
-
-      v=m_pBody->getAbsoluteTransformation().getRotationDegrees();
-      m_pCockpit->setHorizon(v,v.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f)));
 
       irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
 
@@ -219,6 +202,11 @@ void CPlane::odeStep(irr::u32 iStep) {
     }
     m_fAngleRate[2]=f;
   }
+
+  if (m_bAutoPilot != m_pAutoPilot->isEnabled()) {
+    m_bAutoPilot = m_pAutoPilot->isEnabled();
+    dataChanged();
+  }
 }
 
 void CPlane::drawSpecifics() {
@@ -226,7 +214,7 @@ void CPlane::drawSpecifics() {
 }
 
 irr::ode::IIrrOdeEvent *CPlane::writeEvent() {
-  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_bThreeWheeler);
+  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_bThreeWheeler,m_pBrakes[0]->getForce()>20.0f,m_pAutoPilot->isEnabled(),m_fThrust);
   return p;
 }
 
