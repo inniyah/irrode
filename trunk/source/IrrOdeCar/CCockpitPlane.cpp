@@ -206,6 +206,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  printf("--> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
 }
 
 CCockpitPlane::~CCockpitPlane() {
@@ -324,7 +325,6 @@ void CCockpitPlane::setHitsTaken(irr::s32 iHits) {
 
 bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   wchar_t s[0xFF];
-
   if (pEvent->getType() == EVENT_LAP_TIME_ID) {
     m_iInfoMode = 1;
     CEventLapTime *p = (CEventLapTime *)pEvent;

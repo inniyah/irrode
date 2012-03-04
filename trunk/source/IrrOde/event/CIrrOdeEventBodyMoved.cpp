@@ -36,6 +36,8 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CIrrOdeBody *pBody, irr::core::vect
 
   m_iColMaterial=pBody->getCollisionMaterial();
   m_vColPoint=pBody->getCollisionPoint();
+
+  m_pSmgr = NULL;
 }
 
 CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, irr::scene::ISceneManager *pSmgr) : IIrrOdeEvent() {
@@ -62,6 +64,8 @@ CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(CSerializer *pData, irr::scene::ISc
       m_iLinearDamping=pData->getU16();
     }
   }
+
+  m_pSmgr = pSmgr;
 }
 
 CIrrOdeEventBodyMoved::CIrrOdeEventBodyMoved(IIrrOdeEvent *pIn) : IIrrOdeEvent() {
@@ -84,6 +88,7 @@ u16 CIrrOdeEventBodyMoved::getType() {
 }
 
 CIrrOdeBody *CIrrOdeEventBodyMoved::getBody() {
+  if (m_pBody == NULL && m_pSmgr != NULL) m_pBody = reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromId(m_iBodyId));
   return m_pBody;
 }
 

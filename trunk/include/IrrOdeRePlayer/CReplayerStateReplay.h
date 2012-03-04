@@ -25,7 +25,9 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
     irr::scene::ISceneManager *m_pSmgr;
     irr::u32 m_iRet,
              m_iCamMode,
-             m_iFocusedNode;
+             m_iFocusedNode,
+             m_iDirection,
+             m_iPos;
     irr::f32 m_fCamDist,
              m_fCamHeight;
     irr::c8 m_sReplay[0xFF];

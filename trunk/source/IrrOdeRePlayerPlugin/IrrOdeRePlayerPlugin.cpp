@@ -15,6 +15,9 @@
   #include <CMeshCombiner.h>
   #include <CRandomForestNode.h>
 
+  #include <CCockpitCar.h>
+  #include <CCockpitPlane.h>
+
 /**
  * We use the plugin to add an addition event listener to the IrrOdeRePlayer. This
  * listener must deactivate the particle systems of the missiles and shells so that
@@ -23,11 +26,14 @@
 class APS_EventListener : public irr::ode::IIrrOdeEventListener {
   protected:
     irr::IrrlichtDevice *m_pDevice;
-
+    irr::ode::CIrrOdeManager *m_pOdeMngr;
+    irr::core::list<CCockpitPlane *> m_lPlaneCockpits;
+    irr::core::list<CCockpitCar *> m_lCarCockpits;
 
   public:
-    APS_EventListener(irr::IrrlichtDevice *pDevice) {
+    APS_EventListener(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMngr) {
       m_pDevice=pDevice;
+      m_pOdeMngr = pOdeMngr;
     }
 
     void searchPlaneBodies(irr::scene::ISceneNode *pNode) {
@@ -36,6 +42,9 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         if (p->getOdeClassname().equals_ignore_case("plane")) {
           printf("\t\t#### add plane \"%s\"\n",pNode->getName());
           CCustomEventReceiver::getSharedInstance()->addPlane(p);
+          CCockpitPlane *pCockpit = new CCockpitPlane(m_pDevice,"instruments",p);
+          m_lPlaneCockpits.push_back(pCockpit);
+          m_pOdeMngr->getQueue()->addEventListener(pCockpit);
         }
       }
       irr::core::list<ISceneNode *> children=pNode->getChildren();
@@ -64,6 +73,9 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         if (p->getOdeClassname().equals_ignore_case("car")) {
           printf("\t\t#### add car \"%s\"\n",pNode->getName());
           CCustomEventReceiver::getSharedInstance()->addCar(p);
+          CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p);
+          m_lCarCockpits.push_back(pCarCockpit);
+          m_pOdeMngr->getQueue()->addEventListener(pCarCockpit);
         }
       }
       irr::core::list<ISceneNode *> children=pNode->getChildren();
@@ -130,11 +142,19 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         return true;
       }
 
+      if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+        irr::core::list<CCockpitPlane *>::Iterator pit;
+        for (pit = m_lPlaneCockpits.begin(); pit != m_lPlaneCockpits.end(); pit++) (*pit)->update(true);
+
+        irr::core::list<CCockpitCar *>::Iterator cit;
+        for (cit = m_lCarCockpits.begin(); cit != m_lCarCockpits.end(); cit++) (*cit)->update(false);
+      }
+
       return false;
     }
 
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      return pEvent->getType()==irr::ode::eIrrOdeEventLoadScene;
+      return pEvent->getType()==irr::ode::eIrrOdeEventLoadScene || pEvent->getType()==irr::ode::eIrrOdeEventStep;
     }
 };
 
@@ -151,6 +171,7 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       if (iCode==EVENT_FIRE_SND_ID   ) return new CEventFireSound (pData);
       if (iCode==EVENT_AUTOPILOT_ID  ) return new CEventAutoPilot (pData);
       if (iCode==EVENT_LAP_TIME_ID   ) return new CEventLapTime   (pData);
+      if (iCode==EVENT_AUTOPILOT_ID  ) return new CEventAutoPilot (pData);
 
       if (iCode==EVENT_INST_FOREST_ID) return new CEventInstallRandomForestPlugin(pData);
 
@@ -177,7 +198,7 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
   }
 
   printf("registering event listener...\n");
-  g_pListener=new APS_EventListener(pDevice);
+  g_pListener=new APS_EventListener(pDevice,pMgr);
   pMgr->getQueue()->addEventListener(g_pListener);
 
   printf("registering event factory...\n");

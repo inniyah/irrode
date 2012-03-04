@@ -103,6 +103,7 @@ void CIrrOdeRePlayer::update() {
           if (pNode) CIrrOdeManager::getSharedInstance()->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
         }
 
+        //printf("%s\n",p2->toString());
         if (p->getType()==eIrrOdeEventStep) bStep=true;
         CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
         m_iIt++;
