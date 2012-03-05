@@ -86,31 +86,14 @@ void CHeli::odeStep(irr::u32 iStep) {
       CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
-      m_iShotsFired++;
-      if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
+      incShotsFired();
+      //if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
     }
 
     if (m_pCockpit!=NULL) {
-      irr::core::vector3df vPos=m_pBody->getPosition();
-
-      //m_pCockpit->setWarnStateHeli(0,m_pAutoPilot->isEnabled()?m_pAutoPilot->getState()==CAutoPilot::eApHeliLowAlt?2:1:0);
-      //m_pCockpit->setWarnStateHeli(1,vPos.Y<200.0f?3:vPos.Y<400.0f?2:1);
-
-      irr::ode::CIrrOdeBody *pTarget=m_pTargetSelector->getTarget();
-
-      if (pTarget!=NULL) {
-        irr::core::stringw s=irr::core::stringw(pTarget->getName());
-        m_pCockpit->setTargetName(s.c_str());
-        m_pCockpit->setTargetDist((vPos-pTarget->getPosition()).getLength());
-      }
-      else {
-        m_pCockpit->setTargetName(L"<no target>");
-        m_pCockpit->setTargetDist(0.0f);
-      }
-
       if (m_bActive) {
-        if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
-        if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
+        //if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
+        //if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
       }
 
       m_iOldHitsTaken  = m_iHitsTaken ;

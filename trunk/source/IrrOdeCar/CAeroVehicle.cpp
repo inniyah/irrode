@@ -6,6 +6,7 @@
   #include <CTargetSelector.h>
   #include <CRearView.h>
   #include <irrklang.h>
+  #include <CEventVehicleState.h>
 
 CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
   m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode"));
@@ -283,4 +284,24 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
 bool CAeroVehicle::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==irr::ode::eIrrOdeEventStep;
+}
+
+void CAeroVehicle::incHitsScored() {
+  CIrrOdeCarState::incHitsScored();
+  postShotEvent();
+}
+
+void CAeroVehicle::incHitsTaken() {
+  CIrrOdeCarState::incHitsTaken();
+  postShotEvent();
+}
+
+void CAeroVehicle::incShotsFired() {
+  m_iShotsFired++;
+  postShotEvent();
+}
+
+void CAeroVehicle::postShotEvent() {
+  CEventShots *p = new CEventShots(m_pBody->getID(), m_iShotsFired, m_iHitsTaken, m_iHitsScored);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
 }

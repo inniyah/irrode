@@ -82,7 +82,8 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
     CCockpitPlane *m_pCockpit;
-    //irrklang::ISound *m_pSound;
+
+    void postShotEvent();
 
   public:
     CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
@@ -104,6 +105,10 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     irr::ode::CIrrOdeBody *getBody() { return m_pBody; }
 
     void setCockpit(CCockpitPlane *p) { m_pCockpit = p; }
+
+    virtual void incHitsScored();
+    virtual void incHitsTaken();
+    void incShotsFired();
 };
 
 #endif

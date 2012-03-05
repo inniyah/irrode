@@ -273,82 +273,82 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     irr::f32 fVelocity=vForeward.dotProduct(m_pCarBody->getLinearVelocity());
 
+    bool bBoost=m_bActive?m_pController->get(m_pCtrls[eCarBoost])!=0.0f:false;
+
+    if (bBoost!=m_bBoost) {
+      m_bBoost=bBoost;
+      bDataChanged=true;
+    }
+
+    m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
+
+    irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
+    if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
+    //calculate the differential gear
+    irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
+             f2=m_pAxesRear[1]->getHingeAngleRate(),
+             fDiff=f1-f2,fDiffFact[2]={ 1.0f, 1.0f };
+
+    if (m_bDifferential) {
+      if (fDiff>2.5f || fDiff<-2.5f) {
+        if (fDiff> 150.0f) fDiff= 150.0f;
+        if (fDiff<-150.0f) fDiff=-150.0f;
+        fDiffFact[0]=1.0f-fDiff/150.0f;
+        fDiffFact[1]=1.0f+fDiff/150.0f;
+      }
+
+      if (m_fDiff>fDiff) {
+        m_fDiff-=3.5f;
+        if (m_fDiff<fDiff) m_fDiff=fDiff;
+      }
+
+      if (m_fDiff<fDiff) {
+        m_fDiff+=3.5f;
+        if (m_fDiff>fDiff) m_fDiff=fDiff;
+      }
+    }
+    else {
+      fDiff=0.0f;
+      m_fDiff=0.0f;
+      fDiffFact[0]=1.0f;
+      fDiffFact[1]=1.0f;
+    }
+
+    if (fForeward!=0.0f) {
+      irr::f32 fForce=fForeward<0.0f?-fForeward:fForeward;
+
+      for (irr::u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(-250.0*fForeward);
+        m_pMotor[i]->setForce(bBoost?fDiffFact[i]*60*fForce:fDiffFact[i]*40*fForce);
+        m_iThrottle=-1;
+      }
+    }
+    else
+      for (irr::u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(0.0f);
+        m_pMotor[i]->setForce(5.0f);
+      }
+
+    m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
+
+    if (m_fSteer!=0.0f)
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*m_fSteer);
+    else
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+
+    if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
+      irr::f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
+      if (fFact<0.0f) fFact=-fFact;
+
+      for (irr::u32 i=0; i<2; i++) {
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
+      }
+      m_bBrake=true;
+    }
+    else m_bBrake=false;
+
     if (m_bActive) {
-      bool bBoost=m_pController->get(m_pCtrls[eCarBoost])!=0.0f;
-
-      if (bBoost!=m_bBoost) {
-        m_bBoost=bBoost;
-        bDataChanged=true;
-      }
-
-      irr::f32 fForeward=m_pController->get(m_pCtrls[eCarForeward]);
-      m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
-
-      if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
-      //calculate the differential gear
-      irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
-               f2=m_pAxesRear[1]->getHingeAngleRate(),
-               fDiff=f1-f2,fFact[2]={ 1.0f, 1.0f };
-
-      if (m_bDifferential) {
-        if (fDiff>2.5f || fDiff<-2.5f) {
-          if (fDiff> 150.0f) fDiff= 150.0f;
-          if (fDiff<-150.0f) fDiff=-150.0f;
-          fFact[0]=1.0f-fDiff/150.0f;
-          fFact[1]=1.0f+fDiff/150.0f;
-        }
-
-        if (m_fDiff>fDiff) {
-          m_fDiff-=3.5f;
-          if (m_fDiff<fDiff) m_fDiff=fDiff;
-        }
-
-        if (m_fDiff<fDiff) {
-          m_fDiff+=3.5f;
-          if (m_fDiff>fDiff) m_fDiff=fDiff;
-        }
-      }
-      else {
-        fDiff=0.0f;
-        m_fDiff=0.0f;
-        fFact[0]=1.0f;
-        fFact[1]=1.0f;
-      }
-
-      if (fForeward!=0.0f) {
-        irr::f32 fForce=fForeward<0.0f?-fForeward:fForeward;
-
-        for (irr::u32 i=0; i<2; i++) {
-          m_pMotor[i]->setVelocity(-250.0*fForeward);
-          m_pMotor[i]->setForce(bBoost?fFact[i]*60*fForce:fFact[i]*40*fForce);
-          m_iThrottle=-1;
-        }
-      }
-      else
-        for (irr::u32 i=0; i<2; i++) {
-          m_pMotor[i]->setVelocity(0.0f);
-          m_pMotor[i]->setForce(5.0f);
-        }
-
-      m_fSteer=m_pController->get(m_pCtrls[eCarLeft]);
-
-      if (m_fSteer!=0.0f)
-        for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*m_fSteer);
-      else
-        for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
-
-      if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
-        irr::f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
-        if (fFact<0.0f) fFact=-fFact;
-
-        for (irr::u32 i=0; i<2; i++) {
-          m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
-          m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
-        }
-        m_bBrake=true;
-      }
-      else m_bBrake=false;
-
       if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
         m_bAdaptSteer=!m_bAdaptSteer;
         m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
@@ -523,20 +523,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       dataChanged();
     }
 
-    irr::core::vector3df r = m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
-                    v = m_pCarBody->getLinearVelocity(),
-                    p = m_pCarBody->getAbsolutePosition(),
-                    f = r.rotationToDirection(irr::core::vector3df(-1.0f,0.0f,0.0f)),
-                    s = r.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
-                    u = r.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-    irr::f32 fFact = v.getLength()<10.0f?0.0f:v.getLength()>100.0f?0.1f:0.1f*(v.getLength()-10.0f)/90.0f;
-    v.normalize();
-
-    irr::f32 f2 = 125.0f*v.dotProduct(s), f3 = 125.0f*v.dotProduct(u);
-
-    m_pCarBody->addForceAtPosition(p-2.0f*f,(-fFact*f2*s)+(-fFact*f3*u));
-    m_pCarBody->addForceAtPosition(p+2.0f*f,( fFact*f2*s)+( fFact*f3*u));
+    applyAeroEffect();
   }
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventTrigger) {
@@ -554,7 +541,25 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
     }
   }
+
   return false;
+}
+
+void CCar::applyAeroEffect() {
+  irr::core::vector3df r = m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
+                  v = m_pCarBody->getLinearVelocity(),
+                  p = m_pCarBody->getAbsolutePosition(),
+                  f = r.rotationToDirection(irr::core::vector3df(-1.0f,0.0f,0.0f)),
+                  s = r.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
+                  u = r.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
+
+  irr::f32 fFact = v.getLength()<10.0f?0.0f:v.getLength()>100.0f?0.1f:0.1f*(v.getLength()-10.0f)/90.0f;
+  v.normalize();
+
+  irr::f32 f1 = 125.0f*v.dotProduct(s), f2 = 125.0f*v.dotProduct(u);
+
+  m_pCarBody->addForceAtPosition(p-2.0f*f,(-fFact*f1*s)+(-fFact*f2*u));
+  m_pCarBody->addForceAtPosition(p+2.0f*f,( fFact*f1*s)+( fFact*f2*u));
 }
 
 bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {

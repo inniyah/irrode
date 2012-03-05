@@ -61,9 +61,9 @@ class CIrrOdeCarState {
       return m_vCamVelocity;
     }
 
-    void incHitsScored() { m_iHitsScored++; }
+    virtual void incHitsScored() { m_iHitsScored++; }
 
-    void incHitsTaken() { m_iHitsTaken++; }
+    virtual void incHitsTaken() { m_iHitsTaken++; }
 };
 
 #endif

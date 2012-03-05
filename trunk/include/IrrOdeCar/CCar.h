@@ -84,6 +84,8 @@ class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode
 
     CIrrOdeCarTrack *m_pLap;
 
+    void applyAeroEffect();
+
   public:
     CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);    /*!< the car's constructor */
     virtual ~CCar();                                                    /*!< the car's destructor */
