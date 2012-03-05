@@ -231,7 +231,7 @@ class CEventLapTime : public irr::ode::IIrrOdeEvent {
       if (iCode==EVENT_LAP_TIME_ID) {
         m_fTime=pData->getF32();
         m_iBody=pData->getS32();
-        m_iCp  =pData->getS32();
+        m_iCp  =pData->getS16();
       }
     }
 
