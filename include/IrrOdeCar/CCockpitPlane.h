@@ -30,11 +30,11 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
                                   *m_pWeaponInfo,
                                   *m_pLapInfo,
                                   *m_pApInfo;
-    irr::gui::IGUIStaticText      *m_pLblTgtDist,
-                                  *m_pLblTgtName,
-                                  *m_pLblShots,
-                                  *m_pLblHitsScored,
-                                  *m_pLblHitsTaken,
+    irr::gui::IGUIStaticText      *m_stTgtDist,
+                                  *m_stTgtName,
+                                  *m_stShots,
+                                  *m_stHitsScored,
+                                  *m_stHitsTaken,
                                   *m_stCurLap,
                                   *m_stLastLap,
                                   *m_stSplit,
@@ -42,7 +42,8 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
                                   *m_stApNextCp,
                                   *m_stApState;
     irr::scene::ISceneNode        *m_pHorizon,
-                                  *m_pApTarget;
+                                  *m_pApTarget,
+                                  *m_pTarget;
     irr::ode::CIrrOdeBody         *m_pObject;
     irr::scene::ICameraSceneNode  *m_pCam;
     irr::gui::CGUINeedleIndicator *m_pInstruments[6];
@@ -59,6 +60,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     bool m_bLapStarted;
 
     void updateApState(irr::s32 iApState);
+    void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
 
   public:
     CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject);
@@ -66,23 +68,8 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
 
     virtual void update(bool bPlane);
 
-    void setPower   (irr::f32 f) { m_fPower   =f; }
-
-    void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
-
-    void setTargetName(const wchar_t *sName);
-    void setTargetDist(irr::f32 fDist);
-
-    void setShotsFired(irr::s32 iShots);
-    void setHitsScored(irr::s32 iHits);
-    void setHitsTaken(irr::s32 iHits);
-
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    irr::u32 getInfoMode() { return m_iInfoMode; }
-
-    irr::scene::ISceneNode *getApTarget() { return m_pApTarget; }
 };
 
 #endif

@@ -13,6 +13,8 @@
 #define EVENT_INST_FOREST_ID irr::ode::eIrrOdeEventUser+6
 #define EVENT_LAP_TIME_ID irr::ode::eIrrOdeEventUser+7
 #define EVENT_AUTOPILOT_ID irr::ode::eIrrOdeEventUser+8
+#define EVENT_SELECT_TARGET_ID irr::ode::eIrrOdeEventUser+9
+#define EVENT_SHOTS_ID irr::ode::eIrrOdeEventUser+10
 
 class CEventPlaneState : public irr::ode::IIrrOdeEvent {
   protected:
@@ -322,6 +324,109 @@ class CEventAutoPilot : public irr::ode::IIrrOdeEvent {
     irr::s32 getNextCp() { return m_iNextCp; }
 
     irr::s32 getState() { return m_iState; }
+};
+
+class CEventSelectTarget : public irr::ode::IIrrOdeEvent {
+  private:
+    irr::s32 m_iBodyId,
+             m_iTargetId;
+
+  public:
+    CEventSelectTarget(irr::s32 iBodyId, irr::s32 iTargetId) {
+      m_iBodyId = iBodyId;
+      m_iTargetId = iTargetId;
+    }
+
+    CEventSelectTarget(irr::ode::CSerializer *pData) {
+      pData->resetBufferPos();
+      irr::u16 iCode = pData->getU16();
+      if (iCode == EVENT_SELECT_TARGET_ID) {
+        m_iBodyId = pData->getS32();
+        m_iTargetId = pData->getS32();
+      }
+    }
+
+    virtual irr::u16 getType() { return EVENT_SELECT_TARGET_ID; }
+
+    virtual const irr::c8 *toString() {
+      sprintf(m_sString, "CEventSelectTarget");
+      return m_sString;
+    }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+
+        m_pSerializer->addU16(EVENT_SELECT_TARGET_ID);
+        m_pSerializer->addS32(m_iBodyId);
+        m_pSerializer->addS32(m_iTargetId);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::ode::IIrrOdeEvent *clone() {
+      return new CEventSelectTarget(m_iBodyId, m_iTargetId);
+    }
+
+    irr::s32 getBody() { return m_iBodyId; }
+
+    irr::s32 getTarget() { return m_iTargetId; }
+};
+
+class CEventShots : public irr::ode::IIrrOdeEvent {
+  private:
+    irr::s32 m_iBodyId;
+    irr::u32 m_iShotsFired,
+             m_iHitsTaken,
+             m_iHitsScored;
+
+  public:
+    CEventShots(irr::s32 iBodyId, irr::u32 iShotsFired, irr::u32 iHitsTaken, irr::u32 iHitsScored) {
+      m_iBodyId     = iBodyId;
+      m_iShotsFired = iShotsFired;
+      m_iHitsTaken  = iHitsTaken;
+      m_iHitsScored = iHitsScored;
+    }
+
+    CEventShots(irr::ode::CSerializer *pData) {
+      pData->resetBufferPos();
+      irr::u16 iCode = pData->getU16();
+      if (iCode == EVENT_SHOTS_ID) {
+        m_iBodyId     = pData->getS32();
+        m_iShotsFired = pData->getU32();
+        m_iHitsTaken  = pData->getU32();
+        m_iHitsScored = pData->getU32();
+      }
+    }
+
+    virtual irr::u16 getType() { return EVENT_SHOTS_ID; }
+
+    virtual const irr::c8 *toString() {
+      sprintf(m_sString,"CEventShots");
+      return m_sString;
+    }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+        m_pSerializer->addU16(EVENT_SHOTS_ID);
+        m_pSerializer->addS32(m_iBodyId);
+        m_pSerializer->addU32(m_iShotsFired);
+        m_pSerializer->addU32(m_iHitsTaken);
+        m_pSerializer->addU32(m_iHitsScored);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::ode::IIrrOdeEvent *clone() {
+      return new CEventShots(m_iBodyId, m_iShotsFired, m_iHitsTaken, m_iHitsScored);
+    }
+
+    irr::s32 getBody() { return m_iBodyId; }
+
+    irr::u32 getShotsFired() { return m_iShotsFired; }
+    irr::u32 getHitsTaken () { return m_iHitsTaken ; }
+    irr::u32 getHitsScored() { return m_iHitsScored; }
 };
 
 #endif

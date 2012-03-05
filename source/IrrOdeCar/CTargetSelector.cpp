@@ -1,5 +1,6 @@
   #include <irrlicht.h>
   #include <CTargetSelector.h>
+  #include <CEventVehicleState.h>
   #include <irrode.h>
 
 CTargetSelector::CTargetSelector(irr::ode::CIrrOdeBody *pCarrier, irr::IrrlichtDevice *pDevice, irr::core::vector3df vForeward) {
@@ -75,18 +76,22 @@ void CTargetSelector::update() {
     irr::f32 f1=vPoint.getDistanceFrom(vPos),
              f2=vPoint.getDistanceFrom(m_pCarrier->getAbsolutePosition());
 
-    if (f1*5.0f>=f2) m_pTarget=NULL;
+    if (f1*5.0f>=f2) {
+      m_pTarget=NULL;
+      CEventSelectTarget *p = new CEventSelectTarget(m_pCarrier->getID(), -1);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    }
   }
 }
 
 bool CTargetSelector::selectOption() {
   if (m_pOption!=NULL) {
     m_pTarget=m_pOption;
+
+    CEventSelectTarget *p = new CEventSelectTarget(m_pCarrier->getID(), m_pOption->getID());
+    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+
     return true;
   }
   return false;
-}
-
-irr::ode::CIrrOdeBody *CTargetSelector::getTarget() {
-  return m_pTarget;
 }

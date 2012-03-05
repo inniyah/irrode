@@ -13,6 +13,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_iLapStart = 0;
   m_pObject = pObject;
   m_iBodyId = m_pObject->getID();
+  m_pTarget = NULL;
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 	irr::scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
@@ -156,17 +157,17 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pGuienv->addStaticText(L"Hits Sc:" ,irr::core::rect<irr::s32>(0, 75,80, 95),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
   m_pGuienv->addStaticText(L"Hits Tk:" ,irr::core::rect<irr::s32>(0,100,80,115),false,false,m_pWeaponInfo,-1,false)->setOverrideFont(pFont);
 
-  m_pLblTgtName   =m_pGuienv->addStaticText(L"Tg Name",irr::core::rect<irr::s32>(75,  0,175, 20),true,true,m_pWeaponInfo,-1,true);
-  m_pLblTgtDist   =m_pGuienv->addStaticText(L"Tg Dist",irr::core::rect<irr::s32>(75, 25,175, 45),true,true,m_pWeaponInfo,-1,true);
-  m_pLblShots     =m_pGuienv->addStaticText(L"Shots"  ,irr::core::rect<irr::s32>(75, 50,175, 70),true,true,m_pWeaponInfo,-1,true);
-  m_pLblHitsScored=m_pGuienv->addStaticText(L"Hits Sc",irr::core::rect<irr::s32>(75, 75,155, 95),true,true,m_pWeaponInfo,-1,true);
-  m_pLblHitsTaken =m_pGuienv->addStaticText(L"Hits Tk",irr::core::rect<irr::s32>(75,100,155,115),true,true,m_pWeaponInfo,-1,true);
+  m_stTgtName   =m_pGuienv->addStaticText(L"Tg Name",irr::core::rect<irr::s32>(75,  0,175, 20),true,true,m_pWeaponInfo,-1,true);
+  m_stTgtDist   =m_pGuienv->addStaticText(L"Tg Dist",irr::core::rect<irr::s32>(75, 25,175, 45),true,true,m_pWeaponInfo,-1,true);
+  m_stShots     =m_pGuienv->addStaticText(L"Shots"  ,irr::core::rect<irr::s32>(75, 50,175, 70),true,true,m_pWeaponInfo,-1,true);
+  m_stHitsScored=m_pGuienv->addStaticText(L"Hits Sc",irr::core::rect<irr::s32>(75, 75,155, 95),true,true,m_pWeaponInfo,-1,true);
+  m_stHitsTaken =m_pGuienv->addStaticText(L"Hits Tk",irr::core::rect<irr::s32>(75,100,155,115),true,true,m_pWeaponInfo,-1,true);
 
-  m_pLblTgtName   ->setOverrideFont(pFont);
-  m_pLblTgtDist   ->setOverrideFont(pFont);
-  m_pLblShots     ->setOverrideFont(pFont);
-  m_pLblHitsScored->setOverrideFont(pFont);
-  m_pLblHitsTaken ->setOverrideFont(pFont);
+  m_stTgtName   ->setOverrideFont(pFont);
+  m_stTgtDist   ->setOverrideFont(pFont);
+  m_stShots     ->setOverrideFont(pFont);
+  m_stHitsScored->setOverrideFont(pFont);
+  m_stHitsTaken ->setOverrideFont(pFont);
 
   m_pLapInfo = m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,195,135), pTab);
 
@@ -273,6 +274,13 @@ void CCockpitPlane::update(bool bPlane) {
   }
   else m_stApNextCp->setText(L"");
 
+  if (m_pTarget != NULL) {
+    irr::core::vector3df v = m_pObject->getPosition() - m_pTarget->getPosition();
+    wchar_t s[0xFF];
+    swprintf(s,0xFF,L"%.2f", v.getLength());
+    m_stTgtDist->setText(s);
+  }
+
   m_pGuienv->drawAll();
   m_pTab->setVisible(false);
   endRttUpdate();
@@ -286,41 +294,6 @@ void CCockpitPlane::setHorizon(irr::core::vector3df vRot, irr::core::vector3df v
   vUp.Z=-vUp.Z;
 
   m_pCam->setUpVector(vUp);
-}
-
-void CCockpitPlane::setTargetName(const wchar_t *sName) {
-  m_pLblTgtName->setText(sName);
-
-  m_pWeaponInfo->setVisible(true);
-  m_pLapInfo   ->setVisible(false);
-  m_pApInfo    ->setVisible(false);
-}
-
-void CCockpitPlane::setTargetDist(irr::f32 fDist) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"%.2f",fDist);
-  m_pLblTgtDist->setText(s);
-}
-
-void CCockpitPlane::setShotsFired(irr::s32 iShots) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"%i",iShots);
-  m_pLblShots->setText(s);
-  m_iInfoMode = 0;
-}
-
-void CCockpitPlane::setHitsScored(irr::s32 iHits) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"%i",iHits);
-  m_pLblHitsScored->setText(s);
-  m_iInfoMode = 0;
-}
-
-void CCockpitPlane::setHitsTaken(irr::s32 iHits) {
-  wchar_t s[0xFF];
-  swprintf(s,0xFF,L"%i",iHits);
-  m_pLblHitsTaken->setText(s);
-  m_iInfoMode = 0;
 }
 
 bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
@@ -424,6 +397,33 @@ bool CCockpitPlane::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType() == EVENT_SELECT_TARGET_ID) {
+    CEventSelectTarget *p = (CEventSelectTarget *)pEvent;
+
+    if (p->getBody() == m_iBodyId) {
+      m_pTarget = p->getTarget()!=-1?m_pSmgr->getSceneNodeFromId(p->getTarget()):NULL;
+      if (m_pTarget) {
+        m_iInfoMode = 0;
+        m_stTgtName->setText(irr::core::stringw(m_pTarget->getName()).c_str());
+      }
+      else {
+        m_stTgtName->setText(L"<no target>");
+        m_stTgtDist->setText(L"<no target>");
+      }
+    }
+  }
+
+  if (pEvent->getType() == EVENT_SHOTS_ID) {
+    CEventShots *p = (CEventShots *)pEvent;
+    if (p->getBody() == m_iBodyId) {
+      wchar_t s[0xFF];
+      swprintf(s,0xFF,L"%i",p->getShotsFired()); m_stShots     ->setText(s);
+      swprintf(s,0xFF,L"%i",p->getHitsScored()); m_stHitsScored->setText(s);
+      swprintf(s,0xFF,L"%i",p->getHitsTaken ()); m_stHitsTaken ->setText(s);
+      m_iInfoMode = 0;
+    }
+  }
+
   return true;
 }
 
@@ -442,5 +442,7 @@ bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
          pEvent->getType() == EVENT_AUTOPILOT_ID              ||
          pEvent->getType() == EVENT_LAP_TIME_ID               ||
          pEvent->getType() == EVENT_PLANE_STATE_ID            ||
-         pEvent->getType() == EVENT_HELI_STATE_ID;
+         pEvent->getType() == EVENT_HELI_STATE_ID             ||
+         pEvent->getType() == EVENT_SELECT_TARGET_ID          ||
+         pEvent->getType() == EVENT_SHOTS_ID;
 }

@@ -32,7 +32,7 @@ class CTargetSelector {
     void highlightTargets();
     bool selectOption();
 
-    irr::ode::CIrrOdeBody *getTarget();
+    irr::ode::CIrrOdeBody *getTarget() { return m_pTarget; }
 };
 
 #endif

@@ -164,14 +164,16 @@ class APS_EventFactory : public irr::ode::IIrrOdeEventFactory {
       pData->resetBufferPos();
       irr::u16 iCode=pData->getU16();
 
-      if (iCode==EVENT_PLANE_STATE_ID) return new CEventPlaneState(pData);
-      if (iCode==EVENT_TANK_STATE_ID ) return new CEventTankState (pData);
-      if (iCode==EVENT_CAR_STATE_ID  ) return new CEventCarState  (pData);
-      if (iCode==EVENT_HELI_STATE_ID ) return new CEventHeliState (pData);
-      if (iCode==EVENT_FIRE_SND_ID   ) return new CEventFireSound (pData);
-      if (iCode==EVENT_AUTOPILOT_ID  ) return new CEventAutoPilot (pData);
-      if (iCode==EVENT_LAP_TIME_ID   ) return new CEventLapTime   (pData);
-      if (iCode==EVENT_AUTOPILOT_ID  ) return new CEventAutoPilot (pData);
+      if (iCode==EVENT_PLANE_STATE_ID  ) return new CEventPlaneState  (pData);
+      if (iCode==EVENT_TANK_STATE_ID   ) return new CEventTankState   (pData);
+      if (iCode==EVENT_CAR_STATE_ID    ) return new CEventCarState    (pData);
+      if (iCode==EVENT_HELI_STATE_ID   ) return new CEventHeliState   (pData);
+      if (iCode==EVENT_FIRE_SND_ID     ) return new CEventFireSound   (pData);
+      if (iCode==EVENT_AUTOPILOT_ID    ) return new CEventAutoPilot   (pData);
+      if (iCode==EVENT_LAP_TIME_ID     ) return new CEventLapTime     (pData);
+      if (iCode==EVENT_AUTOPILOT_ID    ) return new CEventAutoPilot   (pData);
+      if (iCode==EVENT_SELECT_TARGET_ID) return new CEventSelectTarget(pData);
+      if (iCode==EVENT_SHOTS_ID        ) return new CEventShots       (pData);
 
       if (iCode==EVENT_INST_FOREST_ID) return new CEventInstallRandomForestPlugin(pData);
 
