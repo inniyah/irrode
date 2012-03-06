@@ -25,13 +25,6 @@ enum eAerealControls {
   eAeroFireSecondary,
   eAeroSelectTarget,
   eAeroAutoPilot,
-  eAeroToggleCam,
-  eAeroInternalView,
-  eAeroCamLeft,
-  eAeroCamRight,
-  eAeroCamUp,
-  eAeroCamDown,
-  eAeroCamCenter,
   eAeroFlip
 };
 
@@ -51,9 +44,7 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
              m_iLastShot2,
              m_iShotsFired;
 
-    bool m_bInternal,
-         m_bWeaponCam,
-         m_bFirePrimary,
+    bool m_bFirePrimary,
          m_bFireSecondary,
          m_bThreeWheeler,
          m_bDataChanged,
@@ -71,7 +62,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     irr::ode::CIrrOdeServo        *m_pSteer;
     irr::ode::CIrrOdeMotor        *m_pBrakes[2];
 
-    irr::scene::ICameraSceneNode *m_pCam;
     irr::scene::ITerrainSceneNode *m_pTerrain;
 
     CAutoPilot *m_pAutoPilot;

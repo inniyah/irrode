@@ -22,6 +22,7 @@
   #include <CCockpitPlane.h>
   #include <CCockpitCar.h>
   #include <CRoadMeshLoader.h>
+  #include <CCameraController.h>
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -258,19 +259,11 @@ int main(int argc, char** argv) {
   iCtrls[0][eCarBoost              ]=pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarToggleAdaptiveSteer]=pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
   iCtrls[0][eCarFlip               ]=pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-  iCtrls[0][eCarInternal           ]=pController->addItem(0,stringw(L"Internal Camera"      ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
-  iCtrls[0][eCarCamLeft            ]=pController->addItem(0,stringw(L"Camera Left"          ),KEY_KEY_Y ,CIrrCC::eCtrlButton);
-  iCtrls[0][eCarCamRight           ]=pController->addItem(0,stringw(L"Camera Right"         ),KEY_KEY_C ,CIrrCC::eCtrlButton);
-  iCtrls[0][eCarCamUp              ]=pController->addItem(0,stringw(L"Camera Up"            ),KEY_KEY_F ,CIrrCC::eCtrlButton);
-  iCtrls[0][eCarCamDown            ]=pController->addItem(0,stringw(L"Camera Down"          ),KEY_KEY_V ,CIrrCC::eCtrlButton);
-  iCtrls[0][eCarCamCenter          ]=pController->addItem(0,stringw(L"Center Camera"        ),KEY_KEY_X ,CIrrCC::eCtrlButton);
   iCtrls[0][eCarDifferential       ]=pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
 
   //we need two axes for the car: acceleration and steering
   pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);
   pController->createAxis(iCtrls[0][eCarLeft    ],iCtrls[0][eCarRight   ]);
-  pController->createAxis(iCtrls[0][eCarCamLeft ],iCtrls[0][eCarCamRight]);
-  pController->createAxis(iCtrls[0][eCarCamDown ],iCtrls[0][eCarCamUp   ]);
 
   //next up: the tank
   iCtrls[1][eTankForeward     ]=pController->addItem(1,stringw(L"Foreward"         ),KEY_UP    ,CIrrCC::eCtrlAxis);
@@ -282,8 +275,6 @@ int main(int argc, char** argv) {
   iCtrls[1][eTankCannonUp     ]=pController->addItem(1,stringw(L"Cannon Up"        ),KEY_KEY_W ,CIrrCC::eCtrlAxis);
   iCtrls[1][eTankCannonDown   ]=pController->addItem(1,stringw(L"Cannon Down"      ),KEY_KEY_S ,CIrrCC::eCtrlAxis);
   iCtrls[1][eTankFire         ]=pController->addItem(1,stringw(L"Fire"             ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-  iCtrls[1][eTankCamTurret    ]=pController->addItem(1,stringw(L"Toggle Turret Cam"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-  iCtrls[1][eTankCamBullet    ]=pController->addItem(1,stringw(L"Toggle Bullet Cam"),KEY_KEY_B ,CIrrCC::eCtrlToggleButton);
   iCtrls[1][eTankFlip         ]=pController->addItem(1,stringw(L"Flip"             ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
   iCtrls[1][eTankFastCollision]=pController->addItem(1,stringw(L"Fast Collision"   ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
 
@@ -307,22 +298,23 @@ int main(int argc, char** argv) {
   iCtrls[2][eAeroFireSecondary]=pController->addItem(2,stringw("Fire Secondary"),KEY_RETURN,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eAeroSelectTarget ]=pController->addItem(2,stringw("Select Target" ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eAeroAutoPilot    ]=pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroToggleCam    ]=pController->addItem(2,stringw("Missile Cam"   ),KEY_KEY_M ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroInternalView ]=pController->addItem(2,stringw("Internal View" ),KEY_KEY_I ,CIrrCC::eCtrlToggleButton);
-  iCtrls[2][eAeroCamLeft      ]=pController->addItem(2,stringw("Camera Left"   ),KEY_KEY_Y ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eAeroCamRight     ]=pController->addItem(2,stringw("Camera Right"  ),KEY_KEY_C ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eAeroCamUp        ]=pController->addItem(2,stringw("Camera Up"     ),KEY_KEY_F ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eAeroCamDown      ]=pController->addItem(2,stringw("Camera Down"   ),KEY_KEY_V ,CIrrCC::eCtrlAxis);
-  iCtrls[2][eAeroCamCenter    ]=pController->addItem(2,stringw("Center Camera" ),KEY_KEY_X ,CIrrCC::eCtrlToggleButton);
   iCtrls[2][eAeroFlip         ]=pController->addItem(2,stringw("Flip"          ),KEY_KEY_L ,CIrrCC::eCtrlToggleButton);
 
   pController->createAxis(iCtrls[2][eAeroYawLeft ],iCtrls[2][eAeroYawRight ]);
   pController->createAxis(iCtrls[2][eAeroRollLeft],iCtrls[2][eAeroRollRight]);
   pController->createAxis(iCtrls[2][eAeroPitchUp ],iCtrls[2][eAeroPitchDown]);
-  pController->createAxis(iCtrls[2][eAeroCamLeft ],iCtrls[2][eAeroCamRight ]);
-  pController->createAxis(iCtrls[2][eAeroCamUp   ],iCtrls[2][eAeroCamDown  ]);
 
   pController->createFader(iCtrls[2][eAeroPowerUp],iCtrls[2][eAeroPowerDown],10,0.01f);
+
+  iCtrls[3][eCameraLeft    ] = pController->addItem(3, stringw("Camera Left"    ), KEY_KEY_Y, CIrrCC::eCtrlAxis);
+  iCtrls[3][eCameraRight   ] = pController->addItem(3, stringw("Camera Right"   ), KEY_KEY_C, CIrrCC::eCtrlAxis);
+  iCtrls[3][eCameraUp      ] = pController->addItem(3, stringw("Camera Up"      ), KEY_KEY_R, CIrrCC::eCtrlAxis);
+  iCtrls[3][eCameraDown    ] = pController->addItem(3, stringw("Camera Down"    ), KEY_KEY_F, CIrrCC::eCtrlAxis);
+  iCtrls[3][eCameraCenter  ] = pController->addItem(3, stringw("Center Camera"  ), KEY_KEY_X, CIrrCC::eCtrlButton);
+  iCtrls[3][eCameraInternal] = pController->addItem(3, stringw("Toggle Internal"), KEY_KEY_I, CIrrCC::eCtrlToggleButton);
+
+  pController->createAxis(iCtrls[3][eCameraLeft], iCtrls[3][eCameraRight]);
+  pController->createAxis(iCtrls[3][eCameraUp  ], iCtrls[3][eCameraDown ]);
 
   IVideoDriver *driver = device->getVideoDriver();
   ISceneManager *smgr = device->getSceneManager();
@@ -455,10 +447,8 @@ int main(int argc, char** argv) {
 
   delete pSettings;
 
-  //Initialize the camera
-  vector3df camPos=vector3df(1750,99,2500);
-  ICameraSceneNode *cam=smgr->addCameraSceneNode();
-  cam->setPosition(camPos);
+  CCameraController *pCamCtrl = new CCameraController(device, pSndEngine, pController);
+  pCamCtrl->setCtrl(iCtrls[3]);
 
   //modify the textures of the car segment and the tank segment to
   IAnimatedMeshSceneNode *pNode=(IAnimatedMeshSceneNode *)smgr->getSceneNodeFromName("car_segment");
@@ -481,7 +471,6 @@ int main(int argc, char** argv) {
 
   CRearView *pRearView=NULL;
 
-  smgr->addCameraSceneNode();
   if (bRearCam) pRearView=new CRearView(device,"rearview.jpg",smgr->addCameraSceneNode());
 
   for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
@@ -548,22 +537,6 @@ int main(int argc, char** argv) {
     //step the simulation
     irr::ode::CIrrOdeManager::getSharedInstance()->step();
 
-    if (pSndEngine && pActive) {
-      scene::ICameraSceneNode *pCam=smgr->getActiveCamera();
-      core::vector3df irrPos=pCam->getPosition(),
-                      irrTgt=pCam->getTarget(),
-                      irrUp =pCam->getUpVector(),
-                      irrVel=pActive->getCameraVelocity();
-
-      irrklang::vec3df pos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
-                       tgt=irrklang::vec3df(irrTgt.X,irrTgt.Y,irrTgt.Z),
-                       up =irrklang::vec3df(irrUp .X,irrUp .Y,irrUp .Z),
-                       vel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
-
-      pSndEngine->setListenerPosition(pos,tgt,vel,up);
-      pSndEngine->setRolloffFactor(0.125f);
-    }
-
     //call the update method of the currently active state
     u32 iSwitch=pActive->update();
 
@@ -573,8 +546,11 @@ int main(int argc, char** argv) {
       pActive->deactivate();
       pActive=aStates[iSwitch];
       pActive->activate();
+      pCamCtrl->setTarget(pActive->getBody());
       iSwitch=0;
     }
+
+    pCamCtrl->update();
 
     //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
     driver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
@@ -606,6 +582,8 @@ int main(int argc, char** argv) {
 
   CConfigFileManager::getSharedInstance()->writeConfig(device,"../../data/irrOdeCarControls.xml");
   irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
+
+  delete pCamCtrl;
 
   //drop the world so it is destroyed
   device->drop();

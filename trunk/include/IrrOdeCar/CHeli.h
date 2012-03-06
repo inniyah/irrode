@@ -37,15 +37,11 @@ class CHeli : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeft;
     irr::f32 m_fSound;
-    irr::s32 m_iNodeId,
-        m_iOldHitsTaken,
-        m_iOldHitsScored;
+    irr::s32 m_iNodeId;
 
   public:
     CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
     virtual ~CHeli();
-
-    virtual irr::u32 update();
 
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }
 

@@ -20,8 +20,6 @@ enum eTankCtrl {
   eTankCannonUp,
   eTankCannonDown,
   eTankFire,
-  eTankCamTurret,
-  eTankCamBullet,
   eTankFlip,
   eTankFastCollision
 };
@@ -45,8 +43,6 @@ class CTank : public CIrrOdeCarState, public irr::IEventReceiver, public irr::od
     irr::ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
     irr::ode::CIrrOdeMotor *m_pTurretMotor;
     irr::ode::CIrrOdeServo *m_pCannonServo;
-
-    irr::scene::ICameraSceneNode *m_pCam;
 
     irr::core::list<irr::ode::CIrrOdeJointHinge *> m_lAxes;
     irr::ode::CIrrOdeJointHinge *m_pCannonHinge,
@@ -81,6 +77,7 @@ class CTank : public CIrrOdeCarState, public irr::IEventReceiver, public irr::od
 
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
+    virtual irr::ode::CIrrOdeBody *getBody();
 };
 
 #endif

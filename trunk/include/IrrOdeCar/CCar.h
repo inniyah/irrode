@@ -21,12 +21,6 @@ enum eCarCtrl {
   eCarBoost,
   eCarFlip,
   eCarToggleAdaptiveSteer,
-  eCarInternal,
-  eCarCamLeft,
-  eCarCamRight,
-  eCarCamUp,
-  eCarCamDown,
-  eCarCamCenter,
   eCarDifferential
 };
 
@@ -41,8 +35,6 @@ class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode
              m_bGasStation,      /*!< is the car in a gas station? */
              m_bGasLastStep;     /*!< was the car in a gas station in the last step? */
     irr::f32 m_fActSteer,        /*!< the actual steering (-45.0, 0, +45.0) */
-             m_fCamAngleH,       /*!< horizontal angle of camera */
-             m_fCamAngleV,       /*!< vertical angle of camera */
              m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
@@ -68,8 +60,6 @@ class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode
     irr::ode::CIrrOdeJointHinge2       *m_pAxesFront[2];   /*!< front left axis for speed measure */
     irr::ode::CIrrOdeJointHinge        *m_pAxesRear [2];   /*!< the rear axes */
     irr::ode::CIrrOdeSurfaceParameters *m_pParams   [4];   /*!< the contact parameters */
-
-    irr::scene::ICameraSceneNode *m_pCam; /*!< the camera scene node */
 
     CCockpitCar *m_pCockpit;
     CRearView *m_pRView;
@@ -108,7 +98,7 @@ class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
 
-    irr::scene::ISceneNode *getBody() { return m_pCarBody; }
+    virtual irr::ode::CIrrOdeBody *getBody() { return m_pCarBody; }
     void setCockpit(CCockpitCar *p) { m_pCockpit = p; }
 };
 

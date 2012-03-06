@@ -41,6 +41,8 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L""; return s; }
 
     virtual void drawSpecifics() { }
+
+    virtual irr::ode::CIrrOdeBody *getBody() { return NULL; }
 };
 
 #endif
