@@ -20,55 +20,11 @@ CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC
 
   CCustomEventReceiver::getSharedInstance()->addHeli(pNode);
 
-  m_iOldHitsScored = -1;
-  m_iOldHitsTaken = -1;
   dataChanged();
 }
 
 CHeli::~CHeli() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
-}
-
-irr::u32 CHeli::update() {
-  irr::u32 iRet=CIrrOdeCarState::update();
-
-  irr::core::vector3df rot=m_pBody->getRotation();
-
-  //get the parameters for the camera
-  irr::core::vector3df pos,tgt,
-                       up =m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0));
-
-  if (m_bInternal) {
-    irr::core::vector2df lookAt=irr::core::vector2df(0,-5).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(5, 0).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(0,-0.15,-1.3));
-    tgt=rot.rotationToDirection(irr::core::vector3df(lookAt.X,-0.15+lookUp.Y,lookAt.Y));
-  }
-  else {
-    irr::core::vector2df lookAt=irr::core::vector2df(  0,15).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(-15, 0).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(lookAt.X,5+lookUp.Y,lookAt.Y)),
-    tgt=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,5  ,0));
-  }
-
-  CProjectileManager *ppm=CProjectileManager::getSharedInstance();
-
-  //if we follow a bomb we focus the last dropped bomb ...
-  if (m_bWeaponCam && ppm->getLast()!=NULL) {
-    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(irr::core::vector3df(0,5,10));
-    m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
-    m_pCam->setUpVector(irr::core::vector3df(0,1,0));
-    m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
-  }
-  else {  //... otherwise we focus the plane
-    m_pCam->setPosition(m_pBody->getPosition()+pos);
-    m_pCam->setUpVector(up);
-    m_pCam->setTarget(m_pBody->getPosition()+tgt);
-  }
-
-  return iRet;
 }
 
 void CHeli::odeStep(irr::u32 iStep) {
@@ -87,19 +43,6 @@ void CHeli::odeStep(irr::u32 iStep) {
       p->setTarget(m_pTargetSelector->getTarget());
       m_bLeft=!m_bLeft;
       incShotsFired();
-      //if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
-    }
-
-    if (m_pCockpit!=NULL) {
-      if (m_bActive) {
-        //if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
-        //if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
-      }
-
-      m_iOldHitsTaken  = m_iHitsTaken ;
-      m_iOldHitsScored = m_iHitsScored;
-
-      m_pCockpit->update(false);
     }
 
     irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
@@ -111,6 +54,8 @@ void CHeli::odeStep(irr::u32 iStep) {
       m_pRView->setCameraParameters(cPos,cTgt,cUp);
       m_pRView->update(true);
     }
+
+    if (m_pCockpit) m_pCockpit->update(false);
   }
 
   m_fSound=0.75f+0.5*m_pMotor->getPower();

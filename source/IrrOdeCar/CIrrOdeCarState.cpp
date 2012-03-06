@@ -12,8 +12,6 @@ CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sV
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_bActive=false;
 
-  m_vCamVelocity=irr::core::vector3df(0.0f,0.0f,0.0f);
-
   m_pController=pCtrl;
 
   //create the help text

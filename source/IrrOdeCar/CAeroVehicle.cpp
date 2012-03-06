@@ -16,10 +16,6 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
     m_pBody->setUserData(this);
     m_pTerrain=reinterpret_cast<irr::scene::ITerrainSceneNode *>(m_pSmgr->getSceneNodeFromName("terrain"));
 
-    m_pCam=m_pSmgr->addCameraSceneNode();
-    m_pCam->setNearValue(0.1f);
-    m_bWeaponCam=false;
-    m_bInternal=false;
     m_iShotsFired=0;
     m_fCamAngleH=0.0f;
     m_fCamAngleV=0.0f;
@@ -80,20 +76,10 @@ CAeroVehicle::~CAeroVehicle() {
 }
 
 void CAeroVehicle::activate() {
-  m_pSmgr->setActiveCamera(m_pCam);
-
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
-
-  irr::core::vector3df pos=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,5,15)),
-                       up =m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0)),
-                       tgt=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,1  ,0));
-
-  m_pCam->setPosition(m_pBody->getPosition()+pos);
-  m_pCam->setUpVector(up);
-  m_pCam->setTarget(m_pBody->getPosition()+tgt);
 
   loadHelpFile();
   wchar_t s[1024];
@@ -165,16 +151,6 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pBrakes[1]->setForce(100.0f*m_pController->get(m_pCtrls[eAeroBrake]));
       }
 
-      if (m_pController->get(m_pCtrls[eAeroToggleCam])) {
-        m_pController->set(m_pCtrls[eAeroToggleCam],0.0f);
-        m_bWeaponCam=!m_bWeaponCam;
-      }
-
-      if (m_pController->get(m_pCtrls[eAeroInternalView])) {
-        m_pController->set(m_pCtrls[eAeroInternalView],0.0f);
-        m_bInternal=!m_bInternal;
-      }
-
       if (m_pController->get(m_pCtrls[eAeroFlip])) {
         m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
       }
@@ -188,44 +164,6 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (m_pController->get(m_pCtrls[eAeroSelectTarget])) {
         m_pController->set(m_pCtrls[eAeroSelectTarget],0.0f);
         m_pTargetSelector->selectOption();
-      }
-
-      if (m_pController->get(m_pCtrls[eAeroCamLeft])!=0.0f) {
-        m_fCamAngleH+=m_pController->get(m_pCtrls[eAeroCamLeft]);
-
-        if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
-        if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
-      }
-
-      if (m_pController->get(m_pCtrls[eAeroCamUp])!=0.0f) {
-        m_fCamAngleV+=m_pController->get(m_pCtrls[eAeroCamUp]);
-
-        if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
-        if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
-      }
-
-      if (m_pController->get(m_pCtrls[eAeroCamCenter])) {
-        if (m_fCamAngleH!=0.0f) {
-          if (m_fCamAngleH>0.0f) {
-            m_fCamAngleH-=5.0f;
-            if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
-          }
-          else {
-            m_fCamAngleH+=5.0f;
-            if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
-          }
-        }
-
-        if (m_fCamAngleV!=0.0f) {
-          if (m_fCamAngleV>0.0f) {
-            m_fCamAngleV-=5.0f;
-            if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
-          }
-          else {
-            m_fCamAngleV+=5.0f;
-            if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
-          }
-        }
       }
     }
 
@@ -273,8 +211,6 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
     }
     m_pMotor->setPower(m_fThrust*fAltFact);
-
-    if (m_pBody!=NULL) m_vCamVelocity=m_pBody->getLinearVelocity();
 
     odeStep(pStep->getStepNo());
   }

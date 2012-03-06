@@ -29,9 +29,6 @@ class CIrrOdeCarState {
     irr::c8 m_sHelpFile[1024];
 
     CIrrCC *m_pController;
-
-    irr::core::vector3df m_vCamVelocity;
-
   public:
     /**
      * The constructor
@@ -57,13 +54,11 @@ class CIrrOdeCarState {
 
     virtual const irr::core::stringw &getButton()=0;
 
-    const irr::core::vector3df &getCameraVelocity() {
-      return m_vCamVelocity;
-    }
-
     virtual void incHitsScored() { m_iHitsScored++; }
 
     virtual void incHitsTaken() { m_iHitsTaken++; }
+
+    virtual irr::ode::CIrrOdeBody *getBody() = 0;
 };
 
 #endif

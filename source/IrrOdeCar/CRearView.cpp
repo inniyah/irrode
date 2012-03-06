@@ -14,11 +14,9 @@ CRearView::~CRearView() {
 
 void CRearView::update(bool b) {
   startRttUpdate();
-  irr::scene::ICameraSceneNode *pActCam=m_pSmgr->getActiveCamera();
   m_pSmgr->setActiveCamera(m_pCam);
   m_pSmgr->drawAll();
   endRttUpdate();
-  m_pSmgr->setActiveCamera(pActCam);
 }
 
 void CRearView::setCameraParameters(const irr::core::vector3df cPos, const irr::core::vector3df cTgt, const irr::core::vector3df cUp) {

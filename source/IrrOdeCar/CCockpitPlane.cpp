@@ -14,16 +14,9 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pObject = pObject;
   m_iBodyId = m_pObject->getID();
   m_pTarget = NULL;
+  m_pApTarget = NULL;
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
-	irr::scene::ICameraSceneNode *pCam=m_pRttSmgr->addCameraSceneNode();
-
-	m_pApTarget = NULL;
-
-	pCam->setPosition(irr::core::vector3df(0,0,20));
-	pCam->setTarget(irr::core::vector3df(0,0,0));
-	pCam->setFOV(10.0f);
-	m_pRttSmgr->setActiveCamera(pCam);
 
   m_pElement=m_pDrv->addRenderTargetTexture(irr::core::dimension2d<irr::u32>(128,128));
 

@@ -114,13 +114,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     m_bAdaptSteer=false;
     m_iThrottle=0;
 
-    m_fCamAngleH=0.0f;
-    m_fCamAngleV=0.0f;
     m_fOldVel=0.0f;
-
-    //add a camera
-    m_pCam=m_pSmgr->addCameraSceneNode();
-    m_pCam->setNearValue(0.1f);
 
     m_pCtrls=NULL;
 
@@ -149,21 +143,15 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
-  m_pSmgr->setActiveCamera(m_pCam);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
 
   //get the parameters for the camera ...
-  irr::core::vector3df pos=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(8,4  ,0)),
-                       up =m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.2,0)),
-                       tgt=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,2  ,0));
-
-  //... and apply them to the active camera
-  m_pCam->setPosition(m_pCarBody->getPosition()+pos);
-  m_pCam->setUpVector(up);
-  m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
+  //irr::core::vector3df pos=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(8,4  ,0)),
+  //                     up =m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.2,0)),
+  //                     tgt=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,2  ,0));
 
   loadHelpFile();
   wchar_t s[0xFFFF];
@@ -205,40 +193,6 @@ irr::u32 CCar::update() {
       else
         //and 45 we calculate the actual steering angle
         m_fActSteer=_MAX_STEER-(_MAX_STEER-_MIN_STEER)*(v-10.0f)/(_MAX_STEER-_MIN_STEER);
-
-  //get the parameters for the camera ...
-  irr::core::vector3df pos=m_pCarBody->getRotation().rotationToDirection(m_bInternal?irr::core::vector3df(0,1.35,0):irr::core::vector3df(8,4,0)),
-                       up =m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.2,0)),
-                       tgt=m_pCarBody->getRotation().rotationToDirection(m_bInternal?irr::core::vector3df(-5,1.35,0):irr::core::vector3df(0,2,0)),
-                       rot=m_pCarBody->getRotation();
-
-  if (m_bInternal) {
-    irr::core::vector2df lookAt=irr::core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(0.0f,1.35f,0.0f)),
-    up =rot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f,0.0f));
-    tgt=rot.rotationToDirection(irr::core::vector3df(lookAt.Y,1.1+lookUp.Y,lookAt.X));
-  }
-  else {
-    irr::core::vector2df lookAt=irr::core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(lookAt.Y,5.0f+lookUp.Y,lookAt.X)),
-    up =rot.rotationToDirection(irr::core::vector3df(0,1,0));
-    tgt=rot.rotationToDirection(irr::core::vector3df(0,4,0));
-  }
-
-  //... and apply them to the active camera
-  m_pCam->setPosition(m_pCarBody->getPosition()+pos);
-  m_pCam->setUpVector(up);
-  m_pCam->setTarget(m_pCarBody->getPosition()+tgt);
-
-  //now we fill the info text with useful information
-  wchar_t dummy[0xFF];
-  pos=m_pCarBody->getAbsolutePosition();
-  swprintf(dummy,0xFE,L"vel: %.2f\npos: (%.0f, %.0f, %.0f)\nsteer: %.2f %s",v,pos.X,pos.Y,pos.Z,m_fActSteer,m_bAdaptSteer?L"(adaptive)":L"");
-  if (m_pController->get(m_pCtrls[eCarBoost])!=0.0f) swprintf(dummy,0xFF,L"%s\nBOOST!",dummy);
 
   //if the iRet value we got from CVehicle::update is more than 0 the state will be deactivated and
   //one of the other states will get active.
@@ -360,11 +314,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,120,0));
       }
 
-      if (m_pController->get(m_pCtrls[eCarInternal])!=0.0f) {
-        m_bInternal=!m_bInternal;
-        m_pController->set(m_pCtrls[eCarInternal],0.0f);
-      }
-
       m_pCockpit->update(false);
 
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
@@ -377,7 +326,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pRView->update(true);
       }
 
-      if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
+      /*if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
         m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
 
         if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
@@ -412,9 +361,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             m_fCamAngleV+=5.0f;
             if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
           }
-        }
-      }
-
+        }*/
       if (m_pController->get(m_pCtrls[eCarDifferential])) {
         m_pController->set(m_pCtrls[eCarDifferential],0.0f);
         m_bDifferential=!m_bDifferential;

@@ -67,8 +67,6 @@ CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC
     printf("turret: %i -- axis=%i, motor=%i\n",(int)m_pTurret,(int)m_pTurretHinge,(int)m_pTurretMotor);
     printf("cannon: %i -- axis=%i, motor=%i\n",(int)m_pCannon,(int)m_pCannonHinge,(int)m_pCannonServo);
 
-    m_pCam=m_pSmgr->addCameraSceneNode();
-
     m_bFollowTurret=false;
     m_bFollowBullet=false;
     m_bFastCollision=true;
@@ -93,7 +91,6 @@ CTank::~CTank() {
 }
 
 void CTank::activate() {
-  m_pSmgr->setActiveCamera(m_pCam);
   m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pInfo->setVisible(true);
@@ -105,10 +102,6 @@ void CTank::activate() {
   irr::core::vector3df pos=rot.rotationToDirection(irr::core::vector3df(7.5,2.5,0)),
                            up =m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0)),
                            tgt=m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,1  ,0));
-
-  m_pCam->setPosition(m_pTankBody->getPosition()+pos);
-  m_pCam->setUpVector(up);
-  m_pCam->setTarget(m_pTankBody->getPosition()+tgt);
 
   loadHelpFile();
   wchar_t s[1024];
@@ -141,9 +134,6 @@ irr::u32 CTank::update() {
   if (m_bFollowBullet && CProjectileManager::getSharedInstance()->getLast()!=NULL) {
     CProjectile *p=CProjectileManager::getSharedInstance()->getLast();
     irr::core::vector3df pos=p->getBody()->getPosition()-3*p->getBody()->getLinearVelocity().normalize();
-    m_pCam->setPosition(pos);
-    m_pCam->setUpVector(irr::core::vector3df(0,1,0));
-    m_pCam->setTarget(p->getBody()->getPosition());
   }
   else {
     irr::core::vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getAbsoluteTransformation().getRotationDegrees();
@@ -151,10 +141,6 @@ irr::u32 CTank::update() {
     irr::core::vector3df pos=rot.rotationToDirection(irr::core::vector3df(7.5,2.5,0)),
                          up =m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0)),
                          tgt=m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,1  ,0));
-
-    m_pCam->setPosition(m_pTankBody->getPosition()+pos);
-    m_pCam->setUpVector(up);
-    m_pCam->setTarget(m_pTankBody->getPosition()+tgt);
   }
 
   wchar_t dummy[0xFF];
@@ -225,16 +211,6 @@ bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(m_pCtrls[eTankFlip])!=0.0f) {
         m_pTankBody->addForceAtPosition(m_pTankBody->getPosition()+irr::core::vector3df(0.0f,0.2f,0.0f),irr::core::vector3df(0.0f,80.0f,0.0f));
-      }
-
-      if (m_pController->get(m_pCtrls[eTankCamBullet])) {
-        m_pController->set(m_pCtrls[eTankCamBullet],0.0f);
-        m_bFollowBullet=!m_bFollowBullet;
-      }
-
-      if (m_pController->get(m_pCtrls[eTankCamTurret])) {
-        m_pController->set(m_pCtrls[eTankCamTurret],0.0f);
-        m_bFollowTurret=!m_bFollowTurret;
       }
 
       if (m_pController->get(m_pCtrls[eTankFastCollision])) {
@@ -312,4 +288,8 @@ irr::ode::IIrrOdeEvent *CTank::writeEvent() {
 
 irr::ode::eEventWriterType CTank::getEventWriterType() {
   return irr::ode::eIrrOdeEventWriterUnknown;
+}
+
+irr::ode::CIrrOdeBody *CTank::getBody() {
+  return m_pTankBody;
 }

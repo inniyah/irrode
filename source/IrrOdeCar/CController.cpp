@@ -8,12 +8,14 @@ CController::CController(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeC
   pTab[0]=m_pTabCtrl->addTab(L"Car");
   pTab[1]=m_pTabCtrl->addTab(L"Tank");
   pTab[2]=m_pTabCtrl->addTab(L"Helicopter/Plane");
+  pTab[3]=m_pTabCtrl->addTab(L"Camera");
 
   m_pTabCtrl->setVisible(false);
 
   pCtrl->addGui(0,pTab[0],irr::core::position2di(15,15));
   pCtrl->addGui(1,pTab[1],irr::core::position2di(15,15));
   pCtrl->addGui(2,pTab[2],irr::core::position2di(15,15));
+  pCtrl->addGui(3,pTab[3],irr::core::position2di(15,15));
 }
 
 CController::~CController() {

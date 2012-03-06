@@ -103,6 +103,7 @@
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CAeroVehicle.h" />
 		<Unit filename="..\include\IrrOdeCar\CAutoPilot.h" />
+		<Unit filename="..\include\IrrOdeCar\CCameraController.h" />
 		<Unit filename="..\include\IrrOdeCar\CCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CCockpitCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CCockpitPlane.h" />
@@ -136,6 +137,7 @@
 		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
 		<Unit filename="..\source\IrrOdeCar\CAeroVehicle.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CAutoPilot.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCameraController.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitPlane.cpp" />

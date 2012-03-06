@@ -46,9 +46,6 @@ CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrr
   m_pSteerAxis=(irr::ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
   printf("steer axis: %i\n",(int)m_pSteerAxis);
 
-  m_iOldHitsScored = -1;
-  m_iOldHitsTaken = -1;
-
   m_pLap = new CIrrOdeCarTrack(m_pBody);
 
   m_bAutoPilot = false;
@@ -57,50 +54,6 @@ CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrr
 
 CPlane::~CPlane() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
-}
-
-irr::u32 CPlane::update() {
-  //call the superclass's update method
-  irr::u32 iRet=CIrrOdeCarState::update();
-
-  irr::core::vector3df rot=m_pBody->getRotation();
-
-  //get the parameters for the camera
-  irr::core::vector3df pos,tgt,up=m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0));
-
-  if (m_bInternal) {
-    irr::core::vector2df lookAt=irr::core::vector2df(0.0f,-5.0f).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(5.0f, 0.0f).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(0,1.1,-0.6)),
-    up =rot.rotationToDirection(irr::core::vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(irr::core::vector3df(lookAt.X,1.1+lookUp.Y,lookAt.Y));
-  }
-  else {
-    irr::core::vector2df lookAt=irr::core::vector2df(  0.0f,15.0f).rotateBy(m_fCamAngleH),
-                         lookUp=irr::core::vector2df(-15.0f, 0.0f).rotateBy(m_fCamAngleV);
-
-    pos=rot.rotationToDirection(irr::core::vector3df(lookAt.X,5.0f+lookUp.Y,lookAt.Y)),
-    up =rot.rotationToDirection(irr::core::vector3df(0,0.1,0));
-    tgt=rot.rotationToDirection(irr::core::vector3df(0,5,0));
-  }
-
-  CProjectileManager *ppm=CProjectileManager::getSharedInstance();
-
-  //if we follow a bomb we focus the last dropped bomb ...
-  if (m_bWeaponCam && ppm->getLast()!=NULL) {
-    pos=ppm->getLast()->getBody()->getRotation().rotationToDirection(irr::core::vector3df(0,5,10));
-    m_pCam->setPosition(ppm->getLast()->getBody()->getPosition()+pos);
-    m_pCam->setUpVector(irr::core::vector3df(0,1,0));
-    m_pCam->setTarget(ppm->getLast()->getBody()->getPosition());
-  }
-  else {  //... otherwise we focus the plane
-    m_pCam->setPosition(m_pBody->getPosition()+pos);
-    m_pCam->setUpVector(up);
-    m_pCam->setTarget(m_pBody->getPosition()+tgt);
-  }
-
-  return iRet;
 }
 
 void CPlane::odeStep(irr::u32 iStep) {
@@ -130,18 +83,6 @@ void CPlane::odeStep(irr::u32 iStep) {
       new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
       incShotsFired();
       m_bFireSecondary=false;
-    }
-
-    if (m_pCockpit!=NULL) {
-      if (m_bActive) {
-        //if (m_iHitsScored != m_iOldHitsScored) m_pCockpit->setHitsScored(m_iHitsScored);
-        //if (m_iHitsTaken  != m_iOldHitsTaken ) m_pCockpit->setHitsTaken (m_iHitsTaken );
-      }
-
-      m_iOldHitsTaken  = m_iHitsTaken ;
-      m_iOldHitsScored = m_iHitsScored;
-
-      m_pCockpit->update(true);
     }
 
     irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
