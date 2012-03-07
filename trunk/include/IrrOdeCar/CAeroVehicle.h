@@ -46,7 +46,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
 
     bool m_bFirePrimary,
          m_bFireSecondary,
-         m_bThreeWheeler,
          m_bDataChanged,
          m_bBrakes;
 

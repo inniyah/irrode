@@ -13,6 +13,7 @@ CIrrOdeCarTrack::CIrrOdeCarTrack(irr::ode::CIrrOdeBody *pBody) {
 }
 
 CIrrOdeCarTrack::~CIrrOdeCarTrack() {
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
