@@ -143,7 +143,6 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
-  m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
@@ -197,13 +196,6 @@ irr::u32 CCar::update() {
   //if the iRet value we got from CVehicle::update is more than 0 the state will be deactivated and
   //one of the other states will get active.
   return iRet;
-}
-
-//here we have the Irrlicht event receiver
-bool CCar::OnEvent(const irr::SEvent &event) {
-  bool bRet=m_pController->OnEvent(event);
-  bRet|=CIrrOdeCarState::OnEvent(event);
-  return bRet;
 }
 
 bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {

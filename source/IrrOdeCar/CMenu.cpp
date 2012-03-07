@@ -33,7 +33,6 @@ CMenu::~CMenu() {
 
 void CMenu::activate() {
   //register this class as Irrlicht event receiver
-  m_pDevice->setEventReceiver(this);
 
   //on the first activation we want the camera to focus the info panel floating somewhere between the heli and the car
   static bool bFirstCall=true;

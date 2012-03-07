@@ -26,7 +26,7 @@ enum eTankCtrl {
 
 class CProjectile;
 
-class CTank : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
+class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bBrake,
          m_bFollowTurret,
@@ -63,8 +63,6 @@ class CTank : public CIrrOdeCarState, public irr::IEventReceiver, public irr::od
     virtual void activate();
     virtual void deactivate();
     virtual irr::u32 update();
-
-    virtual bool OnEvent(const irr::SEvent &event);
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

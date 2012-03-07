@@ -91,7 +91,6 @@ CTank::~CTank() {
 }
 
 void CTank::activate() {
-  m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_pInfo->setVisible(true);
   m_bSwitchToMenu=false;
@@ -152,12 +151,6 @@ irr::u32 CTank::update() {
   m_pInfo->setText(dummy);
 
   return iRet;
-}
-
-bool CTank::OnEvent(const irr::SEvent &event) {
-  bool bRet=m_pController->OnEvent(event) ||  CIrrOdeCarState::OnEvent(event);
-
-  return bRet;
 }
 
 bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
