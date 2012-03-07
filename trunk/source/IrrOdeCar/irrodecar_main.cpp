@@ -225,6 +225,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
     scene::ISceneManager *m_pSmgr;
     gui::IGUIEnvironment *m_pGui;
 
+    irrklang::ISoundEngine *m_pSndEngine;
+
     CIrrCC *m_pController;
 
     CIrrOdeCarState *m_pActive;
@@ -236,74 +238,9 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
     irr::core::list<IRenderToTexture *> m_lCockpits;
 
-  public:
-    CIrrOdeCar() {
-      m_bSwitchToMenu = false;
-      m_bHelp = false;
-      m_iCount = 0;
+    CCameraController *m_pCamCtrl;
 
-      m_pRecorder  = NULL;
-      m_pRecording = NULL;
-      m_pSaveFile  = NULL;
-
-      m_pActive=NULL;
-    }
-
-    ~CIrrOdeCar() {
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
-    }
-
-    void run() {
-      //First thing to do: show the graphics options dialog to let the user choose the graphics options
-      CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
-
-      pSettings->setMinResolution(dimension2du(640,480));
-
-      u32 iRet=pSettings->run();
-      if (iRet==2) {
-        delete pSettings;
-        return;
-      }
-
-      //now create the Irrlicht device from the chosen options
-      m_pDevice=pSettings->createDeviceFromSettings();
-      m_pDevice->setWindowCaption(L"IrrODE car demo");
-
-
-      m_pDriver = m_pDevice->getVideoDriver  ();
-      m_pSmgr   = m_pDevice->getSceneManager  ();
-      m_pGui    = m_pDevice->getGUIEnvironment();
-
-      irrklang::ISoundEngine *pSndEngine=irrklang::createIrrKlangDevice();
-
-      irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
-      irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-
-      CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),pSndEngine);
-      CCustomEventReceiver::getSharedInstance()->install();
-
-      irr::core::dimension2d<irr::u32> cSize=m_pDriver->getScreenSize();
-      irr::core::rect<irr::s32> cRect=irr::core::rect<irr::s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
-      m_pSaveFile=m_pGui->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
-      m_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
-      m_pSaveFile->setVisible(false);
-
-      CProgress *pProg=new CProgress(m_pDevice);
-
-      irr::ode::CIrrOdeEventProgress *p=new irr::ode::CIrrOdeEventProgress(0,0);
-      pProg->onEvent(p);
-      delete p;
-
-      m_pController=new CIrrCC(m_pDevice);
-      m_pController->setSetsCanConflict(false);
-      m_pController->setAllowFKeys(false);
-      m_pController->setAllowMouse(false);
-      CConfigFileManager::getSharedInstance()->addReader(m_pController);
-      CConfigFileManager::getSharedInstance()->addWriter(m_pController);
-
-      m_pDevice->setEventReceiver(this);
-
+    void initControls() {
       //first up: the car's controls
       m_iCtrls[0][eCarForeward           ]=m_pController->addItem(0,stringw(L"Foreward"             ),KEY_UP    ,CIrrCC::eCtrlAxis);
       m_iCtrls[0][eCarBackward           ]=m_pController->addItem(0,stringw(L"Backward"             ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
@@ -369,6 +306,65 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       m_pController->createAxis(m_iCtrls[3][eCameraLeft], m_iCtrls[3][eCameraRight]);
       m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
+    }
+
+  public:
+    CIrrOdeCar(irr::IrrlichtDevice *pDevice) {
+      m_pDevice = pDevice;
+
+      m_pDriver = m_pDevice->getVideoDriver  ();
+      m_pSmgr   = m_pDevice->getSceneManager  ();
+      m_pGui    = m_pDevice->getGUIEnvironment();
+
+      m_pSndEngine=irrklang::createIrrKlangDevice();
+
+      m_bSwitchToMenu = false;
+      m_bHelp = false;
+      m_iCount = 0;
+
+      m_pRecorder  = NULL;
+      m_pRecording = NULL;
+      m_pSaveFile  = NULL;
+
+      m_pActive=NULL;
+
+      irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
+      irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+
+      CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),m_pSndEngine);
+      CCustomEventReceiver::getSharedInstance()->install();
+
+      irr::core::dimension2d<irr::u32> cSize=m_pDriver->getScreenSize();
+      irr::core::rect<irr::s32> cRect=irr::core::rect<irr::s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
+      m_pSaveFile=m_pGui->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
+      m_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
+      m_pSaveFile->setVisible(false);
+
+      m_pController=new CIrrCC(m_pDevice);
+      m_pController->setSetsCanConflict(false);
+      m_pController->setAllowFKeys(false);
+      m_pController->setAllowMouse(false);
+      CConfigFileManager::getSharedInstance()->addReader(m_pController);
+      CConfigFileManager::getSharedInstance()->addWriter(m_pController);
+
+      m_pDevice->setEventReceiver(this);
+
+      m_pCamCtrl = NULL;
+    }
+
+    ~CIrrOdeCar() {
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+    }
+
+    void run(CSettings *pSettings) {
+      CProgress *pProg=new CProgress(m_pDevice);
+
+      irr::ode::CIrrOdeEventProgress *p=new irr::ode::CIrrOdeEventProgress(0,0);
+      pProg->onEvent(p);
+      delete p;
+
+      initControls();
 
       //register the IrrOde scene node factory
       irr::ode::CIrrOdeSceneNodeFactory cFactory(m_pSmgr);
@@ -497,8 +493,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       delete pSettings;
 
-      CCameraController *pCamCtrl = new CCameraController(m_pDevice, pSndEngine, m_pController);
-      pCamCtrl->setCtrl(m_iCtrls[3]);
+      m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController);
+      m_pCamCtrl->setCtrl(m_iCtrls[3]);
 
       //modify the textures of the car segment and the tank segment to
       IAnimatedMeshSceneNode *pNode=(IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("car_segment");
@@ -601,11 +597,11 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
           m_pActive->deactivate();
           m_pActive=aStates[iSwitch];
           m_pActive->activate();
-          pCamCtrl->setTarget(m_pActive->getBody());
+          m_pCamCtrl->setTarget(m_pActive->getBody());
           iSwitch=0;
         }
 
-        pCamCtrl->update();
+        m_pCamCtrl->update();
 
         //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
         m_pDriver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
@@ -639,12 +635,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
-      delete pCamCtrl;
-
       //drop the world so it is destroyed
       m_pDevice->drop();
 
-      if (pSndEngine) pSndEngine->drop();
+      if (m_pSndEngine) m_pSndEngine->drop();
 
       //and now some more cleanup...
       for (u32 i=0; i<aStates.size(); i++) {
@@ -654,7 +648,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
     }
 
     virtual bool OnEvent(const irr::SEvent &event) {
-      m_pController->OnEvent(event);
+      if (m_pController!=NULL) m_pController->OnEvent(event);
+      if (m_pCamCtrl   !=NULL) m_pCamCtrl   ->OnEvent(event);
 
       if (m_pActive) m_pActive->OnEvent(event);
 
@@ -716,8 +711,23 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 };
 
 int main(int argc, char** argv) {
-  CIrrOdeCar CProgram;
-  CProgram.run();
+  //First thing to do: show the graphics options dialog to let the user choose the graphics options
+  CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
+
+  pSettings->setMinResolution(dimension2du(640,480));
+
+  u32 iRet=pSettings->run();
+  if (iRet==2) {
+    delete pSettings;
+    return 0;
+  }
+
+  //now create the Irrlicht device from the chosen options
+  irr::IrrlichtDevice *pDevice=pSettings->createDeviceFromSettings();
+  pDevice->setWindowCaption(L"IrrODE car demo");
+
+  CIrrOdeCar CProgram(pDevice);
+  CProgram.run(pSettings);
 
   return 0;
 }

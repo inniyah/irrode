@@ -104,9 +104,16 @@ bool CCameraController::OnEvent(const irr::SEvent &event) {
 }
 
 bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+    if (m_pController->get(m_pCtrls[eCameraInternal])) {
+      m_pController->set(m_pCtrls[eCameraInternal], 0.0f);
+      m_bInternal = !m_bInternal;
+    }
+  }
+
   return false;
 }
 
 bool CCameraController::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return false;
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep;
 }
