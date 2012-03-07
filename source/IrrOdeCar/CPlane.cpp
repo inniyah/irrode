@@ -92,7 +92,7 @@ void CPlane::odeStep(irr::u32 iStep) {
 
     if (m_pRView) {
       m_pRView->setCameraParameters(cPos,cTgt,cUp);
-      m_pRView->update(true);
+      m_pRView->update();
     }
   }
 

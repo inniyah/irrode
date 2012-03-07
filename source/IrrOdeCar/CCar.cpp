@@ -306,7 +306,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,120,0));
       }
 
-      m_pCockpit->update(false);
+      m_pCockpit->update();
 
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
                            cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.75f,0.0f)),
@@ -315,7 +315,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       if (m_pRView!=NULL) {
         m_pRView->setCameraParameters(cPos,cTgt,cUp);
-        m_pRView->update(true);
+        m_pRView->update();
       }
 
       /*if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {

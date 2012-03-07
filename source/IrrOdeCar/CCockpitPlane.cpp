@@ -16,6 +16,8 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pTarget = NULL;
   m_pApTarget = NULL;
 
+  m_bPlane = m_pObject->getOdeClassname() == "plane";
+
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 
   m_pElement=m_pDrv->addRenderTargetTexture(irr::core::dimension2d<irr::u32>(128,128));
@@ -208,7 +210,7 @@ CCockpitPlane::~CCockpitPlane() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
-void CCockpitPlane::update(bool bPlane) {
+void CCockpitPlane::update() {
   irr::f32 fDummy=m_fHeading+180.0f;
 
   while (fDummy<  0.0f) fDummy+=360.0f;
@@ -221,7 +223,7 @@ void CCockpitPlane::update(bool bPlane) {
   m_pInstruments[4]->setValue(m_fVelVert);
   m_pInstruments[5]->setValue(m_fSpeed);
 
-  if (bPlane) {
+  if (m_bPlane) {
     m_pPlaneWarnings->setVisible(true);
     m_pHeliWarnings->setVisible(false);
     m_pInstruments[0]->setVisible(true);
