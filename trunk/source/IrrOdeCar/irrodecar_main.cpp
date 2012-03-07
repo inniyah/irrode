@@ -299,8 +299,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       m_iCtrls[3][eCameraLeft    ] = m_pController->addItem(3, stringw("Camera Left"    ), KEY_KEY_Y, CIrrCC::eCtrlAxis);
       m_iCtrls[3][eCameraRight   ] = m_pController->addItem(3, stringw("Camera Right"   ), KEY_KEY_C, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraUp      ] = m_pController->addItem(3, stringw("Camera Up"      ), KEY_KEY_R, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraDown    ] = m_pController->addItem(3, stringw("Camera Down"    ), KEY_KEY_F, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraUp      ] = m_pController->addItem(3, stringw("Camera Up"      ), KEY_KEY_F, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraDown    ] = m_pController->addItem(3, stringw("Camera Down"    ), KEY_KEY_V, CIrrCC::eCtrlAxis);
       m_iCtrls[3][eCameraCenter  ] = m_pController->addItem(3, stringw("Center Camera"  ), KEY_KEY_X, CIrrCC::eCtrlButton);
       m_iCtrls[3][eCameraInternal] = m_pController->addItem(3, stringw("Toggle Internal"), KEY_KEY_I, CIrrCC::eCtrlToggleButton);
 
