@@ -23,7 +23,6 @@ CController::~CController() {
 
 void CController::activate() {
   m_bActive=true;
-  m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_pTabCtrl->setVisible(true);

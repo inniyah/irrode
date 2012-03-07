@@ -24,7 +24,7 @@ enum eCarCtrl {
   eCarDifferential
 };
 
-class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
+class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool     m_bBrake,           /*!< is the handbrake active? */
              m_bBoost,           /*!< is the boos button pushed? */
@@ -83,8 +83,6 @@ class CCar : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode
     virtual void activate();      /*!< the activation method */
     virtual void deactivate();    /*!< the deactivation method */
     virtual irr::u32 update();         /*!< the update method called once per frame */
-
-    virtual bool OnEvent(const irr::SEvent &event);  /*!< the Irrlicht event receiver callback */
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

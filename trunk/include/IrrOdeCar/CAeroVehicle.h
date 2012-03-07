@@ -28,7 +28,7 @@ enum eAerealControls {
   eAeroFlip
 };
 
-class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
+class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener {
   protected:
     irr::f32 m_fPitch,
              m_fRoll,
@@ -82,8 +82,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::IEventReceiver, public 
     virtual void activate();
     virtual void deactivate();
     //virtual u32 update();
-
-    virtual bool OnEvent(const irr::SEvent &event);
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

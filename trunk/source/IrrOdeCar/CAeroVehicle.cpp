@@ -76,7 +76,6 @@ CAeroVehicle::~CAeroVehicle() {
 }
 
 void CAeroVehicle::activate() {
-  m_pDevice->setEventReceiver(this);
   m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
@@ -91,12 +90,6 @@ void CAeroVehicle::activate() {
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
   m_bActive=false;
-}
-
-bool CAeroVehicle::OnEvent(const irr::SEvent &event) {
-  bool bRet=m_pController->OnEvent(event);
-  bRet|=CIrrOdeCarState::OnEvent(event);
-  return bRet;
 }
 
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
