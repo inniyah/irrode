@@ -7,6 +7,8 @@ static int s_iNum = 0;
 
 class IRenderToTexture {
   protected:
+    bool m_bActive;
+
     irr::IrrlichtDevice *m_pDevice;
     irr::gui::IGUIEnvironment *m_pGuienv;
     irr::video::IVideoDriver  *m_pDrv;
@@ -56,6 +58,8 @@ class IRenderToTexture {
       irr::c8 s[0xFF];
       sprintf(s,"rt_%i_%s",s_iNum++,sName);
       m_pTarget=m_pDrv->addRenderTargetTexture(cSize,s,irr::video::ECF_A8R8G8B8);
+
+      m_bActive = true;
     }
 
     virtual ~IRenderToTexture() {
@@ -67,6 +71,10 @@ class IRenderToTexture {
     irr::video::ITexture *getTexture() {
       return m_pTarget;
     }
+
+    void setActive(bool b) { m_bActive = b; }
+
+    bool isActive() { return m_bActive; }
 };
 
 #endif
