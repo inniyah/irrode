@@ -10,7 +10,7 @@ CEventPlaneState::CEventPlaneState() {
   m_fThrust = 0.0f;
 }
 
-CEventPlaneState::CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bThreeWheeler, bool bBrakes, bool bAp, irr::f32 fThrust) {
+CEventPlaneState::CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bBrakes, bool bAp, irr::f32 fThrust) {
   m_iNodeId=iId;
   m_pSerializer=NULL;
   m_iYaw=(irr::u8)(fYaw*100.0f);
@@ -19,7 +19,6 @@ CEventPlaneState::CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch,
   m_iFlags = 0;
   m_fThrust = fThrust;
 
-  if (bThreeWheeler) m_iFlags += s_iThreeWheeler;
   if (bBrakes      ) m_iFlags += s_iBrakes      ;
   if (bAp          ) m_iFlags += s_iAutoPilot   ;
 
@@ -61,7 +60,7 @@ const irr::c8 *CEventPlaneState::toString() {
 }
 
 irr::ode::IIrrOdeEvent *CEventPlaneState::clone() {
-  return new CEventPlaneState(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f,m_fSound,m_iFlags&s_iThreeWheeler,m_iFlags&s_iBrakes,m_iFlags&s_iAutoPilot,m_fThrust);
+  return new CEventPlaneState(m_iNodeId,((irr::f32)m_iYaw)/100.0f,((irr::f32)m_iPitch)/100.0f,((irr::f32)m_iRoll)/100.0f,m_fSound,m_iFlags&s_iBrakes,m_iFlags&s_iAutoPilot,m_fThrust);
 }
 
 CEventTankState::CEventTankState() {

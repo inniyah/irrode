@@ -140,7 +140,7 @@ void CPlane::drawSpecifics() {
 }
 
 irr::ode::IIrrOdeEvent *CPlane::writeEvent() {
-  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_bThreeWheeler,m_pBrakes[0]->getForce()>20.0f,m_pAutoPilot->isEnabled(),m_fThrust);
+  CEventPlaneState *p=new CEventPlaneState(m_pBody->getID(),m_fYaw,m_fPitch,m_fRoll,m_pMotor->getPower(),m_pBrakes[0]->getForce()>20.0f,m_pAutoPilot->isEnabled(),m_fThrust);
   return p;
 }
 

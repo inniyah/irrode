@@ -26,13 +26,12 @@ class CEventPlaneState : public irr::ode::IIrrOdeEvent {
              m_fThrust;
     irr::u8  m_iFlags;
 
-    static const irr::u8 s_iThreeWheeler = 1,
-                         s_iBrakes       = 2,
-                         s_iAutoPilot    = 4;
+    static const irr::u8 s_iBrakes       = 1,
+                         s_iAutoPilot    = 2;
 
   public:
     CEventPlaneState();
-    CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bThreeWheeler, bool bBrakes, bool bAp, irr::f32 fThrust);
+    CEventPlaneState(irr::s32 iId, irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fSound, bool bBrakes, bool bAp, irr::f32 fThrust);
     CEventPlaneState(irr::ode::CSerializer *pData);
 
     virtual ~CEventPlaneState() { }
@@ -50,7 +49,6 @@ class CEventPlaneState : public irr::ode::IIrrOdeEvent {
     irr::f32 getThrust() { return m_fThrust; }
     irr::s32 getNodeId() { return m_iNodeId; }
 
-    bool isThreeWheeler() { return m_iFlags & s_iThreeWheeler; }
     bool isBrakesOn    () { return m_iFlags & s_iBrakes      ; }
     bool isAutoPilotOn () { return m_iFlags & s_iAutoPilot   ; }
 };

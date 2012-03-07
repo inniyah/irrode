@@ -229,6 +229,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
     CIrrOdeCarState *m_pActive;
 
+    irr::u32 m_iCtrls[4][32];  //an array for all the controls we are going to define
+
     bool m_bHelp,
          m_bSwitchToMenu;
 
@@ -245,6 +247,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_pSaveFile  = NULL;
 
       m_pActive=NULL;
+    }
+
+    ~CIrrOdeCar() {
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
     }
 
     void run() {
@@ -298,73 +304,71 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       m_pDevice->setEventReceiver(this);
 
-      u32 iCtrls[4][32];  //an array for all the controls we are going to define
-
       //first up: the car's controls
-      iCtrls[0][eCarForeward           ]=m_pController->addItem(0,stringw(L"Foreward"             ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      iCtrls[0][eCarBackward           ]=m_pController->addItem(0,stringw(L"Backward"             ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      iCtrls[0][eCarLeft               ]=m_pController->addItem(0,stringw(L"Left"                 ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      iCtrls[0][eCarRight              ]=m_pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      iCtrls[0][eCarBrake              ]=m_pController->addItem(0,stringw(L"Brake"                ),KEY_SPACE ,CIrrCC::eCtrlButton);
-      iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-      iCtrls[0][eCarToggleAdaptiveSteer]=m_pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-      iCtrls[0][eCarFlip               ]=m_pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
+      m_iCtrls[0][eCarForeward           ]=m_pController->addItem(0,stringw(L"Foreward"             ),KEY_UP    ,CIrrCC::eCtrlAxis);
+      m_iCtrls[0][eCarBackward           ]=m_pController->addItem(0,stringw(L"Backward"             ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[0][eCarLeft               ]=m_pController->addItem(0,stringw(L"Left"                 ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[0][eCarRight              ]=m_pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+      m_iCtrls[0][eCarBrake              ]=m_pController->addItem(0,stringw(L"Brake"                ),KEY_SPACE ,CIrrCC::eCtrlButton);
+      m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
+      m_iCtrls[0][eCarToggleAdaptiveSteer]=m_pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[0][eCarFlip               ]=m_pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
 
       //we need two axes for the car: acceleration and steering
-      m_pController->createAxis(iCtrls[0][eCarForeward],iCtrls[0][eCarBackward]);
-      m_pController->createAxis(iCtrls[0][eCarLeft    ],iCtrls[0][eCarRight   ]);
+      m_pController->createAxis(m_iCtrls[0][eCarForeward],m_iCtrls[0][eCarBackward]);
+      m_pController->createAxis(m_iCtrls[0][eCarLeft    ],m_iCtrls[0][eCarRight   ]);
 
       //next up: the tank
-      iCtrls[1][eTankForeward     ]=m_pController->addItem(1,stringw(L"Foreward"         ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankBackward     ]=m_pController->addItem(1,stringw(L"Backward"         ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankLeft         ]=m_pController->addItem(1,stringw(L"Left"             ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankRight        ]=m_pController->addItem(1,stringw(L"Right"            ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankCannonLeft   ]=m_pController->addItem(1,stringw(L"Cannon Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankCannonRight  ]=m_pController->addItem(1,stringw(L"Cannon Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankCannonUp     ]=m_pController->addItem(1,stringw(L"Cannon Up"        ),KEY_KEY_W ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankCannonDown   ]=m_pController->addItem(1,stringw(L"Cannon Down"      ),KEY_KEY_S ,CIrrCC::eCtrlAxis);
-      iCtrls[1][eTankFire         ]=m_pController->addItem(1,stringw(L"Fire"             ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-      iCtrls[1][eTankFlip         ]=m_pController->addItem(1,stringw(L"Flip"             ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      iCtrls[1][eTankFastCollision]=m_pController->addItem(1,stringw(L"Fast Collision"   ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[1][eTankForeward     ]=m_pController->addItem(1,stringw(L"Foreward"         ),KEY_UP    ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankBackward     ]=m_pController->addItem(1,stringw(L"Backward"         ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankLeft         ]=m_pController->addItem(1,stringw(L"Left"             ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankRight        ]=m_pController->addItem(1,stringw(L"Right"            ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankCannonLeft   ]=m_pController->addItem(1,stringw(L"Cannon Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankCannonRight  ]=m_pController->addItem(1,stringw(L"Cannon Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankCannonUp     ]=m_pController->addItem(1,stringw(L"Cannon Up"        ),KEY_KEY_W ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankCannonDown   ]=m_pController->addItem(1,stringw(L"Cannon Down"      ),KEY_KEY_S ,CIrrCC::eCtrlAxis);
+      m_iCtrls[1][eTankFire         ]=m_pController->addItem(1,stringw(L"Fire"             ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[1][eTankFlip         ]=m_pController->addItem(1,stringw(L"Flip"             ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[1][eTankFastCollision]=m_pController->addItem(1,stringw(L"Fast Collision"   ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
 
       //this time we're gonna create four axes: acceleration, steering, turret movement and cannon angle
-      m_pController->createAxis(iCtrls[1][eTankForeward  ],iCtrls[1][eTankBackward   ]);
-      m_pController->createAxis(iCtrls[1][eTankLeft      ],iCtrls[1][eTankRight      ]);
-      m_pController->createAxis(iCtrls[1][eTankCannonUp  ],iCtrls[1][eTankCannonDown ]);
-      m_pController->createAxis(iCtrls[1][eTankCannonLeft],iCtrls[1][eTankCannonRight]);
+      m_pController->createAxis(m_iCtrls[1][eTankForeward  ],m_iCtrls[1][eTankBackward   ]);
+      m_pController->createAxis(m_iCtrls[1][eTankLeft      ],m_iCtrls[1][eTankRight      ]);
+      m_pController->createAxis(m_iCtrls[1][eTankCannonUp  ],m_iCtrls[1][eTankCannonDown ]);
+      m_pController->createAxis(m_iCtrls[1][eTankCannonLeft],m_iCtrls[1][eTankCannonRight]);
 
-      iCtrls[2][eAeroPitchUp      ]=m_pController->addItem(2,stringw("Pitch Up"      ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroPitchDown    ]=m_pController->addItem(2,stringw("Pitch Down"    ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroRollLeft     ]=m_pController->addItem(2,stringw("Roll Left"     ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroRollRight    ]=m_pController->addItem(2,stringw("Roll Right"    ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroYawLeft      ]=m_pController->addItem(2,stringw("Yaw Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroYawRight     ]=m_pController->addItem(2,stringw("Yaw Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroPowerUp      ]=m_pController->addItem(2,stringw("Power Up"      ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-      iCtrls[2][eAeroPowerDown    ]=m_pController->addItem(2,stringw("Power Down"    ),KEY_KEY_S ,CIrrCC::eCtrlFader);
-      iCtrls[2][eAeroPowerZero    ]=m_pController->addItem(2,stringw("Power Zero"    ),KEY_KEY_Z ,CIrrCC::eCtrlToggleButton);
-      iCtrls[2][eAeroBrake        ]=m_pController->addItem(2,stringw("Wheel Brake"   ),KEY_KEY_B ,CIrrCC::eCtrlAxis);
-      iCtrls[2][eAeroFirePrimary  ]=m_pController->addItem(2,stringw("Fire Primary"  ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-      iCtrls[2][eAeroFireSecondary]=m_pController->addItem(2,stringw("Fire Secondary"),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      iCtrls[2][eAeroSelectTarget ]=m_pController->addItem(2,stringw("Select Target" ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-      iCtrls[2][eAeroAutoPilot    ]=m_pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-      iCtrls[2][eAeroFlip         ]=m_pController->addItem(2,stringw("Flip"          ),KEY_KEY_L ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroPitchUp      ]=m_pController->addItem(2,stringw("Pitch Up"      ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroPitchDown    ]=m_pController->addItem(2,stringw("Pitch Down"    ),KEY_UP    ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroRollLeft     ]=m_pController->addItem(2,stringw("Roll Left"     ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroRollRight    ]=m_pController->addItem(2,stringw("Roll Right"    ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroYawLeft      ]=m_pController->addItem(2,stringw("Yaw Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroYawRight     ]=m_pController->addItem(2,stringw("Yaw Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroPowerUp      ]=m_pController->addItem(2,stringw("Power Up"      ),KEY_KEY_W ,CIrrCC::eCtrlFader);
+      m_iCtrls[2][eAeroPowerDown    ]=m_pController->addItem(2,stringw("Power Down"    ),KEY_KEY_S ,CIrrCC::eCtrlFader);
+      m_iCtrls[2][eAeroPowerZero    ]=m_pController->addItem(2,stringw("Power Zero"    ),KEY_KEY_Z ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroBrake        ]=m_pController->addItem(2,stringw("Wheel Brake"   ),KEY_KEY_B ,CIrrCC::eCtrlAxis);
+      m_iCtrls[2][eAeroFirePrimary  ]=m_pController->addItem(2,stringw("Fire Primary"  ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroFireSecondary]=m_pController->addItem(2,stringw("Fire Secondary"),KEY_RETURN,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroSelectTarget ]=m_pController->addItem(2,stringw("Select Target" ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroAutoPilot    ]=m_pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[2][eAeroFlip         ]=m_pController->addItem(2,stringw("Flip"          ),KEY_KEY_L ,CIrrCC::eCtrlToggleButton);
 
-      m_pController->createAxis(iCtrls[2][eAeroYawLeft ],iCtrls[2][eAeroYawRight ]);
-      m_pController->createAxis(iCtrls[2][eAeroRollLeft],iCtrls[2][eAeroRollRight]);
-      m_pController->createAxis(iCtrls[2][eAeroPitchUp ],iCtrls[2][eAeroPitchDown]);
+      m_pController->createAxis(m_iCtrls[2][eAeroYawLeft ],m_iCtrls[2][eAeroYawRight ]);
+      m_pController->createAxis(m_iCtrls[2][eAeroRollLeft],m_iCtrls[2][eAeroRollRight]);
+      m_pController->createAxis(m_iCtrls[2][eAeroPitchUp ],m_iCtrls[2][eAeroPitchDown]);
 
-      m_pController->createFader(iCtrls[2][eAeroPowerUp],iCtrls[2][eAeroPowerDown],10,0.01f);
+      m_pController->createFader(m_iCtrls[2][eAeroPowerUp],m_iCtrls[2][eAeroPowerDown],10,0.01f);
 
-      iCtrls[3][eCameraLeft    ] = m_pController->addItem(3, stringw("Camera Left"    ), KEY_KEY_Y, CIrrCC::eCtrlAxis);
-      iCtrls[3][eCameraRight   ] = m_pController->addItem(3, stringw("Camera Right"   ), KEY_KEY_C, CIrrCC::eCtrlAxis);
-      iCtrls[3][eCameraUp      ] = m_pController->addItem(3, stringw("Camera Up"      ), KEY_KEY_R, CIrrCC::eCtrlAxis);
-      iCtrls[3][eCameraDown    ] = m_pController->addItem(3, stringw("Camera Down"    ), KEY_KEY_F, CIrrCC::eCtrlAxis);
-      iCtrls[3][eCameraCenter  ] = m_pController->addItem(3, stringw("Center Camera"  ), KEY_KEY_X, CIrrCC::eCtrlButton);
-      iCtrls[3][eCameraInternal] = m_pController->addItem(3, stringw("Toggle Internal"), KEY_KEY_I, CIrrCC::eCtrlToggleButton);
+      m_iCtrls[3][eCameraLeft    ] = m_pController->addItem(3, stringw("Camera Left"    ), KEY_KEY_Y, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraRight   ] = m_pController->addItem(3, stringw("Camera Right"   ), KEY_KEY_C, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraUp      ] = m_pController->addItem(3, stringw("Camera Up"      ), KEY_KEY_R, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraDown    ] = m_pController->addItem(3, stringw("Camera Down"    ), KEY_KEY_F, CIrrCC::eCtrlAxis);
+      m_iCtrls[3][eCameraCenter  ] = m_pController->addItem(3, stringw("Center Camera"  ), KEY_KEY_X, CIrrCC::eCtrlButton);
+      m_iCtrls[3][eCameraInternal] = m_pController->addItem(3, stringw("Toggle Internal"), KEY_KEY_I, CIrrCC::eCtrlToggleButton);
 
-      m_pController->createAxis(iCtrls[3][eCameraLeft], iCtrls[3][eCameraRight]);
-      m_pController->createAxis(iCtrls[3][eCameraUp  ], iCtrls[3][eCameraDown ]);
+      m_pController->createAxis(m_iCtrls[3][eCameraLeft], m_iCtrls[3][eCameraRight]);
+      m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
 
       //register the IrrOde scene node factory
       irr::ode::CIrrOdeSceneNodeFactory cFactory(m_pSmgr);
@@ -494,7 +498,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       delete pSettings;
 
       CCameraController *pCamCtrl = new CCameraController(m_pDevice, pSndEngine, m_pController);
-      pCamCtrl->setCtrl(iCtrls[3]);
+      pCamCtrl->setCtrl(m_iCtrls[3]);
 
       //modify the textures of the car segment and the tank segment to
       IAnimatedMeshSceneNode *pNode=(IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("car_segment");
@@ -519,7 +523,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
         CPlane *p=new CPlane(m_pDevice,*it,m_pController,NULL,pRearView);
         CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
-        p->setCtrl((const u32 *)iCtrls[2]);
+        p->setCtrl((const u32 *)m_iCtrls[2]);
         p->setCockpit(pCockpit);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
@@ -530,7 +534,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         CCar *p=new CCar(m_pDevice,*it,m_pController,pRearView);
         CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p->getBody());
         p->setCockpit(pCarCockpit);
-        p->setCtrl((const u32 *)iCtrls[0]);
+        p->setCtrl((const u32 *)m_iCtrls[0]);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
         m_lCockpits.push_back(pCarCockpit);
@@ -538,7 +542,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       for (it=lTanks.begin(); it!=lTanks.end(); it++) {
         CTank *p=new CTank(m_pDevice,*it,m_pController);
-        p->setCtrl((const u32 *)iCtrls[1]);
+        p->setCtrl((const u32 *)m_iCtrls[1]);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
       }
@@ -546,7 +550,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       for (it=lHelis.begin(); it!=lHelis.end(); it++) {
         CHeli *p=new CHeli(m_pDevice,*it,m_pController,pRearView);
         CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
-        p->setCtrl((const u32 *)iCtrls[2]);
+        p->setCtrl((const u32 *)m_iCtrls[2]);
         p->setCockpit(pCockpit);
         aStates.push_back(p);
         theMenu->addButtonForState(p);

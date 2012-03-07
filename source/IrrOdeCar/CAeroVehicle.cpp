@@ -40,13 +40,10 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
 
     m_pSteer=(irr::ode::CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
 
-    m_bThreeWheeler=!strcmp(m_pBody->getName(),"plane2") || !strcmp(m_pBody->getName(),"plane4");
-
     printf("\naero state:\n\n");
     printf("motors: %i, %i, %i, ray: %i\n\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero,(int)m_pRay);
     printf("brakes: %i, %i\n",(int)m_pBrakes[0],(int)m_pBrakes[1]);
     printf("steer: %i\n",(int)m_pSteer);
-    printf("3-wheeler: %s\n",m_bThreeWheeler?"yes":"no");
 
     m_fThrust=0;
     m_fPitch=0;
@@ -196,12 +193,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (m_fYaw  ==m_fYaw  ) {
       m_pTorque->setYaw(fYaw);
 
-      if (m_pSteer!=NULL) {
-        if (m_bThreeWheeler)
-          m_pSteer->setServoPos(-20.0f*m_fYaw);
-        else
-          m_pSteer->setServoPos(10.0f*m_fYaw);
-      }
+      if (m_pSteer!=NULL) m_pSteer->setServoPos(-20.0f*m_fYaw);
     }
     m_pMotor->setPower(m_fThrust*fAltFact);
 
