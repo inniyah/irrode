@@ -212,7 +212,7 @@ void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, con
   for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax);
 }
 
-class CIrrOdeCar : public irr::IEventReceiver {
+class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   private:
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;
@@ -231,6 +231,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
     bool m_bHelp,
          m_bSwitchToMenu;
+
+    irr::core::list<IRenderToTexture *> m_lCockpits;
 
   public:
     CIrrOdeCar() {
@@ -270,6 +272,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+
       CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),pSndEngine);
       CCustomEventReceiver::getSharedInstance()->install();
 
@@ -519,6 +523,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         p->setCockpit(pCockpit);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
+        m_lCockpits.push_back(pCockpit);
       }
 
       for (it=lCars.begin(); it!=lCars.end(); it++) {
@@ -528,6 +533,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         p->setCtrl((const u32 *)iCtrls[0]);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
+        m_lCockpits.push_back(pCarCockpit);
       }
 
       for (it=lTanks.begin(); it!=lTanks.end(); it++) {
@@ -544,6 +550,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         p->setCockpit(pCockpit);
         aStates.push_back(p);
         theMenu->addButtonForState(p);
+        m_lCockpits.push_back(pCockpit);
       }
 
       //phyiscs initialization
@@ -688,6 +695,19 @@ class CIrrOdeCar : public irr::IEventReceiver {
       }
 
       return false;
+    }
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+      if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+        irr::core::list<IRenderToTexture *>::Iterator it;
+        for (it = m_lCockpits.begin(); it!=m_lCockpits.end(); it++) (*it)->update();
+      }
+
+      return false;
+    }
+
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
+      return pEvent->getType() == irr::ode::eIrrOdeEventStep;
     }
 };
 
