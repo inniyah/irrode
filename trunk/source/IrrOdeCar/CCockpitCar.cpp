@@ -61,7 +61,7 @@ CCockpitCar::~CCockpitCar() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
-void CCockpitCar::update(bool b) {
+void CCockpitCar::update() {
   m_pMeter->setValue(m_fSpeed);
   m_pDiff->setValue(m_fDiff);
   m_pRpm->setValue(m_fRpm);

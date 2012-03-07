@@ -57,7 +57,8 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
              m_iTime,
              m_iLapStart;
     irr::s32 m_iBodyId;
-    bool m_bLapStarted;
+    bool m_bLapStarted,
+         m_bPlane;
 
     void updateApState(irr::s32 iApState);
     void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
@@ -66,7 +67,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject);
     virtual ~CCockpitPlane();
 
-    virtual void update(bool bPlane);
+    virtual void update();
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

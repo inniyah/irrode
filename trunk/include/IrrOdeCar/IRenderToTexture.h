@@ -62,7 +62,7 @@ class IRenderToTexture {
       m_pTarget->drop();
     }
 
-    virtual void update(bool bPlane)=0;
+    virtual void update()=0;
 
     irr::video::ITexture *getTexture() {
       return m_pTarget;

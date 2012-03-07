@@ -52,10 +52,10 @@ void CHeli::odeStep(irr::u32 iStep) {
 
     if (m_pRView) {
       m_pRView->setCameraParameters(cPos,cTgt,cUp);
-      m_pRView->update(true);
+      m_pRView->update();
     }
 
-    if (m_pCockpit) m_pCockpit->update(false);
+    if (m_pCockpit) m_pCockpit->update();
   }
 
   m_fSound=0.75f+0.5*m_pMotor->getPower();

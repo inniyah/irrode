@@ -12,7 +12,7 @@ CRearView::CRearView(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene
 CRearView::~CRearView() {
 }
 
-void CRearView::update(bool b) {
+void CRearView::update() {
   startRttUpdate();
   m_pSmgr->setActiveCamera(m_pCam);
   m_pSmgr->drawAll();

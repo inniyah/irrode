@@ -44,7 +44,7 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
     CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody);
     virtual ~CCockpitCar();
 
-    virtual void update(bool b);
+    virtual void update();
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
