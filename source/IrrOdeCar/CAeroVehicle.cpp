@@ -82,11 +82,13 @@ void CAeroVehicle::activate() {
   swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
   m_pHelp->setText(s);
   m_pController->restoreState((irr::f32 *)m_aCtrlBuffer);
+  if (m_pCockpit) m_pCockpit->setActive(true);
 }
 
 void CAeroVehicle::deactivate() {
   m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
   m_bActive=false;
+  if (m_pCockpit) m_pCockpit->setActive(false);
 }
 
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {

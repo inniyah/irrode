@@ -156,6 +156,7 @@ void CCar::activate() {
   wchar_t s[0xFFFF];
   swprintf(s,0xFFFE,m_pHelp->getText(),m_pController->getSettingsText(0));
   m_pHelp->setText(s);
+  if (m_pCockpit) m_pCockpit->setActive(true);
 }
 
 void CCar::deactivate() {
@@ -168,6 +169,7 @@ void CCar::deactivate() {
   }
 
   for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
+  if (m_pCockpit) m_pCockpit->setActive(false);
 }
 
 //This method is called once for each rendered frame.
