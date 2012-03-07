@@ -147,11 +147,6 @@ void CCar::activate() {
   m_bSwitchToMenu=false;
   m_bActive=true;
 
-  //get the parameters for the camera ...
-  //irr::core::vector3df pos=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(8,4  ,0)),
-  //                     up =m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.2,0)),
-  //                     tgt=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(0,2  ,0));
-
   loadHelpFile();
   wchar_t s[0xFFFF];
   swprintf(s,0xFFFE,m_pHelp->getText(),m_pController->getSettingsText(0));
@@ -322,42 +317,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pRView->update();
       }
 
-      /*if (m_pController->get(m_pCtrls[eCarCamRight])!=0.0f) {
-        m_fCamAngleH+=m_pController->get(m_pCtrls[eCarCamRight]);
-
-        if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
-        if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
-      }
-
-      if (m_pController->get(m_pCtrls[eCarCamUp])!=0.0f) {
-        m_fCamAngleV+=m_pController->get(m_pCtrls[eCarCamUp]);
-
-        if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
-        if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
-      }
-
-      if (m_pController->get(m_pCtrls[eCarCamCenter])) {
-        if (m_fCamAngleH!=0.0f) {
-          if (m_fCamAngleH>0.0f) {
-            m_fCamAngleH-=5.0f;
-            if (m_fCamAngleH<0.0f) m_fCamAngleH=0.0f;
-          }
-          else {
-            m_fCamAngleH+=5.0f;
-            if (m_fCamAngleH>0.0f) m_fCamAngleH=0.0f;
-          }
-        }
-
-        if (m_fCamAngleV!=0.0f) {
-          if (m_fCamAngleV>0.0f) {
-            m_fCamAngleV-=5.0f;
-            if (m_fCamAngleV<0.0f) m_fCamAngleV=0.0f;
-          }
-          else {
-            m_fCamAngleV+=5.0f;
-            if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
-          }
-        }*/
       if (m_pController->get(m_pCtrls[eCarDifferential])) {
         m_pController->set(m_pCtrls[eCarDifferential],0.0f);
         m_bDifferential=!m_bDifferential;
