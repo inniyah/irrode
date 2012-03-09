@@ -93,6 +93,7 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
             m_fExtDist   = 15.0f;
             m_fExtOffset =  3.0f;
           }
+          else setTarget(NULL);
   }
 }
 

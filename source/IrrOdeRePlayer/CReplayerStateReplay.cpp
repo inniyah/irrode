@@ -32,7 +32,7 @@ void CReplayerStateReplay::removeNode(irr::scene::ISceneNode *pNode) {
   }
 }
 
-CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay) {
+CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay, IPlugin *pPlugin) {
   m_pOdeManager=irr::ode::CIrrOdeManager::getSharedInstance();
   m_pDevice=pDevice;
   m_pSmgr=pDevice->getSceneManager();
@@ -43,6 +43,11 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   m_pFont=m_pDevice->getGUIEnvironment()->getFont("../../data/font2.xml");
   m_iDirection = 0;
   m_iPos = 0;
+
+  m_pPlugin = pPlugin;
+  m_bPluginHandlesCamera = pPlugin->pluginHandleCamera();
+
+  m_bStepTaken = false;
 }
 
 void CReplayerStateReplay::activate() {
@@ -50,8 +55,16 @@ void CReplayerStateReplay::activate() {
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_pLblBodies=m_pGuiEnv->addStaticText(L"Hello World",irr::core::rect<irr::s32>(5,5,200,300),true,true,0,-1,true);
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-  m_pCam=m_pSmgr->addCameraSceneNode();
-  m_pFreeCam=m_pSmgr->addCameraSceneNodeFPS();
+
+  if (m_bPluginHandlesCamera) {
+    m_pCam = NULL;
+    m_pFreeCam = NULL;
+  }
+  else {
+    m_pCam=m_pSmgr->addCameraSceneNode();
+    m_pFreeCam=m_pSmgr->addCameraSceneNodeFPS();
+  }
+
   m_pSmgr->setActiveCamera(m_pFreeCam);
 
   m_pLblPaused=m_pGuiEnv->addStaticText(L"Paused",irr::core::rect<irr::s32>(422,5,602,35),true,true,0,-1,true);
@@ -96,6 +109,11 @@ irr::u32 CReplayerStateReplay::update() {
 
 bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    if (!m_bStepTaken) {
+      m_bStepTaken = true;
+      m_pPlugin->physicsInitialized();
+    }
+
     irr::core::position2df pos=m_pCrsCtrl->getRelativePosition();
     m_pCrsCtrl->setPosition(irr::core::position2df(0.5f,0.5f));
     switch (m_eCamMode) {
@@ -103,7 +121,7 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         break;
 
       case eCamFollow:
-        if (m_pFocusedNode!=NULL) {
+        if (m_pCam && m_pFocusedNode!=NULL) {
           irr::core::vector3df vDir, vCpo = irr::core::vector3df(0.0f, m_iPos==0?1.1f:1.35f, m_iPos==0?-0.6f:0.0f);
 
           if (m_iPos==0) {
@@ -177,7 +195,10 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (pEvent->getType()==irr::ode::eIrrOdeEventNodeRemoved) {
       irr::ode::CIrrOdeEventNodeRemoved *p=(irr::ode::CIrrOdeEventNodeRemoved *)pEvent;
       irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(p->getRemovedNodeId());
-      if (pNode!=NULL) removeNode(pNode);
+      if (pNode!=NULL) {
+        pNode->setVisible(false);
+        removeNode(pNode);
+      }
       updateBodyList();
       return true;
     }
@@ -194,6 +215,8 @@ bool CReplayerStateReplay::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
+  if (m_pPlugin->HandleEvent(event)) return true;
+
   bool bRet=false;
 
   if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
@@ -209,30 +232,32 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
           break;
 
         case irr::KEY_TAB:
-          if (m_eCamMode==eCamFree) {
-            if (m_pFocusedNode==NULL && m_aBodies.size()>0) {
-              if (m_iFocusedNode>=m_aBodies.size()) m_iFocusedNode=0;
-              m_pFocusedNode=m_aBodies[m_iFocusedNode];
-              m_pFocusedNode->grab();
-            }
+          if (!m_bPluginHandlesCamera) {
+            if (m_eCamMode==eCamFree) {
+              if (m_pFocusedNode==NULL && m_aBodies.size()>0) {
+                if (m_iFocusedNode>=m_aBodies.size()) m_iFocusedNode=0;
+                m_pFocusedNode=m_aBodies[m_iFocusedNode];
+                m_pFocusedNode->grab();
+              }
 
-            if (m_pFocusedNode!=NULL) {
-              m_eCamMode=eCamFollow;
-              m_pSmgr->setActiveCamera(m_pCam);
+              if (m_pFocusedNode!=NULL) {
+                m_eCamMode=eCamFollow;
+                m_pSmgr->setActiveCamera(m_pCam);
+              }
             }
-          }
-          else {
-            m_pFreeCam->setPosition(m_pCam->getPosition());
-            m_pFreeCam->setTarget(m_pCam->getTarget());
-            m_pSmgr->setActiveCamera(m_pFreeCam);
+            else {
+              m_pFreeCam->setPosition(m_pCam->getPosition());
+              m_pFreeCam->setTarget(m_pCam->getTarget());
+              m_pSmgr->setActiveCamera(m_pFreeCam);
 
-            if (m_pFocusedNode!=NULL) {
-              m_pFocusedNode->drop();
-              m_pFocusedNode=NULL;
+              if (m_pFocusedNode!=NULL) {
+                m_pFocusedNode->drop();
+                m_pFocusedNode=NULL;
+              }
+              m_eCamMode=eCamFree;
             }
-            m_eCamMode=eCamFree;
+            bRet=true;
           }
-          bRet=true;
           break;
 
         case irr::KEY_RIGHT:
@@ -278,7 +303,6 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
 
   if (event.EventType==irr::EET_MOUSE_INPUT_EVENT)
     if (event.MouseInput.Event==irr::EMIE_MOUSE_WHEEL) {
-      printf("==> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
       m_fCamDist+=0.25f*event.MouseInput.Wheel;
     }
 

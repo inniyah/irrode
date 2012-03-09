@@ -39,6 +39,11 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData);
  */
 int DLL_EXPORT destall(irr::IrrlichtDevice *pDevice, void *pUserData);
 
+int DLL_EXPORT handleCamera();
+
+bool DLL_EXPORT handleEvent(const irr::SEvent &event);
+
+void DLL_EXPORT physicsInitialized(void);
 #ifdef __cplusplus
 }
 #endif
