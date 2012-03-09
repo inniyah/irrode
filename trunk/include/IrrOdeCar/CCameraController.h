@@ -30,10 +30,13 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     irr::scene::ISceneManager *m_pSmgr;
     irr::ode::CIrrOdeBody *m_pTarget;
 
+    irr::ode::CIrrOdeManager *m_pOdeMngr;
+
     irr::f32 m_fCamAngleV,
              m_fCamAngleH,
              m_fExtDist,
-             m_fExtOffset;
+             m_fExtOffset,
+             m_fExtFact;
 
     irr::core::dimension2du m_cScreen;
     irr::core::position2di m_cMousePos;
@@ -55,7 +58,7 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     const irr::u32 *m_pCtrls;
 
   public:
-    CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl);
+    CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr);
     virtual ~CCameraController();
 
     void setTarget(irr::ode::CIrrOdeBody *pTarget);
