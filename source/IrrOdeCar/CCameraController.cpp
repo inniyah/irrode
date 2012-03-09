@@ -1,10 +1,11 @@
   #include <CCameraController.h>
   #include <irrCC.h>
 
-CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl) {
+CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr) {
   m_pDevice = pDevice;
   m_pTarget = NULL;
   m_pSndEngine = pSndEngine;
+  m_pOdeMngr = pOdeMngr;
 
   m_pSmgr = m_pDevice->getSceneManager();
   m_pCam = m_pSmgr->addCameraSceneNode();
@@ -13,7 +14,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_bInternal = false;
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  m_pOdeMngr->getQueue()->addEventListener(this);
 
   m_pCursor = m_pDevice->getCursorControl();
 
@@ -22,6 +23,8 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_fCamAngleH = 0.0f;
   m_fCamAngleV = 0.0f;
 
+  m_fExtFact = 1.0f;
+
   m_cMousePos = irr::core::position2di(-1, -1);
 
   m_bLeftMouse = false;
@@ -29,7 +32,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 }
 
 CCameraController::~CCameraController() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  m_pOdeMngr->getQueue()->removeEventListener(this);
 }
 
 void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
@@ -114,7 +117,7 @@ void CCameraController::update() {
       m_vUp       = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
     else {
-      m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset - (m_fExtDist * v - m_fExtOffset * irr::core::vector3df(0.0f, 1.0f, 0.0f)));
+      m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset - (m_fExtFact * m_fExtDist * v - m_fExtFact * m_fExtOffset * irr::core::vector3df(0.0f, 1.0f, 0.0f)));
       m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
       m_vUp = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
@@ -146,6 +149,11 @@ bool CCameraController::OnEvent(const irr::SEvent &event) {
   if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
     m_bLeftMouse = event.MouseInput.isLeftPressed ();
     m_bRghtMouse = event.MouseInput.isRightPressed();
+
+    m_fExtFact += 0.01f * event.MouseInput.Wheel;
+
+    if (m_fExtFact > 3.0f) m_fExtFact = 3.0f;
+    if (m_fExtFact < 0.1f) m_fExtFact = 0.1f;
   }
 
   return false;
@@ -206,6 +214,16 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           m_fCamAngleV+=5.0f;
           if (m_fCamAngleV>0.0f) m_fCamAngleV=0.0f;
         }
+      }
+
+      if (m_fExtFact > 1.0f) {
+        m_fExtFact -= 0.05f;
+        if (m_fExtFact < 1.0f) m_fExtFact = 1.0f;
+      }
+
+      if (m_fExtFact < 1.0f) {
+        m_fExtFact += 0.05f;
+        if (m_fExtFact > 1.0f) m_fExtFact = 1.0f;
       }
     }
   }

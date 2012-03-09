@@ -492,7 +492,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       delete pSettings;
 
-      m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController);
+      m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController, irr::ode::CIrrOdeManager::getSharedInstance());
       m_pCamCtrl->setCtrl(m_iCtrls[3]);
 
       //modify the textures of the car segment and the tank segment to
