@@ -29,9 +29,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_fOldSlider=0.0f;
   m_bGasStation=false;
   m_bGasLastStep=false;
-  m_iNextCp=-1;
-  m_iCurStep=0;
-  m_iLastLapStep=0;
   m_fSteer = 0.0f;
   m_fSpeed = 0.0f;
 
@@ -111,7 +108,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     m_bHelp=false;
     m_bBrake=false;
     m_bBoost=false;
-    m_bAdaptSteer=false;
     m_iThrottle=0;
 
     m_fOldVel=0.0f;
@@ -143,7 +139,6 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
-  m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -176,32 +171,11 @@ irr::u32 CCar::update() {
   //call the superclasse's update method
   irr::u32 iRet=CIrrOdeCarState::update();
 
-  #define _MAX_STEER 25.0f
-  #define _MIN_STEER 10.0f
-
-  //the car's velocity
-  irr::f32 v=m_pCarBody->getLinearVelocity().getLength();
-  //is the adaptive steer option is not active ...
-  if (!m_bAdaptSteer)
-    m_fActSteer=_MAX_STEER;   //... just use the default steering angle of 45 degrees, otherwise ...
-  else
-    if (v<10.0f)
-      m_fActSteer=_MAX_STEER;    //... just use this value if the velocity is low. If the velocity is higher, even ...
-    else
-      if (v>45.0f)
-        m_fActSteer=_MIN_STEER;  //... higher than 45 we use the minimum value of 10 degrees. If the speed is between 10 ...
-      else
-        //and 45 we calculate the actual steering angle
-        m_fActSteer=_MAX_STEER-(_MAX_STEER-_MIN_STEER)*(v-10.0f)/(_MAX_STEER-_MIN_STEER);
-
-  //if the iRet value we got from CVehicle::update is more than 0 the state will be deactivated and
-  //one of the other states will get active.
   return iRet;
 }
 
 bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
-    m_iCurStep++;
     if (m_bGasLastStep && !m_bGasStation) {
       const irr::core::vector3df v=m_pCarBody->getPosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
@@ -279,7 +253,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
     if (m_fSteer!=0.0f)
-      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fActSteer*m_fSteer);
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(25.0f*m_fSteer);
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
@@ -296,11 +270,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else m_bBrake=false;
 
     if (m_bActive) {
-      if (m_pController->get(m_pCtrls[eCarToggleAdaptiveSteer])!=0.0f) {
-        m_bAdaptSteer=!m_bAdaptSteer;
-        m_pController->set(m_pCtrls[eCarToggleAdaptiveSteer],0.0f);
-      }
-
       //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
       if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
         irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));

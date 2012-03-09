@@ -44,9 +44,6 @@ void CMenu::activate() {
   }
   m_pSmgr->getActiveCamera()->setUpVector(irr::core::vector3df(0,1,0));
 
-  //we need to see the mouse cursor
-  m_pDevice->getCursorControl()->setVisible(true);
-
   //returning 0 means that no state change is wished, so we init the member returned by CMenu::update
   m_iMenuSelect=0;
 

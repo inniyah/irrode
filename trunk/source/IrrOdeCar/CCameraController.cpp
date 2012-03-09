@@ -15,8 +15,17 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
+  m_pCursor = m_pDevice->getCursorControl();
+
+  m_cScreen = m_pDevice->getVideoDriver()->getScreenSize() / 2;
+
   m_fCamAngleH = 0.0f;
   m_fCamAngleV = 0.0f;
+
+  m_cMousePos = irr::core::position2di(-1, -1);
+
+  m_bLeftMouse = false;
+  m_bRghtMouse = false;
 }
 
 CCameraController::~CCameraController() {
@@ -26,11 +35,22 @@ CCameraController::~CCameraController() {
 void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pTarget = pTarget;
 
-  if (m_pTarget==NULL) {
+  if (m_pTarget == NULL) {
     m_vInternalOffset = irr::core::vector3df(0.0f,0.0f, 0.0f);
     m_bRotateXY = true;
+
+    m_pCursor->setVisible(true);
+
+    if (m_cMousePos.X != -1) {
+      m_pCursor->setPosition(m_cMousePos);
+      m_cMousePos = irr::core::position2di(-1,-1);
+    }
   }
-  else
+  else {
+    m_pCursor->setVisible(false);
+    if (m_cMousePos.X == -1) m_cMousePos = m_pCursor->getPosition();
+    m_pCursor->setPosition(irr::core::position2df(0.5f,0.5f));
+
     if (m_pTarget->getOdeClassname() == "car") {
       m_vInternalOffset = irr::core::vector3df( 0.0f, 1.35f, 0.0f);
 
@@ -70,15 +90,13 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
             m_fExtDist   = 15.0f;
             m_fExtOffset =  3.0f;
           }
+  }
 }
 
 void CCameraController::update() {
   m_pSmgr->setActiveCamera(m_pCam);
 
   if (m_pTarget) {
-    irr::core::vector3df vRot = m_pTarget->getRotation(),
-                         vPos = m_pTarget->getPosition();
-
     irr::core::vector3df v = m_vDirection;
     if (m_bRotateXY)
       v.rotateXYBy(m_fCamAngleV);
@@ -86,6 +104,9 @@ void CCameraController::update() {
       v.rotateYZBy(-m_fCamAngleV);
 
     v.rotateXZBy(m_fCamAngleH);
+
+    irr::core::vector3df vRot = m_pTarget->getRotation(),
+                         vPos = m_pTarget->getPosition();
 
     if (m_bInternal) {
       m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
@@ -122,11 +143,29 @@ void CCameraController::update() {
 }
 
 bool CCameraController::OnEvent(const irr::SEvent &event) {
+  if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
+    m_bLeftMouse = event.MouseInput.isLeftPressed ();
+    m_bRghtMouse = event.MouseInput.isRightPressed();
+  }
+
   return false;
 }
 
 bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+    if (m_pTarget != NULL) {
+      irr::core::position2di pos = m_pCursor->getPosition();
+      m_pCursor->setPosition(0.5f, 0.5f);
+
+      irr::s32 offsetx = m_cScreen.Width  - pos.X,
+               offsety = m_cScreen.Height - pos.Y;
+
+      if (m_bLeftMouse) {
+        m_fCamAngleH += (irr::f32)(offsetx) / 8.0f;
+        m_fCamAngleV -= (irr::f32)(offsety) / 8.0f;
+      }
+    }
+
     if (m_pController->get(m_pCtrls[eCameraInternal])) {
       m_pController->set(m_pCtrls[eCameraInternal], 0.0f);
       m_bInternal = !m_bInternal;
@@ -134,19 +173,19 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     if (m_pController->get(m_pCtrls[eCameraLeft])!=0.0f) {
       m_fCamAngleH+=m_pController->get(m_pCtrls[eCameraLeft]);
-
-      if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
-      if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
     }
+
+    if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
+    if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
 
     if (m_pController->get(m_pCtrls[eCameraDown])!=0.0f) {
       m_fCamAngleV+=m_pController->get(m_pCtrls[eCameraDown]);
-
-      if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
-      if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
     }
 
-    if (m_pController->get(m_pCtrls[eCameraCenter])) {
+    if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
+    if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
+
+    if (m_pController->get(m_pCtrls[eCameraCenter]) || m_bRghtMouse) {
       if (m_fCamAngleH!=0.0f) {
         if (m_fCamAngleH>0.0f) {
           m_fCamAngleH-=5.0f;

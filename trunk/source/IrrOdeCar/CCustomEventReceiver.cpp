@@ -218,7 +218,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         f32 fYaw=p->getYaw(),fPitch=p->getPitch(),fRoll=p->getRoll();
 
         for(i=0; i<nodes->aRoll.size(); i++)
-          nodes->aRoll[i]->setRotation(vector3df(i==0?15.0f*fRoll:-15.0f*fRoll,i==0?4:-4,0));
+          nodes->aRoll[i]->setRotation(vector3df(i==0?-15.0f*fRoll:15.0f*fRoll,i==0?4:-4,0));
 
         for(i=0; i<nodes->aPitch.size(); i++)
           nodes->aPitch[i]->setRotation(vector3df(fPitch*-15.0f,i==0?-8:8,0));

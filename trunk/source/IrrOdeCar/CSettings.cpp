@@ -146,8 +146,6 @@ void CSettings::createGUI() {
   m_pResolution->setSelected(m_iResolution);
 
   m_pFullscreen->setChecked(m_bFullscreen);
-
-  m_pDevice->getCursorControl()->setVisible(true);
 }
 
 /**

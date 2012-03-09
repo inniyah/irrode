@@ -73,7 +73,6 @@ CAeroVehicle::~CAeroVehicle() {
 }
 
 void CAeroVehicle::activate() {
-  m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
 
