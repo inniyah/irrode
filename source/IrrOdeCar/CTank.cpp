@@ -87,7 +87,6 @@ CTank::~CTank() {
 }
 
 void CTank::activate() {
-  m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_bActive=true;
 

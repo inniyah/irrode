@@ -23,16 +23,13 @@ CController::~CController() {
 
 void CController::activate() {
   m_bActive=true;
-  m_pDevice->getCursorControl()->setVisible(false);
   m_bSwitchToMenu=false;
   m_pTabCtrl->setVisible(true);
-  m_pDevice->getCursorControl()->setVisible(true);
 }
 
 void CController::deactivate() {
   m_bActive=false;
   m_pTabCtrl->setVisible(false);
-  m_pDevice->getCursorControl()->setVisible(false);
 }
 
 irr::u32 CController::update() {

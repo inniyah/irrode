@@ -248,7 +248,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_iCtrls[0][eCarRight              ]=m_pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
       m_iCtrls[0][eCarBrake              ]=m_pController->addItem(0,stringw(L"Brake"                ),KEY_SPACE ,CIrrCC::eCtrlButton);
       m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-      m_iCtrls[0][eCarToggleAdaptiveSteer]=m_pController->addItem(0,stringw(L"Toggle adaptive Steer"),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
       m_iCtrls[0][eCarFlip               ]=m_pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
       m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
 
@@ -322,10 +321,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_bHelp = false;
       m_iCount = 0;
 
-      m_pRecorder  = NULL;
-      m_pRecording = NULL;
-      m_pSaveFile  = NULL;
-
       m_pActive=NULL;
 
       irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
@@ -340,6 +335,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_pSaveFile=m_pGui->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
       m_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
       m_pSaveFile->setVisible(false);
+
+      m_pRecorder  = NULL;
+      m_pRecording = m_pGui->addStaticText(L"Recording"       , core::rect<s32>(cSize.Width/2 - 100, 10, cSize.Width/2 + 100, 30), true); m_pRecording->setVisible(false);
+      m_pSaveFile  = m_pGui->addStaticText(L"Saving Replay...", core::rect<s32>(cSize.Width/2 - 100, 35, cSize.Width/2 + 100, 55), true); m_pSaveFile ->setVisible(false);
 
       m_pController=new CIrrCC(m_pDevice);
       m_pController->setSetsCanConflict(false);

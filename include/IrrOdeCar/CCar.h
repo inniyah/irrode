@@ -20,7 +20,6 @@ enum eCarCtrl {
   eCarBrake,
   eCarBoost,
   eCarFlip,
-  eCarToggleAdaptiveSteer,
   eCarDifferential
 };
 
@@ -28,23 +27,16 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
   protected:
     bool     m_bBrake,           /*!< is the handbrake active? */
              m_bBoost,           /*!< is the boos button pushed? */
-             m_bAdaptSteer,      /*!< is the adaptive steer mode active? */
              m_bHelp,            /*!< is the help screen visible? */
              m_bInternal,        /*!< internal view active? */
              m_bDifferential,    /*!< differential gear enabled? */
              m_bGasStation,      /*!< is the car in a gas station? */
              m_bGasLastStep;     /*!< was the car in a gas station in the last step? */
-    irr::f32 m_fActSteer,        /*!< the actual steering (-45.0, 0, +45.0) */
-             m_fOldVel,          /*!< old velocity */
+    irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
-             m_iBodyId,          /*!< id of the car body */
-             m_iNextCp,          /*!< checkpoint for racetrack laps */
-             m_iCurStep,
-             m_iLastLapStep;
-
-    irr::gui::IGUIStaticText *m_pInfo;    /*!< the info text (with speed...) */
+             m_iBodyId;          /*!< id of the car body */
 
     irr::core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
 
