@@ -77,10 +77,6 @@ CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC
     m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
     m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
 
-    m_pInfo=m_pGuiEnv->addStaticText(L"Hello World!",irr::core::rect<irr::s32>(5,5,150,65),true);
-    m_pInfo->setDrawBackground(true);
-    m_pInfo->setBackgroundColor(irr::video::SColor(0x80,0xFF,0xFF,0xFF));
-    m_pInfo->setVisible(false);
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
     m_bInitialized=true;
   }
@@ -92,7 +88,6 @@ CTank::~CTank() {
 
 void CTank::activate() {
   m_pDevice->getCursorControl()->setVisible(false);
-  m_pInfo->setVisible(true);
   m_bSwitchToMenu=false;
   m_bActive=true;
 
@@ -109,7 +104,6 @@ void CTank::activate() {
 }
 
 void CTank::deactivate() {
-  m_pInfo->setVisible(false);
   m_pController->reset();
   for (int i=0; i<4; i++) {
     m_pMotor[i]->setVelocity(0);
@@ -148,7 +142,6 @@ irr::u32 CTank::update() {
   if (m_bFollowTurret) swprintf(dummy,0xFF,L"%s\ncamera follows turret",dummy);
   if (m_bFollowBullet) swprintf(dummy,0xFF,L"%s\ncamera follows bullet",dummy);
   if (m_bFastCollision) swprintf(dummy,0xFF,L"%s\nfast collision detection on",dummy);
-  m_pInfo->setText(dummy);
 
   return iRet;
 }

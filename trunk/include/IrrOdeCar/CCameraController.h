@@ -31,15 +31,11 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     irr::ode::CIrrOdeBody *m_pTarget;
 
     irr::f32 m_fCamAngleV,
-             m_fCamAngleH;
-
-    irr::core::vector2df m_vMoveCam1,
-                         m_vMoveCam2;
+             m_fCamAngleH,
+             m_fExtDist,
+             m_fExtOffset;
 
     irr::core::vector3df m_vInternalOffset,
-                         m_vExternalOffset,
-                         m_vInternalTarget,
-                         m_vExternalTarget,
                          m_vDirection,
                          m_vPosition,
                          m_vTarget,

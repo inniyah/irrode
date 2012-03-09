@@ -28,73 +28,47 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
   if (m_pTarget==NULL) {
     m_vInternalOffset = irr::core::vector3df(0.0f,0.0f, 0.0f);
-    m_vExternalOffset = irr::core::vector3df(0.0f,0.0f, 0.0f);
-    m_vInternalTarget = irr::core::vector3df(0.0f,0.0f,-1.0f);
-    m_vExternalTarget = irr::core::vector3df(0.0f,0.0f,-1.0f);
     m_bRotateXY = true;
-
-    m_vMoveCam1 = irr::core::vector2df(1.0f, 0.0f);
-
   }
   else
     if (m_pTarget->getOdeClassname() == "car") {
       m_vInternalOffset = irr::core::vector3df( 0.0f, 1.35f, 0.0f);
-      m_vExternalOffset = irr::core::vector3df(15.0f, 5.00f, 0.0f);
-      m_vInternalTarget = irr::core::vector3df(-5.0f, 1.35f, 0.0f);
-      m_vExternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
 
-      m_vDirection = irr::core::vector3df(1.0f,0.0f,0.0f);
+      m_vDirection = irr::core::vector3df(-1.0f,0.0f,0.0f);
       m_bRotateXY = true;
 
-      m_vMoveCam1 = irr::core::vector2df( 0.0f,-1.0f);
-      m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
-
-      m_vInternalTarget.normalize();
+      m_fExtOffset =  3.0f;
+      m_fExtDist   = 15.0f;
     }
     else
       if (m_pTarget->getOdeClassname() == "tank") {
         m_vInternalOffset = irr::core::vector3df(10.0f, 5.00f, 0.0f);
-        m_vExternalOffset = irr::core::vector3df(10.0f, 5.00f, 0.0f);
-        m_vInternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
-        m_vExternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
 
-        m_vDirection = irr::core::vector3df(1.0f,0.0f,0.0f);
+        m_vDirection = irr::core::vector3df(-1.0f,0.0f,0.0f);
         m_bRotateXY = true;
 
-        m_vMoveCam1 = irr::core::vector2df( 0.0f, 0.0f);
-        m_vMoveCam2 = irr::core::vector2df( 0.0f, 0.0f);
-
-        m_vInternalTarget.normalize();
+        m_fExtDist   = 1.0f;
+        m_fExtOffset = 0.0f;
       }
       else
         if (m_pTarget->getOdeClassname() == "heli") {
           m_vInternalOffset = irr::core::vector3df(0.0f, 0.1f, -1.0f);
-          m_vExternalOffset = irr::core::vector3df(0.0f, 5.0f, 15.0f);
-          m_vInternalTarget = irr::core::vector3df(0.0f, 0.1f, -5.0f);
-          m_vExternalTarget = irr::core::vector3df(0.0f, 5.0f,  0.0f);
 
-          m_vMoveCam1 = irr::core::vector2df(-1.0f, 0.0f);
-          m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
-
-          m_vDirection = irr::core::vector3df(0.0f,0.0f,1.0f);
+          m_vDirection = irr::core::vector3df(0.0f,0.0f,-1.0f);
           m_bRotateXY = false;
 
-          m_vInternalTarget.normalize();
+          m_fExtDist   = 15.0f;
+          m_fExtOffset =  5.0f;
         }
         else
           if (m_pTarget->getOdeClassname() == "plane") {
             m_vInternalOffset = irr::core::vector3df(0.0f, 1.1f, -0.6f);
-            m_vExternalOffset = irr::core::vector3df(0.0f, 5.0f, 15.0f);
-            m_vInternalTarget = irr::core::vector3df(0.0f, 1.0f, -5.0f);
-            m_vExternalTarget = irr::core::vector3df(0.0f, 5.0f,  0.0f);
 
-            m_vMoveCam1 = irr::core::vector2df( 1.0f, 0.0f);
-            m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
-
-            m_vDirection = irr::core::vector3df(0.0f,0.0f,1.0f);
+            m_vDirection = irr::core::vector3df(0.0f,0.0f,-1.0f);
             m_bRotateXY = false;
 
-            m_vInternalTarget.normalize();
+            m_fExtDist   = 15.0f;
+            m_fExtOffset =  3.0f;
           }
 }
 
@@ -105,23 +79,23 @@ void CCameraController::update() {
     irr::core::vector3df vRot = m_pTarget->getRotation(),
                          vPos = m_pTarget->getPosition();
 
+    irr::core::vector3df v = m_vDirection;
+    if (m_bRotateXY)
+      v.rotateXYBy(m_fCamAngleV);
+    else
+      v.rotateYZBy(-m_fCamAngleV);
+
+    v.rotateXZBy(m_fCamAngleH);
+
     if (m_bInternal) {
-      irr::core::vector3df v = m_vDirection;
-      if (m_bRotateXY)
-        v.rotateXYBy(m_fCamAngleV);
-      else
-        v.rotateYZBy(m_fCamAngleV);
-
-      v.rotateXZBy(m_fCamAngleH);
-
       m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
       m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset + v);
       m_vUp       = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
     else {
-      m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vExternalOffset);
-      m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vExternalTarget);
-      m_vUp       = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
+      m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset - (m_fExtDist * v - m_fExtOffset * irr::core::vector3df(0.0f, 1.0f, 0.0f)));
+      m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
+      m_vUp = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
 
     m_pCam->setPosition(m_vPosition);
@@ -158,15 +132,15 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_bInternal = !m_bInternal;
     }
 
-    if (m_pController->get(m_pCtrls[eCameraRight])!=0.0f) {
-      m_fCamAngleH+=m_pController->get(m_pCtrls[eCameraRight]);
+    if (m_pController->get(m_pCtrls[eCameraLeft])!=0.0f) {
+      m_fCamAngleH+=m_pController->get(m_pCtrls[eCameraLeft]);
 
       if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
       if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
     }
 
-    if (m_pController->get(m_pCtrls[eCameraUp])!=0.0f) {
-      m_fCamAngleV+=m_pController->get(m_pCtrls[eCameraUp]);
+    if (m_pController->get(m_pCtrls[eCameraDown])!=0.0f) {
+      m_fCamAngleV+=m_pController->get(m_pCtrls[eCameraDown]);
 
       if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
       if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;

@@ -34,7 +34,6 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
          m_bFollowBullet;
     irr::video::ITexture *m_pTextures[2];
 
-    irr::gui::IGUIStaticText *m_pInfo;
     irr::f32 m_fCannonAngle,
              m_fTurretAngle;
 
