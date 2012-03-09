@@ -40,11 +40,13 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
                          m_vExternalOffset,
                          m_vInternalTarget,
                          m_vExternalTarget,
+                         m_vDirection,
                          m_vPosition,
                          m_vTarget,
                          m_vUp;
 
-    bool m_bInternal;
+    bool m_bInternal,
+         m_bRotateXY;
     CIrrCC *m_pController;
 
     const irr::u32 *m_pCtrls;

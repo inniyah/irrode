@@ -31,6 +31,7 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
     m_vExternalOffset = irr::core::vector3df(0.0f,0.0f, 0.0f);
     m_vInternalTarget = irr::core::vector3df(0.0f,0.0f,-1.0f);
     m_vExternalTarget = irr::core::vector3df(0.0f,0.0f,-1.0f);
+    m_bRotateXY = true;
 
     m_vMoveCam1 = irr::core::vector2df(1.0f, 0.0f);
 
@@ -41,6 +42,9 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
       m_vExternalOffset = irr::core::vector3df(15.0f, 5.00f, 0.0f);
       m_vInternalTarget = irr::core::vector3df(-5.0f, 1.35f, 0.0f);
       m_vExternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
+
+      m_vDirection = irr::core::vector3df(1.0f,0.0f,0.0f);
+      m_bRotateXY = true;
 
       m_vMoveCam1 = irr::core::vector2df( 0.0f,-1.0f);
       m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
@@ -53,6 +57,9 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
         m_vExternalOffset = irr::core::vector3df(10.0f, 5.00f, 0.0f);
         m_vInternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
         m_vExternalTarget = irr::core::vector3df( 0.0f, 4.00f, 0.0f);
+
+        m_vDirection = irr::core::vector3df(1.0f,0.0f,0.0f);
+        m_bRotateXY = true;
 
         m_vMoveCam1 = irr::core::vector2df( 0.0f, 0.0f);
         m_vMoveCam2 = irr::core::vector2df( 0.0f, 0.0f);
@@ -69,6 +76,9 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
           m_vMoveCam1 = irr::core::vector2df(-1.0f, 0.0f);
           m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
 
+          m_vDirection = irr::core::vector3df(0.0f,0.0f,1.0f);
+          m_bRotateXY = false;
+
           m_vInternalTarget.normalize();
         }
         else
@@ -80,6 +90,9 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
             m_vMoveCam1 = irr::core::vector2df( 1.0f, 0.0f);
             m_vMoveCam2 = irr::core::vector2df( 1.0f, 0.0f);
+
+            m_vDirection = irr::core::vector3df(0.0f,0.0f,1.0f);
+            m_bRotateXY = false;
 
             m_vInternalTarget.normalize();
           }
@@ -93,14 +106,16 @@ void CCameraController::update() {
                          vPos = m_pTarget->getPosition();
 
     if (m_bInternal) {
-      irr::core::vector2df lookAt = m_vMoveCam1,
-                           lookUp = m_vMoveCam2;
+      irr::core::vector3df v = m_vDirection;
+      if (m_bRotateXY)
+        v.rotateXYBy(m_fCamAngleV);
+      else
+        v.rotateYZBy(m_fCamAngleV);
 
-      lookAt.rotateBy(m_fCamAngleH);
-      lookUp.rotateBy(m_fCamAngleV);
+      v.rotateXZBy(m_fCamAngleH);
 
       m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
-      m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(irr::core::vector3df(lookAt.Y, m_vInternalOffset.Y + lookUp.Y, lookAt.X));
+      m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset + v);
       m_vUp       = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
     else {
