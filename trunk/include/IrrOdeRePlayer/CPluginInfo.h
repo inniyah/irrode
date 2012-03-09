@@ -6,20 +6,35 @@
 
   #include <Irrlicht.h>
 
-class IrrlichtDevice;
-class CIrrOdeManager;
+namespace irr {
+  class IrrlichtDevice;
+  namespace ode {
+    class CIrrOdeManager;
+  }
+}
 
 class IPlugin {
   protected:
     typedef int(*PI_install )(irr::IrrlichtDevice *, void *);   /**< typedef for the "install" method of the dll */
     typedef int(*PI_destall )(irr::IrrlichtDevice *, void *);   /**< typedef for the "destall" method of the dll */
 
+    typedef int(*PI_camera  )(void);    /**< typedef for the "handle camera" method of the dll */
+
+    typedef bool(*PI_handleEvent)(const irr::SEvent &event);
+    typedef void(*PI_physicsInitialized)(void);
+
   public:
     virtual ~IPlugin() { }
     virtual int pluginInstall(void *pUserData)=0;    /**< This method calls the dll's "install" method */
     virtual int pluginDestall(void *pUserData)=0;    /**< This method calls the dll's "destall" method */
 
+    virtual bool pluginHandleCamera()=0;
+
     virtual bool dllLoaded()=0;
+
+    virtual bool HandleEvent(const irr::SEvent &event)=0;
+
+    virtual void physicsInitialized()=0;
 };
 
 /**
@@ -42,6 +57,11 @@ class CPluginInfo : public IPlugin {
 
     PI_install m_pFuncInstall;    /**< pointer to the "install" method */
     PI_destall m_pFuncDestall;    /**< pointer to the "destall" method */
+    PI_camera  m_pHandleCamera;   /**< pointer to the "handle camera" method */
+
+    PI_handleEvent m_pHandleEvent;
+
+    PI_physicsInitialized m_pPhysicsInitialized;
 
     irr::IrrlichtDevice *m_pDevice;
 
@@ -71,6 +91,12 @@ class CPluginInfo : public IPlugin {
     virtual bool dllLoaded();
 
     irr::IrrlichtDevice *getIrrlichtDevice() { return m_pDevice; }
+
+    virtual bool pluginHandleCamera();
+
+    virtual bool HandleEvent(const irr::SEvent &event);
+
+    virtual void physicsInitialized();
 };
 
 #endif

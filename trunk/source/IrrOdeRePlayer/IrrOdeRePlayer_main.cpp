@@ -34,12 +34,15 @@ int main(int argc, char** argv) {
   cManagers.m_pEventFactory=(void *)irr::ode::CIrrOdeEventFactory::getSharedEventFactory();
   cManagers.m_pSndEngine=(void *)pSndEngine;
 
-  if (pPlugin->dllLoaded())
-    pPlugin->pluginInstall(&cManagers);
-  else
-    printf("Plugin not installed!\n");
+  bool bPluginHandlesCamera = false;
 
-  IState *pActiveState=new CReplayerStateReplay(device,"../../data/replay/car.rec");
+  if (pPlugin->dllLoaded()) {
+    pPlugin->pluginInstall(&cManagers);
+    bPluginHandlesCamera = pPlugin->pluginHandleCamera();
+  }
+  else printf("Plugin not installed!\n");
+
+  IState *pActiveState=new CReplayerStateReplay(device,"../../data/replay/car.rec", pPlugin);
   pActiveState->activate();
 
   irr::u32 iRet=0;
@@ -48,16 +51,18 @@ int main(int argc, char** argv) {
   while(iRet==0 && device->run()) {
     iRet=pActiveState->update();
 
-    irr::core::vector3df vPos=smgr->getActiveCamera()->getPosition(),
-                         vTgt=smgr->getActiveCamera()->getTarget(),
-                         vUp =smgr->getActiveCamera()->getUpVector();
+    if (smgr->getActiveCamera()) {
+      irr::core::vector3df vPos=smgr->getActiveCamera()->getPosition(),
+                           vTgt=smgr->getActiveCamera()->getTarget(),
+                           vUp =smgr->getActiveCamera()->getUpVector();
 
-    irrklang::vec3df vLstPos=irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),
-                     vLstTgt=irrklang::vec3df(vTgt.X,vTgt.Y,vTgt.Z),
-                     vLstUp =irrklang::vec3df(vUp .X,vUp .Y,vUp .Z);
+      irrklang::vec3df vLstPos=irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),
+                       vLstTgt=irrklang::vec3df(vTgt.X,vTgt.Y,vTgt.Z),
+                       vLstUp =irrklang::vec3df(vUp .X,vUp .Y,vUp .Z);
 
-    pSndEngine->setListenerPosition(vLstPos,vLstTgt,irrklang::vec3df(0.0f,0.0f,0.0f),vLstUp);
-    pSndEngine->setRolloffFactor(0.125f);
+      pSndEngine->setListenerPosition(vLstPos,vLstTgt,irrklang::vec3df(0.0f,0.0f,0.0f),vLstUp);
+      pSndEngine->setRolloffFactor(0.125f);
+    }
 
     driver->beginScene(true, true, irr::video::SColor(0,200,200,200));
 

@@ -57,6 +57,7 @@
 			<Add directory="..\include\IrrOdeCar\RoadCreator" />
 			<Add directory="..\..\libs\irrKlang-1.3.0\include" />
 		</Compiler>
+		<Unit filename="..\include\IrrOdeCar\CCameraController.h" />
 		<Unit filename="..\include\IrrOdeCar\CCockpitCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CCockpitPlane.h" />
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
@@ -72,8 +73,10 @@
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\CTextureParameters.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\INotification.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\IRoadPart.h" />
+		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
 		<Unit filename="..\include\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.h" />
 		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
+		<Unit filename="..\source\IrrOdeCar\CCameraController.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitPlane.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
@@ -86,6 +89,7 @@
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadMeshLoader.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSegment.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSurface.cpp" />
+		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
 		<Unit filename="..\source\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.cpp" />
 		<Extensions>
 			<code_completion />

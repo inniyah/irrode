@@ -1,6 +1,7 @@
   #include <irrlicht.h>
   #include <IState.h>
 
+  #include <CPluginInfo.h>
   #include <IrrOde.h>
   #include <observer/CIrrOdeRePlayer.h>
 
@@ -39,13 +40,17 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
 
     irr::scene::ICameraSceneNode *m_pCam,*m_pFreeCam;
 
-    bool m_bSceneLoaded;
+    IPlugin *m_pPlugin;
+
+    bool m_bSceneLoaded,
+         m_bPluginHandlesCamera,
+         m_bStepTaken;
 
     void updateBodyList();
     void removeNode(irr::scene::ISceneNode *pNode);
 
   public:
-    CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay);
+    CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay, IPlugin *pPlugin);
     virtual ~CReplayerStateReplay() { }
     virtual void activate();
     virtual void deactivate();

@@ -17,6 +17,11 @@ CPluginInfo::CPluginInfo(const char *sDllFileName, irr::IrrlichtDevice *pDevice)
   if (m_pDll) {
     m_pFuncInstall=(PI_install)GetProcAddress(m_pDll,"install");
     m_pFuncDestall=(PI_destall)GetProcAddress(m_pDll,"destall");
+
+    m_pHandleCamera=(PI_camera     )GetProcAddress(m_pDll,"handleCamera");
+    m_pHandleEvent =(PI_handleEvent)GetProcAddress(m_pDll,"handleEvent" );
+
+    m_pPhysicsInitialized=(PI_physicsInitialized)GetProcAddress(m_pDll,"physicsInitialized");
   }
 }
 
@@ -48,4 +53,23 @@ int CPluginInfo::pluginDestall(void *pUserData) {
  */
 bool CPluginInfo::dllLoaded() {
   return m_pFuncInstall!=NULL && m_pFuncDestall!=NULL;
+}
+
+bool CPluginInfo::pluginHandleCamera() {
+  if (!m_pHandleCamera)
+    return false;
+
+  m_pHandleCamera();
+  return true;
+}
+
+bool CPluginInfo::HandleEvent(const irr::SEvent &event) {
+  if (m_pHandleEvent)
+    return m_pHandleEvent(event);
+  else
+    return false;
+}
+
+void CPluginInfo::physicsInitialized() {
+  if (m_pPhysicsInitialized) m_pPhysicsInitialized();
 }
