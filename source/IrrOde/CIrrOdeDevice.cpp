@@ -1482,7 +1482,14 @@ u32 CIrrOdeDevice::geomCreateCapsule(u32 iSpace, f32 fRadius, f32 fLength) {
   wrap->m_pGeom=dCreateCapsule(GETSPACE(iSpace),fRadius,fLength);
   m_pOdeData.push_back(wrap);
   iRet=m_pOdeData.size();
+
   return iRet;
+}
+
+void CIrrOdeDevice::geomOffsetYUp(u32 iGeom) {
+  dQuaternion q;
+  dQFromAxisAndAngle(q,1,0,0,0.5*M_PI);
+  dGeomSetOffsetQuaternion(GETGEOM(iGeom),q);
 }
 
 u32 CIrrOdeDevice::geomCreateCylinder(u32 iSpace, f32 fRadius, f32 fLength) {

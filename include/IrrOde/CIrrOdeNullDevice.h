@@ -265,6 +265,8 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual void checkRayWithWorld(CIrrOdeGeomRay *pRay, CIrrOdeWorld *pWorld, irr::core::array<irr::core::vector3df> &aHits) { }
 
     virtual IIrrOdeEvent *writeEventFor(IIrrOdeEventWriter *p) { return NULL; }
+
+    virtual void geomOffsetYUp(u32 iGeom) { }
 };
 
 } //namespace ode

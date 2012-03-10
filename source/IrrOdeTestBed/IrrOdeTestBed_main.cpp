@@ -15,6 +15,7 @@
   #include <tests/CTestTrigger.h>
   #include <tests/CTestCloneRemove.h>
   #include <tests/CTestSlipstream.h>
+  #include <tests/CTestCapsule.h>
 
 class CRunner : public IRunner, public irr::IEventReceiver {
   protected:
@@ -41,6 +42,7 @@ class CRunner : public IRunner, public irr::IEventReceiver {
       m_aStates.push_back(new CTestPlane      (m_pDevice,this));
       m_aStates.push_back(new CTestCar        (m_pDevice,this));
       m_aStates.push_back(new CTestTank       (m_pDevice,this));
+      m_aStates.push_back(new CTestCapsule    (m_pDevice,this));
 
       m_pDevice->setEventReceiver(this);
     }

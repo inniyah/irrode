@@ -276,6 +276,8 @@ class IIrrOdeDevice {
     virtual u32 geomCreateSphere(u32 iSpace, f32 fRadius)=0;
     virtual u32 geomCreateTrimesh(u32 iSpace, u32 iData)=0;
 
+    virtual void geomOffsetYUp(u32 iGeom)=0;
+
     virtual u32 geomHeightfieldDataCreate()=0;
     virtual void geomHeightfieldSetBounds(u32 iHFData, f32 fMinHeight, f32 fMaxHeight)=0;
     virtual void geomHeightfieldDataCallback(u32 iHFData, void *pData, void *pCallback, f32 fWidth, f32 fDepth, s32 iWidthSamples, s32 iDepthSamples, f32 fScale, f32 fOffset, f32 fThickness, s32 bWrap)=0;

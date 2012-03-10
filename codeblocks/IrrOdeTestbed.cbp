@@ -80,6 +80,7 @@
 		<Unit filename="..\include\IrrOdeTestBed\IRunner.h" />
 		<Unit filename="..\include\IrrOdeTestBed\IState.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestBoxPile.h" />
+		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCapsule.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCar.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestCloneRemove.h" />
 		<Unit filename="..\include\IrrOdeTestBed\tests\CTestFastMoving.h" />
@@ -92,6 +93,7 @@
 		<Unit filename="..\source\IrrOdeTestBed\CMenu.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\CTestBoxPile.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\IrrOdeTestBed_main.cpp" />
+		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCapsule.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCar.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestCloneRemove.cpp" />
 		<Unit filename="..\source\IrrOdeTestBed\tests\CTestFastMoving.cpp" />

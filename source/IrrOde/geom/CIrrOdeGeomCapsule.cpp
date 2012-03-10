@@ -61,7 +61,7 @@ void CIrrOdeGeomCapsule::initPhysics() {
     irr::scene::IMesh *pMesh=pParent->getMesh()->getMesh(0);
 
     m_fRadius=pMesh->getBoundingBox().getExtent().X*getParent()->getScale().X;
-    m_fLength=pMesh->getBoundingBox().getExtent().Z*getParent()->getScale().Z-2*m_fRadius;
+    m_fLength=pMesh->getBoundingBox().getExtent().Y*getParent()->getScale().Y-2*m_fRadius;
 
     #ifdef _TRACE_INIT_PHYSICS
       printf("CIrrOdeGeomCapsule::initPhysics: getting size from parent node\n");
@@ -82,6 +82,7 @@ void CIrrOdeGeomCapsule::initPhysics() {
         //m_pOdeDevice->bodySetMass(m_pBody->getBodyId(),m_iMass);
       }
       setBody(m_pBody);
+      m_pOdeDevice->geomOffsetYUp(m_iGeomId);
     }
     else {
       //m_pOdeDevice->geomSetCategoryBits(m_iGeomId,1);
