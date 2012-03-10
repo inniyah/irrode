@@ -32,10 +32,12 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_bLeftMouse = false;
   m_bRghtMouse = false;
 
-  m_vPosition = irr::core::vector3df(0.0f, 0.0f, 0.0f);
-  m_vDirection = irr::core::vector3df(0.0f, 0.0f, 1.0f);
-
   setTarget(NULL);
+
+  m_vPosition  = irr::core::vector3df(3505.0f, 1000.0f, 2490.0f);
+  m_vDirection = irr::core::vector3df(   0.0f,    0.0f,    1.0f);
+
+  m_fCamAngleH = 25.0f;
 }
 
 CCameraController::~CCameraController() {
@@ -49,16 +51,22 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
     irr::core::vector3df v = m_pCam->getTarget() - m_pCam->getPosition(),
                          a = v.getHorizontalAngle();
 
-    //v *= 180.0f * irr::core::PI;
-    printf("--> %.2f, %.2f, %.2f\n",a.X,a.Y,a.Z);
-
     m_fTgtAngleH = m_fCamAngleH;
     m_fTgtAngleV = m_fCamAngleV;
 
     m_fCamAngleH = -a.Y;
-    m_fCamAngleV =  a.X;
+    m_fCamAngleV = -a.X;
 
-    m_bRotateXY = true;
+    while (m_fCamAngleH >  180.0f) m_fCamAngleH -= 360.0f;
+    while (m_fCamAngleH < -180.0f) m_fCamAngleH += 360.0f;
+
+    while (m_fCamAngleV >  180.0f) m_fCamAngleV -= 360.0f;
+    while (m_fCamAngleV < -180.0f) m_fCamAngleV += 360.0f;
+
+    if (m_fCamAngleV >  80.0f) m_fCamAngleV =  80.0f;
+    if (m_fCamAngleV < -80.0f) m_fCamAngleV = -80.0f;
+
+    m_bRotateXY = false;
 
     m_pCursor->setVisible(true);
 

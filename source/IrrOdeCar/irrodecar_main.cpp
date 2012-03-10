@@ -226,6 +226,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
     gui::IGUIEnvironment *m_pGui;
 
     irrklang::ISoundEngine *m_pSndEngine;
+    CMenu *m_pMenu;
 
     CIrrCC *m_pController;
 
@@ -506,7 +507,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       //create the necessary state objects
       array<CIrrOdeCarState *> aStates;
 
-      CMenu       *theMenu=new CMenu      (m_pDevice,m_pController); aStates.push_back(theMenu);
+                   m_pMenu=new CMenu      (m_pDevice,m_pController); aStates.push_back(m_pMenu);
       CController *theCtrl=new CController(m_pDevice,m_pController); aStates.push_back(theCtrl );
 
       list<ISceneNode *>::Iterator it;
@@ -521,7 +522,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         p->setCtrl((const u32 *)m_iCtrls[2]);
         p->setCockpit(pCockpit);
         aStates.push_back(p);
-        theMenu->addButtonForState(p);
+        m_pMenu->addButtonForState(p);
         m_lCockpits.push_back(pCockpit);
       }
 
@@ -531,7 +532,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         p->setCockpit(pCarCockpit);
         p->setCtrl((const u32 *)m_iCtrls[0]);
         aStates.push_back(p);
-        theMenu->addButtonForState(p);
+        m_pMenu->addButtonForState(p);
         m_lCockpits.push_back(pCarCockpit);
       }
 
@@ -539,7 +540,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         CTank *p=new CTank(m_pDevice,*it,m_pController);
         p->setCtrl((const u32 *)m_iCtrls[1]);
         aStates.push_back(p);
-        theMenu->addButtonForState(p);
+        m_pMenu->addButtonForState(p);
       }
 
       for (it=lHelis.begin(); it!=lHelis.end(); it++) {
@@ -548,7 +549,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         p->setCtrl((const u32 *)m_iCtrls[2]);
         p->setCockpit(pCockpit);
         aStates.push_back(p);
-        theMenu->addButtonForState(p);
+        m_pMenu->addButtonForState(p);
         m_lCockpits.push_back(pCockpit);
       }
 
@@ -559,7 +560,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
 
       //set the menu state to active
-      m_pActive=theMenu;
+      m_pActive=m_pMenu;
       m_pActive->activate();
 
       CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
@@ -697,8 +698,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+        m_pMenu->setVisible(false);
         irr::core::list<IRenderToTexture *>::Iterator it;
         for (it = m_lCockpits.begin(); it!=m_lCockpits.end(); it++) (*it)->update();
+        m_pMenu->setVisible(true);
       }
 
       return false;
