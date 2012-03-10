@@ -3,7 +3,6 @@
 
 CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr) {
   m_pDevice = pDevice;
-  m_pTarget = NULL;
   m_pSndEngine = pSndEngine;
   m_pOdeMngr = pOdeMngr;
 
@@ -23,12 +22,20 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_fCamAngleH = 0.0f;
   m_fCamAngleV = 0.0f;
 
+  m_fTgtAngleH = 0.0f;
+  m_fTgtAngleV = 0.0f;
+
   m_fExtFact = 1.0f;
 
   m_cMousePos = irr::core::position2di(-1, -1);
 
   m_bLeftMouse = false;
   m_bRghtMouse = false;
+
+  m_vPosition = irr::core::vector3df(0.0f, 0.0f, 0.0f);
+  m_vDirection = irr::core::vector3df(0.0f, 0.0f, 1.0f);
+
+  setTarget(NULL);
 }
 
 CCameraController::~CCameraController() {
@@ -39,7 +46,18 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pTarget = pTarget;
 
   if (m_pTarget == NULL) {
-    m_vInternalOffset = irr::core::vector3df(0.0f,0.0f, 0.0f);
+    irr::core::vector3df v = m_pCam->getTarget() - m_pCam->getPosition(),
+                         a = v.getHorizontalAngle();
+
+    //v *= 180.0f * irr::core::PI;
+    printf("--> %.2f, %.2f, %.2f\n",a.X,a.Y,a.Z);
+
+    m_fTgtAngleH = m_fCamAngleH;
+    m_fTgtAngleV = m_fCamAngleV;
+
+    m_fCamAngleH = -a.Y;
+    m_fCamAngleV =  a.X;
+
     m_bRotateXY = true;
 
     m_pCursor->setVisible(true);
@@ -48,8 +66,13 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
       m_pCursor->setPosition(m_cMousePos);
       m_cMousePos = irr::core::position2di(-1,-1);
     }
+
+    m_vDirection = irr::core::vector3df(0.0f, 0.0f, 1.0f);
   }
   else {
+    m_fCamAngleH = m_fTgtAngleH;
+    m_fCamAngleV = m_fTgtAngleV;
+
     m_pCursor->setVisible(false);
     if (m_cMousePos.X == -1) m_cMousePos = m_pCursor->getPosition();
     m_pCursor->setPosition(irr::core::position2df(0.5f,0.5f));
@@ -100,15 +123,15 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 void CCameraController::update() {
   m_pSmgr->setActiveCamera(m_pCam);
 
-  if (m_pTarget) {
-    irr::core::vector3df v = m_vDirection;
-    if (m_bRotateXY)
-      v.rotateXYBy(m_fCamAngleV);
-    else
-      v.rotateYZBy(-m_fCamAngleV);
+  irr::core::vector3df v = m_vDirection;
+  if (m_bRotateXY)
+    v.rotateXYBy(m_fCamAngleV);
+  else
+    v.rotateYZBy(-m_fCamAngleV);
 
-    v.rotateXZBy(m_fCamAngleH);
+  v.rotateXZBy(m_fCamAngleH);
 
+  if (m_pTarget != NULL) {
     irr::core::vector3df vRot = m_pTarget->getRotation(),
                          vPos = m_pTarget->getPosition();
 
@@ -122,13 +145,15 @@ void CCameraController::update() {
       m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
       m_vUp = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
-
-    m_pCam->setPosition(m_vPosition);
-    m_pCam->setTarget  (m_vTarget  );
-    m_pCam->setUpVector(m_vUp      );
   }
   else {
+    m_vTarget = m_vPosition + v;
+    m_vUp = irr::core::vector3df(0.0f, 1.0f, 0.0f);
   }
+
+  m_pCam->setPosition(m_vPosition);
+  m_pCam->setTarget  (m_vTarget  );
+  m_pCam->setUpVector(m_vUp      );
 
   if (m_pSndEngine) {
     irr::core::vector3df irrPos=m_pCam->getPosition(),
@@ -162,18 +187,44 @@ bool CCameraController::OnEvent(const irr::SEvent &event) {
 
 bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
+    irr::core::position2di pos = m_pCursor->getPosition();
+    irr::s32 offsetx = 0,
+             offsety = 0;
+
     if (m_pTarget != NULL) {
-      irr::core::position2di pos = m_pCursor->getPosition();
       m_pCursor->setPosition(0.5f, 0.5f);
-
-      irr::s32 offsetx = m_cScreen.Width  - pos.X,
-               offsety = m_cScreen.Height - pos.Y;
-
-      if (m_bLeftMouse) {
-        m_fCamAngleH += (irr::f32)(offsetx) / 8.0f;
-        m_fCamAngleV -= (irr::f32)(offsety) / 8.0f;
-      }
+      offsetx = m_cScreen.Width  - pos.X,
+      offsety = m_cScreen.Height - pos.Y;
     }
+    else {
+      offsetx = m_cMousePos.X - pos.X;
+      offsety = m_cMousePos.Y - pos.Y;
+
+      m_cMousePos = pos;
+    }
+
+    if (m_bLeftMouse) {
+      m_fCamAngleH += (irr::f32)(offsetx) / 8.0f;
+
+      if (m_pTarget != NULL)
+        m_fCamAngleV -= (irr::f32)(offsety) / 8.0f;
+      else
+        m_fCamAngleV += (irr::f32)(offsety) / 8.0f;
+    }
+    else
+      if (m_bRghtMouse && m_pTarget == NULL) {
+        irr::core::vector3df v = m_vDirection;
+        if (m_bRotateXY)
+          v.rotateXYBy(m_fCamAngleV);
+        else
+          v.rotateYZBy(-m_fCamAngleV);
+
+        v.rotateXZBy(m_fCamAngleH);
+        m_vPosition += offsety * v;
+
+        v = v.crossProduct(m_vUp);
+        m_vPosition += offsetx * v;
+      }
 
     if (m_pController->get(m_pCtrls[eCameraInternal])) {
       m_pController->set(m_pCtrls[eCameraInternal], 0.0f);
@@ -184,17 +235,17 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_fCamAngleH+=m_pController->get(m_pCtrls[eCameraLeft]);
     }
 
-    if (m_fCamAngleH> 190.0f) m_fCamAngleH= 190.0f;
-    if (m_fCamAngleH<-190.0f) m_fCamAngleH=-190.0f;
+    while (m_fCamAngleH >=  180.0f) m_fCamAngleH -= 360.0f;
+    while (m_fCamAngleH <  -180.0f) m_fCamAngleH += 360.0f;
 
     if (m_pController->get(m_pCtrls[eCameraDown])!=0.0f) {
       m_fCamAngleV+=m_pController->get(m_pCtrls[eCameraDown]);
     }
 
-    if (m_fCamAngleV> 60.0f) m_fCamAngleV= 60.0f;
-    if (m_fCamAngleV<-60.0f) m_fCamAngleV=-60.0f;
+    if (m_fCamAngleV> 80.0f) m_fCamAngleV= 80.0f;
+    if (m_fCamAngleV<-80.0f) m_fCamAngleV=-80.0f;
 
-    if (m_pController->get(m_pCtrls[eCameraCenter]) || m_bRghtMouse) {
+    if (m_pController->get(m_pCtrls[eCameraCenter]) || (m_bRghtMouse && m_pTarget != NULL)) {
       if (m_fCamAngleH!=0.0f) {
         if (m_fCamAngleH>0.0f) {
           m_fCamAngleH-=5.0f;
