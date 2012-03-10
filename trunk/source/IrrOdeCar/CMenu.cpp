@@ -8,8 +8,10 @@ CMenu::CMenu(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDev
   m_cPos=irr::core::position2di(5,5);
   m_iIdx=2;
 
+  m_pTab = m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0, 0, m_pDevice->getVideoDriver()->getScreenSize().Width, m_pDevice->getVideoDriver()->getScreenSize().Height));
+
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),0,m_iIdx++,L"");
+  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),m_pTab,m_iIdx++,L"");
 
   b->setImage       (m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_off.png"));
   b->setPressedImage(m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_on.png" ));
@@ -108,7 +110,7 @@ void CMenu::addButtonForState(CIrrOdeCarState *pState) {
   irr::gui::IGUIButton *b=NULL;
 
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),0,m_iIdx++,L"");
+  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),m_pTab,m_iIdx++,L"");
   b->setVisible(false);
 
   irr::core::stringw sBtn = "../../data/textures/buttons/";

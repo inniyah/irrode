@@ -17,6 +17,7 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     irr::f32 m_fAngleH,m_fAngleV;
     bool m_bLeftBtn;
     irr::core::vector3df m_vCamLookAt;
+    irr::gui::IGUITab *m_pTab;
 
   public:
     /**
@@ -43,6 +44,8 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     virtual void drawSpecifics() { }
 
     virtual irr::ode::CIrrOdeBody *getBody() { return NULL; }
+
+    void setVisible(bool b) { m_pTab->setVisible(b); }
 };
 
 #endif
