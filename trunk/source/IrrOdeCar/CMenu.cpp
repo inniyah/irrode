@@ -91,39 +91,6 @@ bool CMenu::OnEvent(const irr::SEvent &event) {
     }
   }
 
-  //Handle mouse input events to update the camera (or the position of a segment when the arrow is dragged)
-  if (event.EventType==irr::EET_MOUSE_INPUT_EVENT) {
-    irr::scene::ICameraSceneNode *pCam=m_pSmgr->getActiveCamera();
-    if (m_iMouseX!=-100 && m_iMouseY!=-100) {
-      if (event.MouseInput.isLeftPressed()) {
-        m_bLeftBtn=true;
-        m_fAngleH-=0.5f*((irr::f32)m_iMouseX-event.MouseInput.X);
-        m_fAngleV+=0.5f*((irr::f32)m_iMouseY-event.MouseInput.Y);
-
-        while (m_fAngleV> 80.0f) m_fAngleV= 80.0f;
-        while (m_fAngleV<-80.0f) m_fAngleV=-80.0f;
-
-        irr::f32 fCamX=(irr::f32)(1.0f*sin(m_fAngleH*irr::ode::GRAD_PI2)*cos(m_fAngleV*irr::ode::GRAD_PI2)),
-        fCamY=(irr::f32)(1.0f*sin(m_fAngleV*irr::ode::GRAD_PI2)),
-        fCamZ=(irr::f32)(1.0f*cos(m_fAngleH*irr::ode::GRAD_PI2)*cos(m_fAngleV*irr::ode::GRAD_PI2));
-
-        m_vCamLookAt=irr::core::vector3df(fCamX,fCamY,fCamZ);
-        pCam->setTarget(pCam->getPosition()+m_vCamLookAt);
-      }
-      else m_bLeftBtn=false;
-
-      if (event.MouseInput.isRightPressed()) {
-        irr::core::vector3df vStrafe=m_vCamLookAt.crossProduct(irr::core::vector3df(0,1,0)),
-        v=pCam->getPosition()+((irr::f32)(m_iMouseY-event.MouseInput.Y))*m_vCamLookAt+((irr::f32)(m_iMouseX-event.MouseInput.X))*vStrafe;
-        pCam->setPosition(v);
-        pCam->setTarget(v+m_vCamLookAt);
-      }
-    }
-
-    m_iMouseX=event.MouseInput.X;
-    m_iMouseY=event.MouseInput.Y;
-  }
-
   return false;
 }
 

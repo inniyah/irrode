@@ -36,7 +36,9 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
              m_fCamAngleH,
              m_fExtDist,
              m_fExtOffset,
-             m_fExtFact;
+             m_fExtFact,
+             m_fTgtAngleV,
+             m_fTgtAngleH;
 
     irr::core::dimension2du m_cScreen;
     irr::core::position2di m_cMousePos;
