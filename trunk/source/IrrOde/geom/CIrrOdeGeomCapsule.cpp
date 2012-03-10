@@ -87,6 +87,7 @@ void CIrrOdeGeomCapsule::initPhysics() {
     else {
       //m_pOdeDevice->geomSetCategoryBits(m_iGeomId,1);
       m_pOdeDevice->geomSetCollisionBits(m_iGeomId,0);
+      m_pOdeDevice->geomStaticOffsetYUp(m_iGeomId);
     }
   }
   #ifdef _TRACE_INIT_PHYSICS

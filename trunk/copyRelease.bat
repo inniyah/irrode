@@ -15,7 +15,7 @@ copy bin\vc2008\libIrrOde.lib irrode\bin\vc2008
 copy bin\vc2008\*.exe irrode\bin\vc2008
 mkdir irrode\bin\vc2005
 copy bin\vc2005\*.* irrode\bin\vc2005
-copy readme.txt irrode
+copy *.txt irrode
 copy changelog.txt irrode
 mkdir irrode\data
 copy data\*.* irrode\data
@@ -55,6 +55,10 @@ mkdir irrode\data\textures\buttons
 copy data\textures\buttons\*.png irrode\data\textures\buttons
 mkdir irrode\data\shaders
 copy data\shaders\*.* irrode\data\shaders
+mkdir irrode\data\scenes
+copy data\scenes\*.* irrode\data\scenes
+mkdir irrode\data\parameters
+copy data\parameters\*.* irrode\data\parameters
 
 mkdir irrode\source
 mkdir irrode\source\IrrOde

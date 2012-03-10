@@ -1492,6 +1492,12 @@ void CIrrOdeDevice::geomOffsetYUp(u32 iGeom) {
   dGeomSetOffsetQuaternion(GETGEOM(iGeom),q);
 }
 
+void CIrrOdeDevice::geomStaticOffsetYUp(u32 iGeom) {
+  dQuaternion q;
+  dQFromAxisAndAngle(q,1,0,0,0.5*M_PI);
+  dGeomSetQuaternion(GETGEOM(iGeom),q);
+}
+
 u32 CIrrOdeDevice::geomCreateCylinder(u32 iSpace, f32 fRadius, f32 fLength) {
   u32 iRet;
   COdeDataWrapper *wrap=new COdeDataWrapper();
