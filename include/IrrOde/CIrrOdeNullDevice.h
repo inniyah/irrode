@@ -267,6 +267,7 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual IIrrOdeEvent *writeEventFor(IIrrOdeEventWriter *p) { return NULL; }
 
     virtual void geomOffsetYUp(u32 iGeom) { }
+    virtual void geomStaticOffsetYUp(u32 iGeom) { }
 };
 
 } //namespace ode

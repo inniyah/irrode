@@ -1,46 +1,37 @@
-#include <irrlicht.h>
-#include <IrrOde.h>
-
-using namespace irr;
-
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-using namespace ode;
+  #include <irrlicht.h>
+  #include <IrrOde.h>
 
 int main(int argc, char** argv) {
-  IrrlichtDevice *device=createDevice(EDT_DIRECT3D9, dimension2d<u32>(640,480),16,false,false,false,0);
+  irr::IrrlichtDevice *device=irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(640,480),16,false,false,false,0);
   device->setWindowCaption(L"Hello World! - Irrlicht-ODE Engine Demo");
 
-  IVideoDriver *driver = device->getVideoDriver();
-  ISceneManager *smgr = device->getSceneManager();
-  IGUIEnvironment *guienv = device->getGUIEnvironment();
-  ICursorControl *pCursor=device->getCursorControl();
+  irr::video::IVideoDriver *driver = device->getVideoDriver();
+  irr::scene::ISceneManager *smgr = device->getSceneManager();
+  irr::gui::IGUIEnvironment *guienv = device->getGUIEnvironment();
+  irr::gui::ICursorControl *pCursor=device->getCursorControl();
   pCursor->setVisible(false);
 
-  CIrrOdeManager::getSharedInstance()->install(device);
+  irr::ode::CIrrOdeManager::getSharedInstance()->install(device);
 
-  CIrrOdeSceneNodeFactory cFactory(smgr);
+  irr::ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
   smgr->loadScene("../../data/IrrOdEdit_example.xml");
 
   //init the ODE
-  CIrrOdeManager::getSharedInstance()->initODE();
-  CIrrOdeManager::getSharedInstance()->initPhysics();
+  irr::ode::CIrrOdeManager::getSharedInstance()->initODE();
+  irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
 
-  ICameraSceneNode *cam=reinterpret_cast<ICameraSceneNode *>(smgr->getSceneNodeFromName("theCamera"));
-  cam->setTarget(vector3df(0,0,0));
+  irr::scene::ICameraSceneNode *cam=reinterpret_cast<irr::scene::ICameraSceneNode *>(smgr->getSceneNodeFromName("theCamera"));
+  cam->setTarget(irr::core::vector3df(0,0,0));
 
   //let's run the loop
   while(device->run()) {
     //step the simulation
-    CIrrOdeManager::getSharedInstance()->step();
+    irr::ode::CIrrOdeManager::getSharedInstance()->step();
 
     //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
-    driver->beginScene(true, true, SColor(0,200,200,200));
+    driver->beginScene(true, true, irr::video::SColor(0,200,200,200));
 
     smgr->drawAll();
     guienv->drawAll();

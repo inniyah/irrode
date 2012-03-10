@@ -151,7 +151,7 @@ irr::video::SMaterial &CIrrOdeSceneNode::getMaterial(u32 iIdx) {
 void CIrrOdeSceneNode::render() {
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh && m_pMesh->getMesh(0) && m_pMesh->getMesh(0)->getMeshBuffer(0) && m_bDrawEditorMesh) {
-	  matrix4 tmpMatrix;
+      irr::core::matrix4 tmpMatrix;
 	  tmpMatrix.setTranslation(AbsoluteTransformation.getTranslation());
       m_pVideoDriver->setMaterial(m_cMat);
       m_pVideoDriver->setTransform(irr::video::ETS_WORLD,tmpMatrix);
