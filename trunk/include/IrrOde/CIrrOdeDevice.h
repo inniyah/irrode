@@ -293,6 +293,7 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual u32 geomCreateHeightfield(u32 iSpace, u32 iData);
     virtual u32 geomCreatePlane(u32 iSpace, f32 A, f32 B, f32 C, f32 D);
     virtual u32 geomCreateBox(u32 iSpace, f32 fWidth, f32 fHeight, f32 fDepth);
+    virtual void geomOffsetYUp(u32 iGeom);
 
     virtual u32 geomHeightfieldDataCreate();
     virtual void geomHeightfieldSetBounds(u32 iHFData, f32 fMinHeight, f32 fMaxHeight);
