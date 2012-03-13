@@ -66,9 +66,9 @@ const irr::core::aabbox3df &CIrrOdeSceneNode::getBoundingBox() const {
 }
 
 irr::scene::ISceneNode *CIrrOdeSceneNode::findFirstNodeOfType(irr::scene::ESCENE_NODE_TYPE iType, irr::scene::ISceneNode *pNode) {
-  irr::scene::ESCENE_NODE_TYPE eType = pNode->getType();
+  /*irr::scene::ESCENE_NODE_TYPE eType = pNode->getType();
   irr::u32 thisType = eType;
-  if (thisType == (irr::u32)iType) 
+  if (thisType == (irr::u32)iType)
     return pNode;
 
   irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
@@ -81,7 +81,8 @@ irr::scene::ISceneNode *CIrrOdeSceneNode::findFirstNodeOfType(irr::scene::ESCENE
       p = findFirstNodeOfType(iType, pChild);
   }
 
-  return p;
+  return p;*/
+  return NULL;
 }
 
 /**
@@ -94,7 +95,7 @@ irr::scene::ISceneNode *CIrrOdeSceneNode::getAncestorOfType(irr::scene::ESCENE_N
   while (pNode!=NULL && pNode->getType()!=iType) pNode=pNode->getParent();
 
   if (pNode == NULL) {
-    pNode = findFirstNodeOfType(iType, m_pSceneManager->getRootSceneNode());
+    //pNode = findFirstNodeOfType(iType, m_pSceneManager->getRootSceneNode());
   }
 
   return pNode;

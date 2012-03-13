@@ -494,7 +494,7 @@ void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld) {
     dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
     handleFastCollisions();
     m_fStepTime-=m_fStepSize;
-    CIrrOdeManager::getSharedInstance()->stepStepMotors();
+    pWorld->stepStepMotors();
 
     CIrrOdeEventStep *pStepEvent=new CIrrOdeEventStep(m_iStep++);
     pStepEvent->setFrameNo(CIrrOdeManager::getSharedInstance()->getFrameNo());
@@ -514,7 +514,7 @@ void CIrrOdeDevice::quickStep(f32 fTime, CIrrOdeWorld *pWorld) {
     dWorldQuickStep(GETWORLD(pWorld->getWorldId()),m_fStepSize);
     dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
     m_fStepTime-=m_fStepSize;
-    CIrrOdeManager::getSharedInstance()->stepStepMotors();
+    pWorld->stepStepMotors();
 
     CIrrOdeEventStep *pStepEvent=new CIrrOdeEventStep(m_iStep++);
     pStepEvent->setFrameNo(CIrrOdeManager::getSharedInstance()->getFrameNo());

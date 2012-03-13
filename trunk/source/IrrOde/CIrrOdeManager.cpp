@@ -15,7 +15,6 @@
   #include <event/IIrrOdeEventWriter.h>
   #include <event/CIrrOdeEventJoint.h>
   #include <IIrrOdeDevice.h>
-  #include <motors/IIrrOdeStepMotor.h>
 
   #ifndef _USE_ODE_NULL_DEVICE
     #include <CIrrOdeDevice.h>
@@ -101,11 +100,8 @@ void CIrrOdeManager::closeODE() {
   for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) (*wit)->setPhysicsInitialized(false);
   irr::core::list<CIrrOdeSceneNode *>::Iterator nit;
   for (nit=m_pSceneNodes.begin(); nit!=m_pSceneNodes.end(); nit++) (*nit)->setPhysicsInitialized(false);
-  irr::core::list<IIrrOdeStepMotor *>::Iterator mit;
-  for (mit=m_lStepMotors.begin(); mit!=m_lStepMotors.end(); mit++) (*mit)->setPhysicsInitialized(false);
 
   m_pSceneNodes.clear();
-  m_lStepMotors.clear();
   m_lWorlds.clear();
 
   m_iNodesInitialized=0;
@@ -213,9 +209,6 @@ void CIrrOdeManager::initPhysics() {
   for (itw=m_lWorlds.begin(); itw!=m_lWorlds.end(); itw++)
     (*itw)->initPhysics();
 
-  irr::core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
-  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
-
   m_bPhysicsInitialized=true;
 }
 
@@ -225,22 +218,6 @@ irr::core::list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
 
 irr::core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
   return m_lWorlds;
-}
-
-void CIrrOdeManager::addStepMotor(IIrrOdeStepMotor *pMotor) {
-  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
-  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) return;
-  m_lStepMotors.push_back(pMotor);
-}
-
-void CIrrOdeManager::removeStepMotor(IIrrOdeStepMotor *pMotor) {
-  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
-  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
-}
-
-void CIrrOdeManager::stepStepMotors() {
-  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
-  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->step();
 }
 
 void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {

@@ -29,14 +29,14 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
       m_pBody=(CIrrOdeBody *)getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
       if (m_pBody!=NULL) m_pBody->addStepMotor(this);
       CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-      if (pWorld!=NULL) CIrrOdeManager::getSharedInstance()->addStepMotor(this);
+      if (pWorld!=NULL) m_pWorld->addStepMotor(this);
       m_fMaxPower=0.0f;
       m_fPower=0.0f;
       m_bIsActive=false;
     }
 
     virtual ~IIrrOdeStepMotor() {
-      CIrrOdeManager::getSharedInstance()->removeStepMotor(this);
+      if (m_pWorld != NULL) m_pWorld->removeStepMotor(this);
     }
 
     virtual void serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
@@ -82,7 +82,7 @@ class IIrrOdeStepMotor : public CIrrOdeSceneNode {
 
     virtual void removeFromPhysics() {
       m_pBody=NULL;
-      CIrrOdeManager::getSharedInstance()->removeStepMotor(this);
+      if (m_pWorld != NULL) m_pWorld->removeStepMotor(this);
       CIrrOdeSceneNode::removeFromPhysics();
     }
 
