@@ -14,7 +14,9 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
 
     irr::gui::IGUIStaticText *m_pLblBodies,
                              *m_pLblPaused,
-                             *m_pLblFinished;
+                             *m_pLblFinished,
+                             *m_pLblInfo,
+                             *m_pLblStep;
     irr::core::array<irr::ode::CIrrOdeBody *> m_aBodies;
     irr::ode::CIrrOdeManager *m_pOdeManager;
     irr::ode::CIrrOdeRePlayer *m_pPlayer;
@@ -28,7 +30,9 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
              m_iCamMode,
              m_iFocusedNode,
              m_iDirection,
-             m_iPos;
+             m_iPos,
+             m_iSteps,
+             m_iThisStep;
     irr::f32 m_fCamDist,
              m_fCamHeight;
     irr::c8 m_sReplay[0xFF];
