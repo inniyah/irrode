@@ -48,16 +48,12 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     irr::scene::ISceneManager *m_pSmgr;
     IrrlichtDevice *m_pDevice;
 
-		irr::core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global irr::core::list of surface parameters */
-		CIrrOdeSurfaceParameters m_cNullSurface;
-
 	  IIrrOdeDevice *m_pOdeDevice;
 
     CIrrOdeManager();  /**< protected contructor for singleton */
     ~CIrrOdeManager();
 
     bool isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode);
-    void updateSurfaceParameterList();
 
   public:
     static CIrrOdeManager *getSharedInstance();   /*!< get a pointer to the singleton instance of this class */
@@ -85,12 +81,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     void initPhysics();																					/*!< init all dynamic objects */
     irr::core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a irr::core::list of all registered IrrOde scene nodes */
     irr::core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a irr::core::list of all registered IrrOde worlds */
-
-		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
-		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
-		CIrrOdeSurfaceParameters *getSurfaceParameter(irr::core::stringw sName);
-
-    const c8 *const *getSurfaceParameterList();
 
 		u32 getFrameNo() { return m_iFrameNo; }
 

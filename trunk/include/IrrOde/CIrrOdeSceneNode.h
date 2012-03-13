@@ -44,7 +44,9 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
 
     void *m_pUserData;
 
-    irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);  /**< retrieve an ancestor of a given type */
+    irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);    /**< retrieve an ancestor of a given type */
+
+    irr::scene::ISceneNode *findFirstNodeOfType(irr::scene::ESCENE_NODE_TYPE iType, irr::scene::ISceneNode *pNode);  /**< find the first node of a given type */
 
     #ifdef _IRREDIT_PLUGIN
       irr::scene::IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit when compiled as plugin */

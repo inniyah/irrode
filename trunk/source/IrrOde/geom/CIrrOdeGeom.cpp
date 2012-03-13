@@ -113,9 +113,11 @@ void CIrrOdeGeom::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttri
     for (u32 i=0; i<this->getSurfaceParametersCount(); i++) {
       c8 s[0xFF];
       if (i==0) strcpy(s,"Surface"); else sprintf(s,"Surface_mat%i",i);
-      out->addEnum(s,m_aParamNames[i].c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
+
+      if (m_pWorld) out->addEnum(s,m_aParamNames[i].c_str(),m_pWorld->getSurfaceParameterList());
     }
-  else out->addEnum("Surface",m_aParamNames[0].c_str(),CIrrOdeManager::getSharedInstance()->getSurfaceParameterList());
+  else
+    if (m_pWorld) out->addEnum("Surface",m_aParamNames[0].c_str(),m_pWorld->getSurfaceParameterList());
 
   out->addFloat("Mass",m_fMass);
 
@@ -192,11 +194,13 @@ void CIrrOdeGeom::initPhysics() {
   }
 
   m_aParams.clear();
-  for (u32 i=0; i<m_aParamNames.size(); i++) {
-    CIrrOdeSurfaceParameters *p=CIrrOdeManager::getSharedInstance()->getSurfaceParameter(irr::core::stringw(m_aParamNames[i]));
-    m_aParams.push_back(p);
-    if (p==NULL) printf("*ERROR* unable to find surface parameter \"%s\"!\n",m_aParamNames[i].c_str());
-  }
+
+  if (m_pWorld)
+    for (u32 i=0; i<m_aParamNames.size(); i++) {
+      CIrrOdeSurfaceParameters *p=m_pWorld->getSurfaceParameter(irr::core::stringw(m_aParamNames[i]));
+      m_aParams.push_back(p);
+      if (p==NULL) printf("*ERROR* unable to find surface parameter \"%s\"!\n",m_aParamNames[i].c_str());
+    }
 
   CIrrOdeSceneNode::initPhysics();
 }
