@@ -28,7 +28,7 @@ enum eAerealControls {
   eAeroFlip
 };
 
-class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener {
+class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
   protected:
     irr::f32 m_fPitch,
              m_fRoll,
@@ -51,7 +51,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
 
     CRearView *m_pRView;
 
-    irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeBody *m_pBody;
 
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;

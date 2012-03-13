@@ -16,6 +16,7 @@ class CIrrOdeSpace;
 class CIrrOdeBody;
 class CIrrOdeGeom;
 class IIrrOdeStepMotor;
+class IIrrOdeEventWriter;
 class CIrrOdeEventBodyMoved;
 
 class CIrrOdeWorld : public CIrrOdeDampable {
@@ -39,8 +40,12 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     irr::core::stringw m_sSurfaceFile;
 
     irr::core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;             /**< all step motors */
-		irr::core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global irr::core::list of surface parameters */
-		CIrrOdeSurfaceParameters m_cNullSurface;
+
+    /**
+     * This is a irr::core::list of all objects that want to post events
+     * about their state change after the step has been done.
+     */
+    irr::core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
 
     void loadParameter(irr::io::IXMLReader *pReader);
     u32 loadFromFile(const wchar_t *sName);
@@ -164,15 +169,12 @@ class CIrrOdeWorld : public CIrrOdeDampable {
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
 
-		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
-		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
-		CIrrOdeSurfaceParameters *getSurfaceParameter(irr::core::stringw sName);
-
-    const c8 *const *getSurfaceParameterList();
-
 		void addStepMotor(IIrrOdeStepMotor *pMotor);    /*!< add a step motor */
 		void removeStepMotor(IIrrOdeStepMotor *pMotor); /*!< remove a step motor */
 		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
+
+    void removeEventWriter(IIrrOdeEventWriter *p);
+    void objectChanged(IIrrOdeEventWriter *p);
 };
 
 } //namespace ode
