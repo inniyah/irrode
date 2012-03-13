@@ -8,6 +8,7 @@
   #include <geom/CIrrOdeGeom.h>
   #include <CIrrOdeBody.h>
   #include <IIrrOdeDevice.h>
+  #include <motors/IIrrOdeStepMotor.h>
 
 namespace irr {
 namespace ode {
@@ -127,6 +128,9 @@ void CIrrOdeWorld::initPhysics() {
       }
     }
   }
+
+  irr::core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
+  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
 }
 
 u32 CIrrOdeWorld::getWorldId() {
@@ -559,6 +563,11 @@ f32 CIrrOdeWorld::getERP() {
 
 void CIrrOdeWorld::stopPhysics() {
   m_lParamList.clear();
+
+  irr::core::list<IIrrOdeStepMotor *>::Iterator mit;
+  for (mit=m_lStepMotors.begin(); mit!=m_lStepMotors.end(); mit++) (*mit)->setPhysicsInitialized(false);
+
+  m_lStepMotors.clear();
 }
 static irr::core::array<irr::core::stringc> g_aParamNames;
 static irr::core::array<const c8 *> g_aC8ParamNames;
@@ -627,6 +636,23 @@ CIrrOdeSurfaceParameters *CIrrOdeWorld::getSurfaceParameter(irr::core::stringw s
 const c8 *const *CIrrOdeWorld::getSurfaceParameterList() {
   return g_aC8ParamNames.const_pointer();
 }
+
+void CIrrOdeWorld::addStepMotor(IIrrOdeStepMotor *pMotor) {
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
+  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) return;
+  m_lStepMotors.push_back(pMotor);
+}
+
+void CIrrOdeWorld::removeStepMotor(IIrrOdeStepMotor *pMotor) {
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
+  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) if (*it==pMotor) { m_lStepMotors.erase(it); return; }
+}
+
+void CIrrOdeWorld::stepStepMotors() {
+  irr::core::list<IIrrOdeStepMotor *>::Iterator it;
+  for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->step();
+}
+
 
 } //namespace ode
 } //namespace irr

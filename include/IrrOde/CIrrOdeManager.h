@@ -14,7 +14,6 @@ class CIrrOdeSceneNode;
 class IIrrOdeDevice;
 class IIrrOdeEvent;
 class CIrrOdeWorld;
-class IIrrOdeStepMotor;
 class IIrrOdeEventQueue;
 class IIrrOdeEventWriter;
 
@@ -32,7 +31,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     bool m_bPhysicsInitialized; /**< was the initPhysics call already done? */
 
     irr::core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
-    irr::core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
     irr::core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
 
     /**
@@ -83,10 +81,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     irr::core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a irr::core::list of all registered IrrOde worlds */
 
 		u32 getFrameNo() { return m_iFrameNo; }
-
-		void addStepMotor(IIrrOdeStepMotor *pMotor);    /*!< add a step motor */
-		void removeStepMotor(IIrrOdeStepMotor *pMotor); /*!< remove a step motor */
-		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
 
 		void sceneNodeInitialized(CIrrOdeSceneNode *pNode);
 
