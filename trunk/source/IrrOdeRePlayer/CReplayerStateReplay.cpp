@@ -47,6 +47,8 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   m_pPlugin = pPlugin;
   m_bPluginHandlesCamera = pPlugin->pluginHandleCamera();
 
+  m_iThisStep = 0;
+
   m_bStepTaken = false;
 }
 
@@ -54,7 +56,13 @@ void CReplayerStateReplay::activate() {
   m_pPlayer=new irr::ode::CIrrOdeRePlayer(m_pDevice,m_sReplay);
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_pLblBodies=m_pGuiEnv->addStaticText(L"Hello World",irr::core::rect<irr::s32>(5,5,200,300),true,true,0,-1,true);
+  m_pLblStep = m_pGuiEnv->addStaticText(L"Step", irr::core::rect<irr::s32>(5, 305, 200, 320), true, true, 0, -1, true);
+
+  m_pLblStep->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+
+  m_iSteps = m_pPlayer->getNumberOfSteps();
 
   if (m_bPluginHandlesCamera) {
     m_pCam = NULL;
@@ -109,6 +117,10 @@ irr::u32 CReplayerStateReplay::update() {
 
 bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    m_iThisStep++;
+    wchar_t s[0xFF];
+    swprintf(s, 0xFF, L"Step %i of %i", m_iThisStep, m_iSteps);
+    m_pLblStep->setText(s);
     if (!m_bStepTaken) {
       m_bStepTaken = true;
       m_pPlugin->physicsInitialized();
@@ -174,7 +186,16 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
       updateBodyList();
       m_bSceneLoaded=true;
-      return true;
+      irr::u32 iSec = (m_iSteps /   60) % 60,
+               iMin = (m_iSteps / 3600) % 60;
+
+      printf("Replay information: %i steps (%i:%i minutes)\n",m_iSteps, iMin, iSec);
+
+      wchar_t s[0xFF];
+      swprintf(s, 0xFF, L"%i Steps, (%i:%i minutes)", m_iSteps, iMin, iSec);
+      m_pLblInfo = m_pGuiEnv->addStaticText(s, irr::core::rect<irr::s32>(5, 325, 200, 340), true, true, 0, -1, true);
+      m_pLblInfo->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+    return true;
     }
   }
   else {

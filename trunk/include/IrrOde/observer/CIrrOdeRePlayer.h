@@ -20,7 +20,9 @@ class CIrrOdeRePlayer {
     irr::core::list<irr::ode::IIrrOdeEvent *> m_lEvents;
     irr::ode::CSerializer m_cSerializer;					  /**< the serializer for the messages */
 
-    irr::u32 m_iLastStep,m_iTimeBuffer;
+    irr::u32 m_iLastStep,
+             m_iTimeBuffer,
+             m_iNumberOfSteps;
 
     irr::core::list<irr::ode::IIrrOdeEvent *>::Iterator m_iIt;
 
@@ -41,6 +43,8 @@ class CIrrOdeRePlayer {
     bool isPaused() { return m_bIsPaused; }
 
     bool isFinished() { return m_bReplayFinished; }
+
+    irr::u32 getNumberOfSteps() { return m_iNumberOfSteps; }
 };
 
 }

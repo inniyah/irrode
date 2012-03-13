@@ -34,6 +34,7 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
   }
 
   CIrrOdeEventFactory *pFactory=CIrrOdeEventFactory::getSharedEventFactory();
+  m_iNumberOfSteps = 0;
 
   while (f->getPos()<f->getSize()) {
     c8 pBuffer[4096];
@@ -46,6 +47,8 @@ CIrrOdeRePlayer::CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sR
     IIrrOdeEvent *evt=pFactory->createMessage(&m_cSerializer,m_pSmgr);
 
     if (evt) {
+      if (evt->getType() == irr::ode::eIrrOdeEventStep) m_iNumberOfSteps++;
+
       m_lEvents.push_back(evt);
       if (!m_bValidReplay) {
         if (evt->getType()==eIrrOdeEventIdentify) {
