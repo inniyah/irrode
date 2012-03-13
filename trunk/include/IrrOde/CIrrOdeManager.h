@@ -15,7 +15,6 @@ class IIrrOdeDevice;
 class IIrrOdeEvent;
 class CIrrOdeWorld;
 class IIrrOdeEventQueue;
-class IIrrOdeEventWriter;
 
 /**
  * @class CIrrOdeManager
@@ -32,12 +31,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     irr::core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
     irr::core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
-
-    /**
-     * This is a irr::core::list of all objects that want to post events
-     * about their state change after the step has been done.
-     */
-    irr::core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
 
     IIrrOdeEventQueue *m_pQueue;
 
@@ -118,8 +111,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
      */
     void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
 
-    void removeEventWriter(IIrrOdeEventWriter *p);
-
     /**
      * Remove a node from the scene. This method sends a CIrrOdeEventNodeRemoved event
      * @param pNode node to remove
@@ -145,8 +136,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     ITimer *getTimer() { return m_pTimer; }
 
     CIrrOdeEventFactory *getEventFactory() { return CIrrOdeEventFactory::getSharedEventFactory(); }
-
-    void objectChanged(IIrrOdeEventWriter *p);
 };
 
 } //namespace ode

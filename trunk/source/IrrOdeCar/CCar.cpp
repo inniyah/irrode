@@ -23,6 +23,7 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
 }
 
 CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
+  irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
@@ -67,7 +68,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     irr::core::stringw sParamNames[]={ L"surfaceTireFront", L"surfaceTireStop", L"surfaceTireBack", L"surfaceTireStop" };
     for (irr::u32 i=0; i<4; i++) {
       m_pParams[i]=new irr::ode::CIrrOdeSurfaceParameters();
-      m_pCarBody->getWorld()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
+      irr::ode::CIrrOdeSurfaceParameterManager::getSharedInstance()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
     }
 
     m_pSuspension=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName("sc_suspension_rear",m_pCarBody));

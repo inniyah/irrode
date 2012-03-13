@@ -120,6 +120,8 @@ void CIrrOdeManager::clearODE() {
 
   irr::core::list<irr::ode::CIrrOdeWorld *>::Iterator it;
   for (it = m_lWorlds.begin(); it != m_lWorlds.end(); it++) (*it)->stopPhysics();
+
+  CIrrOdeSurfaceParameterManager::getSharedInstance()->clearList();
 }
 
 void CIrrOdeManager::install(IrrlichtDevice *pDevice) {
@@ -142,14 +144,6 @@ void CIrrOdeManager::step() {
   irr::core::list<CIrrOdeWorld *>::Iterator it;
   for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++) (*it)->step(fStep);
 
-  irr::core::list<IIrrOdeEventWriter *>::Iterator cit;
-  for (cit=m_lChanged.begin(); cit!=m_lChanged.end(); cit++) {
-    IIrrOdeEvent *p=m_pOdeDevice->writeEventFor(*cit);
-    if (p==NULL) p=(*cit)->writeEvent();
-    if (p) getQueue()->postEvent(p);
-  }
-  m_lChanged.clear();
-
   m_iLastStep=thisStep;
 }
 
@@ -169,15 +163,6 @@ void CIrrOdeManager::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
   for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
     if ((*it)==pNode) {
       m_pSceneNodes.erase(it);
-      return;
-    }
-}
-
-void CIrrOdeManager::removeEventWriter(IIrrOdeEventWriter *p) {
-  irr::core::list<IIrrOdeEventWriter *>::Iterator it;
-  for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++)
-    if (*it==p) {
-      m_lChanged.erase(it);
       return;
     }
 }
@@ -356,12 +341,6 @@ bool CIrrOdeManager::handlesEvent(IIrrOdeEvent *pEvent) {
          pEvent->getType()==eIrrOdeEventBodyRemoved ||
          pEvent->getType()==eIrrOdeEventNodeRemoved ||
          pEvent->getType()==eIrrOdeEventJoint;
-}
-
-void CIrrOdeManager::objectChanged(IIrrOdeEventWriter *p) {
-  irr::core::list<IIrrOdeEventWriter *>::Iterator it;
-  for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++) if (*it==p) return;
-  m_lChanged.push_back(p);
 }
 
 } //namespace ode

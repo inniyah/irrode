@@ -65,26 +65,6 @@ const irr::core::aabbox3df &CIrrOdeSceneNode::getBoundingBox() const {
   return m_cBoundingBox;
 }
 
-irr::scene::ISceneNode *CIrrOdeSceneNode::findFirstNodeOfType(irr::scene::ESCENE_NODE_TYPE iType, irr::scene::ISceneNode *pNode) {
-  /*irr::scene::ESCENE_NODE_TYPE eType = pNode->getType();
-  irr::u32 thisType = eType;
-  if (thisType == (irr::u32)iType)
-    return pNode;
-
-  irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
-  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
-  irr::scene::ISceneNode *p = NULL;
-
-  for (it = Children.begin(); it != Children.end() && p == NULL; it++) {
-    irr::scene::ISceneNode *pChild = *it;
-    if (pChild != pNode)
-      p = findFirstNodeOfType(iType, pChild);
-  }
-
-  return p;*/
-  return NULL;
-}
-
 /**
  * Retreive the first ancestor of a given node type
  * @param iType the node type of the ancestor
