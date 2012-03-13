@@ -67,7 +67,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     irr::core::stringw sParamNames[]={ L"surfaceTireFront", L"surfaceTireStop", L"surfaceTireBack", L"surfaceTireStop" };
     for (irr::u32 i=0; i<4; i++) {
       m_pParams[i]=new irr::ode::CIrrOdeSurfaceParameters();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
+      m_pCarBody->getWorld()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
     }
 
     m_pSuspension=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName("sc_suspension_rear",m_pCarBody));

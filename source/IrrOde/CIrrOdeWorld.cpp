@@ -468,7 +468,7 @@ void CIrrOdeWorld::loadParameter(irr::io::IXMLReader *pReader) {
           p->deserializeAttributes(pAttr,NULL,0);
           irr::core::stringc sName=irr::core::stringc(p->getName());
           printf("%s\n",sName.c_str());
-          CIrrOdeManager::getSharedInstance()->addSurfaceParameter(p);
+          addSurfaceParameter(p);
         }
         break;
 
@@ -555,6 +555,77 @@ f32 CIrrOdeWorld::getCFM() {
 
 f32 CIrrOdeWorld::getERP() {
   return m_pOdeDevice->worldGetERP(m_iWorldId);
+}
+
+void CIrrOdeWorld::stopPhysics() {
+  m_lParamList.clear();
+}
+static irr::core::array<irr::core::stringc> g_aParamNames;
+static irr::core::array<const c8 *> g_aC8ParamNames;
+
+void CIrrOdeWorld::updateSurfaceParameterList() {
+  g_aParamNames.clear();
+  g_aC8ParamNames.clear();
+
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++) {
+    irr::core::stringc s=((*it)->getName());
+    if (s!="") {
+      bool bAdd=true;
+      for (u32 i=0; i<g_aParamNames.size() && bAdd; i++) if (g_aParamNames[i]==s) bAdd=false;
+      if (bAdd) g_aParamNames.push_back(s);
+    }
+  }
+
+  for (u32 i=0; i<g_aParamNames.size(); i++) g_aC8ParamNames.push_back(g_aParamNames[i].c_str());
+  g_aC8ParamNames.push_back(NULL);
+}
+
+void CIrrOdeWorld::addSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
+  m_lParamList.push_back(pParam);
+  updateSurfaceParameterList();
+}
+
+void CIrrOdeWorld::removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam) {
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
+    if ((*it)==pParam) {
+      m_lParamList.erase(it);
+      updateSurfaceParameterList();
+      return;
+    }
+}
+
+CIrrOdeSurfaceParameters *CIrrOdeWorld::getSurfaceParameter(irr::core::stringw sName) {
+	irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+
+	#ifdef _TRACE_INIT_PHYSICS
+	  printf("\tsearching for surface parameters \"%s\" ... ",irr::core::stringc(sName).c_str());
+  #endif
+
+	if (sName=="") {
+	  #ifdef _TRACE_INIT_PHYSICS
+	    printf("no search name defined!\n");
+    #endif
+	  return &m_cNullSurface;
+	}
+
+	for (it=m_lParamList.begin(); it!=m_lParamList.end(); it++)
+		if (sName==irr::core::stringw((*it)->getName())) {
+		  #ifdef _TRACE_INIT_PHYSICS
+		    printf("OK\n");
+      #endif
+		  return *it;
+		}
+
+  #ifdef _TRACE_INIT_PHYSICS
+    printf("not found!\n");
+  #endif
+	return &m_cNullSurface;
+}
+
+const c8 *const *CIrrOdeWorld::getSurfaceParameterList() {
+  return g_aC8ParamNames.const_pointer();
 }
 
 } //namespace ode

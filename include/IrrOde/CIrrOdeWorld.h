@@ -35,10 +35,15 @@ class CIrrOdeWorld : public CIrrOdeDampable {
       irr::core::list<CIrrOdeSceneNode *> m_pChildNodes;
     #endif
 
-	irr::core::stringw m_sSurfaceFile;
+    irr::core::stringw m_sSurfaceFile;
 
-	void loadParameter(irr::io::IXMLReader *pReader);
-	u32 loadFromFile(const wchar_t *sName);
+		irr::core::list<irr::ode::CIrrOdeSurfaceParameters *> m_lParamList;      /**< global irr::core::list of surface parameters */
+		CIrrOdeSurfaceParameters m_cNullSurface;
+
+    void loadParameter(irr::io::IXMLReader *pReader);
+    u32 loadFromFile(const wchar_t *sName);
+    void updateSurfaceParameterList();
+
   public:
     CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
                  const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
@@ -83,6 +88,8 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual f32 getAutoDisableTime();
 
     virtual void initPhysics();
+
+    void stopPhysics();
 
     void setStepSize(f32 fStepSize);
     f32 getStepSize();
@@ -154,6 +161,12 @@ class CIrrOdeWorld : public CIrrOdeDampable {
      * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
+
+		void addSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
+		void removeSurfaceParameter(CIrrOdeSurfaceParameters *pParam);
+		CIrrOdeSurfaceParameters *getSurfaceParameter(irr::core::stringw sName);
+
+    const c8 *const *getSurfaceParameterList();
 };
 
 } //namespace ode
