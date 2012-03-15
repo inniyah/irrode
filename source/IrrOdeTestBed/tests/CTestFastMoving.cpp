@@ -21,8 +21,7 @@ void CTestFastMoving::activate() {
 
   m_pTemplate=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("CannonBall"));
 
-  irr::core::list<irr::ode::CIrrOdeWorld *> lWorlds=m_pOdeMngr->getWorlds();
-  m_pWorld=*(lWorlds.begin());
+  m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("world"));
 
   printf("cannonball template: %i\nworld: %i\n",(int)m_pTemplate,(int)m_pWorld);
 
