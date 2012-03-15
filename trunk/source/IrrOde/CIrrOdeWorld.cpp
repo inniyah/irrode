@@ -30,7 +30,6 @@ CIrrOdeWorld::CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
   m_pWorldSpace=NULL;
 
 	m_cGravity=irr::core::vector3df(0.0f,-10.0f,0.0f);
-	m_pOdeManager->addWorld(this);
 	m_bDrawEditorMesh=true;
   #ifdef _IRREDIT_PLUGIN
     if (m_pMesh) {
@@ -55,8 +54,6 @@ CIrrOdeWorld::~CIrrOdeWorld() {
     m_pOdeDevice->worldDestroy(m_iWorldId);
     m_iWorldId=0;
   }
-
-  m_pOdeManager->removeWorld(this);
 }
 
 void CIrrOdeWorld::initPhysics() {

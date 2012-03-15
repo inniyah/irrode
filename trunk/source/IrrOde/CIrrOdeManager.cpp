@@ -69,24 +69,6 @@ void CIrrOdeManager::initODE() {
   getOdeDevice()->initODE();
 }
 
-void CIrrOdeManager::addWorld(CIrrOdeWorld *pWorld) {
-  irr::core::list<CIrrOdeWorld *>::Iterator it;
-  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
-    if ((*it)==pWorld)
-      return;
-
-  m_lWorlds.push_back(pWorld);
-}
-
-void CIrrOdeManager::removeWorld(CIrrOdeWorld *pWorld) {
-  irr::core::list<CIrrOdeWorld *>::Iterator it;
-  for (it=m_lWorlds.begin(); it!=m_lWorlds.end(); it++)
-    if ((*it)==pWorld) {
-      m_lWorlds.erase(it);
-      return;
-    }
-}
-
 /**
  * Shutdown ODE
  */
@@ -184,12 +166,24 @@ void CIrrOdeManager::setOdeDevice(IIrrOdeDevice *pDevice) {
   #endif
 }
 
+void CIrrOdeManager::findWorlds(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType() == irr::ode::IRR_ODE_WORLD_ID) m_lWorlds.push_back(reinterpret_cast<irr::ode::CIrrOdeWorld *>(pNode));
+
+  irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+  for (it = children.begin(); it != children.end(); it++)
+    findWorlds(*it);
+}
+
 /**
  * Initialize physics
  */
 void CIrrOdeManager::initPhysics() {
   m_iNodesInitialized=0;
   m_bPhysicsInitialized=false;
+
+  findWorlds(m_pSmgr->getRootSceneNode());
 
   irr::core::list<CIrrOdeWorld *>::Iterator itw;
   for (itw=m_lWorlds.begin(); itw!=m_lWorlds.end(); itw++)
@@ -200,10 +194,6 @@ void CIrrOdeManager::initPhysics() {
 
 irr::core::list<CIrrOdeSceneNode *> &CIrrOdeManager::getIrrOdeNodes() {
   return m_pSceneNodes;
-}
-
-irr::core::list<CIrrOdeWorld *> &CIrrOdeManager::getWorlds() {
-  return m_lWorlds;
 }
 
 void CIrrOdeManager::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {

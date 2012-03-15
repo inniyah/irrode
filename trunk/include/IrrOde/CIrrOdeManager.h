@@ -46,6 +46,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     bool isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode);
 
+    void findWorlds(irr::scene::ISceneNode *pNode);
+
   public:
     static CIrrOdeManager *getSharedInstance();   /*!< get a pointer to the singleton instance of this class */
 
@@ -64,14 +66,10 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     void step();      /*!< step the world(s) */
 
-    void addWorld(CIrrOdeWorld *pWorld);     /*!< add a world */
-    void removeWorld(CIrrOdeWorld *pWorld);  /*!< remove a world */
-
     IIrrOdeDevice *getOdeDevice();															/*!< get a pointer to the ODE device */
     void setOdeDevice(IIrrOdeDevice *pDevice);                  /*!< set a new ODE device */
     void initPhysics();																					/*!< init all dynamic objects */
     irr::core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a irr::core::list of all registered IrrOde scene nodes */
-    irr::core::list<CIrrOdeWorld *> &getWorlds();                    /*!< get a irr::core::list of all registered IrrOde worlds */
 
 		u32 getFrameNo() { return m_iFrameNo; }
 
