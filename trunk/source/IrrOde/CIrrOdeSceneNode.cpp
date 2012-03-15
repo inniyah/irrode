@@ -262,5 +262,79 @@ irr::scene::ISceneNode *CIrrOdeSceneNode::getChildByName(const c8 *sName, irr::s
   return NULL;
 }
 
+static irr::core::array<irr::core::stringc> g_aParamNames;
+static irr::core::array<const c8 *> g_aC8ParamNames;
+static irr::core::list<irr::ode::CIrrOdeSurfaceParameters *> g_lParamList;      /**< global irr::core::list of surface parameters */
+static CIrrOdeSurfaceParameters g_cNullSurface;
+
+void CIrrOdeSceneNode::updateParameterList() const {
+  g_aParamNames.clear();
+  g_aC8ParamNames.clear();
+
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=g_lParamList.begin(); it!=g_lParamList.end(); it++) {
+    irr::core::stringc s=((*it)->getName());
+    if (s!="") {
+      bool bAdd=true;
+      for (u32 i=0; i<g_aParamNames.size() && bAdd; i++) if (g_aParamNames[i]==s) bAdd=false;
+      if (bAdd) g_aParamNames.push_back(s);
+    }
+  }
+
+  for (u32 i=0; i<g_aParamNames.size(); i++) g_aC8ParamNames.push_back(g_aParamNames[i].c_str());
+  g_aC8ParamNames.push_back(NULL);
+}
+
+void CIrrOdeSceneNode::addParameter(CIrrOdeSurfaceParameters *pParam) const {
+  g_lParamList.push_back(pParam);
+  updateParameterList();
+}
+
+void CIrrOdeSceneNode::removeParameter(CIrrOdeSurfaceParameters *pParam) const {
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+  for (it=g_lParamList.begin(); it!=g_lParamList.end(); it++)
+    if ((*it)==pParam) {
+      g_lParamList.erase(it);
+      updateParameterList();
+      return;
+    }
+}
+
+CIrrOdeSurfaceParameters *CIrrOdeSceneNode::getParameter(irr::core::stringw sName) const {
+  irr::core::list<CIrrOdeSurfaceParameters *>::Iterator it;
+
+  #ifdef _TRACE_INIT_PHYSICS
+    printf("\tsearching for surface parameters \"%s\" ... ",irr::core::stringc(sName).c_str());
+  #endif
+
+  if (sName=="") {
+    #ifdef _TRACE_INIT_PHYSICS
+      printf("no search name defined!\n");
+    #endif
+    return &g_cNullSurface;
+  }
+
+  for (it=g_lParamList.begin(); it!=g_lParamList.end(); it++)
+    if (sName==irr::core::stringw((*it)->getName())) {
+      #ifdef _TRACE_INIT_PHYSICS
+        printf("OK\n");
+      #endif
+      return *it;
+    }
+
+  #ifdef _TRACE_INIT_PHYSICS
+    printf("not found!\n");
+  #endif
+  return &g_cNullSurface;
+}
+
+const c8 *const *CIrrOdeSceneNode::getParameterList() const {
+  return g_aC8ParamNames.const_pointer();
+}
+
+void CIrrOdeSceneNode::clearParameterList() const {
+  g_lParamList.clear();
+}
+
 } //namespace ode
 } //namespace irr

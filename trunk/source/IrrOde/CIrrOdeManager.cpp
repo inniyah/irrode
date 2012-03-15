@@ -121,7 +121,8 @@ void CIrrOdeManager::clearODE() {
   irr::core::list<irr::ode::CIrrOdeWorld *>::Iterator it;
   for (it = m_lWorlds.begin(); it != m_lWorlds.end(); it++) (*it)->stopPhysics();
 
-  CIrrOdeSurfaceParameterManager::getSharedInstance()->clearList();
+  CIrrOdeWorld *p = *(m_lWorlds.begin());
+  if (p) p->clearParameterList();
 }
 
 void CIrrOdeManager::install(IrrlichtDevice *pDevice) {
