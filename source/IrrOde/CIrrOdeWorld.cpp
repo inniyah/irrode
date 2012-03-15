@@ -482,7 +482,7 @@ void CIrrOdeWorld::loadParameter(irr::io::IXMLReader *pReader) {
           p->deserializeAttributes(pAttr,NULL,0);
           irr::core::stringc sName=irr::core::stringc(p->getName());
           printf("%s\n",sName.c_str());
-          CIrrOdeSurfaceParameterManager::getSharedInstance()->addSurfaceParameter(p);
+          addParameter(p);
         }
         break;
 
