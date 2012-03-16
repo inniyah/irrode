@@ -171,10 +171,10 @@ void replaceMaterials(scene::ISceneNode *pNode, s32 iNewMaterial) {
   }
 }
 
-void removeFromScene(const c8 *sName, ISceneManager *smgr) {
+void removeFromScene(const c8 *sName, ISceneManager *smgr, irr::ode::CIrrOdeWorld *pWorld) {
   ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
   if (pNode!=NULL) {
-    irr::ode::CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+    pWorld->removeTreeFromPhysics(pNode);
     s32 iNodeId=pNode->getID();
     pNode->remove();
 
@@ -183,8 +183,8 @@ void removeFromScene(const c8 *sName, ISceneManager *smgr) {
   }
 }
 
-void removeFromScene(ISceneNode *pNode) {
-  irr::ode::CIrrOdeManager::getSharedInstance()->removeTreeFromPhysics(pNode);
+void removeFromScene(ISceneNode *pNode, irr::ode::CIrrOdeWorld *pWorld) {
+  pWorld->removeTreeFromPhysics(pNode);
   s32 iNodeId=pNode->getID();
   pNode->remove();
 
@@ -192,7 +192,7 @@ void removeFromScene(ISceneNode *pNode) {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
 }
 
-void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax) {
+void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax, irr::ode::CIrrOdeWorld *pWorld) {
   if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
     irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
     if (p->getOdeClassname().equals_ignore_case(sClassName)) {
@@ -200,7 +200,7 @@ void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, con
       if (aPlanes.size()<iMax)
         aPlanes.push_back(pNode);
       else {
-        removeFromScene(pNode);
+        removeFromScene(pNode, pWorld);
         return;
       }
     }
@@ -209,7 +209,7 @@ void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, con
   irr::core::list<ISceneNode *> children=pNode->getChildren();
   irr::core::list<ISceneNode *>::Iterator it;
 
-  for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax);
+  for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax, pWorld);
 }
 
 class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
@@ -217,6 +217,7 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;
     irr::ode::CIrrOdeRecorder *m_pRecorder;
+    irr::ode::CIrrOdeWorld    *m_pWorld;
     irr::u32 m_iCount;
 
     irr::IrrlichtDevice *m_pDevice;
@@ -308,6 +309,18 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
     }
 
+    void initWorld(irr::scene::ISceneNode *pNode) {
+      if (pNode->getType() == (irr::scene::ESCENE_NODE_TYPE)irr::ode::IRR_ODE_WORLD_ID) {
+        m_pWorld = reinterpret_cast<irr::ode::CIrrOdeWorld *>(pNode);
+        return;
+      }
+
+      irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
+      irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+      for (it = children.begin(); it != children.end(); it++) initWorld(*it);
+    }
+
   public:
     CIrrOdeCar(irr::IrrlichtDevice *pDevice) {
       m_pDevice = pDevice;
@@ -388,6 +401,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       //load the scene
       irr::ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",m_pSmgr);
 
+      initWorld(m_pSmgr->getRootSceneNode());
+
       for (irr::u32 i=0; i<m_pSmgr->getMeshCache()->getMeshCount(); i++) {
         irr::scene::IAnimatedMesh *p=m_pSmgr->getMeshCache()->getMeshByIndex(i);
         for (irr::u32 j=0; j<p->getMeshBufferCount(); j++) {
@@ -396,26 +411,26 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       }
 
       irr::core::list<ISceneNode *> lCars;
-      fillBodyList(lCars,m_pSmgr->getRootSceneNode(),"car",pSettings->getCountOf(0));
+      fillBodyList(lCars,m_pSmgr->getRootSceneNode(),"car",pSettings->getCountOf(0), m_pWorld);
 
       irr::core::list<ISceneNode *> lPlanes;
-      fillBodyList(lPlanes,m_pSmgr->getRootSceneNode(),"plane",pSettings->getCountOf(1));
+      fillBodyList(lPlanes,m_pSmgr->getRootSceneNode(),"plane",pSettings->getCountOf(1), m_pWorld);
 
       irr::core::list<ISceneNode *> lTanks;
-      fillBodyList(lTanks,m_pSmgr->getRootSceneNode(),"tank",pSettings->getCountOf(2));
+      fillBodyList(lTanks,m_pSmgr->getRootSceneNode(),"tank",pSettings->getCountOf(2), m_pWorld);
 
       irr::core::list<ISceneNode *> lHelis;
-      fillBodyList(lHelis,m_pSmgr->getRootSceneNode(),"heli",pSettings->getCountOf(3));
+      fillBodyList(lHelis,m_pSmgr->getRootSceneNode(),"heli",pSettings->getCountOf(3), m_pWorld);
 
       printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lHelis.size(),lTanks.size());
 
       bool bRearCam=pSettings->isActive(6);
       printf("bRearCam=%s\n",bRearCam?"true":"false");
 
-      if (!pSettings->isActive(0)) removeFromScene("roads"       ,m_pSmgr);
-      if (!pSettings->isActive(1)) removeFromScene("bumps"       ,m_pSmgr);
-      if (!pSettings->isActive(2)) removeFromScene("targets"     ,m_pSmgr);
-      if (!pSettings->isActive(3)) removeFromScene("plane_course",m_pSmgr);
+      if (!pSettings->isActive(0)) removeFromScene("roads"       ,m_pSmgr, m_pWorld);
+      if (!pSettings->isActive(1)) removeFromScene("bumps"       ,m_pSmgr, m_pWorld);
+      if (!pSettings->isActive(2)) removeFromScene("targets"     ,m_pSmgr, m_pWorld);
+      if (!pSettings->isActive(3)) removeFromScene("plane_course",m_pSmgr, m_pWorld);
       if ( pSettings->isActive(4)) {
        const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
 
@@ -453,11 +468,11 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       }
       if (!pSettings->isActive(5)) {
         printf("removing terrain trimesh...\n");
-        removeFromScene("terrain_trimesh",m_pSmgr);
+        removeFromScene("terrain_trimesh",m_pSmgr, m_pWorld);
       }
       else {
         printf("removing terrain heightfield...\n");
-        removeFromScene("terrain_heightfield",m_pSmgr);
+        removeFromScene("terrain_heightfield",m_pSmgr, m_pWorld);
       }
 
       bool bUseShader=pSettings->getSelectedDriver()==video::EDT_OPENGL;
@@ -564,14 +579,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_pActive->activate();
 
       CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
-
-      list<irr::ode::CIrrOdeSceneNode *> lNodes=irr::ode::CIrrOdeManager::getSharedInstance()->getIrrOdeNodes();
-      list<irr::ode::CIrrOdeSceneNode *>::Iterator nit;
-
-      for (nit=lNodes.begin(); nit!=lNodes.end(); nit++) {
-        irr::ode::CIrrOdeSceneNode *p=*nit;
-        if (!p->physicsInitialized()) printf("\t\t--> %i (%s)\n",p->getID(),p->getName());
-      }
 
       m_pDriver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
       enableFog(m_pSmgr->getRootSceneNode());

@@ -19,7 +19,6 @@ void CTestBoxPile::activate() {
 
 void CTestBoxPile::deactivate() {
   m_pSmgr->clear();
-  m_pOdeMngr->clearODE();
   m_pOdeMngr->closeODE();
 }
 

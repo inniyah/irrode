@@ -767,10 +767,12 @@ void CIrrOdeBody::doRemoveFromPhysics() {
   CIrrOdeSceneNode::removeFromPhysics();
 
   if (m_iBodyId) {
-    if (m_pWorld) m_pWorld->removeBody(this);
-    m_pOdeManager->removeTreeFromPhysics(this);
-    m_pOdeManager->removeOdeSceneNode(this);
-    if (m_pWorld) m_pWorld->removeEventWriter(this);
+    if (m_pWorld) {
+      m_pWorld->removeBody(this);
+      m_pWorld->removeOdeSceneNode(this);
+      m_pWorld->removeEventWriter(this);
+      m_pWorld->removeTreeFromPhysics(this);
+    }
 
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;

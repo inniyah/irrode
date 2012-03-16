@@ -144,6 +144,9 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
      * @param pParam the parameter set to remove
      */
     void removeParameter(CIrrOdeSurfaceParameters *pParam) const;
+
+    s32 getNextId();
+    void updateNextId(s32 iId);
 };
 
 } //namespace ode

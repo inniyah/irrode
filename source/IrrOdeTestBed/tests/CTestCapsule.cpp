@@ -19,7 +19,6 @@ void CTestCapsule::activate() {
 
 void CTestCapsule::deactivate() {
   m_pSmgr->clear();
-  m_pOdeMngr->clearODE();
   m_pOdeMngr->closeODE();
 }
 
