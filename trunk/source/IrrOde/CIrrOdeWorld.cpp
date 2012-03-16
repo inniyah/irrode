@@ -11,6 +11,9 @@
   #include <motors/IIrrOdeStepMotor.h>
   #include <CIrrOdeManager.h>
   #include <event/IIrrOdeEventQueue.h>
+  #include <event/CIrrOdeEventProgress.h>
+  #include <event/CIrrOdeEventNodeCloned.h>
+  #include <event/CIrrOdeEventNodeRemoved.h>
 
 namespace irr {
 namespace ode {
@@ -25,6 +28,7 @@ CIrrOdeWorld::CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
 
   m_iWorldId=0;
   m_iJointGroupId=0;
+  m_iNodesInitialized=0;
   m_sSurfaceFile=irr::core::stringw("");
 
   m_pWorldSpace=NULL;
@@ -58,6 +62,7 @@ CIrrOdeWorld::~CIrrOdeWorld() {
 
 void CIrrOdeWorld::initPhysics() {
   if (m_bPhysicsInitialized) return;
+  m_iNodesInitialized=0;
   CIrrOdeSceneNode::initPhysics();
 
   m_iWorldId=m_pOdeDevice->worldCreate();
@@ -571,8 +576,13 @@ f32 CIrrOdeWorld::getERP() {
 void CIrrOdeWorld::stopPhysics() {
   irr::core::list<IIrrOdeStepMotor *>::Iterator mit;
   for (mit=m_lStepMotors.begin(); mit!=m_lStepMotors.end(); mit++) (*mit)->setPhysicsInitialized(false);
+  irr::core::list<CIrrOdeSceneNode *>::Iterator nit;
+  for (nit=m_pSceneNodes.begin(); nit!=m_pSceneNodes.end(); nit++) (*nit)->setPhysicsInitialized(false);
 
+  m_pSceneNodes.clear();
   m_lStepMotors.clear();
+
+  m_iNodesInitialized=0;
 }
 
 void CIrrOdeWorld::addStepMotor(IIrrOdeStepMotor *pMotor) {
@@ -604,6 +614,90 @@ void CIrrOdeWorld::objectChanged(IIrrOdeEventWriter *p) {
   irr::core::list<IIrrOdeEventWriter *>::Iterator it;
   for (it=m_lChanged.begin(); it!=m_lChanged.end(); it++) if (*it==p) return;
   m_lChanged.push_back(p);
+}
+
+/**
+ * Add a new ODE scene node
+ */
+void CIrrOdeWorld::addOdeSceneNode(CIrrOdeSceneNode *pNode) {
+  updateNextId(pNode->getID());
+  m_pSceneNodes.push_back(pNode);
+}
+
+/**
+ * Remove an ODE scene node
+ */
+void CIrrOdeWorld::removeOdeSceneNode(CIrrOdeSceneNode *pNode) {
+  irr::core::list<CIrrOdeSceneNode *>::Iterator it;
+  for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
+    if ((*it)==pNode) {
+      m_pSceneNodes.erase(it);
+      return;
+    }
+}
+
+irr::core::list<CIrrOdeSceneNode *> &CIrrOdeWorld::getIrrOdeNodes() {
+  return m_pSceneNodes;
+}
+
+void CIrrOdeWorld::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
+  if (!m_bPhysicsInitialized) {
+    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
+    bool b=false;
+    for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end() && !b; it++)
+      if (*it==pNode) b=true;
+
+    if (b) {
+      m_iNodesInitialized++;
+      CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
+      CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pPrg);
+    }
+  }
+}
+
+irr::scene::ISceneNode *CIrrOdeWorld::cloneOdeNode(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr, s32 iNewId) {
+  irr::scene::ISceneNode *pRet=pSource->clone(newParent,newSmgr);
+  pRet->setID(iNewId==-1?getNextId():iNewId);
+  pRet->setParent(newParent);
+
+  return pRet;
+}
+
+irr::scene::ISceneNode *CIrrOdeWorld::cloneTree(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr) {
+  irr::scene::ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
+
+  CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
+  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
+
+  return pRet;
+}
+
+void CIrrOdeWorld::removeTreeFromPhysics(irr::scene::ISceneNode *pNode) {
+  irr::core::list<irr::scene::ISceneNode *> ch=pNode->getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+  for (it=ch.begin(); it!=ch.end(); it++) {
+    if (isRegisteredOdeSceneNode(*it)) {
+      CIrrOdeSceneNode *p=(CIrrOdeSceneNode *)(*it);
+      p->removeFromPhysics();
+    }
+    removeTreeFromPhysics(*it);
+  }
+}
+
+void CIrrOdeWorld::removeSceneNode(irr::scene::ISceneNode *pNode) {
+  CIrrOdeEventNodeRemoved *p=new CIrrOdeEventNodeRemoved(pNode);
+  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+}
+
+bool CIrrOdeWorld::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
+  irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
+
+  for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end(); it++)
+    if ((*it)==pNode)
+      return true;
+
+  return false;
 }
 
 } //namespace ode

@@ -37,7 +37,6 @@ void CTestSlipstream::activate() {
 
 void CTestSlipstream::deactivate() {
   m_pSmgr->clear();
-  m_pOdeMngr->clearODE();
   m_pOdeMngr->closeODE();
   m_pOdeMngr->getQueue()->removeEventListener(this);
   m_pGui->clear();

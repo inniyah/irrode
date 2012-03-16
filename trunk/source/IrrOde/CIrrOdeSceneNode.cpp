@@ -9,6 +9,8 @@
 namespace irr {
 namespace ode {
 
+static s32 g_iNextOdeNodeId = 20000;       /**< the next id for ODE scene nodes */
+
 CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
                                    const irr::core::vector3df &position, const irr::core::vector3df &rotation, const irr::core::vector3df &scale) :
                                    irr::scene::ISceneNode(parent, mgr, id, position, rotation, scale) {
@@ -24,10 +26,14 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::IS
   m_pOdeDevice=m_pOdeManager->getOdeDevice();
 
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (m_pWorld || this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
-    m_pOdeManager->addOdeSceneNode(this);
-  }
-  else printf("no world!\n");
+  if (m_pWorld)
+    m_pWorld->addOdeSceneNode(this);
+  else
+    if (this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+      CIrrOdeWorld *p = reinterpret_cast<CIrrOdeWorld *>(this);
+      p->addOdeSceneNode(this);
+    }
+    else printf("no world!\n");
 
   m_iIdent=-1;
   m_pUserData=NULL;
@@ -54,7 +60,7 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::IS
 }
 
 CIrrOdeSceneNode::~CIrrOdeSceneNode() {
-  m_pOdeManager->removeOdeSceneNode(this);
+  if (m_pWorld) m_pWorld->removeOdeSceneNode(this);
 }
 
 /**
@@ -110,7 +116,7 @@ void CIrrOdeSceneNode::deserializeAttributes(irr::io::IAttributes* in, irr::io::
   irr::scene::ISceneNode::deserializeAttributes(in,options);
   m_sOdeClassName=in->getAttributeAsString("OdeClassName");
   m_iIdent=in->getAttributeAsInt("Ident");
-  m_pOdeManager->updateNextId(getID());
+  updateNextId(getID());
 }
 
 /**
@@ -186,7 +192,7 @@ void CIrrOdeSceneNode::addChild (irr::scene::ISceneNode *child) {
 void CIrrOdeSceneNode::remove() {
   irr::scene::ISceneNode::remove();
   if (this->getReferenceCount()==1) removeFromPhysics();
-  m_pOdeManager->removeOdeSceneNode(this);
+  if (m_pWorld) m_pWorld->removeOdeSceneNode(this);
 }
 
 irr::scene::ISceneManager *CIrrOdeSceneNode::getSceneManager() {
@@ -217,12 +223,24 @@ void CIrrOdeSceneNode::setParent(irr::scene::ISceneNode *newParent) {
     }
   #endif
 
-  m_pOdeManager->removeOdeSceneNode(this);
+  if (m_pWorld)
+    m_pWorld->removeOdeSceneNode(this);
+  else
+    if (this->getType() == (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+      CIrrOdeWorld *p = reinterpret_cast<CIrrOdeWorld *>(this);
+      p->removeOdeSceneNode(this);
+    }
 
   irr::scene::ISceneNode::setParent(newParent);
 
   pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (pWorld!=NULL || this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) m_pOdeManager->addOdeSceneNode(this);
+  if (pWorld!=NULL)
+    m_pWorld->addOdeSceneNode(this);
+  else
+    if (this->getType()==(irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+      CIrrOdeWorld *p = reinterpret_cast<CIrrOdeWorld *>(this);
+      p->addOdeSceneNode(this);
+    }
 
   #ifdef _IRREDIT_PLUGIN
     if (pWorld!=NULL) {
@@ -233,11 +251,23 @@ void CIrrOdeSceneNode::setParent(irr::scene::ISceneNode *newParent) {
 
 void CIrrOdeSceneNode::initPhysics() {
   m_bPhysicsInitialized=true;
-  CIrrOdeManager::getSharedInstance()->sceneNodeInitialized(this);
+  if (m_pWorld)
+    m_pWorld->sceneNodeInitialized(this);
+  else
+    if (getType() == (irr::scene::ESCENE_NODE_TYPE)(IRR_ODE_WORLD_ID)) {
+      CIrrOdeWorld *p = reinterpret_cast<CIrrOdeWorld *>(this);
+      p->sceneNodeInitialized(this);
+    }
 }
 
 void CIrrOdeSceneNode::removeFromPhysics() {
-  m_pOdeManager->removeOdeSceneNode(this);
+  if (m_pWorld)
+    m_pWorld->removeOdeSceneNode(this);
+  else
+    if (getType() == (irr::scene::ESCENE_NODE_TYPE)(IRR_ODE_WORLD_ID)) {
+      CIrrOdeWorld *p = reinterpret_cast<CIrrOdeWorld *>(this);
+      p->removeOdeSceneNode(this);
+    }
 }
 
 void CIrrOdeSceneNode::cloneChildren(irr::scene::ISceneNode *pNewParent, irr::scene::ISceneManager *pNewManager) {
@@ -334,6 +364,14 @@ const c8 *const *CIrrOdeSceneNode::getParameterList() const {
 
 void CIrrOdeSceneNode::clearParameterList() const {
   g_lParamList.clear();
+}
+
+s32 CIrrOdeSceneNode::getNextId() {
+  return ++g_iNextOdeNodeId;
+}
+
+void CIrrOdeSceneNode::updateNextId(s32 iId) {
+  if (iId>g_iNextOdeNodeId) g_iNextOdeNodeId=iId;
 }
 
 } //namespace ode

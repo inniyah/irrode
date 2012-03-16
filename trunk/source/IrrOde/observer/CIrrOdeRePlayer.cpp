@@ -77,6 +77,18 @@ CIrrOdeRePlayer::~CIrrOdeRePlayer() {
   clearEventList();
 }
 
+void CIrrOdeRePlayer::initWorld(irr::scene::ISceneNode *pNode) {
+  if (pNode->getType() == (irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID) {
+    m_pWorld = reinterpret_cast<CIrrOdeWorld *>(pNode);
+    return;
+  }
+
+  irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
+  irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+
+  for (it = children.begin(); it != children.end(); it++) initWorld(*it);
+}
+
 void CIrrOdeRePlayer::update() {
   u32 iThisTime=m_pTimer->getTime();
 
@@ -103,7 +115,9 @@ void CIrrOdeRePlayer::update() {
         if (p->getType()==eIrrOdeEventNodeCloned) {
           CIrrOdeEventNodeCloned *pClone=(CIrrOdeEventNodeCloned *)p;
           irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(pClone->getSourceId());
-          if (pNode) CIrrOdeManager::getSharedInstance()->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
+          if (pNode && m_pWorld) {
+            m_pWorld->cloneOdeNode(pNode,m_pSmgr->getRootSceneNode(),m_pSmgr,pClone->getNewId());
+          }
         }
 
         //printf("%s\n",p2->toString());

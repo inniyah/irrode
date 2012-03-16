@@ -8,6 +8,7 @@ namespace irr {
 namespace ode {
 
 class IIrrOdeEvent;
+class CIrrOdeWorld;
 
 class CIrrOdeRePlayer {
   protected:
@@ -18,6 +19,7 @@ class CIrrOdeRePlayer {
     irr::ITimer *m_pTimer;
 
     irr::core::list<irr::ode::IIrrOdeEvent *> m_lEvents;
+    irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CSerializer m_cSerializer;					  /**< the serializer for the messages */
 
     irr::u32 m_iLastStep,
@@ -32,6 +34,7 @@ class CIrrOdeRePlayer {
          m_bReplayFinished;
 
     void clearEventList();
+    void initWorld(irr::scene::ISceneNode *pNode);
 
   public:
     CIrrOdeRePlayer(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay);
