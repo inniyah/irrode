@@ -19,14 +19,11 @@ copy *.txt irrode
 copy changelog.txt irrode
 mkdir irrode\data
 copy data\*.* irrode\data
-del irrode\data\irrOdeMarbleSettings.xml
 del irrode\data\irrOdeCarSettings.xml
 del irrode\data\irrOdeCarControls.xml
 del irrode\data\highscore.xml
 copy irrode\data\_highscore.xml irrode\data\highscore.xml
-copy irrode\data\_irrOdeMarbleSettings.xml irrode\data\irrOdeMarbleSettings.xml
 copy irrode\data\_irrOdeCarSettings.xml irrode\data\irrOdeCarSettings.xml
-del irrode\data\_irrOdeMarbleSettings.xml
 del irrode\data\_highscore.xml
 mkdir irrode\data\irrodedit
 copy data\irrodedit\*.* irrode\data\irrodedit
@@ -77,12 +74,6 @@ mkdir irrode\source\IrrOdeCar
 copy source\IrrOdeCar\*.* irrode\source\IrrOdeCar
 mkdir irrode\source\IrrOdeRePlayer
 copy source\IrrOdeRePlayer\*.* irrode\source\IrrOdeRePlayer
-mkdir irrode\source\IrrOdeMarble
-copy source\IrrOdeMarble\*.* irrode\source\IrrOdeMarble
-mkdir irrode\source\IrrOdePlayground
-copy source\IrrOdePlayground\*.* irrode\source\IrrOdePlayground
-mkdir irrode\source\IrrOdeSurfaceEdit
-copy source\IrrOdeSurfaceEdit\*.* irrode\source\IrrOdeSurfaceEdit
 
 mkdir irrode\include
 mkdir irrode\include\IrrOde
@@ -102,12 +93,6 @@ mkdir irrode\include\IrrOdeCar
 copy include\IrrOdeCar\*.* irrode\include\IrrOdeCar
 mkdir irrode\include\IrrOdeRePlayer
 copy include\IrrOdeRePlayer\*.* irrode\include\IrrOdeRePlayer
-mkdir irrode\include\IrrOdeMarble
-copy include\IrrOdeMarble\*.* irrode\include\IrrOdeMarble
-mkdir irrode\include\IrrOdePlayground
-copy include\IrrOdePlayground\*.* irrode\include\IrrOdePlayground
-mkdir irrode\include\IrrOdeSurfaceEdit
-copy include\IrrOdeSurfaceEdit\*.* irrode\include\IrrOdeSurfaceEdit
 mkdir irrode\include\IrrOdeCar\RoadCreator
 copy include\IrrOdeCar\RoadCreator irrode\include\IrrOdeCar\RoadCreator
 
