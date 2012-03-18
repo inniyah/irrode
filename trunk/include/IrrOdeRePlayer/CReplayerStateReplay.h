@@ -17,10 +17,10 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
                              *m_pLblFinished,
                              *m_pLblInfo,
                              *m_pLblStep;
-    irr::core::array<irr::ode::CIrrOdeBody *> m_aBodies;
     irr::ode::CIrrOdeManager *m_pOdeManager;
     irr::ode::CIrrOdeRePlayer *m_pPlayer;
     irr::IrrlichtDevice *m_pDevice;
+    irr::gui::IGUITab *m_pTab;
     irr::gui::IGUIEnvironment *m_pGuiEnv;
     irr::gui::IGUIFont *m_pFont;
     irr::gui::ICursorControl *m_pCrsCtrl;
@@ -50,7 +50,6 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
          m_bPluginHandlesCamera,
          m_bStepTaken;
 
-    void updateBodyList();
     void removeNode(irr::scene::ISceneNode *pNode);
 
   public:
@@ -58,9 +57,11 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
     virtual ~CReplayerStateReplay() { }
     virtual void activate();
     virtual void deactivate();
+    virtual void setUIVisibility(bool b) { m_pTab->setVisible(b); }
     virtual irr::u32 update();
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool OnEvent(const irr::SEvent &event);
+
 };
 

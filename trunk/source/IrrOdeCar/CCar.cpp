@@ -30,6 +30,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_fOldSlider=0.0f;
   m_bGasStation=false;
   m_bGasLastStep=false;
+  m_bSmoke = false;
   m_fSteer = 0.0f;
   m_fSpeed = 0.0f;
 
@@ -60,6 +61,8 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
       sprintf(s,"brk_re_%i",i+1);
       m_pBrkRe[i]=reinterpret_cast<irr::ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
     }
+
+    m_pGearBox = new CGearBox(m_pMotor);
 
     irr::c8 sWheelNames[][20]={ "wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr" };
     for (irr::u32 i=0; i<4; i++)
@@ -108,7 +111,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     //initialize the members
     m_bHelp=false;
     m_bBrake=false;
-    m_bBoost=false;
     m_iThrottle=0;
 
     m_fOldVel=0.0f;
@@ -186,26 +188,17 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_bGasLastStep = m_bGasStation;
     m_bGasStation=false;
 
-    bool bDataChanged=false,bBrake=false;
+    bool bDataChanged=false;
 
     irr::core::vector3df vForeward=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(-1.0f,0.0f,0.0f)),
                          vNormVel=m_pCarBody->getLinearVelocity();
 
     vNormVel.normalize();
 
-    irr::f32 fVelocity=vForeward.dotProduct(m_pCarBody->getLinearVelocity());
-
-    bool bBoost=m_bActive?m_pController->get(m_pCtrls[eCarBoost])!=0.0f:false;
-
-    if (bBoost!=m_bBoost) {
-      m_bBoost=bBoost;
-      bDataChanged=true;
-    }
-
     m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
     irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
-    if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
+
     //calculate the differential gear
     irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
              f2=m_pAxesRear[1]->getHingeAngleRate(),
@@ -236,20 +229,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       fDiffFact[1]=1.0f;
     }
 
-    if (fForeward!=0.0f) {
-      irr::f32 fForce=fForeward<0.0f?-fForeward:fForeward;
-
-      for (irr::u32 i=0; i<2; i++) {
-        m_pMotor[i]->setVelocity(-250.0*fForeward);
-        m_pMotor[i]->setForce(bBoost?fDiffFact[i]*60*fForce:fDiffFact[i]*40*fForce);
-        m_iThrottle=-1;
-      }
-    }
-    else
-      for (irr::u32 i=0; i<2; i++) {
-        m_pMotor[i]->setVelocity(0.0f);
-        m_pMotor[i]->setForce(5.0f);
-      }
+    m_pGearBox->update(fForeward, fDiffFact);
 
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
@@ -258,19 +238,28 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
-    if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
-      irr::f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
-      if (fFact<0.0f) fFact=-fFact;
+    if (m_pController->get(eCarForeward) < 0.0f) {
+      if (fForeward<0.0f) fForeward=-fForeward;
 
       for (irr::u32 i=0; i<2; i++) {
-        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
-        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*350.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward*150.0f);
       }
       m_bBrake=true;
     }
     else m_bBrake=false;
 
     if (m_bActive) {
+      if (m_pController->get(m_pCtrls[eCarShiftUp])) {
+        m_pController->set(m_pCtrls[eCarShiftUp],0.0f);
+        m_pGearBox->shiftUp();
+      }
+
+      if (m_pController->get(m_pCtrls[eCarShiftDown])) {
+        m_pController->set(m_pCtrls[eCarShiftDown],0.0f);
+        m_pGearBox->shiftDown();
+      }
+
       //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
       if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
         irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
@@ -325,35 +314,34 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_fOldVel=fVel;
 
-    irr::f32 fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f;
+    irr::f32 fRpm = 0.0f;
+    if (m_pGearBox->getGear() != 0)
+      fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/(2.0f*m_pGearBox->getMaxVelocity());
+    else
+      fRpm = -0.8f*m_pController->get(m_pCtrls[eCarForeward]);
 
     if (m_fRpm>fRpm) {
       bDataChanged=true;
-      m_fRpm-=1.5f;
+      m_fRpm-=0.005f;
       if (m_fRpm<fRpm) m_fRpm=fRpm;
     }
 
     if (m_fRpm<fRpm) {
       bDataChanged=true;
-      m_fRpm+=1.5f;
+      m_fRpm+=0.005f;
       if (m_fRpm>fRpm) m_fRpm=fRpm;
     }
 
-    irr::f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
-    if (fRot<0.0f) {
-      bDataChanged=true;
-      fRot=-fRot;
-    }
+    m_bSmoke = m_fRpm < -0.85f;
 
-    if (fRot>5.0f) {
-      if (fRot>155.0f)
-        fSound=5.75f;
-      else
-        fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
-    }
+    irr::f32 fSound = 0.75;
 
+    if (m_fRpm<-0.05f) {
+      fSound=0.75f+(-5.0f*(m_fRpm+0.05f));
+      if (fSound > 5.75f) fSound = 5.75f;
+    }
     if (m_fSound<fSound) {
-      m_fSound+=0.025f;
+      m_fSound+=0.05f;
       if (m_fSound>=fSound) {
         bDataChanged=true;
         m_fSound=fSound;
@@ -361,7 +349,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
 
     if (m_fSound>fSound) {
-      m_fSound-=0.025f;
+      m_fSound-=0.05f;
       if (m_fSound<=fSound) {
         m_fSound=fSound;
         bDataChanged=true;
@@ -441,19 +429,74 @@ bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   irr::u8 iFlags=0;
 
-  if (m_bBoost       ) iFlags|=CEventCarState::eCarFlagBoost;
   if (m_bBrake       ) iFlags|=CEventCarState::eCarFlagBrake;
   if (m_bDifferential) iFlags|=CEventCarState::eCarFlagDifferential;
+  if (m_bSmoke       ) iFlags|=CEventCarState::eCarFlagSmoke;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed);
+                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
 
   return pEvent;
 }
 
 irr::ode::eEventWriterType CCar::getEventWriterType() {
   return irr::ode::eIrrOdeEventWriterUnknown;
+}
+
+CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2]) {
+  for (irr::u16 i = 0; i< 2; i++) m_pMotor[i] = pMotor[i];
+  m_iGear = 0;
+
+  m_fVelocity[0] =  -50.0f; m_fForce[0] =  90.0f;
+  m_fVelocity[1] =  -85.0f; m_fForce[1] =  80.0f;
+  m_fVelocity[2] = -120.0f; m_fForce[2] =  70.0f;
+  m_fVelocity[3] = -155.0f; m_fForce[3] =  60.0f;
+}
+
+void CCar::CGearBox::shiftUp() {
+  if (m_iGear < 4) m_iGear++;
+}
+
+void CCar::CGearBox::update(irr::f32 fThrottle, irr::f32 *fDiff) {
+  for (irr::u32 i = 0; i < 2; i++) {
+    if (fThrottle > 0) {
+      if (m_iGear >= 1) {
+        m_pMotor[i]->setVelocity(m_fVelocity[m_iGear-1]);
+        m_pMotor[i]->setForce(fThrottle*fDiff[i]*m_fForce[m_iGear-1]);
+      }
+      else
+        if (m_iGear == -1) {
+          m_pMotor[i]->setVelocity(25.0f);
+          m_pMotor[i]->setForce(fThrottle*fDiff[i]*90.0f);
+        }
+    }
+    else {
+      m_pMotor[i]->setVelocity(0.0f);
+      if (m_iGear != 0) {
+        m_pMotor[i]->setForce(75.0f);
+      }
+      else {
+        m_pMotor[i]->setForce(5.0f);
+      }
+    }
+  }
+}
+
+void CCar::CGearBox::shiftDown() {
+  if (m_iGear > -1) m_iGear--;
+}
+
+irr::s8 CCar::CGearBox::getGear() {
+  return m_iGear;
+}
+
+irr::f32 CCar::CGearBox::getMaxVelocity() {
+  switch (m_iGear) {
+    case -1: return -25.0f;
+    case  0: return 0.0f;
+    default: return -m_fVelocity[m_iGear-1];
+  }
 }

@@ -38,7 +38,8 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
                              *m_stSplit;
     irr::gui::IGUITab   *m_pTab;
     irr::gui::IGUIImage *m_pBoostRed,
-                        *m_pBoostGray;
+                        *m_pBoostGray,
+                        *m_pGear[6];
 
   public:
     CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody);

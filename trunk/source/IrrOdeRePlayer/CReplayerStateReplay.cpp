@@ -1,20 +1,5 @@
   #include <CReplayerStateReplay.h>
 
-void CReplayerStateReplay::updateBodyList() {
-  irr::core::stringw s;
-  for (irr::u32 i=0; i<m_aBodies.size(); i++) {
-    irr::ode::CIrrOdeBody *p=m_aBodies[i];
-    if (p!=NULL) {
-      s+=p->getID();
-      s+=" -- (";
-      s+=p->getName();
-      s+=")";
-      s+="\n";
-    }
-  }
-  m_pLblBodies->setText(s.c_str());
-}
-
 void CReplayerStateReplay::removeNode(irr::scene::ISceneNode *pNode) {
   if (pNode==NULL) return;
 
@@ -22,14 +7,6 @@ void CReplayerStateReplay::removeNode(irr::scene::ISceneNode *pNode) {
   irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
   for (it=children.begin(); it!=children.end(); it++) removeNode(*it);
-
-  if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
-    irr::ode::CIrrOdeBody *pBody=(irr::ode::CIrrOdeBody *)pNode;
-    for (irr::u32 i=0; i<m_aBodies.size(); i++) if (m_aBodies[i]==pBody) {
-      m_aBodies.erase(i); break;
-      updateBodyList();
-    }
-  }
 }
 
 CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const irr::c8 *sReplay, IPlugin *pPlugin) {
@@ -55,6 +32,7 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
 void CReplayerStateReplay::activate() {
   m_pPlayer=new irr::ode::CIrrOdeRePlayer(m_pDevice,m_sReplay);
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
+  m_pTab = m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0,0,300,500));
   m_pLblBodies=m_pGuiEnv->addStaticText(L"Hello World",irr::core::rect<irr::s32>(5,5,200,300),true,true,0,-1,true);
   m_pLblStep = m_pGuiEnv->addStaticText(L"Step", irr::core::rect<irr::s32>(5, 305, 200, 320), true, true, 0, -1, true);
 
@@ -99,8 +77,6 @@ void CReplayerStateReplay::activate() {
 }
 
 void CReplayerStateReplay::deactivate() {
-  for (irr::u32 i=0; i<m_aBodies.size(); i++) m_aBodies[i]->drop();
-  m_aBodies.clear();
   m_pSmgr->clear();
   m_pGuiEnv->clear();
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
@@ -171,20 +147,6 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
   if (!m_bSceneLoaded) {
     if (pEvent->getType()==irr::ode::eIrrOdeEventLoadScene) {
-      irr::core::list<irr::ode::CIrrOdeSceneNode *> lBodies=m_pOdeManager->getIrrOdeNodes();
-      irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
-
-      for (it=lBodies.begin(); it!=lBodies.end(); it++) {
-        irr::ode::CIrrOdeSceneNode *pNode=*it;
-        if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
-          irr::ode::CIrrOdeBody *pBody=(irr::ode::CIrrOdeBody *)pNode;
-          if (pBody->getParentBody()==NULL && pBody->getID()!=-1) {
-            pBody->grab();
-            m_aBodies.push_back(pBody);
-          }
-        }
-      }
-      updateBodyList();
       m_bSceneLoaded=true;
       irr::u32 iSec = (m_iSteps /   60) % 60,
                iMin = (m_iSteps / 3600) % 60;
@@ -193,26 +155,12 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       wchar_t s[0xFF];
       swprintf(s, 0xFF, L"%i Steps, (%i:%i minutes)", m_iSteps, iMin, iSec);
-      m_pLblInfo = m_pGuiEnv->addStaticText(s, irr::core::rect<irr::s32>(5, 325, 200, 340), true, true, 0, -1, true);
+      m_pLblInfo = m_pGuiEnv->addStaticText(s, irr::core::rect<irr::s32>(5, 325, 200, 340), true, true, m_pTab, -1, true);
       m_pLblInfo->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
     return true;
     }
   }
   else {
-    if (pEvent->getType()==irr::ode::eIrrOdeEventNodeCloned) {
-      irr::ode::CIrrOdeEventNodeCloned *p=(irr::ode::CIrrOdeEventNodeCloned *)pEvent;
-      irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(p->getNewId());
-      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
-        irr::ode::CIrrOdeBody *pBody=(irr::ode::CIrrOdeBody *)pNode;
-        if (pBody->getParentBody()==NULL) {
-          pBody->grab();
-          m_aBodies.push_back(pBody);
-        }
-      }
-      updateBodyList();
-      return true;
-    }
-
     if (pEvent->getType()==irr::ode::eIrrOdeEventNodeRemoved) {
       irr::ode::CIrrOdeEventNodeRemoved *p=(irr::ode::CIrrOdeEventNodeRemoved *)pEvent;
       irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(p->getRemovedNodeId());
@@ -220,7 +168,6 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         pNode->setVisible(false);
         removeNode(pNode);
       }
-      updateBodyList();
       return true;
     }
   }
@@ -250,60 +197,6 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
 
         case irr::KEY_BACK:
           m_iPos = m_iPos==0?1:0;
-          break;
-
-        case irr::KEY_TAB:
-          if (!m_bPluginHandlesCamera) {
-            if (m_eCamMode==eCamFree) {
-              if (m_pFocusedNode==NULL && m_aBodies.size()>0) {
-                if (m_iFocusedNode>=m_aBodies.size()) m_iFocusedNode=0;
-                m_pFocusedNode=m_aBodies[m_iFocusedNode];
-                m_pFocusedNode->grab();
-              }
-
-              if (m_pFocusedNode!=NULL) {
-                m_eCamMode=eCamFollow;
-                m_pSmgr->setActiveCamera(m_pCam);
-              }
-            }
-            else {
-              m_pFreeCam->setPosition(m_pCam->getPosition());
-              m_pFreeCam->setTarget(m_pCam->getTarget());
-              m_pSmgr->setActiveCamera(m_pFreeCam);
-
-              if (m_pFocusedNode!=NULL) {
-                m_pFocusedNode->drop();
-                m_pFocusedNode=NULL;
-              }
-              m_eCamMode=eCamFree;
-            }
-            bRet=true;
-          }
-          break;
-
-        case irr::KEY_RIGHT:
-          if (m_pFocusedNode!=NULL) {
-            m_pFocusedNode->drop();
-            m_pFocusedNode=NULL;
-          }
-          m_iFocusedNode++;
-          if (m_iFocusedNode>=m_aBodies.size()) m_iFocusedNode=0;
-          if (m_aBodies.size()>0) {
-            m_pFocusedNode=m_aBodies[m_iFocusedNode];
-            m_pFocusedNode->grab();
-          }
-          break;
-
-        case irr::KEY_LEFT:
-          if (m_pFocusedNode!=NULL) {
-            m_pFocusedNode->drop();
-            m_pFocusedNode=NULL;
-          }
-          if (m_iFocusedNode>0) m_iFocusedNode--; else m_iFocusedNode=m_aBodies.size()-1;
-          if (m_aBodies.size()>0) {
-            m_pFocusedNode=m_aBodies[m_iFocusedNode];
-            m_pFocusedNode->grab();
-          }
           break;
 
         case irr::KEY_SPACE:
