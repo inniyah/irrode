@@ -331,8 +331,8 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         pCar->pRearWheels[1]->setRotation(v);
 
         if (pCar->pSmoke[0]!=NULL && pCar->pSmoke[1]!=NULL) {
-          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
-          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
+          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
+          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
 
           u32 iMin=(u32)(-p->getRpm()*3.0f),
               iMax=(u32)(-p->getRpm()*5.0f);

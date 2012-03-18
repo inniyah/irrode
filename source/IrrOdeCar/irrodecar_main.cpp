@@ -248,10 +248,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_iCtrls[0][eCarBackward           ]=m_pController->addItem(0,stringw(L"Backward"             ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
       m_iCtrls[0][eCarLeft               ]=m_pController->addItem(0,stringw(L"Left"                 ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
       m_iCtrls[0][eCarRight              ]=m_pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      m_iCtrls[0][eCarBrake              ]=m_pController->addItem(0,stringw(L"Brake"                ),KEY_SPACE ,CIrrCC::eCtrlButton);
-      m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
       m_iCtrls[0][eCarFlip               ]=m_pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
       m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
+      m_iCtrls[0][eCarShiftUp            ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_W ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[0][eCarShiftDown          ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_S ,CIrrCC::eCtrlToggleButton);
 
       //we need two axes for the car: acceleration and steering
       m_pController->createAxis(m_iCtrls[0][eCarForeward],m_iCtrls[0][eCarBackward]);

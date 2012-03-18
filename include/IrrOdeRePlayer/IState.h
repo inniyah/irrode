@@ -7,6 +7,7 @@ class IState {
   public:
     virtual void activate()=0;
     virtual void deactivate()=0;
+    virtual void setUIVisibility(bool b)=0;
 
     virtual irr::u32 update()=0;
 };
