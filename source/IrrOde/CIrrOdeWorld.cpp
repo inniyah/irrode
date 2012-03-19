@@ -33,6 +33,8 @@ CIrrOdeWorld::CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
 
   m_pWorldSpace=NULL;
 
+  m_bPhysicsInitialized = false;
+
 	m_cGravity=irr::core::vector3df(0.0f,-10.0f,0.0f);
 	m_bDrawEditorMesh=true;
   #ifdef _IRREDIT_PLUGIN
@@ -135,6 +137,8 @@ void CIrrOdeWorld::initPhysics() {
 
   irr::core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
   for (it=m_lStepMotors.begin(); it!=m_lStepMotors.end(); it++) (*it)->initPhysics();
+
+  m_bPhysicsInitialized = true;
 }
 
 u32 CIrrOdeWorld::getWorldId() {
@@ -641,17 +645,15 @@ irr::core::list<CIrrOdeSceneNode *> &CIrrOdeWorld::getIrrOdeNodes() {
 }
 
 void CIrrOdeWorld::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
-  if (!m_bPhysicsInitialized) {
-    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
-    bool b=false;
-    for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end() && !b; it++)
-      if (*it==pNode) b=true;
+  irr::core::list<CIrrOdeSceneNode *>::Iterator it;
+  bool b=false;
+  for (it=m_pSceneNodes.begin(); it!=m_pSceneNodes.end() && !b; it++)
+    if (*it==pNode) b=true;
 
-    if (b) {
-      m_iNodesInitialized++;
-      CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
-      CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pPrg);
-    }
+  if (b) {
+    m_iNodesInitialized++;
+    CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
+    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pPrg);
   }
 }
 

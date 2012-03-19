@@ -145,17 +145,17 @@ CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
   pData->resetBufferPos();
   irr::u16 iCode=pData->getU16();
   if (iCode==EVENT_CAR_STATE_ID) {
-    m_iNodeId=pData->getS32();
-    m_fSuspension=pData->getF32();
-    m_fLeftWheel=pData->getF32();
-    m_fRightWheel=pData->getF32();
-    m_fRpm=pData->getF32();
-    m_fDiff=pData->getF32();
-    m_fSound=pData->getF32();
-    m_fSteer=pData->getF32();
-    m_iFlags=pData->getU8();
-    m_fSpeed=pData->getF32();
-    m_iGear=pData->getS8();
+    m_iNodeId     = pData->getS32();
+    m_fSuspension = pData->getF32();
+    m_fLeftWheel  = pData->getF32();
+    m_fRightWheel = pData->getF32();
+    m_fRpm        = pData->getF32();
+    m_fDiff       = pData->getF32();
+    m_fSound      = pData->getF32();
+    m_fSteer      = pData->getF32();
+    m_iFlags      = pData->getU8();
+    m_fSpeed      = pData->getF32();
+    m_iGear       = pData->getS8();
   }
 }
 

@@ -530,7 +530,7 @@ bool CCar::CGearBox::dataChanged() {
 }
 
 bool CCar::CGearBox::exhaustSmoke() {
-  return m_fRpm < -0.8f || m_fRpm > 0.8f || (m_fRpm < -0.5 && m_iClutch > 0 && (m_fThrottle > 0.5f || m_fThrottle < -0.5f));
+  return m_fRpm < -0.8f || m_fRpm > 0.8f || m_iClutch > 0;
 }
 
 bool CCar::CGearBox::differential() {
