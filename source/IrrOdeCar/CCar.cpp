@@ -318,7 +318,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (m_pGearBox->getGear() != 0)
       fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/(2.0f*m_pGearBox->getMaxVelocity());
     else
-      fRpm = -0.8f*m_pController->get(m_pCtrls[eCarForeward]);
+      fRpm = -0.95f*m_pController->get(m_pCtrls[eCarForeward]);
 
     if (m_fRpm>fRpm) {
       bDataChanged=true;
