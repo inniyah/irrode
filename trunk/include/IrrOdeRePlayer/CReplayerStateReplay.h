@@ -12,8 +12,7 @@ class CReplayerStateReplay : public irr::ode::IIrrOdeEventListener, public IStat
       eCamFollow
     };
 
-    irr::gui::IGUIStaticText *m_pLblBodies,
-                             *m_pLblPaused,
+    irr::gui::IGUIStaticText *m_pLblPaused,
                              *m_pLblFinished,
                              *m_pLblInfo,
                              *m_pLblStep;

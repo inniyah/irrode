@@ -13,7 +13,6 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   m_pOdeManager=irr::ode::CIrrOdeManager::getSharedInstance();
   m_pDevice=pDevice;
   m_pSmgr=pDevice->getSceneManager();
-  m_pLblBodies=NULL;
   m_bSceneLoaded=false;
   strcpy(m_sReplay,sReplay);
   m_iRet=0;
@@ -33,8 +32,7 @@ void CReplayerStateReplay::activate() {
   m_pPlayer=new irr::ode::CIrrOdeRePlayer(m_pDevice,m_sReplay);
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
   m_pTab = m_pGuiEnv->addTab(irr::core::rect<irr::s32>(0,0,300,500));
-  m_pLblBodies=m_pGuiEnv->addStaticText(L"Hello World",irr::core::rect<irr::s32>(5,5,200,300),true,true,0,-1,true);
-  m_pLblStep = m_pGuiEnv->addStaticText(L"Step", irr::core::rect<irr::s32>(5, 305, 200, 320), true, true, 0, -1, true);
+  m_pLblStep = m_pGuiEnv->addStaticText(L"Step", irr::core::rect<irr::s32>(5, 5, 200, 20), true, true, 0, -1, true);
 
   m_pLblStep->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 
@@ -155,7 +153,7 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       wchar_t s[0xFF];
       swprintf(s, 0xFF, L"%i Steps, (%i:%i minutes)", m_iSteps, iMin, iSec);
-      m_pLblInfo = m_pGuiEnv->addStaticText(s, irr::core::rect<irr::s32>(5, 325, 200, 340), true, true, m_pTab, -1, true);
+      m_pLblInfo = m_pGuiEnv->addStaticText(s, irr::core::rect<irr::s32>(5, 25, 200, 40), true, true, m_pTab, -1, true);
       m_pLblInfo->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
     return true;
     }
