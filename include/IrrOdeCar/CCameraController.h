@@ -17,7 +17,8 @@ enum eCameraControls {
   eCameraUp,
   eCameraDown,
   eCameraCenter,
-  eCameraInternal
+  eCameraInternal,
+  eCameraButtonMove
 };
 
 class CIrrCC;
@@ -53,7 +54,8 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     bool m_bInternal,
          m_bRotateXY,
          m_bLeftMouse,
-         m_bRghtMouse;
+         m_bRghtMouse,
+         m_bButton;
 
     CIrrCC *m_pController;
 
