@@ -469,8 +469,12 @@ void CCar::CGearBox::update(irr::f32 fThrottle, irr::f32 *fDiff) {
       }
       else
         if (m_iGear == -1) {
-          m_pMotor[i]->setVelocity(25.0f);
+          m_pMotor[i]->setVelocity(45.0f);
           m_pMotor[i]->setForce(fThrottle*fDiff[i]*90.0f);
+        }
+        else {
+          m_pMotor[i]->setVelocity(0.0f);
+          m_pMotor[i]->setForce(0.0f);
         }
     }
     else {
@@ -495,7 +499,7 @@ irr::s8 CCar::CGearBox::getGear() {
 
 irr::f32 CCar::CGearBox::getMaxVelocity() {
   switch (m_iGear) {
-    case -1: return -25.0f;
+    case -1: return -45.0f;
     case  0: return 0.0f;
     default: return -m_fVelocity[m_iGear-1];
   }
