@@ -367,6 +367,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       case CEventFireSound::eSndFireShell: strcpy(s,"../../data/sound/shot.ogg"   ); break;
       case CEventFireSound::eSndSkid     : strcpy(s,"../../data/sound/skid.ogg"   ); break;
       case CEventFireSound::eSndBell     : strcpy(s,"../../data/sound/bell.ogg"   ); break;
+      case CEventFireSound::eSndShift    : strcpy(s,"../../data/sound/shift.ogg"  ); break;
     }
 
     if (s[0]!='\0') {
