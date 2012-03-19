@@ -21,7 +21,6 @@ void CIrrOdeEventQueue::postEvent(IIrrOdeEvent *pEvent, bool bDelete) {
 }
 
 void CIrrOdeEventQueue::addEventListener(IIrrOdeEventListener *pListener) {
-  printf("add listener!\n");
 	irr::core::list<IIrrOdeEventListener *>::Iterator it;
 	for (it=m_pListeners.begin(); it!=m_pListeners.end(); it++)
 	  if (*it==pListener)
