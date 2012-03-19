@@ -218,12 +218,18 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (m_bActive) {
       if (m_pController->get(m_pCtrls[eCarShiftUp])) {
         m_pController->set(m_pCtrls[eCarShiftUp],0.0f);
-        m_pGearBox->shiftUp();
+        if (m_pGearBox->shiftUp()) {
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,0.05f,m_pCarBody->getPosition());
+          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        }
       }
 
       if (m_pController->get(m_pCtrls[eCarShiftDown])) {
         m_pController->set(m_pCtrls[eCarShiftDown],0.0f);
-        m_pGearBox->shiftDown();
+        if (m_pGearBox->shiftDown()) {
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,1.0f,m_pCarBody->getPosition());
+          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        }
       }
 
       //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
@@ -280,7 +286,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_fOldVel=fVel;
 
-    irr::f32 fRpm = m_pGearBox->getRmp();
+    irr::f32 fRpm = m_pGearBox->getRpm();
 
     irr::f32 fSound = 0.75;
 
@@ -384,7 +390,7 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_pGearBox->getRmp(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
+                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
 
   return pEvent;
 }
@@ -414,18 +420,22 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_fVelocity[3] = -155.0f; m_fForce[3] =  60.0f;
 }
 
-void CCar::CGearBox::shiftUp() {
+bool CCar::CGearBox::shiftUp() {
   if (m_iGear < 4) {
     m_iGear++;
     m_iClutch = 12;
+    return true;
   }
+  return false;
 }
 
-void CCar::CGearBox::shiftDown() {
+bool CCar::CGearBox::shiftDown() {
   if (m_iGear > -1) {
     m_iGear--;
     m_iClutch = 6;
+    return true;
   }
+  return false;
 }
 
 void CCar::CGearBox::update(irr::f32 fThrottle) {

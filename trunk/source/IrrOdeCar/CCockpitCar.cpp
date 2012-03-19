@@ -125,7 +125,7 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     CEventCarState *p=(CEventCarState *)pEvent;
 
     if (p->getNodeId() == m_iBodyId) {
-      m_fRpm = p->getRpm();
+      m_fRpm = -p->getRpm();
       m_fDiff = p->getDiff();
       m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
 

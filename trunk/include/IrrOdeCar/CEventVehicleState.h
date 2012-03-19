@@ -135,7 +135,8 @@ class CEventFireSound : public irr::ode::IIrrOdeEvent {
       eSndExplode,
       eSndCrash,
       eSndSkid,
-      eSndBell
+      eSndBell,
+      eSndShift
     };
 
   protected:

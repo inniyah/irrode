@@ -43,14 +43,14 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
       public:
         CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJointHinge *pAxesRear[2]);
 
-        void shiftUp();
-        void shiftDown();
+        bool shiftUp();
+        bool shiftDown();
 
         void update(irr::f32 fThrottle);
 
         irr::s8 getGear();
         irr::f32 getMaxVelocity();
-        irr::f32 getRmp() { return m_fRpm; }
+        irr::f32 getRpm() { return m_fRpm; }
         irr::f32 getDiff() { return m_fDiff; }
 
         bool dataChanged();
