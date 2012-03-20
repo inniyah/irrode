@@ -18,9 +18,8 @@
 				</Compiler>
 				<Linker>
 					<Add library="..\bin\gcc-win32-debug\libIrrOde.a" />
-					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 					<Add library="Irrlicht" />
-					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
+					<Add library="..\bin\gcc-win32\libode_single.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -36,9 +35,8 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="..\bin\gcc-win32\libIrrOde.a" />
-					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 					<Add library="Irrlicht" />
-					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
+					<Add library="..\bin\gcc-win32\libode_single.a" />
 				</Linker>
 			</Target>
 			<Target title="Release_console">
@@ -54,9 +52,8 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="..\bin\gcc-win32\libIrrOde.a" />
-					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
 					<Add library="Irrlicht" />
-					<Add directory="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib" />
+					<Add library="..\bin\gcc-win32\libode_single.a" />
 				</Linker>
 			</Target>
 			<Target title="Linux">
@@ -100,6 +97,7 @@
 			<Add directory="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc" />
 			<Add directory="..\codeblocks" />
 			<Add directory="..\..\libs\irrKlang-1.3.0\lib\Win32-gcc" />
+			<Add directory="..\bin\gcc-win32" />
 		</Linker>
 		<Unit filename="..\include\IrrOdeCar\CAeroVehicle.h" />
 		<Unit filename="..\include\IrrOdeCar\CAutoPilot.h" />

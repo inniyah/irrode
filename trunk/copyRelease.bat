@@ -5,6 +5,7 @@ copy bin\gcc-win32\*.exe irrode\bin\gcc-win32
 copy bin\gcc-win32\*.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\irrklang.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\libirrode.a irrode\bin\gcc-win32
+copy bin\gcc-win32\libode_single.a irrode\bin\gcc-win32
 del irrode\bin\gcc-win32\*_debug.exe
 del irrode\bin\gcc-win32\libIrrOdeNull.a
 mkdir irrode\bin\gcc-win32\RePlayerPlugins
@@ -12,6 +13,7 @@ copy bin\gcc-win32\RePlayerPlugins\*.* irrode\bin\gcc-win32\RePlayerPlugins
 mkdir irrode\bin\vc2008
 copy bin\vc2008\*.dll irrode\bin\vc2008
 copy bin\vc2008\libIrrOde.lib irrode\bin\vc2008
+copy bin\vc2008\ode_single.lib irrode\bin\vc2008
 copy bin\vc2008\*.exe irrode\bin\vc2008
 mkdir irrode\bin\vc2005
 copy bin\vc2005\*.* irrode\bin\vc2005

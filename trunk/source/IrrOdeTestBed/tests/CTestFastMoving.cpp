@@ -48,7 +48,7 @@ irr::s32 CTestFastMoving::update() {
 
 void CTestFastMoving::fire(bool bFast) {
   SCannonBall *pBall=new SCannonBall();
-  pBall->pBody=(irr::ode::CIrrOdeBody *)m_pOdeMngr->cloneTree(m_pTemplate,m_pWorld,m_pSmgr);
+  pBall->pBody=(irr::ode::CIrrOdeBody *)m_pWorld->cloneTree(m_pTemplate,m_pWorld,m_pSmgr);
   pBall->pBody->setPosition(irr::core::vector3df(20.0f,5.0f,0.0f));
   pBall->pBody->setLinearVelocity(irr::core::vector3df(-150.0f,2.0f,0.0f));
   if (bFast) pBall->pBody->setIsFastMoving(true);
