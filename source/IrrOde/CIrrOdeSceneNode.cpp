@@ -51,7 +51,7 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::IS
 	  sprintf(sFileName,"%sIrrOde.3ds",m_sResources);
     m_pMesh=mgr->getMesh(sFileName);
 
-    this->setID(m_pOdeManager->getNextId());
+    this->setID(getNextId());
 
     if (m_pWorld!=NULL) {
       m_pWorld->addOdeChildNode(this);

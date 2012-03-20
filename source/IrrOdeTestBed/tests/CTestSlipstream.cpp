@@ -8,10 +8,13 @@ CTestSlipstream::CTestSlipstream(irr::IrrlichtDevice *pDevice, IRunner *pRunner)
 void CTestSlipstream::activate() {
   m_pSmgr->loadScene("../../data/scenes/Testbed_slipstream.xml");
 
+  m_pWorld = reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("world"));
+  printf("world=%i\n",(int)m_pWorld);
+
   m_pMarble=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("marble"));
   printf("marble=%i\n",(int)m_pMarble);
 
-  irr::core::list<irr::ode::CIrrOdeSceneNode *> lNodes=m_pOdeMngr->getIrrOdeNodes();
+  irr::core::list<irr::ode::CIrrOdeSceneNode *> lNodes=m_pWorld->getIrrOdeNodes();
   irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
   for (it=lNodes.begin(); it!=lNodes.end(); it++) {
     if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
