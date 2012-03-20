@@ -18,7 +18,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     typedef struct SPlaneNodes {
       irr::s32 iNodeId;
       irr::core::array<irr::scene::ISceneNode *> aYaw, aPitch, aRoll;
-      irrklang::ISound *pEngine;
+      irrklang::ISound *pEngine,
+                       *pWind;
       irr::ode::CIrrOdeBody *pPlane;
     } SPlaneNodes;
 
@@ -41,7 +42,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                              *pBody;
       irr::ode::CIrrOdeBody *pCar;
       CAdvancedParticleSystemNode *pSmoke[2];
-      irrklang::ISound *pEngine;
+      irrklang::ISound *pEngine,
+                       *pWind;
     } SCarNodes;
 
     typedef struct sHeliNodes {
