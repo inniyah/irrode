@@ -475,18 +475,18 @@ void CCar::CGearBox::update(irr::f32 fThrottle) {
   //apply the forces of the motor
   for (irr::u32 i = 0; i < 2; i++) {
     if (fThrottle > 0) {
-      if (m_iGear >= 1) {
-        m_pMotor[i]->setVelocity(m_fVelocity[m_iGear-1]);
-        m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
+      if (m_iGear == 0 || m_iClutch > 6) {
+        m_pMotor[i]->setVelocity(0.0f);
+        m_pMotor[i]->setForce(0.0f);
       }
       else
-        if (m_iGear == -1) {
-          m_pMotor[i]->setVelocity(45.0f);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*90.0f);
+        if (m_iGear >= 1) {
+          m_pMotor[i]->setVelocity(m_fVelocity[m_iGear-1]);
+          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
         }
         else {
-          m_pMotor[i]->setVelocity(0.0f);
-          m_pMotor[i]->setForce(0.0f);
+          m_pMotor[i]->setVelocity(45.0f);
+          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*90.0f);
         }
     }
     else {
