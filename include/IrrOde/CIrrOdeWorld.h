@@ -15,16 +15,13 @@ const wchar_t IRR_ODE_WORLD_NAME[0xFF]=L"CIrrOdeWorld";
 class CIrrOdeSpace;
 class CIrrOdeBody;
 class CIrrOdeGeom;
-class IIrrOdeStepMotor;
-class IIrrOdeEventWriter;
 class CIrrOdeEventBodyMoved;
 
 class CIrrOdeWorld : public CIrrOdeDampable {
   protected:
-    irr::u32 m_iJointGroupId;
-    irr::u32 m_iWorldId;
-    irr::f32 m_fStepSize;      /**< the stepsize */
-    irr::s32 m_iNodesInitialized;    /**< the number of nodes that have already been initialized */
+    u32 m_iJointGroupId;
+    u32 m_iWorldId;
+    f32 m_fStepSize;      /**< the stepsize */
 
     bool m_bDrawEditorMesh;
 
@@ -38,23 +35,10 @@ class CIrrOdeWorld : public CIrrOdeDampable {
       irr::core::list<CIrrOdeSceneNode *> m_pChildNodes;
     #endif
 
-    irr::core::stringw m_sSurfaceFile;
+	irr::core::stringw m_sSurfaceFile;
 
-    irr::core::list<irr::ode::CIrrOdeSceneNode *> m_pSceneNodes;     /**< the scene nodes */
-    irr::core::list<irr::ode::IIrrOdeStepMotor *> m_lStepMotors;     /**< all step motors */
-
-    /**
-     * This is a irr::core::list of all objects that want to post events
-     * about their state change after the step has been done.
-     */
-    irr::core::list<irr::ode::IIrrOdeEventWriter *> m_lChanged;
-
-    void loadParameter(irr::io::IXMLReader *pReader);
-    u32 loadFromFile(const wchar_t *sName);
-    void updateSurfaceParameterList();
-
-    bool isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode);
-
+	void loadParameter(irr::io::IXMLReader *pReader);
+	u32 loadFromFile(const wchar_t *sName);
   public:
     CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
                  const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
@@ -99,8 +83,6 @@ class CIrrOdeWorld : public CIrrOdeDampable {
     virtual f32 getAutoDisableTime();
 
     virtual void initPhysics();
-
-    void stopPhysics();
 
     void setStepSize(f32 fStepSize);
     f32 getStepSize();
@@ -172,53 +154,6 @@ class CIrrOdeWorld : public CIrrOdeDampable {
      * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
     virtual bool handlesEvent(IIrrOdeEvent *pEvent) { return false; }
-
-		void addStepMotor(IIrrOdeStepMotor *pMotor);    /*!< add a step motor */
-		void removeStepMotor(IIrrOdeStepMotor *pMotor); /*!< remove a step motor */
-		void stepStepMotors();                          /*!< this method is called from the IrrOdeDevice to step the step motors */
-
-    void removeEventWriter(IIrrOdeEventWriter *p);
-    void objectChanged(IIrrOdeEventWriter *p);
-
-    void addOdeSceneNode(CIrrOdeSceneNode *pNode);    /*!< add an ode scenenode to the manager */
-    void removeOdeSceneNode(CIrrOdeSceneNode *pNode); /*!< remove an ode scenenode from the manager */
-
-    irr::core::list<CIrrOdeSceneNode *> &getIrrOdeNodes();						/*!< get a irr::core::list of all registered IrrOde scene nodes */
-		void sceneNodeInitialized(CIrrOdeSceneNode *pNode);               /*!< callback function to trace initialization */
-
-		/**
-		 * This is the actual clone method
-     * @param pSource the node to be cloned
-     * @param newParent the parent the clone will be attached to
-     * @param newSmgr the new scene manager
-     * @param iNewId the new ID of the node ("-1" (default) will auto generate new id)
-		 */
-    irr::scene::ISceneNode *cloneOdeNode(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr, s32 iNewId=-1);
-
-		/**
-		 * This methdo is used to clone a complete (sub)tree with ODE scene nodes in (can as well clone any other type of node. Actually this method
-     * doesn't do any cloning, it posts an IrrOde event and call CIrrOdeManager::cloneOdeNode
-     * @param pSource the node to be cloned
-     * @param newParent the parent the clone will be attached to
-     * @param newSmgr the new scene manager
-     * @see cloneOdeNode
-     */
-    irr::scene::ISceneNode *cloneTree(irr::scene::ISceneNode *pSource, irr::scene::ISceneNode *newParent, irr::scene::ISceneManager *newSmgr);
-
-    /**
-     * This method removes all IrrOde objects of a (sub)tree from physics. Note that pNode will not be
-     * removed, this method is called from CIrrOdeBody::removeFromPhysics
-     * @param pNode the root node of the tree to be removed
-     * @see CIrrOdeBody::removeFromPhysics
-     */
-    void removeTreeFromPhysics(irr::scene::ISceneNode *pNode);
-
-    /**
-     * Remove a node from the scene. This method sends a CIrrOdeEventNodeRemoved event
-     * @param pNode node to remove
-     * @see CIrrOdeEventNodeRemoved
-     */
-    void removeSceneNode(irr::scene::ISceneNode *pNode);
 };
 
 } //namespace ode

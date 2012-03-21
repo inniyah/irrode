@@ -23,7 +23,6 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
 }
 
 CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car","../../data/irrOdeCarHelp.txt", pCtrl) {
-  irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_fSound=0.75f;
@@ -61,8 +60,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
       m_pBrkRe[i]=reinterpret_cast<irr::ode::CIrrOdeMotor *>(m_pCarBody->getChildByName(s,m_pCarBody));
     }
 
-    m_pGearBox = new CGearBox(m_pMotor, m_pAxesRear);
-
     irr::c8 sWheelNames[][20]={ "wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr" };
     for (irr::u32 i=0; i<4; i++)
       m_pWheels[i]=reinterpret_cast<irr::ode::CIrrOdeGeomSphere *>(m_pCarBody->getChildByName(sWheelNames[i],m_pCarBody));
@@ -70,7 +67,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     irr::core::stringw sParamNames[]={ L"surfaceTireFront", L"surfaceTireStop", L"surfaceTireBack", L"surfaceTireStop" };
     for (irr::u32 i=0; i<4; i++) {
       m_pParams[i]=new irr::ode::CIrrOdeSurfaceParameters();
-      m_pWorld->getParameter(sParamNames[i])->copy(m_pParams[i]);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getSurfaceParameter(sParamNames[i])->copy(m_pParams[i]);
     }
 
     m_pSuspension=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName("sc_suspension_rear",m_pCarBody));
@@ -110,6 +107,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     //initialize the members
     m_bHelp=false;
     m_bBrake=false;
+    m_bBoost=false;
     m_iThrottle=0;
 
     m_fOldVel=0.0f;
@@ -124,11 +122,14 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     m_pLap = new CIrrOdeCarTrack(m_pCarBody);
 
     m_bInternal=false;
+    m_bDifferential=true;
 
     m_bInitialized=true;
   }
 
   m_vOldSpeed=irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_fDiff=0.0f;
+  m_fRpm=0.0f;
 }
 
 CCar::~CCar() {
@@ -184,18 +185,70 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_bGasLastStep = m_bGasStation;
     m_bGasStation=false;
 
-    bool bDataChanged=false;
+    bool bDataChanged=false,bBrake=false;
 
     irr::core::vector3df vForeward=m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(-1.0f,0.0f,0.0f)),
                          vNormVel=m_pCarBody->getLinearVelocity();
 
     vNormVel.normalize();
 
+    irr::f32 fVelocity=vForeward.dotProduct(m_pCarBody->getLinearVelocity());
+
+    bool bBoost=m_bActive?m_pController->get(m_pCtrls[eCarBoost])!=0.0f:false;
+
+    if (bBoost!=m_bBoost) {
+      m_bBoost=bBoost;
+      bDataChanged=true;
+    }
+
     m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
     irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
+    if ((fForeward<0.0f && fVelocity>2.0f) || (fForeward>0.0f && fVelocity<-2.0f)) bBrake=true;
+    //calculate the differential gear
+    irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
+             f2=m_pAxesRear[1]->getHingeAngleRate(),
+             fDiff=f1-f2,fDiffFact[2]={ 1.0f, 1.0f };
 
-    m_pGearBox->update(fForeward);
+    if (m_bDifferential) {
+      if (fDiff>2.5f || fDiff<-2.5f) {
+        if (fDiff> 150.0f) fDiff= 150.0f;
+        if (fDiff<-150.0f) fDiff=-150.0f;
+        fDiffFact[0]=1.0f-fDiff/150.0f;
+        fDiffFact[1]=1.0f+fDiff/150.0f;
+      }
+
+      if (m_fDiff>fDiff) {
+        m_fDiff-=3.5f;
+        if (m_fDiff<fDiff) m_fDiff=fDiff;
+      }
+
+      if (m_fDiff<fDiff) {
+        m_fDiff+=3.5f;
+        if (m_fDiff>fDiff) m_fDiff=fDiff;
+      }
+    }
+    else {
+      fDiff=0.0f;
+      m_fDiff=0.0f;
+      fDiffFact[0]=1.0f;
+      fDiffFact[1]=1.0f;
+    }
+
+    if (fForeward!=0.0f) {
+      irr::f32 fForce=fForeward<0.0f?-fForeward:fForeward;
+
+      for (irr::u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(-250.0*fForeward);
+        m_pMotor[i]->setForce(bBoost?fDiffFact[i]*60*fForce:fDiffFact[i]*40*fForce);
+        m_iThrottle=-1;
+      }
+    }
+    else
+      for (irr::u32 i=0; i<2; i++) {
+        m_pMotor[i]->setVelocity(0.0f);
+        m_pMotor[i]->setForce(5.0f);
+      }
 
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
@@ -204,34 +257,19 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
-    if (m_pController->get(eCarForeward) < 0.0f) {
-      if (fForeward<0.0f) fForeward=-fForeward;
+    if (bBrake || m_pController->get(eCarBrake)!=0.0f) {
+      irr::f32 fFact=(m_pController->get(eCarBrake)!=0.0f)?m_pController->get(eCarBrake):fForeward;
+      if (fFact<0.0f) fFact=-fFact;
 
       for (irr::u32 i=0; i<2; i++) {
-        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*350.0f);
-        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward*150.0f);
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fFact*350.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fFact*150.0f);
       }
       m_bBrake=true;
     }
     else m_bBrake=false;
 
     if (m_bActive) {
-      if (m_pController->get(m_pCtrls[eCarShiftUp])) {
-        m_pController->set(m_pCtrls[eCarShiftUp],0.0f);
-        if (m_pGearBox->shiftUp()) {
-          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,0.05f,m_pCarBody->getPosition());
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-        }
-      }
-
-      if (m_pController->get(m_pCtrls[eCarShiftDown])) {
-        m_pController->set(m_pCtrls[eCarShiftDown],0.0f);
-        if (m_pGearBox->shiftDown()) {
-          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,1.0f,m_pCarBody->getPosition());
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-        }
-      }
-
       //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
       if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
         irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
@@ -250,7 +288,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       if (m_pController->get(m_pCtrls[eCarDifferential])) {
         m_pController->set(m_pCtrls[eCarDifferential],0.0f);
-        m_pGearBox->toggleDifferential();
+        m_bDifferential=!m_bDifferential;
         dataChanged();
       }
     }
@@ -286,16 +324,35 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_fOldVel=fVel;
 
-    irr::f32 fRpm = m_pGearBox->getRpm();
+    irr::f32 fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f;
 
-    irr::f32 fSound = 0.75;
-
-    if (fRpm<-0.05f) {
-      fSound=0.75f+(-5.0f*(fRpm+0.05f));
-      if (fSound > 5.75f) fSound = 5.75f;
+    if (m_fRpm>fRpm) {
+      bDataChanged=true;
+      m_fRpm-=1.5f;
+      if (m_fRpm<fRpm) m_fRpm=fRpm;
     }
+
+    if (m_fRpm<fRpm) {
+      bDataChanged=true;
+      m_fRpm+=1.5f;
+      if (m_fRpm>fRpm) m_fRpm=fRpm;
+    }
+
+    irr::f32 fRot=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/2.0f,fSound=0.75f;
+    if (fRot<0.0f) {
+      bDataChanged=true;
+      fRot=-fRot;
+    }
+
+    if (fRot>5.0f) {
+      if (fRot>155.0f)
+        fSound=5.75f;
+      else
+        fSound=0.75f+(5.0f*(fRot-5.0f)/150.0f);
+    }
+
     if (m_fSound<fSound) {
-      m_fSound+=0.05f;
+      m_fSound+=0.025f;
       if (m_fSound>=fSound) {
         bDataChanged=true;
         m_fSound=fSound;
@@ -303,33 +360,23 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
 
     if (m_fSound>fSound) {
-      m_fSound-=0.05f;
+      m_fSound-=0.025f;
       if (m_fSound<=fSound) {
         m_fSound=fSound;
         bDataChanged=true;
       }
     }
 
-    irr::f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
-    if (fImpulse<0.0f) fImpulse=-fImpulse;
-
     if (m_pCarBody->getCollision()) {
+      irr::f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
+      if (fImpulse<0.0f) fImpulse=-fImpulse;
+
       if (fImpulse>5.0f) {
         fImpulse-=5.0f;
         fImpulse/=50.0f;
         if (fImpulse>1.0f) fImpulse=1.0f;
 
         CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
-      }
-    }
-    else {
-      if (fImpulse > 2.5f) {
-        fImpulse -= 2.5f;
-        fImpulse /= 50.0f;
-        if (fImpulse > 1.0f) fImpulse = 1.0f;
-
-        CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCreaky,fImpulse,m_pCarBody->getPosition());
         irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
       }
     }
@@ -342,7 +389,8 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_fOldSlider=fSlider;
     }
 
-    if (bDataChanged || m_pGearBox->dataChanged()) {
+    if (bDataChanged) {
+      bDataChanged=false;
       dataChanged();
     }
 
@@ -392,171 +440,19 @@ bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   irr::u8 iFlags=0;
 
-  if (m_bBrake                  ) iFlags|=CEventCarState::eCarFlagBrake;
-  if (m_pGearBox->differential()) iFlags|=CEventCarState::eCarFlagDifferential;
-  if (m_pGearBox->exhaustSmoke()) iFlags|=CEventCarState::eCarFlagSmoke;
+  if (m_bBoost       ) iFlags|=CEventCarState::eCarFlagBoost;
+  if (m_bBrake       ) iFlags|=CEventCarState::eCarFlagBrake;
+  if (m_bDifferential) iFlags|=CEventCarState::eCarFlagDifferential;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
+                                            m_fRpm,m_fDiff,m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed);
 
   return pEvent;
 }
 
 irr::ode::eEventWriterType CCar::getEventWriterType() {
   return irr::ode::eIrrOdeEventWriterUnknown;
-}
-
-CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJointHinge *pAxesRear[2]) {
-  for (irr::u16 i = 0; i< 2; i++) {
-    m_pMotor[i] = pMotor[i];
-    m_pAxesRear[i] = pAxesRear[i];
-  }
-
-  m_iGear = 0;
-  m_iClutch = 0;
-  m_fRpm = 0.0f;
-  m_fDiff = 0.0f;
-  m_fThrottle = 0.0f;
-
-  m_bDifferential = true;
-  m_bDataChanged = false;
-
-  m_fVelocity[0] =  -50.0f; m_fForce[0] =  90.0f;
-  m_fVelocity[1] =  -85.0f; m_fForce[1] =  80.0f;
-  m_fVelocity[2] = -120.0f; m_fForce[2] =  70.0f;
-  m_fVelocity[3] = -155.0f; m_fForce[3] =  60.0f;
-}
-
-bool CCar::CGearBox::shiftUp() {
-  if (m_iGear < 4) {
-    m_iGear++;
-    m_iClutch = 12;
-    return true;
-  }
-  return false;
-}
-
-bool CCar::CGearBox::shiftDown() {
-  if (m_iGear > -1) {
-    m_iGear--;
-    m_iClutch = 6;
-    return true;
-  }
-  return false;
-}
-
-void CCar::CGearBox::update(irr::f32 fThrottle) {
-  //calculate differntial (if active)
-
-  m_fThrottle = fThrottle;
-
-  irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
-           f2=m_pAxesRear[1]->getHingeAngleRate(),
-           fDiff=f1-f2,fDiffFact[2]={ 1.0f, 1.0f };
-
-  if (m_bDifferential) {
-    if (fDiff>2.5f || fDiff<-2.5f) {
-      if (fDiff> 150.0f) fDiff= 150.0f;
-      if (fDiff<-150.0f) fDiff=-150.0f;
-      fDiffFact[0]=1.0f-fDiff/150.0f;
-      fDiffFact[1]=1.0f+fDiff/150.0f;
-    }
-
-    if (m_fDiff>fDiff) {
-      m_fDiff-=3.5f;
-      if (m_fDiff<fDiff) m_fDiff=fDiff;
-    }
-
-    if (m_fDiff<fDiff) {
-      m_fDiff+=3.5f;
-      if (m_fDiff>fDiff) m_fDiff=fDiff;
-    }
-  }
-  else {
-    fDiff=0.0f;
-    m_fDiff=0.0f;
-    fDiffFact[0]=1.0f;
-    fDiffFact[1]=1.0f;
-  }
-
-  //apply the forces of the motor
-  for (irr::u32 i = 0; i < 2; i++) {
-    if (fThrottle > 0) {
-      if (m_iGear == 0 || m_iClutch > 6) {
-        m_pMotor[i]->setVelocity(0.0f);
-        m_pMotor[i]->setForce(0.0f);
-      }
-      else
-        if (m_iGear >= 1) {
-          m_pMotor[i]->setVelocity(m_fVelocity[m_iGear-1]);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
-        }
-        else {
-          m_pMotor[i]->setVelocity(45.0f);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*90.0f);
-        }
-    }
-    else {
-      m_pMotor[i]->setVelocity(0.0f);
-      if (m_iGear != 0) {
-        m_pMotor[i]->setForce(75.0f);
-      }
-      else {
-        m_pMotor[i]->setForce(5.0f);
-      }
-    }
-  }
-
-  irr::f32 fRpm = 0.0f;
-  if (m_iGear != 0 && m_iClutch == 0)
-    fRpm=(m_pAxesRear[0]->getHingeAngleRate()+m_pAxesRear[1]->getHingeAngleRate())/(2.0f*getMaxVelocity());
-  else
-    fRpm = -0.95f*fThrottle;
-
-  if (m_fRpm>fRpm) {
-    m_bDataChanged=true;
-    m_fRpm-=0.005f;
-    if (m_fRpm<fRpm) m_fRpm=fRpm;
-  }
-
-  if (m_fRpm<fRpm) {
-    m_bDataChanged=true;
-    m_fRpm+=0.005f;
-    if (m_fRpm>fRpm) m_fRpm=fRpm;
-  }
-
-  if (m_iClutch > 0) m_iClutch--;
-}
-
-irr::s8 CCar::CGearBox::getGear() {
-  return m_iGear;
-}
-
-irr::f32 CCar::CGearBox::getMaxVelocity() {
-  switch (m_iGear) {
-    case -1: return -45.0f;
-    case  0: return 0.0f;
-    default: return -m_fVelocity[m_iGear-1];
-  }
-}
-
-bool CCar::CGearBox::dataChanged() {
-  bool bRet = m_bDataChanged;
-  m_bDataChanged = false;
-  return bRet;
-}
-
-bool CCar::CGearBox::exhaustSmoke() {
-  return m_fRpm < -0.8f || m_fRpm > 0.8f || m_iClutch > 0;
-}
-
-bool CCar::CGearBox::differential() {
-  return m_bDifferential;
-}
-
-void CCar::CGearBox::toggleDifferential() {
-  m_bDifferential = !m_bDifferential;
 }

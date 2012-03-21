@@ -129,8 +129,6 @@ void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
   pNodes->iNodeId=pPlane->getID();
   pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (pNodes->pEngine) pNodes->pEngine->setMinDistance(100.0f);
-  pNodes->pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (pNodes->pWind) pNodes->pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
   pNodes->pPlane=reinterpret_cast<ode::CIrrOdeBody *>(pPlane);
   searchPlaneNodes(pPlane,pNodes);
   m_lPlanes.push_back(pNodes);
@@ -159,8 +157,6 @@ void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
 
   pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);  else printf("\n\t\t**** oops\n\n");
-  pNodes->pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (pNodes->pWind) pNodes->pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
 
   pNodes->pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(pCar,pNodes);
@@ -244,7 +240,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           nodes->pEngine->setPosition(vPos);
           nodes->pEngine->setPlaybackSpeed(0.75f+0.5*fPitch);
           nodes->pEngine->setIsPaused(false);
-          nodes->pWind  ->setIsPaused(false);
         }
 
         return true;
@@ -320,7 +315,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           pCar->pEngine->setPlaybackSpeed(p->getEngineSound());
 
           pCar->pEngine->setIsPaused(false);
-          pCar->pWind  ->setIsPaused(false);
         }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
 
@@ -337,8 +331,8 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         pCar->pRearWheels[1]->setRotation(v);
 
         if (pCar->pSmoke[0]!=NULL && pCar->pSmoke[1]!=NULL) {
-          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
-          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
+          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
+          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagBoost);
 
           u32 iMin=(u32)(-p->getRpm()*3.0f),
               iMax=(u32)(-p->getRpm()*5.0f);
@@ -373,8 +367,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       case CEventFireSound::eSndFireShell: strcpy(s,"../../data/sound/shot.ogg"   ); break;
       case CEventFireSound::eSndSkid     : strcpy(s,"../../data/sound/skid.ogg"   ); break;
       case CEventFireSound::eSndBell     : strcpy(s,"../../data/sound/bell.ogg"   ); break;
-      case CEventFireSound::eSndShift    : strcpy(s,"../../data/sound/shift.ogg"  ); break;
-      case CEventFireSound::eSndCreaky   : strcpy(s,"../../data/sound/creaky.ogg" ); break;
     }
 
     if (s[0]!='\0') {
@@ -433,13 +425,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         SPlaneNodes *pPlane=*pit;
         if (p->getBodyId()==pPlane->iNodeId) {
           updateSound(pPlane->pEngine,pPlane->pPlane);
-          irr::f32 fVol = pPlane->pPlane->getLinearVelocity().getLength();
-          if (fVol > 100.0f) fVol = 100.0f;
-          fVol /= 100.0f;
-          if (fVol < 0.0f) fVol = -fVol;
-
-          pPlane->pWind->setVolume(fVol / 8.0f);
-          updateSound(pPlane->pWind, pPlane->pPlane);
           bDone=true;
         }
       }
@@ -450,14 +435,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           SCarNodes *pCar=*cit;
           if (p->getBodyId()==pCar->iNodeId) {
             updateSound(pCar->pEngine,pCar->pCar);
-
-            irr::f32 fVol = pCar->pCar->getLinearVelocity().getLength();
-            if (fVol > 100.0f) fVol = 100.0f;
-            fVol /= 100.0f;
-            if (fVol < 0.0f) fVol = -fVol;
-
-            pCar->pWind->setVolume(fVol / 4.0f);
-            updateSound(pCar->pWind, pCar->pCar);
             bDone=true;
           }
         }

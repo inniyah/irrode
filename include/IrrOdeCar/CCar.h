@@ -17,52 +17,19 @@ enum eCarCtrl {
   eCarBackward,
   eCarLeft,
   eCarRight,
+  eCarBrake,
+  eCarBoost,
   eCarFlip,
-  eCarDifferential,
-  eCarShiftUp,
-  eCarShiftDown
+  eCarDifferential
 };
 
 class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
   protected:
-    class CGearBox {
-      protected:
-        irr::f32 m_fVelocity[4],
-                 m_fForce   [4];
-        irr::ode::CIrrOdeMotor *m_pMotor[2];
-        irr::ode::CIrrOdeJointHinge *m_pAxesRear[2];
-        irr::f32 m_fRpm,
-                 m_fDiff,
-                 m_fThrottle;
-        irr::s8 m_iGear,
-                m_iClutch;
-
-        bool m_bDataChanged,
-             m_bDifferential;   /*!< differential gear enabled? */
-
-      public:
-        CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJointHinge *pAxesRear[2]);
-
-        bool shiftUp();
-        bool shiftDown();
-
-        void update(irr::f32 fThrottle);
-
-        irr::s8 getGear();
-        irr::f32 getMaxVelocity();
-        irr::f32 getRpm() { return m_fRpm; }
-        irr::f32 getDiff() { return m_fDiff; }
-
-        bool dataChanged();
-        bool exhaustSmoke();
-        bool differential();
-
-        void toggleDifferential();
-    };
-
     bool     m_bBrake,           /*!< is the handbrake active? */
+             m_bBoost,           /*!< is the boos button pushed? */
              m_bHelp,            /*!< is the help screen visible? */
              m_bInternal,        /*!< internal view active? */
+             m_bDifferential,    /*!< differential gear enabled? */
              m_bGasStation,      /*!< is the car in a gas station? */
              m_bGasLastStep;     /*!< was the car in a gas station in the last step? */
     irr::f32 m_fOldVel,          /*!< old velocity */
@@ -91,13 +58,13 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
 
     const irr::u32 *m_pCtrls;
     irr::f32 m_fSound,
-             m_fOldSlider;
+        m_fRpm,
+        m_fDiff,
+        m_fOldSlider;
 
     irr::core::vector3df m_vOldSpeed;
 
     CIrrOdeCarTrack *m_pLap;
-
-    CGearBox *m_pGearBox;
 
     void applyAeroEffect();
 

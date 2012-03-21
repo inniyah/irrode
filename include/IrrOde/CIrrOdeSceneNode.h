@@ -22,7 +22,6 @@ namespace ode {
 class CIrrOdeManager;
 class IIrrOdeDevice;
 class CIrrOdeWorld;
-class CIrrOdeSurfaceParameters;
 
 /**
  * @class CIrrOdeSceneNode
@@ -45,7 +44,7 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
 
     void *m_pUserData;
 
-    irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);    /**< retrieve an ancestor of a given type */
+    irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);  /**< retrieve an ancestor of a given type */
 
     #ifdef _IRREDIT_PLUGIN
       irr::scene::IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit when compiled as plugin */
@@ -54,11 +53,6 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
     #endif
 
     void cloneChildren(irr::scene::ISceneNode *pNewParent, irr::scene::ISceneManager *pNewManager);
-
-    /**
-     * Update the list of parameters (mainly for the editor plugin)
-     */
-    void updateParameterList() const;
   public:
     CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id = -1,
                      const irr::core::vector3df &position=irr::core::vector3df(0,0,0),
@@ -114,39 +108,6 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
     virtual void setParent(irr::scene::ISceneNode *newParent);
 
     irr::scene::ISceneNode *getChildByName(const c8 *sName, irr::scene::ISceneNode *pParent);
-
-    /**
-     * Add a parameter. For the moment all parameters that are used are surface parameters,
-     * but the method name is left unclear for future enhancements
-     * @param pParam the parameter set to add
-     */
-    void addParameter(CIrrOdeSurfaceParameters *pParam) const;
-
-    /**
-     * Clear the global list of parameters
-     */
-    void clearParameterList() const;
-
-    /**
-     * Get the parameter list (for the editor plugin)
-     */
-    const c8 *const *getParameterList() const;
-
-    /**
-     * Get a parameter by name
-     * @param sName the name of the parameter
-     * @return the parameter or a valid "null" parameter if the queried parameter is not found
-     */
-    CIrrOdeSurfaceParameters *getParameter(irr::core::stringw sName) const;
-
-    /**
-     * Remove a parameter from the global list
-     * @param pParam the parameter set to remove
-     */
-    void removeParameter(CIrrOdeSurfaceParameters *pParam) const;
-
-    s32 getNextId();
-    void updateNextId(s32 iId);
 };
 
 } //namespace ode

@@ -33,7 +33,7 @@ class CProjectile;
 class CAutoPilot;
 class CRearView;
 
-class CHeli : public CAeroVehicle {
+class CHeli : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeft;
     irr::f32 m_fSound;

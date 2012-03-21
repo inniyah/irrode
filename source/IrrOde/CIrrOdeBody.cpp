@@ -27,10 +27,7 @@ CIrrOdeBody::CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManage
   #endif
 
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
-  if (m_pWorld) {
-    m_pWorld->addBody(this);
-    IIrrOdeEventWriter::setWorld(m_pWorld);
-  }
+  if (m_pWorld) m_pWorld->addBody(this);
   m_iBodyId=0;
   m_bEnabled=false;
   m_vLinear=irr::core::vector3df(0.0f,0.0f,0.0f);
@@ -767,12 +764,10 @@ void CIrrOdeBody::doRemoveFromPhysics() {
   CIrrOdeSceneNode::removeFromPhysics();
 
   if (m_iBodyId) {
-    if (m_pWorld) {
-      m_pWorld->removeBody(this);
-      m_pWorld->removeOdeSceneNode(this);
-      m_pWorld->removeEventWriter(this);
-      m_pWorld->removeTreeFromPhysics(this);
-    }
+    if (m_pWorld) m_pWorld->removeBody(this);
+    m_pOdeManager->removeTreeFromPhysics(this);
+    m_pOdeManager->removeOdeSceneNode(this);
+    m_pOdeManager->removeEventWriter(this);
 
     m_pOdeDevice->bodyDestroy(m_iBodyId);
     m_iBodyId=0;
@@ -896,7 +891,7 @@ void CIrrOdeBody::bodyMoved(irr::core::vector3df newPos) {
 
   irr::core::list<CIrrOdeJoint *>::Iterator it;
   for (it=m_pJoints.begin(); it!=m_pJoints.end(); it++) {
-    if ((*it)->doesUpdateVariables() && m_pWorld != NULL) m_pWorld->objectChanged(*it);
+    if ((*it)->doesUpdateVariables()) m_pOdeManager->objectChanged(*it);
   }
 }
 

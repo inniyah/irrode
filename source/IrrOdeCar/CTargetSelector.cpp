@@ -12,17 +12,13 @@ CTargetSelector::CTargetSelector(irr::ode::CIrrOdeBody *pCarrier, irr::IrrlichtD
   m_pDrv=pDevice->getVideoDriver();
   m_pTarget=NULL;
 
-  irr::ode::CIrrOdeWorld *pWorld = pCarrier->getWorld();
+  irr::core::list<irr::ode::CIrrOdeSceneNode *> pNodes=m_pManager->getIrrOdeNodes();
+  irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
 
-  if (pWorld) {
-    irr::core::list<irr::ode::CIrrOdeSceneNode *> nodes = pWorld->getIrrOdeNodes();
-    irr::core::list<irr::ode::CIrrOdeSceneNode *>::Iterator it;
-
-    for (it=nodes.begin(); it!=nodes.end(); it++) {
-      if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
-        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)(*it);
-        if (p->getParentBody()==NULL) m_lOptions.push_back(p);
-      }
+  for (it=pNodes.begin(); it!=pNodes.end(); it++) {
+    if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
+      irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)(*it);
+      if (p->getParentBody()==NULL) m_lOptions.push_back(p);
     }
   }
 }

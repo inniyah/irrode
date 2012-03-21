@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\bin\vc2008\ode_single.lib ..\..\libs\irrlicht-1.7.1\lib\Win32-visualstudio\Irrlicht.lib ..\bin\vc2008\libIrrOde.lib"
+				AdditionalDependencies="..\..\libs\ode-0.11-vc\lib\ReleaseSingleDLL\ode_single.lib ..\..\libs\irrlicht-1.7.1\lib\Win32-visualstudio\Irrlicht.lib ..\bin\vc2008\libIrrOde.lib"
 				OutputFile="..\bin\vc2008\$(ProjectName).exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

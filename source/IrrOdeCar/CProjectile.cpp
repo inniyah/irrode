@@ -49,7 +49,7 @@ void CProjectile::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   m_pAutoPilot->setTarget(m_pTarget);
 }
 
-CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::ode::CIrrOdeWorld *pWorld, bool bFastCollision, CIrrOdeCarState *pShooter) {
+CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df vPos, irr::core::vector3df vRot, irr::core::vector3df vVel, const irr::c8 *sSource, irr::s32 iTtl, irr::scene::ISceneNode *pWorld, bool bFastCollision, CIrrOdeCarState *pShooter) {
   m_iTtl=iTtl;
   m_pSmgr=pSmgr;
   m_bActive=true;
@@ -60,12 +60,10 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
   m_pAutoPilot=NULL;
   m_pShooter=pShooter;
 
-  m_pWorld = pWorld;
-
   irr::ode::CIrrOdeBody *pSource=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName(sSource));
 
   if (pSource!=NULL) {
-    irr::scene::ISceneNode *pNewNode=pWorld->cloneTree(pSource,pWorld,m_pSmgr);
+    irr::scene::ISceneNode *pNewNode=irr::ode::CIrrOdeManager::getSharedInstance()->cloneTree(pSource,pWorld,m_pSmgr);
     pNewNode->setName("projectile_clone");
     m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNewNode);
     if (m_pBody!=NULL) {
@@ -141,7 +139,7 @@ bool CProjectile::particlesActive() {
 
   bool bRet=iParticles!=0;
 
-  if (!bRet && m_pWorld != NULL) m_pWorld->removeSceneNode(m_pBody);
+  if (!bRet) irr::ode::CIrrOdeManager::getSharedInstance()->removeSceneNode(m_pBody);
 
   return bRet;
 }

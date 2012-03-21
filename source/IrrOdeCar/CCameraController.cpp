@@ -12,7 +12,6 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_pController = pCtrl;
 
   m_bInternal = false;
-  m_bButton = true;
 
   m_pOdeMngr->getQueue()->addEventListener(this);
 
@@ -212,7 +211,7 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_cMousePos = pos;
     }
 
-    if (m_bLeftMouse || (!m_bButton && m_pTarget != NULL)) {
+    if (m_bLeftMouse) {
       m_fCamAngleH += (irr::f32)(offsetx) / 8.0f;
 
       if (m_pTarget != NULL)
@@ -234,11 +233,6 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         v = v.crossProduct(m_vUp);
         m_vPosition += offsetx * v;
       }
-
-    if (m_pController->get(m_pCtrls[eCameraButtonMove])) {
-      m_pController->set(m_pCtrls[eCameraButtonMove],0.0f);
-      m_bButton = !m_bButton;
-    }
 
     if (m_pController->get(m_pCtrls[eCameraInternal])) {
       m_pController->set(m_pCtrls[eCameraInternal], 0.0f);

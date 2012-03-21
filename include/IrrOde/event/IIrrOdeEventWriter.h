@@ -1,7 +1,7 @@
 #ifndef _I_IRR_ODE_EVENT_WRITER
   #define _I_IRR_ODE_EVENT_WRITER
 
-  #include <CIrrOdeWorld.h>
+  #include <CIrrOdeManager.h>
 
 namespace irr {
   namespace ode {
@@ -24,22 +24,18 @@ namespace irr {
      */
     class IIrrOdeEventWriter {
       protected:
-        CIrrOdeWorld *m_pWorld;
+        CIrrOdeManager *m_pOdeEventManager;
 
       public:
-        IIrrOdeEventWriter(CIrrOdeWorld *pWorld = NULL) {
-          m_pWorld = pWorld;
+        IIrrOdeEventWriter() {
+          m_pOdeEventManager=CIrrOdeManager::getSharedInstance();
         }
 
         virtual ~IIrrOdeEventWriter() {
         }
 
-        void setWorld(CIrrOdeWorld *pWorld) {
-          m_pWorld = pWorld;
-        }
-
         void dataChanged() {
-          if (m_pWorld) m_pWorld->objectChanged(this);
+          m_pOdeEventManager->objectChanged(this);
         }
 
         /**

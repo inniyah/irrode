@@ -5,7 +5,6 @@ copy bin\gcc-win32\*.exe irrode\bin\gcc-win32
 copy bin\gcc-win32\*.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\irrklang.dll irrode\bin\gcc-win32
 copy bin\gcc-win32\libirrode.a irrode\bin\gcc-win32
-copy bin\gcc-win32\libode_single.a irrode\bin\gcc-win32
 del irrode\bin\gcc-win32\*_debug.exe
 del irrode\bin\gcc-win32\libIrrOdeNull.a
 mkdir irrode\bin\gcc-win32\RePlayerPlugins
@@ -13,7 +12,6 @@ copy bin\gcc-win32\RePlayerPlugins\*.* irrode\bin\gcc-win32\RePlayerPlugins
 mkdir irrode\bin\vc2008
 copy bin\vc2008\*.dll irrode\bin\vc2008
 copy bin\vc2008\libIrrOde.lib irrode\bin\vc2008
-copy bin\vc2008\ode_single.lib irrode\bin\vc2008
 copy bin\vc2008\*.exe irrode\bin\vc2008
 mkdir irrode\bin\vc2005
 copy bin\vc2005\*.* irrode\bin\vc2005
@@ -21,11 +19,14 @@ copy *.txt irrode
 copy changelog.txt irrode
 mkdir irrode\data
 copy data\*.* irrode\data
+del irrode\data\irrOdeMarbleSettings.xml
 del irrode\data\irrOdeCarSettings.xml
 del irrode\data\irrOdeCarControls.xml
 del irrode\data\highscore.xml
 copy irrode\data\_highscore.xml irrode\data\highscore.xml
+copy irrode\data\_irrOdeMarbleSettings.xml irrode\data\irrOdeMarbleSettings.xml
 copy irrode\data\_irrOdeCarSettings.xml irrode\data\irrOdeCarSettings.xml
+del irrode\data\_irrOdeMarbleSettings.xml
 del irrode\data\_highscore.xml
 mkdir irrode\data\irrodedit
 copy data\irrodedit\*.* irrode\data\irrodedit
@@ -76,6 +77,12 @@ mkdir irrode\source\IrrOdeCar
 copy source\IrrOdeCar\*.* irrode\source\IrrOdeCar
 mkdir irrode\source\IrrOdeRePlayer
 copy source\IrrOdeRePlayer\*.* irrode\source\IrrOdeRePlayer
+mkdir irrode\source\IrrOdeMarble
+copy source\IrrOdeMarble\*.* irrode\source\IrrOdeMarble
+mkdir irrode\source\IrrOdePlayground
+copy source\IrrOdePlayground\*.* irrode\source\IrrOdePlayground
+mkdir irrode\source\IrrOdeSurfaceEdit
+copy source\IrrOdeSurfaceEdit\*.* irrode\source\IrrOdeSurfaceEdit
 
 mkdir irrode\include
 mkdir irrode\include\IrrOde
@@ -95,6 +102,12 @@ mkdir irrode\include\IrrOdeCar
 copy include\IrrOdeCar\*.* irrode\include\IrrOdeCar
 mkdir irrode\include\IrrOdeRePlayer
 copy include\IrrOdeRePlayer\*.* irrode\include\IrrOdeRePlayer
+mkdir irrode\include\IrrOdeMarble
+copy include\IrrOdeMarble\*.* irrode\include\IrrOdeMarble
+mkdir irrode\include\IrrOdePlayground
+copy include\IrrOdePlayground\*.* irrode\include\IrrOdePlayground
+mkdir irrode\include\IrrOdeSurfaceEdit
+copy include\IrrOdeSurfaceEdit\*.* irrode\include\IrrOdeSurfaceEdit
 mkdir irrode\include\IrrOdeCar\RoadCreator
 copy include\IrrOdeCar\RoadCreator irrode\include\IrrOdeCar\RoadCreator
 

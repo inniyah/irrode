@@ -36,6 +36,7 @@ void CTestCar::activate() {
 void CTestCar::deactivate() {
   m_pGui->clear();
   m_pSmgr->clear();
+  m_pOdeMngr->clearODE();
   m_pOdeMngr->closeODE();
   m_pOdeMngr->getQueue()->removeEventListener(this);
   m_pRunner->setEventReceiver(NULL);

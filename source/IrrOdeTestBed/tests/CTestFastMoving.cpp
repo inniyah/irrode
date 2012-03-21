@@ -21,7 +21,8 @@ void CTestFastMoving::activate() {
 
   m_pTemplate=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pSmgr->getSceneNodeFromName("CannonBall"));
 
-  m_pWorld=reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("world"));
+  irr::core::list<irr::ode::CIrrOdeWorld *> lWorlds=m_pOdeMngr->getWorlds();
+  m_pWorld=*(lWorlds.begin());
 
   printf("cannonball template: %i\nworld: %i\n",(int)m_pTemplate,(int)m_pWorld);
 
@@ -31,6 +32,7 @@ void CTestFastMoving::activate() {
 
 void CTestFastMoving::deactivate() {
   m_pSmgr->clear();
+  m_pOdeMngr->clearODE();
   m_pOdeMngr->closeODE();
   m_pOdeMngr->getQueue()->removeEventListener(this);
 
@@ -48,7 +50,7 @@ irr::s32 CTestFastMoving::update() {
 
 void CTestFastMoving::fire(bool bFast) {
   SCannonBall *pBall=new SCannonBall();
-  pBall->pBody=(irr::ode::CIrrOdeBody *)m_pWorld->cloneTree(m_pTemplate,m_pWorld,m_pSmgr);
+  pBall->pBody=(irr::ode::CIrrOdeBody *)m_pOdeMngr->cloneTree(m_pTemplate,m_pWorld,m_pSmgr);
   pBall->pBody->setPosition(irr::core::vector3df(20.0f,5.0f,0.0f));
   pBall->pBody->setLinearVelocity(irr::core::vector3df(-150.0f,2.0f,0.0f));
   if (bFast) pBall->pBody->setIsFastMoving(true);

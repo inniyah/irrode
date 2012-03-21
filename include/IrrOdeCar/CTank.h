@@ -37,6 +37,7 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
     irr::f32 m_fCannonAngle,
              m_fTurretAngle;
 
+    irr::ode::CIrrOdeWorld *m_pWorld;
     irr::ode::CIrrOdeMotor *m_pMotor[4];
     irr::ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
     irr::ode::CIrrOdeMotor *m_pTurretMotor;

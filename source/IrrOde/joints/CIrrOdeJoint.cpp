@@ -19,8 +19,6 @@ CIrrOdeJoint::CIrrOdeJoint(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
 
   m_pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));
 
-  if (m_pWorld) IIrrOdeEventWriter::setWorld(m_pWorld);
-
   #ifdef _TRACE_CONSTRUCTOR_DESTRUCTOR
     printf("CIrrOdeGeom constructor: m_pWorld=%i\n",m_pWorld->getID());
   #endif

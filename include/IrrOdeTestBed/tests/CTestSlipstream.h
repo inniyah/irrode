@@ -66,8 +66,7 @@ class CSlipStream {
  */
 class CTestSlipstream : public IState, public irr::ode::IIrrOdeEventListener {
   protected:
-    irr::ode::CIrrOdeBody  *m_pMarble;
-    irr::ode::CIrrOdeWorld *m_pWorld;
+    irr::ode::CIrrOdeBody *m_pMarble;
     irr::core::list<irr::ode::CIrrOdeBody *> m_lBodies;
 
     CSlipStream *m_aSlipStream[30];

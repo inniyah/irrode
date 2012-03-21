@@ -15,7 +15,7 @@ class CProjectile;
 class CAutoPilot;
 class CRearView;
 
-class CPlane : public CAeroVehicle {
+class CPlane : public CAeroVehicle, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bLeftMissile,
          m_bAutoPilot;

@@ -27,7 +27,7 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pRpm=new irr::gui::CGUINeedleIndicator(m_pGuienv,m_pTab,-1,irr::core::rect<irr::s32>(irr::core::position2di(0,0),irr::core::dimension2di(128,128)));
   m_pRpm->setBackground(m_pDrv->getTexture("../../data/car/rpm.png"));
   m_pRpm->addNeedle(irr::video::SColor(0xFF,0,0,0),0.7f,0.02f,1.0f);
-  m_pRpm->setRange(0.25f,1.75f);
+  m_pRpm->setRange(0.0f,175.0f);
   m_pRpm->setAngleRange(0.0f,270.0f);
   m_pRpm->setAngleOffset(90.0f);
 
@@ -38,16 +38,8 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pDiff->setAngleRange(-85.0f,85.0f);
   m_pDiff->setAngleOffset(180.0f);
 
-  m_pBoostRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_red.png" ),irr::core::position2di(164,328),true,m_pTab);
-  m_pBoostGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_gray.png"),irr::core::position2di(164,328),true,m_pTab);
-
-  for (irr::u32 i = 0; i < 6; i++) {
-    irr::c8 s[0xFF];
-    sprintf(s, "../../data/car/gear_%i.png",i);
-    m_pGear[i] = m_pGuienv->addImage(m_pDrv->getTexture(s), irr::core::position2di(323,323), true, m_pTab);
-    m_pGear[i]->setVisible(false);
-  }
-
+  m_pBoostRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_red.png" ),irr::core::position2di(164,328),true,m_pTab);
+  m_pBoostGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_gray.png"),irr::core::position2di(164,328),true,m_pTab);
   m_pTab->setVisible(false);
 
   m_stDifferential=m_pGuienv->addStaticText(L"Active",irr::core::rect<irr::s32>(irr::core::position2di(160,96),irr::core::dimension2du(64,13)),false,true,m_pTab);
@@ -129,14 +121,11 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_fDiff = p->getDiff();
       m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
 
-      bool b = p->getFlags() & CEventCarState::eCarFlagSmoke;
+      bool b = p->getFlags() & CEventCarState::eCarFlagBoost;
       m_pBoostGray->setVisible(!b);
       m_pBoostRed ->setVisible( b);
 
       m_fSpeed = p->getSpeed();
-
-      for (irr::u32 i = 0; i < 6; i++) m_pGear[i]->setVisible(false);
-      m_pGear[p->getGear()+1]->setVisible(true);
     }
   }
 
