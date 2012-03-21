@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RePlayerPlugin" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="debug">
+				<Option output="..\bin\gcc-win32-debug\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\debug" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32-debug\IrrOdeRePlayer.exe" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DBUILD_DLL" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
+					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
+					<Add library="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc\libIrrlicht.dll.a" />
+				</Linker>
+			</Target>
+			<Target title="release">
+				<Option output="..\bin\gcc-win32\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\bin\gcc-win32" />
+				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\release" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32\IrrOdeRePlayer.exe" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="..\bin\gcc-win32\libIrrOdeNull.a" />
+					<Add library="..\..\bbsandbox\particle_clone\libAdvancedParticle.a" />
+					<Add library="..\..\libs\irrlicht-1.7.3\lib\Win32-gcc\libIrrlicht.dll.a" />
+					<Add library="..\..\libs\ode-0.11.1-gcc\lib\DebugSingleLib\libode_singled.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-D_DONT_INCLUDE_NODE" />
+			<Add directory="..\..\libs\irrlicht-1.7.2\include" />
+			<Add directory="..\include\IrrOdeRePlayerPlugin" />
+			<Add directory="..\..\bbsandbox\particle_clone\project" />
+			<Add directory="..\include\IrrOde" />
+			<Add directory="..\include\IrrOdeCar" />
+			<Add directory="..\include\IrrOdeRePlayer" />
+			<Add directory="..\include\IrrOdeCar\RoadCreator" />
+			<Add directory="..\..\libs\irrKlang-1.3.0\include" />
+		</Compiler>
+		<Unit filename="..\include\IrrOdeCar\CCameraController.h" />
+		<Unit filename="..\include\IrrOdeCar\CCockpitCar.h" />
+		<Unit filename="..\include\IrrOdeCar\CCockpitPlane.h" />
+		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
+		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
+		<Unit filename="..\include\IrrOdeCar\CGUINeedleIndicator.h" />
+		<Unit filename="..\include\IrrOdeCar\CMeshCombiner.h" />
+		<Unit filename="..\include\IrrOdeCar\CRandomForestNode.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CConnection.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadLoader.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadMeshLoader.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CSegment.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CSurface.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\CTextureParameters.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\INotification.h" />
+		<Unit filename="..\include\IrrOdeCar\RoadCreator\IRoadPart.h" />
+		<Unit filename="..\include\IrrOdeCar\irrCC.h" />
+		<Unit filename="..\include\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.h" />
+		<Unit filename="..\include\IrrOdeRePlayer\SSharedManagers.h" />
+		<Unit filename="..\source\IrrOdeCar\CCameraController.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCockpitCar.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCockpitPlane.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CGUINeedleIndicator.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CMeshCombiner.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CRandomForestNode.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CConnection.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadLoader.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadMeshLoader.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSegment.cpp" />
+		<Unit filename="..\source\IrrOdeCar\RoadCreator\CSurface.cpp" />
+		<Unit filename="..\source\IrrOdeCar\irrCC.cpp" />
+		<Unit filename="..\source\IrrOdeRePlayerPlugin\IrrOdeRePlayerPlugin.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

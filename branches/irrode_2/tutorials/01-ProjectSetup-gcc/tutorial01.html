@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <title>IrrOde Tutorial 01 - Project Setup - CodeBlocks</title>
+	<style type="text/css">
+
+#mainFrame
+{
+  border: 1px solid #4466FF;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 640px;
+  overflow: auto;
+  padding: 5px;
+  margin: 0px;
+  font-family: Arial;
+  font-size: 10pt;
+  background-color: #CCDDFF;
+  text-align: justify;
+}
+
+img {
+ margin: 5px;
+}
+
+pre {
+  padding: 5px;
+  margin: 5px;
+  background-color: #DDEEFF;
+  border: 1px solid #4466FF;
+  font-size: 10pt;
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="mainFrame">
+	  Welcome to the first tutorial for <a href="http://bulletbyte.de/products.php?sub=irr&show=irrode">IrrODE</a>. IrrODE is a wrapper for the
+	  <a href="http://opende.sourceforge.net">ODE</a> physics library and <a href="http://irrlicht.sourceforge.net">Irrlicht</a>. In this tutorial
+	  I'll show you how to set up the <a href="http://www.codeblocks.org">Code::Blocks</a> IDE for the <a href="http://www.mingw.org/">MinGW gcc</a>
+	  compiler and how to create a simple IrrODE program. I assume you have downloaded Irrlicht and ODE and compiled an ODE library. In
+	  this tutorial we will develop a &quot;helloIrrOdeWorld&quot; example application.<br /><br />
+	  <b>Step 1: setting up the project</b><br />
+	  Use the Code::Blocks project creation wizard and create an Irrlicht project.<br />
+	  <img src="pix/wizard.jpg" alt="the Code::Blocks project creation wizard" /><br />
+	  Set the execution working dir to your working dir in the project/target options dialog, tab &quot;build targets&quot;<br />
+	  <img src="pix/properties.jpg" alt="project properties" /><br />
+	  After this go to the &quot;Linker&quot; tab of the &quot;Project Build Options&quot; dialog and add 
+	  &quot;&gt;irrOdeDirectory&lt;/bin/gcc-win32/libIrrOde.a&quot; and the ODE lib you have created, e.g.
+	  &quot;libode_single.a&quot;. Make sure &quot;libIrrOde.a&quot; is the first lib in the list.<br />
+	  <img src="pix/lib.jpg" alt="add ODE lib" /><br />
+	  Now go to the &quot;Search Directories&quot; tab of the &quot;Project Build Options&quot; dialog and add the &quot;&lt;IrrOde directory&gt;/include/irrOde&quot;
+	  and the &quot;&lt;ODE directory&gt;/include&quot; directory.<br />
+	  <img src="pix/include.jpg" alt="add include directories" /><br /><br />
+	  After adding the file &quot;IrrODE.h&quot; to the includes in your <i>main.cpp</i> file and cleaning the comments from the file 
+	  created by the Wizard your file should look like this:
+	  <pre>
+#include &lt;irrlicht.h&gt;
+#include &lt;IrrODE.h&gt;
+
+using namespace irr;
+
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
+using namespace ode;  //This is the namespace of all IrrODE stuff
+
+int main(int argc, char** argv) {
+  IrrlichtDevice *device=createDevice(EDT_DIRECT3D9,dimension2d<s32>(640,480),
+                                      16,false,false,false,0);
+
+  device->setWindowCaption(L"HelloOdeWorld");
+
+  IVideoDriver* driver = device->getVideoDriver();
+  ISceneManager* smgr = device->getSceneManager();
+  IGUIEnvironment* guienv = device->getGUIEnvironment();
+
+  while(device->run()) {
+    driver->beginScene(true, true, SColor(0,200,200,200));
+
+    smgr->drawAll();
+    guienv->drawAll();
+
+    driver->endScene();
+  }
+
+  device->drop();
+  return 0;
+}</pre>
+	  Your project should now compile and run. You'll get an impressive gray screen.<br /><br />
+	  <b>Step 2: initialize IrrOde:</b><br />
+	  The first thing to do for initializing IrrODE is to register an instance of the <i>CIrrOdeSceneNodeFactory</i>.
+	  <pre>
+  CIrrOdeSceneNodeFactory cFactory(smgr);
+  smgr->registerSceneNodeFactory(&cFactory);</pre>
+	  With this scene node factory you can add all IrrOde scenenodes using the scenemanager. We'll see that later on.<br />
+	  Next we init ODE using the singleton instance of the <i>CIrrOdeMananger</i> and install it. With that installation
+		IrrOde gets the timer and the scene manager it needs.
+	  <pre>
+  //install the ODE
+  CIrrOdeManager::getSharedInstance()->install(device);	</pre>
+	<b>Step 3: load an IrrODE scene</b><br />
+	Before adding objects to the system we init ODE.
+	<pre>
+  CIrrOdeManager::getSharedInstance()->initODE();</pre>
+  The normal way of using IrrOde is to create scenes with the &quot;IrrOdEdit&quot; plugin for the 
+  <a href="http://www.ambiera.com/irredit/index.html">IrrEdit</a> scene editor. See tutorial 3 for details about that,
+  for the moment we just load the scene:<br />
+  <pre>  smgr->loadScene("../../data/IrrOdEdit_example.xml");</pre>
+	  In order to make IrrOde initialize the physics entities of the objects we have added until now we tell the worldNode to do so.
+	  <pre>
+  worldNode->initPhysics();</pre>
+	  Note that when adding objects to the world during runtime you do also have to call the &quot;initPhysics&quot; method of the
+	  object. If you do e.g. call the method of a <i>CIrrOdeBody</i> object it will also init the physics of all it's children so
+	  there is not need to manually call all these methods.<br /><br />
+	  Before we can see anything we need to add a camera to the scene, set it to an apropriate position and make it face the scene.
+	  <pre>
+  ICameraSceneNode *cam=smgr->addCameraSceneNode();
+  cam->setPosition(vector3df(-20.0f, 15.0f, -20.0f));
+  cam->setTarget(vector3df(0.0f,0.0f,0.0f));</pre>
+	  The final thing to do is to adjust the main loop of the program so that our world get steped in each frame. Please note that the
+	  default IrrODE rate is 60fps (0.016s/step), so that even if your computer makes a higher framerate IrrODE will automatically get
+	  the physic's rate down to that value. Please read the ODE wiki on <a href="http://opende.sourceforge.net">their homepage</a> on
+	  why it is important to have a constant time step value and all other information you may want to have.
+	  <pre>
+  while(device->run()) {
+    CIrrOdeManager::getSharedInstance()->step();
+    driver->beginScene(true, true, SColor(0,200,200,200));
+
+    smgr->drawAll();
+    guienv->drawAll();
+
+    driver->endScene();
+  }</pre>
+      After all this hard and dirty work you can finally compile and run your first IrrODE application.<br />
+      <img src="pix/helloIrrOdeWorld.jpg" alt="helloIrrOdeWorld screenshot" />
+	</div>
+  </body>
+</html>

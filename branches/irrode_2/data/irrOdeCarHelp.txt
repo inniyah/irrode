@@ -1,0 +1,47 @@
+
+
+			IrrOdeCar -- Help
+
+Welcome to IrrODECar, a little demo application using Irrlicht, ODE and the IrrODE wrapper. You can drive a car all around a map. Controller settings:
+ 
+toggle help screen: KEY_F1
+%sreturn to vehicle selection menu: KEY_Tab
+ 
+Some notes: 
+
+if you want to jump over the simpel car's ramp be sure to have a speed of about 55. This way you are going to land on the other ramp. If your speed is lower than 50 you will crash into the ramp, if it is much higher you will jump over the landing ramp resulting in a hard landing. Use the BOOST feature to get the necessary speed.
+
+The adaptive steering can be toggled. It adapts the steering angle according to the car's speed. This way the car will not flip that easy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

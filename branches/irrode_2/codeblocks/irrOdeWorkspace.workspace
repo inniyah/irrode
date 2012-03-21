@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="IrrODE">
+		<Project filename="libIrrOde.cbp" />
+		<Project filename="IrrOdeRePlayer.cbp">
+			<Depends filename="libIrrOde.cbp" />
+		</Project>
+		<Project filename="IrrOdeTestbed.cbp">
+			<Depends filename="libIrrOde.cbp" />
+		</Project>
+		<Project filename="IrrOdeCar.cbp">
+			<Depends filename="libIrrOde.cbp" />
+		</Project>
+		<Project filename="RePLayerPlugin.cbp" />
+		<Project filename="IrrOdEditExample.cbp" active="1" />
+	</Workspace>
+</CodeBlocks_workspace_file>
