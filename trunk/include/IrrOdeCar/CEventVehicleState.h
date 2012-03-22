@@ -87,7 +87,8 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
       eCarFlagSmoke=1,
       eCarFlagBrake=2,
       eCarFlagReverse=4,
-      eCarFlagDifferential=8
+      eCarFlagDifferential=8,
+      eCarFlagTouch = 16
     };
 
   protected:

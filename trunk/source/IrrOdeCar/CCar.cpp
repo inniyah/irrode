@@ -85,13 +85,17 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
     for (irr::u32 i=0; i<2; i++)
       m_pRearWheels[i]=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName(sWheelBodies[i],m_pCarBody));
 
+    irr::c8 sFrontWheelBodies[][20] = { "sc_wheel_fr", "sc_wheel_fl"};
+    for (irr::u32 i = 0; i < 2; i++)
+      m_pFrontWheels[i]=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName(sFrontWheelBodies[i],m_pCarBody));
+
     printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
     printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
     printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
     printf("**** wheels: ");
     for (irr::u32 i=0; i<4; i++) printf("%i%s",(int)m_pWheels[i],i<3?", ":"");
     printf("\n");
-    printf("**** wheel bodies: %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1]);
+    printf("**** wheel bodies: %i, %i, %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1],(int)m_pFrontWheels[0],(int)m_pFrontWheels[1]);
     printf("**** params: ");
     for (irr::u32 i=0; i<4; i++) printf("%i%s",(int)m_pParams[i],i<3?", ":"");
     printf("\n");
@@ -346,6 +350,11 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       dataChanged();
     }
 
+    m_bTouch = false;
+    for (irr::u32 i = 0; i < 2 && !m_bTouch; i++) {
+      m_bTouch |= m_pFrontWheels[i]->getTouched() != NULL || m_pRearWheels[i]->getTouched() != NULL;
+    }
+
     applyAeroEffect();
   }
 
@@ -395,6 +404,7 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   if (m_bBrake                  ) iFlags|=CEventCarState::eCarFlagBrake;
   if (m_pGearBox->differential()) iFlags|=CEventCarState::eCarFlagDifferential;
   if (m_pGearBox->exhaustSmoke()) iFlags|=CEventCarState::eCarFlagSmoke;
+  if (m_bTouch                  ) iFlags|=CEventCarState::eCarFlagTouch;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),

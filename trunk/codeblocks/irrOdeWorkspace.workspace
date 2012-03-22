@@ -8,10 +8,10 @@
 		<Project filename="IrrOdeTestbed.cbp">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
-		<Project filename="IrrOdeCar.cbp">
+		<Project filename="IrrOdeCar.cbp" active="1">
 			<Depends filename="libIrrOde.cbp" />
 		</Project>
 		<Project filename="RePLayerPlugin.cbp" />
-		<Project filename="IrrOdEditExample.cbp" active="1" />
+		<Project filename="IrrOdEditExample.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

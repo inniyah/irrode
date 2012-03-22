@@ -43,7 +43,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       irr::ode::CIrrOdeBody *pCar;
       CAdvancedParticleSystemNode *pSmoke[2];
       irrklang::ISound *pEngine,
-                       *pWind;
+                       *pWind,
+                       *pWheels;
     } SCarNodes;
 
     typedef struct sHeliNodes {
