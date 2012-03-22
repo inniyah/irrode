@@ -29,7 +29,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
       protected:
         irr::f32 m_fVelocity[4],
                  m_fForce   [4];
-        irr::ode::CIrrOdeMotor *m_pMotor[2];
+
+        irr::ode::CIrrOdeMotor      *m_pMotor[2];
         irr::ode::CIrrOdeJointHinge *m_pAxesRear[2];
         irr::f32 m_fRpm,
                  m_fDiff,
@@ -64,7 +65,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
              m_bHelp,            /*!< is the help screen visible? */
              m_bInternal,        /*!< internal view active? */
              m_bGasStation,      /*!< is the car in a gas station? */
-             m_bGasLastStep;     /*!< was the car in a gas station in the last step? */
+             m_bGasLastStep,     /*!< was the car in a gas station in the last step? */
+             m_bTouch;           /*!< at least one of the wheels has ground contact */
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
@@ -75,7 +77,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
 
     irr::ode::CIrrOdeBody              *m_pCarBody,        /*!< the car's body */
                                        *m_pSuspension,     /*!< the suspension */
-                                       *m_pRearWheels[2];  /*!< the rear wheel bodies */
+                                       *m_pRearWheels[2],  /*!< the rear wheel bodies */
+                                       *m_pFrontWheels[2]; /*!< the front wheel bodies */
     irr::ode::CIrrOdeJointSlider       *m_pJointSus;       /*!< the supension joint */
     irr::ode::CIrrOdeMotor             *m_pMotor    [2],   /*!< the motors attached to the rear wheels */
                                        *m_pBrkFr    [2],   /*!< front wheel brakes */

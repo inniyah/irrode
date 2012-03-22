@@ -32,6 +32,7 @@ void CCustomEventReceiver::destall() {
     SPlaneNodes *p=*it;
     m_lPlanes.erase(it);
     if (p->pEngine) p->pEngine->drop();
+    if (p->pWind  ) p->pWind  ->drop();
     delete p;
   }
 
@@ -48,6 +49,8 @@ void CCustomEventReceiver::destall() {
     SCarNodes *p=*it;
     m_lCars.erase(it);
     if (p->pEngine) p->pEngine->drop();
+    if (p->pWind  ) p->pWind  ->drop();
+    if (p->pWheels) p->pWheels->drop();
     delete p;
   }
 
@@ -157,10 +160,13 @@ void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
   pNodes->vOldSpeed=core::vector3df(0.0f,0.0f,0.0f);
   pNodes->fSteerAngle=0.0f;
 
-  pNodes->pEngine=m_pSndEngine->play3D("../../data/sound/car.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f);  else printf("\n\t\t**** oops\n\n");
-  pNodes->pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (pNodes->pWind) pNodes->pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
+  pNodes->pEngine = m_pSndEngine->play3D("../../data/sound/car.ogg"    ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  pNodes->pWind   = m_pSndEngine->play3D("../../data/sound/wind.ogg"   ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  pNodes->pWheels = m_pSndEngine->play3D("../../data/sound/rolling.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+
+  if (pNodes->pEngine) pNodes->pEngine->setMinDistance(25.0f); else printf("\n\t\t**** oops 1\n\n");
+  if (pNodes->pWind  ) pNodes->pWind  ->setMinDistance( 0.0f); else printf("\n\t\t**** oops 2\n\n");
+  if (pNodes->pWheels) pNodes->pWheels->setMinDistance( 0.0f); else printf("\n\t\t**** oops 3\n\n");
 
   pNodes->pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(pCar,pNodes);
@@ -321,6 +327,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
           pCar->pEngine->setIsPaused(false);
           pCar->pWind  ->setIsPaused(false);
+          pCar->pWheels->setIsPaused(false);
         }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
 
@@ -359,6 +366,17 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           bool bBrk=p->getFlags()&CEventCarState::eCarFlagBrake;
           pCar->pBody->getMaterial(4).setTexture(0,bBrk?m_pRearLights[1]:m_pRearLights[0]);
         }
+
+        irr::f32 fVol = 0.0f;
+        if (p->getFlags() & CEventCarState::eCarFlagTouch) {
+          fVol = pCar->pCar->getLinearVelocity().getLength() / 100.0f;
+          if (fVol < 0.0f) fVol = -fVol;
+          if (fVol > 1.0f) fVol =  1.0f;
+        }
+
+        pCar->pWheels->setVolume(0.6f * fVol);
+        pCar->pWheels->setPlaybackSpeed(1.0f+(fVol-0.5f));
+        updateSound(pCar->pWheels, pCar->pCar);
       }
     }
   }
