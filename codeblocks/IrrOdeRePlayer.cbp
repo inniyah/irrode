@@ -9,7 +9,7 @@
 			<Target title="nullDeviceDebug">
 				<Option output="..\bin\gcc-win32-debug\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
-				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\debug" />
+				<Option object_output="..\..\_obj_dump\irrOde_2\IrrOdeRePlayer\debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -20,7 +20,7 @@
 			<Target title="nullDeviceRelease">
 				<Option output="..\bin\gcc-win32\IrrOdeRePlayer" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
-				<Option object_output="..\..\_obj_dump\irrOde\IrrOdeRePlayer\release" />
+				<Option object_output="..\..\_obj_dump\irrOde_2\IrrOdeRePlayer\release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
