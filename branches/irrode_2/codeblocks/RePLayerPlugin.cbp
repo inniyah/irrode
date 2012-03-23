@@ -9,7 +9,7 @@
 			<Target title="debug">
 				<Option output="..\bin\gcc-win32-debug\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
-				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\debug" />
+				<Option object_output="..\..\_obj_dump\irrOde_2\RePlayerPlugin\debug" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32-debug\IrrOdeRePlayer.exe" />
@@ -28,7 +28,7 @@
 			<Target title="release">
 				<Option output="..\bin\gcc-win32\RePlayerPlugins\RePlayerPlugin" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\bin\gcc-win32" />
-				<Option object_output="..\..\_obj_dump\irrOde\RePlayerPlugin\release" />
+				<Option object_output="..\..\_obj_dump\irrOde_2\RePlayerPlugin\release" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option host_application="D:\myStuff\projects\irrode\bin\gcc-win32\IrrOdeRePlayer.exe" />
