@@ -100,8 +100,6 @@ copy include\IrrOdeCar\RoadCreator irrode\include\IrrOdeCar\RoadCreator
 
 mkdir irrode\codeblocks
 copy codeblocks\*.* irrode\codeblocks
-mkdir irrode\codeblocks\CodeSnippets
-copy codeblocks\CodeSnippets\*.* irrode\codeblocks\CodeSnippets
 mkdir irrode\vc2008
 copy vc2008\*.* irrode\vc2008
 del irrode\vc2008\*.ncb
