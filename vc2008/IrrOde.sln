@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdEditExample", "IrrOdEd
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libIrrOde", "libIrrOde.vcproj", "{FBB28A58-926F-4137-824A-D4EF514EFEAC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdeTestbed", "IrrOdeTestbed.vcproj", "{33AA4514-63C8-40BF-AD47-D401A49795BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Debug|Win32.Build.0 = Debug|Win32
 		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Release|Win32.ActiveCfg = Release|Win32
 		{FBB28A58-926F-4137-824A-D4EF514EFEAC}.Release|Win32.Build.0 = Release|Win32
+		{33AA4514-63C8-40BF-AD47-D401A49795BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{33AA4514-63C8-40BF-AD47-D401A49795BF}.Debug|Win32.Build.0 = Debug|Win32
+		{33AA4514-63C8-40BF-AD47-D401A49795BF}.Release|Win32.ActiveCfg = Release|Win32
+		{33AA4514-63C8-40BF-AD47-D401A49795BF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
