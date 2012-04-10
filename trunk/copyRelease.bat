@@ -10,11 +10,11 @@ del irrode\bin\gcc-win32\*_debug.exe
 del irrode\bin\gcc-win32\libIrrOdeNull.a
 mkdir irrode\bin\gcc-win32\RePlayerPlugins
 copy bin\gcc-win32\RePlayerPlugins\*.* irrode\bin\gcc-win32\RePlayerPlugins
-mkdir irrode\bin\vc2008
-copy bin\vc2008\*.dll irrode\bin\vc2008
-copy bin\vc2008\libIrrOde.lib irrode\bin\vc2008
-copy bin\vc2008\ode_single.lib irrode\bin\vc2008
-copy bin\vc2008\*.exe irrode\bin\vc2008
+mkdir irrode\bin\vc2010
+copy bin\vc2010\*.dll irrode\bin\vc2010
+copy bin\vc2010\libIrrOde.lib irrode\bin\vc2010
+copy bin\vc2010\ode_single.lib irrode\bin\vc2010
+copy bin\vc2010\*.exe irrode\bin\vc2010
 mkdir irrode\bin\vc2005
 copy bin\vc2005\*.* irrode\bin\vc2005
 copy *.txt irrode
@@ -100,10 +100,10 @@ copy include\IrrOdeCar\RoadCreator irrode\include\IrrOdeCar\RoadCreator
 
 mkdir irrode\codeblocks
 copy codeblocks\*.* irrode\codeblocks
-mkdir irrode\vc2008
-copy vc2008\*.* irrode\vc2008
-del irrode\vc2008\*.ncb
-del irrode\vc2008\*.user
+mkdir irrode\vc2010
+copy vc2010\*.* irrode\vc2010
+del irrode\vc2010\*.ncb
+del irrode\vc2010\*.user
 mkdir irrode\vc2005
 copy vc2005\*.* irrode\vc2005
 mkdir irrode\XCode
