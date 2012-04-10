@@ -1,11 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdEditExample", "IrrOdEditExample.vcproj", "{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdEditExample", "IrrOdEditExample.vcxproj", "{BEB6EE01-0398-4F16-BDA3-1B45FBD3451C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libIrrOde", "libIrrOde.vcproj", "{FBB28A58-926F-4137-824A-D4EF514EFEAC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libIrrOde", "libIrrOde.vcxproj", "{FBB28A58-926F-4137-824A-D4EF514EFEAC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdeTestbed", "IrrOdeTestbed.vcproj", "{33AA4514-63C8-40BF-AD47-D401A49795BF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IrrOdeTestbed", "IrrOdeTestbed.vcxproj", "{33AA4514-63C8-40BF-AD47-D401A49795BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
