@@ -15,8 +15,6 @@ copy bin\vc2010\*.dll irrode\bin\vc2010
 copy bin\vc2010\libIrrOde.lib irrode\bin\vc2010
 copy bin\vc2010\ode_single.lib irrode\bin\vc2010
 copy bin\vc2010\*.exe irrode\bin\vc2010
-mkdir irrode\bin\vc2005
-copy bin\vc2005\*.* irrode\bin\vc2005
 copy *.txt irrode
 copy changelog.txt irrode
 mkdir irrode\data
@@ -104,8 +102,9 @@ mkdir irrode\vc2010
 copy vc2010\*.* irrode\vc2010
 del irrode\vc2010\*.ncb
 del irrode\vc2010\*.user
-mkdir irrode\vc2005
-copy vc2005\*.* irrode\vc2005
+del irrode\vc2010\*.sdf
+del irrode\vc2010\*.filters
+del irrode\vc2010\*.xml
 mkdir irrode\XCode
 copy XCode\*.* irrode\XCode
 mkdir irrode\XCode\MacOSX.xcodeproj
