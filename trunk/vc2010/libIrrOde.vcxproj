@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FBB28A58-926F-4137-824A-D4EF514EFEAC}</ProjectGuid>
+    <RootNamespace>libIrrOde</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\bin\vc2010\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\_obj_dump\irrOde\libIrrOde\vc2010</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\bin\vc2010</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\_obj_dump\irrOde\libIrrOde\vc2010\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>D:\myStuff\projects\libs\ode-0.12-vc\include;D:\myStuff\projects\libs\irrlicht-1.7.1\include;D:\myStuff\projects\irrOde\include\IrrOde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;dSINGLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>..\bin\vc2010\$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>D:\myStuff\projects\libs\ode-0.12-vc\include;D:\myStuff\projects\libs\irrlicht-1.7.1\include;D:\myStuff\projects\irrOde\include\IrrOde;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;dSINGLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+    </ClCompile>
+    <Lib>
+      <OutputFile>..\bin\vc2010\$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\IrrOde\CIrrOdeBody.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeContactParameters.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeDampable.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeDevice.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeManager.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeSceneNode.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeSceneNodeFactory.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeSpace.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeSurfaceParameters.cpp" />
+    <ClCompile Include="..\source\IrrOde\CIrrOdeWorld.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventActivationChanged.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventBeforeStep.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventBodyCreated.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventBodyMoved.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventBodyRemoved.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventClose.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventIdentify.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventInit.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventJointHinge.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventJointHinge2.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventJointSlider.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventLoadScene.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventNodeCloned.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventNodeRemoved.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventProgress.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventQueue.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventRayHit.cpp" />
+    <ClCompile Include="..\source\IrrOde\event\CIrrOdeEventStep.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeom.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomBox.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomCapsule.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomCylinder.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomHeightfield.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomPlane.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomRay.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomSphere.cpp" />
+    <ClCompile Include="..\source\IrrOde\geom\CIrrOdeGeomTrimesh.cpp" />
+    <ClCompile Include="..\source\IrrOde\joints\CIrrOdeJoint.cpp" />
+    <ClCompile Include="..\source\IrrOde\joints\CIrrOdeJointFixed.cpp" />
+    <ClCompile Include="..\source\IrrOde\joints\CIrrOdeJointHinge.cpp" />
+    <ClCompile Include="..\source\IrrOde\joints\CIrrOdeJointHinge2.cpp" />
+    <ClCompile Include="..\source\IrrOde\joints\CIrrOdeJointSlider.cpp" />
+    <ClCompile Include="..\source\IrrOde\motors\CIrrOdeAeroDrag.cpp" />
+    <ClCompile Include="..\source\IrrOde\motors\CIrrOdeImpulseMotor.cpp" />
+    <ClCompile Include="..\source\IrrOde\motors\CIrrOdeMotor.cpp" />
+    <ClCompile Include="..\source\IrrOde\motors\CIrrOdeServo.cpp" />
+    <ClCompile Include="..\source\IrrOde\motors\CIrrOdeTorqueMotor.cpp" />
+    <ClCompile Include="..\source\IrrOde\observer\CIrrOdeEventFactory.cpp" />
+    <ClCompile Include="..\source\IrrOde\observer\CIrrOdeRecorder.cpp" />
+    <ClCompile Include="..\source\IrrOde\observer\CIrrOdeRePlayer.cpp" />
+    <ClCompile Include="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\IrrOde\CIrrOdeBody.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeContactParameters.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeDampable.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeDevice.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeManager.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeNullDevice.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeSceneNode.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeSceneNodeFactory.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeSpace.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeSurfaceParameters.h" />
+    <ClInclude Include="..\include\IrrOde\CIrrOdeWorld.h" />
+    <ClInclude Include="..\include\IrrOde\CSerializer.h" />
+    <ClInclude Include="..\include\IrrOde\IIrrOdeContactParameters.h" />
+    <ClInclude Include="..\include\IrrOde\IIrrOdeDevice.h" />
+    <ClInclude Include="..\include\IrrOde\IrrOde.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventActivationChanged.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventBeforeStep.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventBodyCreated.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventBodyMoved.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventBodyRemoved.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventClose.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventIdentify.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventInit.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventLoadScene.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventNodeCloned.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventNodeRemoved.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventProgress.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventQueue.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventRayHit.h" />
+    <ClInclude Include="..\include\IrrOde\event\CIrrOdeEventStep.h" />
+    <ClInclude Include="..\include\IrrOde\event\IIrrOdeEvent.h" />
+    <ClInclude Include="..\include\IrrOde\event\IIrrOdeEventListener.h" />
+    <ClInclude Include="..\include\IrrOde\event\IIrrOdeEventQueue.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeom.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomBox.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomCapsule.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomCylinder.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomHeightfield.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomPlane.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomRay.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomSphere.h" />
+    <ClInclude Include="..\include\IrrOde\geom\CIrrOdeGeomTrimesh.h" />
+    <ClInclude Include="..\include\IrrOde\joints\CIrrOdeJoint.h" />
+    <ClInclude Include="..\include\IrrOde\joints\CIrrOdeJointFixed.h" />
+    <ClInclude Include="..\include\IrrOde\joints\CIrrOdeJointHinge.h" />
+    <ClInclude Include="..\include\IrrOde\joints\CIrrOdeJointHinge2.h" />
+    <ClInclude Include="..\include\IrrOde\joints\CIrrOdeJointSlider.h" />
+    <ClInclude Include="..\include\IrrOde\motors\CIrrOdeAeroDrag.h" />
+    <ClInclude Include="..\include\IrrOde\motors\CIrrOdeImpulseMotor.h" />
+    <ClInclude Include="..\include\IrrOde\motors\CIrrOdeMotor.h" />
+    <ClInclude Include="..\include\IrrOde\motors\CIrrOdeServo.h" />
+    <ClInclude Include="..\include\IrrOde\motors\CIrrOdeTorqueMotor.h" />
+    <ClInclude Include="..\include\IrrOde\motors\IIrrOdeMotor.h" />
+    <ClInclude Include="..\include\IrrOde\motors\IIrrOdeStepMotor.h" />
+    <ClInclude Include="..\include\IrrOde\observer\CIrrOdeEventFactory.h" />
+    <ClInclude Include="..\include\IrrOde\observer\CIrrOdeRecorder.h" />
+    <ClInclude Include="..\include\IrrOde\observer\CIrrOdeRePlayer.h" />
+    <ClInclude Include="..\include\IrrOde\observer\CIrrOdeWorldObserver.h" />
+    <ClInclude Include="..\include\IrrOde\observer\IEventFactory.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
