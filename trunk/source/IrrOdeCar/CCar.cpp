@@ -212,8 +212,8 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (fForeward<0.0f) fForeward=-fForeward;
 
       for (irr::u32 i=0; i<2; i++) {
-        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*350.0f);
-        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward*150.0f);
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*50.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward*25.0f);
       }
       m_bBrake=true;
     }
@@ -434,10 +434,10 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_bDifferential = true;
   m_bDataChanged = false;
 
-  m_fVelocity[0] =  -50.0f; m_fForce[0] =  90.0f;
-  m_fVelocity[1] =  -85.0f; m_fForce[1] =  80.0f;
-  m_fVelocity[2] = -120.0f; m_fForce[2] =  70.0f;
-  m_fVelocity[3] = -155.0f; m_fForce[3] =  60.0f;
+  m_fVelocity[0] =  -50.0f; m_fForce[0] =  12.5f;
+  m_fVelocity[1] =  -90.0f; m_fForce[1] =   9.5f;
+  m_fVelocity[2] = -130.0f; m_fForce[2] =   7.0f;
+  m_fVelocity[3] = -180.0f; m_fForce[3] =   6.0f;
 }
 
 bool CCar::CGearBox::shiftUp() {
@@ -505,17 +505,17 @@ void CCar::CGearBox::update(irr::f32 fThrottle) {
           m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
         }
         else {
-          m_pMotor[i]->setVelocity(45.0f);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*90.0f);
+          m_pMotor[i]->setVelocity(25.0f);
+          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*20.0f);
         }
     }
     else {
       m_pMotor[i]->setVelocity(0.0f);
       if (m_iGear != 0) {
-        m_pMotor[i]->setForce(75.0f);
+        m_pMotor[i]->setForce(15.0f);
       }
       else {
-        m_pMotor[i]->setForce(5.0f);
+        m_pMotor[i]->setForce(1.0f);
       }
     }
   }
