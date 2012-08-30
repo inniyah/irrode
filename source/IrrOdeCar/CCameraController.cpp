@@ -87,13 +87,13 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
     m_pCursor->setPosition(irr::core::position2df(0.5f,0.5f));
 
     if (m_pTarget->getOdeClassname() == "car") {
-      m_vInternalOffset = irr::core::vector3df( 0.0f, 1.35f, 0.0f);
+      m_vInternalOffset = irr::core::vector3df( 0.0f, 0.32f, 0.0f);
 
       m_vDirection = irr::core::vector3df(-1.0f,0.0f,0.0f);
       m_bRotateXY = true;
 
-      m_fExtOffset =  3.0f;
-      m_fExtDist   = 15.0f;
+      m_fExtOffset = 1.0f;
+      m_fExtDist   = 3.0f;
     }
     else
       if (m_pTarget->getOdeClassname() == "tank") {
