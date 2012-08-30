@@ -139,11 +139,11 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_bBrakes = b;
 
       if (m_pBrakes[0]!=NULL) {
-        m_pBrakes[0]->setForce(100.0f*m_pController->get(m_pCtrls[eAeroBrake]));
+        m_pBrakes[0]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
       }
 
       if (m_pBrakes[1]!=NULL) {
-        m_pBrakes[1]->setForce(100.0f*m_pController->get(m_pCtrls[eAeroBrake]));
+        m_pBrakes[1]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
       }
 
       if (m_pController->get(m_pCtrls[eAeroFlip])) {

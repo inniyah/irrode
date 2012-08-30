@@ -87,7 +87,7 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
     m_pCursor->setPosition(irr::core::position2df(0.5f,0.5f));
 
     if (m_pTarget->getOdeClassname() == "car") {
-      m_vInternalOffset = irr::core::vector3df( 0.0f, 0.32f, 0.0f);
+      m_vInternalOffset = irr::core::vector3df( 0.05f, 0.34f, 0.0f);
 
       m_vDirection = irr::core::vector3df(-1.0f,0.0f,0.0f);
       m_bRotateXY = true;
@@ -117,13 +117,13 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
         }
         else
           if (m_pTarget->getOdeClassname() == "plane") {
-            m_vInternalOffset = irr::core::vector3df(0.0f, 1.1f, -0.6f);
+            m_vInternalOffset = irr::core::vector3df(0.0f, 0.55f, -0.3f);
 
             m_vDirection = irr::core::vector3df(0.0f,0.0f,-1.0f);
             m_bRotateXY = false;
 
-            m_fExtDist   = 15.0f;
-            m_fExtOffset =  3.0f;
+            m_fExtDist   = 7.5f;
+            m_fExtOffset = 1.5f;
           }
           else setTarget(NULL);
   }
