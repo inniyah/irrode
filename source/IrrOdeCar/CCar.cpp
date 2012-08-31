@@ -434,10 +434,10 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_bDifferential = true;
   m_bDataChanged = false;
 
-  m_fVelocity[0] =  -50.0f; m_fForce[0] =  12.5f;
-  m_fVelocity[1] = -100.0f; m_fForce[1] =   9.5f;
-  m_fVelocity[2] = -135.0f; m_fForce[2] =   7.0f;
-  m_fVelocity[3] = -180.0f; m_fForce[3] =   6.0f;
+  m_fVelocity[0] =  -70.0f; m_fForce[0] =  12.5f;
+  m_fVelocity[1] = -120.0f; m_fForce[1] =   9.5f;
+  m_fVelocity[2] = -150.0f; m_fForce[2] =   7.0f;
+  m_fVelocity[3] = -200.0f; m_fForce[3] =   6.0f;
 }
 
 bool CCar::CGearBox::shiftUp() {
