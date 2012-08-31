@@ -102,18 +102,18 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
         m_vDirection = irr::core::vector3df(-1.0f,0.0f,0.0f);
         m_bRotateXY = true;
 
-        m_fExtDist   = 1.0f;
+        m_fExtDist   = 0.4f;
         m_fExtOffset = 0.0f;
       }
       else
         if (m_pTarget->getOdeClassname() == "heli") {
-          m_vInternalOffset = irr::core::vector3df(0.0f, 0.1f, -1.0f);
+          m_vInternalOffset = irr::core::vector3df(0.0f, 0.016f, -0.5f);
 
           m_vDirection = irr::core::vector3df(0.0f,0.0f,-1.0f);
           m_bRotateXY = false;
 
-          m_fExtDist   = 15.0f;
-          m_fExtOffset =  5.0f;
+          m_fExtDist   = 7.0f;
+          m_fExtOffset = 2.0f;
         }
         else
           if (m_pTarget->getOdeClassname() == "plane") {

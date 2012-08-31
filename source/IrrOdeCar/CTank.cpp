@@ -106,7 +106,7 @@ void CTank::deactivate() {
   m_pController->reset();
   for (int i=0; i<4; i++) {
     m_pMotor[i]->setVelocity(0);
-    m_pMotor[i]->setForce(20);
+    m_pMotor[i]->setForce(13);
   }
   m_bActive=false;
 }
@@ -191,7 +191,7 @@ bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       for (irr::u32 i=0; i<4; i++) {
         m_pMotor[i]->setVelocity(fVel[i]);
-        m_pMotor[i]->setForce(20);
+        m_pMotor[i]->setForce(13);
       }
 
       if (m_pController->get(m_pCtrls[eTankFlip])!=0.0f) {
