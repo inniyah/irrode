@@ -41,7 +41,7 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pBoostRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_red.png" ),irr::core::position2di(164,328),true,m_pTab);
   m_pBoostGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_gray.png"),irr::core::position2di(164,328),true,m_pTab);
 
-  for (irr::u32 i = 0; i < 6; i++) {
+  for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
     sprintf(s, "../../data/car/gear_%i.png",i);
     m_pGear[i] = m_pGuienv->addImage(m_pDrv->getTexture(s), irr::core::position2di(323,323), true, m_pTab);
@@ -135,7 +135,7 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       m_fSpeed = p->getSpeed();
 
-      for (irr::u32 i = 0; i < 6; i++) m_pGear[i]->setVisible(false);
+      for (irr::u32 i = 0; i < 7; i++) m_pGear[i]->setVisible(false);
       m_pGear[p->getGear()+1]->setVisible(true);
     }
   }

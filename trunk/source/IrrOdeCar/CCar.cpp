@@ -277,10 +277,10 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (fVel>2.0f || fVel<-2.0f) {
       irr::f32 fFact=fVel-2.0f;
       if (fFact<100.0f) {
-        fFact=0.75f*(fFact/100.0f);
+        fFact=0.5f*(fFact/100.0f);
       }
       else
-        fFact=0.75f;
+        fFact=0.5f;
 
       if (fFact>0.0f)
         for (irr::u32 i=0; i<4; i++) {
@@ -434,14 +434,15 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_bDifferential = true;
   m_bDataChanged = false;
 
-  m_fVelocity[0] =  -70.0f; m_fForce[0] =  12.5f;
-  m_fVelocity[1] = -120.0f; m_fForce[1] =   9.5f;
-  m_fVelocity[2] = -150.0f; m_fForce[2] =   7.0f;
-  m_fVelocity[3] = -200.0f; m_fForce[3] =   6.0f;
+  m_fVelocity[0] =  -70.0f; m_fForce[0] =  20.0f;
+  m_fVelocity[1] = -120.0f; m_fForce[1] =  17.5f;
+  m_fVelocity[2] = -150.0f; m_fForce[2] =  15.0f;
+  m_fVelocity[3] = -200.0f; m_fForce[3] =  12.5f;
+  m_fVelocity[4] = -250.0f; m_fForce[4] =   8.0f;
 }
 
 bool CCar::CGearBox::shiftUp() {
-  if (m_iGear < 4) {
+  if (m_iGear < 5) {
     m_iGear++;
     m_iClutch = 12;
     return true;

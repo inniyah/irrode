@@ -27,8 +27,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
   protected:
     class CGearBox {
       protected:
-        irr::f32 m_fVelocity[4],
-                 m_fForce   [4];
+        irr::f32 m_fVelocity[5],
+                 m_fForce   [5];
 
         irr::ode::CIrrOdeMotor      *m_pMotor[2];
         irr::ode::CIrrOdeJointHinge *m_pAxesRear[2];
