@@ -195,7 +195,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     vNormVel.normalize();
 
-    m_fSpeed=-0.8f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
+    m_fSpeed=-0.3f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
     irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
 
@@ -204,7 +204,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
     if (m_fSteer!=0.0f)
-      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(25.0f*m_fSteer);
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(17.5f*m_fSteer);
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
@@ -212,8 +212,8 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (fForeward<0.0f) fForeward=-fForeward;
 
       for (irr::u32 i=0; i<2; i++) {
-        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*50.0f);
-        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward*25.0f);
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*100.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward* 60.0f);
       }
       m_bBrake=true;
     }
@@ -277,10 +277,10 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (fVel>2.0f || fVel<-2.0f) {
       irr::f32 fFact=fVel-2.0f;
       if (fFact<100.0f) {
-        fFact=0.5f*(fFact/100.0f);
+        fFact=0.075f*(fFact/100.0f);
       }
       else
-        fFact=0.5f;
+        fFact=0.075f;
 
       if (fFact>0.0f)
         for (irr::u32 i=0; i<4; i++) {
@@ -434,11 +434,11 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_bDifferential = true;
   m_bDataChanged = false;
 
-  m_fVelocity[0] =  -70.0f; m_fForce[0] =  20.0f;
-  m_fVelocity[1] = -120.0f; m_fForce[1] =  17.5f;
-  m_fVelocity[2] = -150.0f; m_fForce[2] =  15.0f;
-  m_fVelocity[3] = -200.0f; m_fForce[3] =  12.5f;
-  m_fVelocity[4] = -250.0f; m_fForce[4] =   8.0f;
+  m_fVelocity[0] = -100.0f; m_fForce[0] =  22.5f;
+  m_fVelocity[1] = -150.0f; m_fForce[1] =  20.0f;
+  m_fVelocity[2] = -200.0f; m_fForce[2] =  17.5f;
+  m_fVelocity[3] = -250.0f; m_fForce[3] =  15.0f;
+  m_fVelocity[4] = -300.0f; m_fForce[4] =  12.5f;
 }
 
 bool CCar::CGearBox::shiftUp() {
@@ -461,7 +461,6 @@ bool CCar::CGearBox::shiftDown() {
 
 void CCar::CGearBox::update(irr::f32 fThrottle) {
   //calculate differntial (if active)
-
   m_fThrottle = fThrottle;
 
   irr::f32 f1=m_pAxesRear[0]->getHingeAngleRate(),
