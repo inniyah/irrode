@@ -203,8 +203,18 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
+    irr::f32 v = m_pCarBody->getLinearVelocity().getLength();
+
+    irr::f32 fAngle = 22.5f;
+
+    if (v>50.0f)
+      fAngle = 10.0f;
+    else
+      if (v>5.0f)
+        fAngle = 22.5f - 12.5f * ((v - 5.0f) / 45.0f);
+
     if (m_fSteer!=0.0f)
-      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(17.5f*m_fSteer);
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(fAngle * m_fSteer);
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
