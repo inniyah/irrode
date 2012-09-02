@@ -11,8 +11,11 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
 
   m_iBodyId = -1;
   m_bLapStarted = false;
+  m_bBoost = false;
+  m_bAdapt = false;
   m_iLapStart = 0;
   m_iTime = 0;
+  m_iBoost = 0;
   m_iBodyId = pBody!=NULL?pBody->getID():-1;
 
   m_pGuienv->addStaticText(L"The Car",irr::core::rect<irr::s32>(5,400,105,25),false,true,m_pTab);
@@ -38,8 +41,8 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pDiff->setAngleRange(-85.0f,85.0f);
   m_pDiff->setAngleOffset(180.0f);
 
-  m_pBoostRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_red.png" ),irr::core::position2di(164,328),true,m_pTab);
-  m_pBoostGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_gray.png"),irr::core::position2di(164,328),true,m_pTab);
+  m_pShiftRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_red.png" ),irr::core::position2di(164,328),true,m_pTab);
+  m_pShiftGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_gray.png"),irr::core::position2di(164,328),true,m_pTab);
 
   for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
@@ -52,6 +55,14 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
 
   m_stDifferential=m_pGuienv->addStaticText(L"Active",irr::core::rect<irr::s32>(irr::core::position2di(160,96),irr::core::dimension2du(64,13)),false,true,m_pTab);
   m_stDifferential->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
+
+  m_stBoost = m_pGuienv->addStaticText(L"Boost: 600", irr::core::rect<irr::s32>(irr::core::position2di(143, 300), irr::core::dimension2du(64,13)), false, true, m_pTab);
+  m_stBoost->setBackgroundColor(irr::video::SColor(0xFF,0xFF,0,0));
+  m_stBoost->setDrawBackground(true);
+
+  m_stAdapt = m_pGuienv->addStaticText(L"Adaptive Steer", irr::core::recti(irr::core::position2di(143, 315), irr::core::dimension2du(64, 13)), false, true, m_pTab);
+  m_stAdapt->setBackgroundColor(irr::video::SColor(0xFF,0xFF,0,0));
+  m_stAdapt->setDrawBackground(true);
 
   m_bDifferential=true;
 
@@ -74,6 +85,13 @@ void CCockpitCar::update() {
   m_pDiff->setValue(m_fDiff);
   m_pRpm->setValue(m_fRpm);
   m_stDifferential->setBackgroundColor(m_bDifferential?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0xD0,0xD0));
+  m_stBoost->setBackgroundColor(m_bBoost?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0,0));
+  m_stAdapt->setBackgroundColor(m_bAdapt?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0,0));
+
+  wchar_t s[0xFF];
+  swprintf(s, 0xFF, L"Boost: %i", m_iBoost);
+  m_stBoost->setText(s);
+
   startRttUpdate();
   m_pTab->setVisible(true);
   m_pGuienv->drawAll();
@@ -127,11 +145,14 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (p->getNodeId() == m_iBodyId) {
       m_fRpm = -p->getRpm();
       m_fDiff = p->getDiff();
+      m_iBoost = p->getBoost();
       m_bDifferential = p->getFlags() & CEventCarState::eCarFlagDifferential;
+      m_bBoost        = p->getFlags() & CEventCarState::eCarFlagBoost;
+      m_bAdapt        = p->getFlags() & CEventCarState::eCarFlagAdapt;
 
       bool b = p->getFlags() & CEventCarState::eCarFlagSmoke;
-      m_pBoostGray->setVisible(!b);
-      m_pBoostRed ->setVisible( b);
+      m_pShiftGray->setVisible(!b);
+      m_pShiftRed ->setVisible( b);
 
       m_fSpeed = p->getSpeed();
 

@@ -32,6 +32,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_bGasLastStep=false;
   m_fSteer = 0.0f;
   m_fSpeed = 0.0f;
+  m_iBoost = 0;
 
   if (m_pCarBody) {
     m_iBodyId=m_pCarBody->getID();
@@ -199,7 +200,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
 
-    m_pGearBox->update(fForeward);
+    m_pGearBox->update(fForeward, m_bBoost);
 
     m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
@@ -222,14 +223,27 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (fForeward<0.0f) fForeward=-fForeward;
 
       for (irr::u32 i=0; i<2; i++) {
-        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*100.0f);
-        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward* 60.0f);
+        m_pBrkFr[i]->setVelocity(0.0f); m_pBrkFr[i]->setForce(fForeward*200.0f);
+        m_pBrkRe[i]->setVelocity(0.0f); m_pBrkRe[i]->setForce(fForeward* 90.0f);
       }
       m_bBrake=true;
     }
     else m_bBrake=false;
 
     if (m_bActive) {
+      if (m_pController->get(m_pCtrls[eCarBoost])) {
+        if (m_iBoost > 0) {
+          m_iBoost--;
+        }
+        else m_iBoost = 0;
+
+        m_bBoost = m_iBoost > 0;
+      }
+      else {
+        if (m_iBoost < 600) m_iBoost++;
+        m_bBoost = false;
+      }
+
       if (m_pController->get(m_pCtrls[eCarShiftUp])) {
         m_pController->set(m_pCtrls[eCarShiftUp],0.0f);
         if (m_pGearBox->shiftUp()) {
@@ -282,20 +296,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[0]);
         m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[2]);
       }
-    }
-
-    if (fVel>2.0f || fVel<-2.0f) {
-      irr::f32 fFact=fVel-2.0f;
-      if (fFact<100.0f) {
-        fFact=0.075f*(fFact/100.0f);
-      }
-      else
-        fFact=0.075f;
-
-      if (fFact>0.0f)
-        for (irr::u32 i=0; i<4; i++) {
-          m_pParams[i]->setSlip1(fFact);
-        }
     }
 
     m_fOldVel=fVel;
@@ -415,12 +415,14 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   if (m_pGearBox->differential()) iFlags|=CEventCarState::eCarFlagDifferential;
   if (m_pGearBox->exhaustSmoke()) iFlags|=CEventCarState::eCarFlagSmoke;
   if (m_bTouch                  ) iFlags|=CEventCarState::eCarFlagTouch;
+  if (m_bBoost                  ) iFlags|=CEventCarState::eCarFlagBoost;
+  if (m_bAdapt                  ) iFlags|=CEventCarState::eCarFlagAdapt;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
+                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear(), m_iBoost);
 
   return pEvent;
 }
@@ -447,8 +449,8 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_fVelocity[0] = -100.0f; m_fForce[0] =  22.5f;
   m_fVelocity[1] = -150.0f; m_fForce[1] =  20.0f;
   m_fVelocity[2] = -200.0f; m_fForce[2] =  17.5f;
-  m_fVelocity[3] = -250.0f; m_fForce[3] =  15.0f;
-  m_fVelocity[4] = -300.0f; m_fForce[4] =  12.5f;
+  m_fVelocity[3] = -300.0f; m_fForce[3] =  15.0f;
+  m_fVelocity[4] = -400.0f; m_fForce[4] =  12.5f;
 }
 
 bool CCar::CGearBox::shiftUp() {
@@ -469,7 +471,7 @@ bool CCar::CGearBox::shiftDown() {
   return false;
 }
 
-void CCar::CGearBox::update(irr::f32 fThrottle) {
+void CCar::CGearBox::update(irr::f32 fThrottle, bool bBoost) {
   //calculate differntial (if active)
   m_fThrottle = fThrottle;
 
@@ -504,6 +506,18 @@ void CCar::CGearBox::update(irr::f32 fThrottle) {
 
   //apply the forces of the motor
   for (irr::u32 i = 0; i < 2; i++) {
+    irr::f32 fBoost = 1.0f;
+
+    if (bBoost) {
+      switch (m_iGear) {
+        case 1: fBoost = 1.5f;
+        case 2: fBoost = 2.0f;
+        case 3: fBoost = 2.25f;
+        case 4: fBoost = 2.5f;
+        case 5: fBoost = 2.75f;
+      }
+    }
+
     if (fThrottle > 0) {
       if (m_iGear == 0 || m_iClutch > 6) {
         m_pMotor[i]->setVelocity(0.0f);
@@ -512,11 +526,11 @@ void CCar::CGearBox::update(irr::f32 fThrottle) {
       else
         if (m_iGear >= 1) {
           m_pMotor[i]->setVelocity(m_fVelocity[m_iGear-1]);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
+          m_pMotor[i]->setForce(fBoost * fThrottle*fDiffFact[i]*m_fForce[m_iGear-1]);
         }
         else {
           m_pMotor[i]->setVelocity(25.0f);
-          m_pMotor[i]->setForce(fThrottle*fDiffFact[i]*20.0f);
+          m_pMotor[i]->setForce(fBoost * fThrottle*fDiffFact[i]*20.0f);
         }
     }
     else {
