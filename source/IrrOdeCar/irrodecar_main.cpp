@@ -252,6 +252,8 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
       m_iCtrls[0][eCarShiftUp            ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_W ,CIrrCC::eCtrlToggleButton);
       m_iCtrls[0][eCarShiftDown          ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_S ,CIrrCC::eCtrlToggleButton);
+      m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
+      m_iCtrls[0][eCarAdaptSteer         ]=m_pController->addItem(0,stringw(L"Toggle Adaptive Steer"),KEY_KEY_A ,CIrrCC::eCtrlToggleButton);
 
       //we need two axes for the car: acceleration and steering
       m_pController->createAxis(m_iCtrls[0][eCarForeward],m_iCtrls[0][eCarBackward]);

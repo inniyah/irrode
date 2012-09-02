@@ -24,10 +24,13 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
 
     irr::s32 m_iBodyId,
              m_iLapStart,
-             m_iTime;
+             m_iTime,
+             m_iBoost;
 
     bool m_bDifferential,
-         m_bLapStarted;
+         m_bLapStarted,
+         m_bBoost,
+         m_bAdapt;
 
     irr::gui::CGUINeedleIndicator *m_pMeter,
                                   *m_pRpm,
@@ -35,10 +38,12 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
     irr::gui::IGUIStaticText *m_stDifferential,
                              *m_stCurLap,
                              *m_stLastLap,
-                             *m_stSplit;
+                             *m_stSplit,
+                             *m_stBoost,
+                             *m_stAdapt;
     irr::gui::IGUITab   *m_pTab;
-    irr::gui::IGUIImage *m_pBoostRed,
-                        *m_pBoostGray,
+    irr::gui::IGUIImage *m_pShiftRed,
+                        *m_pShiftGray,
                         *m_pGear[6];
 
   public:
