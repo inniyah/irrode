@@ -75,6 +75,8 @@ class IRenderToTexture {
     void setActive(bool b) { m_bActive = b; }
 
     bool isActive() { return m_bActive; }
+
+    virtual const irr::c8 *getName() = 0;
 };
 
 #endif

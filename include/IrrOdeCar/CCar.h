@@ -76,7 +76,7 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
              m_iBodyId;          /*!< id of the car body */
-    irr::u32 m_iBoost;           /*!< boost counter */
+    irr::s32 m_iBoost;           /*!< boost counter */
 
     irr::core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
 

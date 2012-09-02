@@ -4,6 +4,8 @@
   #include <irrlicht.h>
   #include <IRenderToTexture.h>
 
+const irr::c8 g_sRearView[] = "RearView";
+
 class CRearView : public IRenderToTexture {
   protected:
     irr::scene::ICameraSceneNode *m_pCam;
@@ -16,6 +18,8 @@ class CRearView : public IRenderToTexture {
     virtual void update();
 
     void setCameraParameters(const irr::core::vector3df cPos, const irr::core::vector3df cTgt, const irr::core::vector3df cUp);
+
+    virtual const irr::c8 *getName() { return g_sRearView; }
 };
 
 #endif

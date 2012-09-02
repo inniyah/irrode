@@ -645,16 +645,29 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
-      //drop the world so it is destroyed
-      m_pDevice->drop();
-
-      if (m_pSndEngine) m_pSndEngine->drop();
-
       //and now some more cleanup...
       for (u32 i=0; i<aStates.size(); i++) {
         delete aStates[i];
       }
       aStates.clear();
+
+      printf("1 - %i\n", m_lCockpits.size());
+      while (m_lCockpits.size() > 0) {
+        printf("  1.1\n");
+        irr::core::list<IRenderToTexture *>::Iterator it = m_lCockpits.begin();
+        printf("  1.2\n");
+        IRenderToTexture *p = *it;
+        printf("  1.3\n");
+        m_lCockpits.erase(it);
+        printf("  1.4 - %s\n", p->getName());
+        delete p;
+        printf("  1.5\n");
+      }
+      if (m_pSndEngine) m_pSndEngine->drop();
+
+      printf("2\n");
+      //drop the world so it is destroyed
+      m_pDevice->drop();
     }
 
     virtual bool OnEvent(const irr::SEvent &event) {

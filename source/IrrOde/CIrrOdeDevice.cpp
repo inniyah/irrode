@@ -201,6 +201,7 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
   else {
     //invalid geom in collision (i.e. no IrrOde node attached)
     if (!pGeom1 || !pGeom2) return;
+
     //neither collising nor a trigger
     if (!pGeom1->doesCollide() && !pGeom1->isTrigger()) return;
     if (!pGeom2->doesCollide() && !pGeom2->isTrigger()) return;
