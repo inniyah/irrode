@@ -6,6 +6,8 @@
   #include <event/IIrrOdeEventListener.h>
   #include <CIrrOdeBody.h>
 
+const irr::c8 g_sCockpitCar[] = "CockpitCar";
+
 namespace irr {
   namespace gui {
     class CGUINeedleIndicator;
@@ -54,6 +56,8 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
+
+    virtual const irr::c8 *getName() { return g_sCockpitCar; }
 };
 
 #endif

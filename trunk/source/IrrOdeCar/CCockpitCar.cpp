@@ -7,6 +7,7 @@
   #include <CIrrOdeManager.h>
 
 CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+  printf("** CCockpitCar::CCockpitCar {\n");
   m_pTab=m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,512,512));
 
   m_iBodyId = -1;
@@ -74,6 +75,7 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   printf("**** CCockpitCar: replaced %i texture (%i, \"%s\").\n",iReplace,(int)pBody,pBody->getName());
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  printf("** CCockpitCar::CCockpitCar }\n");
 }
 
 CCockpitCar::~CCockpitCar() {
@@ -85,11 +87,14 @@ void CCockpitCar::update() {
   m_pDiff->setValue(m_fDiff);
   m_pRpm->setValue(m_fRpm);
   m_stDifferential->setBackgroundColor(m_bDifferential?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0xD0,0xD0));
-  m_stBoost->setBackgroundColor(m_bBoost?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0,0));
+
+  irr::video::SColor cBoost = irr::video::SColor(0xFF, 0, 0xFF, 0);
+
+  m_stBoost->setBackgroundColor(m_iBoost < 90 ? irr::video::SColor(0xFF, 0xFF, 0, 0) : m_iBoost < 1200 ? irr::video::SColor(0xFF, 0xFF, 0xFF, 0) : irr::video::SColor(0xFF,0,0xFF,0));
   m_stAdapt->setBackgroundColor(m_bAdapt?irr::video::SColor(0xFF,0,0xFF,0):irr::video::SColor(0xFF,0xD0,0,0));
 
   wchar_t s[0xFF];
-  swprintf(s, 0xFF, L"Boost: %i", m_iBoost);
+  swprintf(s, 0xFF, L"Boost: %.1f", ((irr::f32)m_iBoost) / 180.0f);
   m_stBoost->setText(s);
 
   startRttUpdate();

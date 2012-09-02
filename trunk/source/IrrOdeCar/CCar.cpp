@@ -230,17 +230,18 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
     else m_bBrake=false;
 
+    if (m_iBoost < 0)  m_iBoost = 0;
+
     if (m_bActive) {
       if (m_pController->get(m_pCtrls[eCarBoost])) {
         if (m_iBoost > 0) {
-          m_iBoost--;
+          m_iBoost-=3;
         }
-        else m_iBoost = 0;
 
         m_bBoost = m_iBoost > 0;
       }
       else {
-        if (m_iBoost < 600) m_iBoost++;
+        if (m_iBoost < 1800) m_iBoost++;
         m_bBoost = false;
       }
 
@@ -263,7 +264,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
       if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
         irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
-        m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,120,0));
+        m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,175,0));
       }
 
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
