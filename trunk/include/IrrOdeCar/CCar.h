@@ -20,7 +20,9 @@ enum eCarCtrl {
   eCarFlip,
   eCarDifferential,
   eCarShiftUp,
-  eCarShiftDown
+  eCarShiftDown,
+  eCarBoost,
+  eCarAdapSteer
 };
 
 class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
@@ -47,7 +49,7 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
         bool shiftUp();
         bool shiftDown();
 
-        void update(irr::f32 fThrottle);
+        void update(irr::f32 fThrottle, bool bBoost);
 
         irr::s8 getGear();
         irr::f32 getMaxVelocity();
@@ -66,12 +68,15 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
              m_bInternal,        /*!< internal view active? */
              m_bGasStation,      /*!< is the car in a gas station? */
              m_bGasLastStep,     /*!< was the car in a gas station in the last step? */
-             m_bTouch;           /*!< at least one of the wheels has ground contact */
+             m_bTouch,           /*!< at least one of the wheels has ground contact */
+             m_bAdapt,           /*!< adaptive steer on / off */
+             m_bBoost;           /*!< boost on / off */
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
-             m_iBodyId;          /*!< id of the car body */
+             m_iBodyId,          /*!< id of the car body */
+             m_iBoost;           /*!< remaining boost */
 
     irr::core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
 
