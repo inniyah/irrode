@@ -37,8 +37,14 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
                              *m_stLastLap,
                              *m_stSplit;
     irr::gui::IGUITab   *m_pTab;
-    irr::gui::IGUIImage *m_pBoostRed,
+    irr::gui::IGUIImage *m_pShiftRed,
+                        *m_pShiftGray,
+                        *m_pAdaptRed,
+                        *m_pAdaptGray,
+                        *m_pBoostRed,
                         *m_pBoostGray,
+                        *m_pBoostYellow,
+                        *m_pBoostGreen,
                         *m_pGear[6];
 
   public:
