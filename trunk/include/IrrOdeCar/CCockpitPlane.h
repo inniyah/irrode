@@ -73,8 +73,6 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    virtual const irr::c8 *getName() { return g_sCockpitPlane; }
 };
 
 #endif

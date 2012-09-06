@@ -6,8 +6,6 @@
   #include <event/IIrrOdeEventListener.h>
   #include <CIrrOdeBody.h>
 
-const irr::c8 g_sCockpitCar[] = "CockpitCar";
-
 namespace irr {
   namespace gui {
     class CGUINeedleIndicator;
@@ -26,13 +24,10 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
 
     irr::s32 m_iBodyId,
              m_iLapStart,
-             m_iTime,
-             m_iBoost;
+             m_iTime;
 
     bool m_bDifferential,
-         m_bLapStarted,
-         m_bBoost,
-         m_bAdapt;
+         m_bLapStarted;
 
     irr::gui::CGUINeedleIndicator *m_pMeter,
                                   *m_pRpm,
@@ -40,12 +35,10 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
     irr::gui::IGUIStaticText *m_stDifferential,
                              *m_stCurLap,
                              *m_stLastLap,
-                             *m_stSplit,
-                             *m_stBoost,
-                             *m_stAdapt;
+                             *m_stSplit;
     irr::gui::IGUITab   *m_pTab;
-    irr::gui::IGUIImage *m_pShiftRed,
-                        *m_pShiftGray,
+    irr::gui::IGUIImage *m_pBoostRed,
+                        *m_pBoostGray,
                         *m_pGear[6];
 
   public:
@@ -56,8 +49,6 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    virtual const irr::c8 *getName() { return g_sCockpitCar; }
 };
 
 #endif
