@@ -20,9 +20,7 @@ enum eCarCtrl {
   eCarFlip,
   eCarDifferential,
   eCarShiftUp,
-  eCarShiftDown,
-  eCarBoost,
-  eCarAdaptSteer
+  eCarShiftDown
 };
 
 class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
@@ -37,8 +35,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
         irr::f32 m_fRpm,
                  m_fDiff,
                  m_fThrottle;
-        irr::s8  m_iGear,
-                 m_iClutch;
+        irr::s8 m_iGear,
+                m_iClutch;
 
         bool m_bDataChanged,
              m_bDifferential;   /*!< differential gear enabled? */
@@ -49,7 +47,7 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
         bool shiftUp();
         bool shiftDown();
 
-        void update(irr::f32 fThrottle, bool bBoost);
+        void update(irr::f32 fThrottle);
 
         irr::s8 getGear();
         irr::f32 getMaxVelocity();
@@ -68,15 +66,12 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
              m_bInternal,        /*!< internal view active? */
              m_bGasStation,      /*!< is the car in a gas station? */
              m_bGasLastStep,     /*!< was the car in a gas station in the last step? */
-             m_bTouch,           /*!< at least one of the wheels has ground contact */
-             m_bBoost,           /*!< boost active? */
-             m_bAdapt;           /*!< adaptive steer active? */
+             m_bTouch;           /*!< at least one of the wheels has ground contact */
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed;           /*!< the speed of the car (for the cockpit) */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
              m_iBodyId;          /*!< id of the car body */
-    irr::s32 m_iBoost;           /*!< boost counter */
 
     irr::core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
 

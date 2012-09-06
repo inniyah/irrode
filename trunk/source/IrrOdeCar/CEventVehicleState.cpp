@@ -127,7 +127,7 @@ CEventCarState::CEventCarState() {
   m_iGear = 0;
 }
 
-CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear, irr::u32 iBoost) {
+CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear) {
   m_iNodeId=iId;
   m_fSuspension=fSuspension;
   m_fLeftWheel=fLeftWheel;
@@ -139,7 +139,6 @@ CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLef
   m_fSteer=fSteer;
   m_fSpeed = fSpeed;
   m_iGear = iGear;
-  m_iBoost = iBoost;
 }
 
 CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
@@ -157,7 +156,6 @@ CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
     m_iFlags      = pData->getU8();
     m_fSpeed      = pData->getF32();
     m_iGear       = pData->getS8();
-    m_iBoost      = pData->getS16();
   }
 }
 
@@ -176,13 +174,12 @@ irr::ode::CSerializer *CEventCarState::serialize() {
     m_pSerializer->addU8(m_iFlags);
     m_pSerializer->addF32(m_fSpeed);
     m_pSerializer->addS8(m_iGear);
-    m_pSerializer->addS16(m_iBoost);
   }
   return m_pSerializer;
 }
 
 irr::ode::IIrrOdeEvent *CEventCarState::clone() {
-  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fSteer,m_fRpm,m_fSpeed,m_iGear, m_iBoost);
+  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fSteer,m_fRpm,m_fSpeed,m_iGear);
 }
 
 const irr::c8 *CEventCarState::toString() {
