@@ -18,8 +18,6 @@ class CRearView : public IRenderToTexture {
     virtual void update();
 
     void setCameraParameters(const irr::core::vector3df cPos, const irr::core::vector3df cTgt, const irr::core::vector3df cUp);
-
-    virtual const irr::c8 *getName() { return g_sRearView; }
 };
 
 #endif
