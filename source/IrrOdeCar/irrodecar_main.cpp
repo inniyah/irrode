@@ -252,8 +252,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
       m_iCtrls[0][eCarShiftUp            ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_W ,CIrrCC::eCtrlToggleButton);
       m_iCtrls[0][eCarShiftDown          ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_S ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-      m_iCtrls[0][eCarAdaptSteer         ]=m_pController->addItem(0,stringw(L"Toggle Adaptive Steer"),KEY_KEY_A ,CIrrCC::eCtrlToggleButton);
 
       //we need two axes for the car: acceleration and steering
       m_pController->createAxis(m_iCtrls[0][eCarForeward],m_iCtrls[0][eCarBackward]);
@@ -645,29 +643,16 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
+      //drop the world so it is destroyed
+      m_pDevice->drop();
+
+      if (m_pSndEngine) m_pSndEngine->drop();
+
       //and now some more cleanup...
       for (u32 i=0; i<aStates.size(); i++) {
         delete aStates[i];
       }
       aStates.clear();
-
-      printf("1 - %i\n", m_lCockpits.size());
-      while (m_lCockpits.size() > 0) {
-        printf("  1.1\n");
-        irr::core::list<IRenderToTexture *>::Iterator it = m_lCockpits.begin();
-        printf("  1.2\n");
-        IRenderToTexture *p = *it;
-        printf("  1.3\n");
-        m_lCockpits.erase(it);
-        printf("  1.4 - %s\n", p->getName());
-        delete p;
-        printf("  1.5\n");
-      }
-      if (m_pSndEngine) m_pSndEngine->drop();
-
-      printf("2\n");
-      //drop the world so it is destroyed
-      m_pDevice->drop();
     }
 
     virtual bool OnEvent(const irr::SEvent &event) {
