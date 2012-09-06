@@ -421,12 +421,14 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   if (m_pGearBox->differential()) iFlags|=CEventCarState::eCarFlagDifferential;
   if (m_pGearBox->exhaustSmoke()) iFlags|=CEventCarState::eCarFlagSmoke;
   if (m_bTouch                  ) iFlags|=CEventCarState::eCarFlagTouch;
+  if (m_bBoost && m_iBoost > 0  ) iFlags|=CEventCarState::eCarFlagBoost;
+  if (m_bAdapt                  ) iFlags|=CEventCarState::eCarFlagAdapt;
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
                                             m_pJointSus->getSliderPosition(),
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear());
+                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear(), m_iBoost);
 
   return pEvent;
 }
