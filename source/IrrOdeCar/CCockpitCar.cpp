@@ -141,6 +141,28 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_pShiftGray->setVisible(!b);
       m_pShiftRed ->setVisible( b);
 
+      b = p->getFlags() & CEventCarState::eCarFlagAdapt;
+      m_pAdaptGray->setVisible(!b);
+      m_pAdaptRed ->setVisible( b);
+
+      b = p->getFlags() & CEventCarState::eCarFlagBoost;
+      irr::s32 iBoost = p->getBoost();
+
+      m_pBoostGray  ->setVisible(!b   );
+      m_pBoostRed   ->setVisible(false);
+      m_pBoostGreen ->setVisible(false);
+      m_pBoostYellow->setVisible(false);
+
+      if (b) {
+        if (iBoost > 900)
+          m_pBoostGreen->setVisible(true);
+        else
+          if (iBoost > 120)
+            m_pBoostYellow->setVisible(true);
+          else
+            m_pBoostRed->setVisible(true);
+      }
+
       m_fSpeed = p->getSpeed();
 
       for (irr::u32 i = 0; i < 7; i++) m_pGear[i]->setVisible(false);
