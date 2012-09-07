@@ -33,7 +33,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_fSteer = 0.0f;
   m_fSpeed = 0.0f;
 
-  m_iBoost = 0;
+  m_iBoost = 1800;
   m_bBoost = false;
   m_bAdapt = true;
 
@@ -461,17 +461,10 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
     fRot[i] = m_pFrontWheels[i]->getRotation().Z + v.getLength() * 1080.0f;
     while (fRot[i] >= 360.0f) fRot[i] -= 360.0f;
     while (fRot[i] <    0.0f) fRot[i] += 360.0f;
-    //m_pFrontWheels[i]->setRotation(irr::core::vector3df(0.0f, 0.0f, fRot[i]));
     m_vWheelOld[i] = vWheel[i];
   }
 
-  //m_pAxesFront[0]->setPosition(irr::core::vector3df(a1.X,p1,a1.Z));
-  //m_pAxesFront[1]->setPosition(irr::core::vector3df(a2.X,p2,a2.Z));
-
   irr::f32 fSteer = m_fSteer * m_fAngle;
-
-  //m_pAxesFront[0]->setRotation(irr::core::vector3df(0.0f, -fSteer, 0.0f));
-  //m_pAxesFront[1]->setRotation(irr::core::vector3df(0.0f, -fSteer, 0.0f));
 
   CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(), fSuspension,
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,

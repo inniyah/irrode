@@ -49,6 +49,15 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pBoostGreen =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_green.png" ),irr::core::position2di(202,300),true,m_pTab);
   m_pBoostRed   =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_red.png"   ),irr::core::position2di(202,300),true,m_pTab);
 
+  irr::core::position2di cPos = irr::core::position2di(146, 334);
+
+  for (irr::u32 i = 0; i < 10; i++) {
+    m_pBoost[i][0] = m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/spot_green.png"), cPos, true, m_pTab);
+    m_pBoost[i][1] = m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/spot_red.png"  ), cPos, true, m_pTab);
+    m_pBoost[i][1]->setVisible(false);
+    cPos.X += 8;
+  }
+
   for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
     sprintf(s, "../../data/car/gear_%i.png",i);
@@ -166,6 +175,13 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         else {
           if (b) m_pBoostRed->setVisible(true);
         }
+
+      irr::s32 idx = p->getBoost() / 180;
+
+      for (irr::s32 i = 0; i < 10; i++) {
+        m_pBoost[i][0]->setVisible(i <= idx);
+        m_pBoost[i][1]->setVisible(i >  idx);
+      }
 
       m_fSpeed = p->getSpeed();
 
