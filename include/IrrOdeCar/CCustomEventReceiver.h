@@ -38,9 +38,10 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       irr::core::vector3df vOldSpeed;
       irr::scene::ISceneNode *pSuspension,
                              *pRearWheels[2],
+                             *pFrontAxes[2],
                              *pSteering,
                              *pBody;
-      irr::ode::CIrrOdeBody *pCar;
+      irr::ode::CIrrOdeBody *pFrontWheels[2],*pCar;
       CAdvancedParticleSystemNode *pSmoke[2];
       irrklang::ISound *pEngine,
                        *pWind,

@@ -103,13 +103,15 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
              m_fDiff,
              m_fSound,
              m_fSteer,
-             m_fSpeed;
+             m_fSpeed,
+             m_fWheelRot[2],
+             m_fWheelPos[2];
     irr::u8  m_iFlags;
     irr::s8  m_iGear;
 
   public:
     CEventCarState();
-    CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear, irr::s32 iBoost);
+    CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear, irr::s32 iBoost, irr::f32 fWheelPos[2], irr::f32 fWheelRot[2]);
     CEventCarState(irr::ode::CSerializer *pData);
 
     virtual irr::u16 getType() { return EVENT_CAR_STATE_ID; }
@@ -130,6 +132,9 @@ class CEventCarState : public irr::ode::IIrrOdeEvent {
     irr::u8 getFlags() { return m_iFlags; }
     irr::s8 getGear() { return m_iGear; }
     irr::s32 getBoost() { return m_iBoost; }
+
+    irr::f32 getWheelPos(irr::u32 idx) { return idx < 2 ? m_fWheelPos[idx] : 0.0f; }
+    irr::f32 getWheelRot(irr::u32 idx) { return idx < 2 ? m_fWheelRot[idx] : 0.0f; }
 };
 
 class CEventFireSound : public irr::ode::IIrrOdeEvent {

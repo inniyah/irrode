@@ -101,11 +101,15 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   core::list<scene::ISceneNode *> children=pNode->getChildren();
   core::list<scene::ISceneNode *>::Iterator it;
 
-  if (!strcmp(pNode->getName(),"sc_wheel_rl"       )) pCar->pRearWheels[0]=pNode;
-  if (!strcmp(pNode->getName(),"sc_wheel_rr"       )) pCar->pRearWheels[1]=pNode;
-  if (!strcmp(pNode->getName(),"sc_suspension_rear")) pCar->pSuspension   =pNode;
-  if (!strcmp(pNode->getName(),"steering_wheel"    )) pCar->pSteering     =pNode;
-  if (!strcmp(pNode->getName(),"CarBody"           )) pCar->pBody         =pNode;
+  if (!strcmp(pNode->getName(),"sc_wheel_rl"       )) pCar->pRearWheels[0] =pNode;
+  if (!strcmp(pNode->getName(),"sc_wheel_rr"       )) pCar->pRearWheels[1] =pNode;
+  if (!strcmp(pNode->getName(),"sc_suspension_rear")) pCar->pSuspension    =pNode;
+  if (!strcmp(pNode->getName(),"steering_wheel"    )) pCar->pSteering      =pNode;
+  if (!strcmp(pNode->getName(),"CarBody"           )) pCar->pBody          =pNode;
+  if (!strcmp(pNode->getName(),"axis_fl"           )) pCar->pFrontAxes[0]  =pNode;
+  if (!strcmp(pNode->getName(),"axis_fr"           )) pCar->pFrontAxes[1]  =pNode;
+  if (!strcmp(pNode->getName(),"sc_wheel_fl"       )) { pCar->pFrontWheels[0]=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode); printf("\n\t\t%i\n\n", pNode->getID()); }
+  if (!strcmp(pNode->getName(),"sc_wheel_fr"       )) { pCar->pFrontWheels[1]=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode); printf("\n\t\t%i\n\n", pNode->getID()); }
 
   if (!strcmp(pNode->getName(),"smoke_1")) pCar->pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
   if (!strcmp(pNode->getName(),"smoke_2")) pCar->pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
@@ -340,12 +344,21 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         core::vector3df v=(p->getLeftWheel()*core::vector3df(0.0f,0.0f,-1.0f));
         pCar->pRearWheels[0]->setRotation(v);
 
+        irr::f32 fAngle = -pCar->fSteerAngle / 3.0f;
+        for (irr::u32 i = 0; i < 2; i++) {
+          irr::core::vector3df v = pCar->pFrontAxes[i]->getPosition();
+
+          pCar->pFrontWheels[i]->setRotation(irr::core::vector3df(0.0f, 0.0f, p->getWheelRot(i)));
+          pCar->pFrontAxes  [i]->setPosition(irr::core::vector3df(v.X,p->getWheelPos(i),v.Z));
+          pCar->pFrontAxes  [i]->setRotation(irr::core::vector3df(0.0f, fAngle, 0.0f));
+        }
+
         v=(p->getRightWheel()*core::vector3df(0.0f,0.0f,-1.0f));
         pCar->pRearWheels[1]->setRotation(v);
 
         if (pCar->pSmoke[0]!=NULL && pCar->pSmoke[1]!=NULL) {
-          pCar->pSmoke[0]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
-          pCar->pSmoke[1]->setIsActive(p->getFlags()&CEventCarState::eCarFlagSmoke);
+          pCar->pSmoke[0]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke | CEventCarState::eCarFlagBoost));
+          pCar->pSmoke[1]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke | CEventCarState::eCarFlagBoost));
 
           u32 iMin=(u32)(-p->getRpm()*3.0f),
               iMax=(u32)(-p->getRpm()*5.0f);

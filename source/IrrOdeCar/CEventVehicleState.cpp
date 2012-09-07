@@ -128,7 +128,7 @@ CEventCarState::CEventCarState() {
   m_iBoost = 0;
 }
 
-CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear, irr::s32 iBoost) {
+CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLeftWheel, irr::f32 fRightWheel, irr::f32 fRpm, irr::f32 fDiff, irr::f32 fSound, irr::f32 fSteer, irr::u8 iFlags, irr::f32 fSpeed, irr::s8 iGear, irr::s32 iBoost, irr::f32 fWheelPos[2], irr::f32 fWheelRot[2]) {
   m_iNodeId=iId;
   m_fSuspension=fSuspension;
   m_fLeftWheel=fLeftWheel;
@@ -141,6 +141,11 @@ CEventCarState::CEventCarState(irr::s32 iId, irr::f32 fSuspension, irr::f32 fLef
   m_fSpeed = fSpeed;
   m_iGear = iGear;
   m_iBoost = iBoost;
+
+  for (irr::u32 i = 0; i < 2; i++) {
+    m_fWheelPos[i] = fWheelPos[i];
+    m_fWheelRot[i] = fWheelRot[i];
+  }
 }
 
 CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
@@ -159,6 +164,11 @@ CEventCarState::CEventCarState(irr::ode::CSerializer *pData) {
     m_fSpeed      = pData->getF32();
     m_iGear       = pData->getS8();
     m_iBoost      = pData->getS32();
+
+    for (irr::u32 i = 0; i < 2; i++) {
+      m_fWheelPos[i] = pData->getF32();
+      m_fWheelRot[i] = pData->getF32();
+    }
   }
 }
 
@@ -178,12 +188,17 @@ irr::ode::CSerializer *CEventCarState::serialize() {
     m_pSerializer->addF32(m_fSpeed);
     m_pSerializer->addS8(m_iGear);
     m_pSerializer->addS32(m_iBoost);
+
+    for (irr::u32 i = 0; i < 2; i++) {
+      m_pSerializer->addF32(m_fWheelPos[i]);
+      m_pSerializer->addF32(m_fWheelRot[i]);
+    }
   }
   return m_pSerializer;
 }
 
 irr::ode::IIrrOdeEvent *CEventCarState::clone() {
-  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fSteer,m_fRpm,m_fSpeed,m_iGear,m_iBoost);
+  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fSteer,m_fRpm,m_fSpeed,m_iGear,m_iBoost, m_fWheelPos, m_fWheelRot);
 }
 
 const irr::c8 *CEventCarState::toString() {
