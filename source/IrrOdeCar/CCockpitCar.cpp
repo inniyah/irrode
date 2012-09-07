@@ -58,6 +58,9 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
     cPos.X += 8;
   }
 
+  m_pBoost[0][0]->setVisible(false);
+  m_pBoost[0][1]->setVisible(false);
+
   for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
     sprintf(s, "../../data/car/gear_%i.png",i);
@@ -178,7 +181,7 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       irr::s32 idx = p->getBoost() / 180;
 
-      for (irr::s32 i = 0; i < 10; i++) {
+      for (irr::s32 i = 1; i < 10; i++) {
         m_pBoost[i][0]->setVisible(i <= idx);
         m_pBoost[i][1]->setVisible(i >  idx);
       }
