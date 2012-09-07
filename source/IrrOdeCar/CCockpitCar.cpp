@@ -49,11 +49,6 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pBoostGreen =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_green.png" ),irr::core::position2di(202,300),true,m_pTab);
   m_pBoostRed   =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_red.png"   ),irr::core::position2di(202,300),true,m_pTab);
 
-  m_stBoost = m_pGuienv->addStaticText(L"", irr::core::recti(irr::core::position2di(202, 334), irr::core::dimension2di(32,15)), true, false, m_pTab);
-  m_stBoost->setDrawBackground(true);
-  m_stBoost->setBackgroundColor(irr::video::SColor(0x192, 0xFF, 0xFF, 0x80));
-  m_stBoost->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-
   for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
     sprintf(s, "../../data/car/gear_%i.png",i);
@@ -155,7 +150,6 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       wchar_t s[0xFF];
       swprintf(s, 0xFF, L"%.0f %%", 100.0f * ((irr::f32)iBoost) / 1800.0f);
-      m_stBoost->setText(s);
 
       m_pBoostGray  ->setVisible(!b   );
       m_pBoostRed   ->setVisible(false);
@@ -164,16 +158,13 @@ bool CCockpitCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
       if (iBoost > 900) {
         if (b) m_pBoostGreen->setVisible(true);
-        m_stBoost->setBackgroundColor(irr::video::SColor(192, 0, 255, 0));
       }
       else
         if (iBoost > 120) {
           if (b) m_pBoostYellow->setVisible(true);
-          m_stBoost->setBackgroundColor(irr::video::SColor(192, 255, 255, 0));
         }
         else {
           if (b) m_pBoostRed->setVisible(true);
-          m_stBoost->setBackgroundColor(irr::video::SColor(192, 255, 0, 0));
         }
 
       m_fSpeed = p->getSpeed();

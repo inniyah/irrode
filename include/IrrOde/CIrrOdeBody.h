@@ -227,6 +227,7 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     irr::core::vector3df getVectorFromWorld(irr::core::vector3df vPos);
 
     void getOdeRotation(irr::core::vector3df &cRot);
+    void getOdePosition(irr::core::vector3df &cPos);
 
     /**
      * Is the graphical representation of this body updated when the physics body moves? Can be false

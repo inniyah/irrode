@@ -932,6 +932,10 @@ void CIrrOdeBody::getOdeRotation(irr::core::vector3df &cRot) {
   cRot=m_pOdeDevice->bodyGetRotation(m_iBodyId);
 }
 
+void CIrrOdeBody::getOdePosition(irr::core::vector3df &cPos) {
+  cPos = m_pOdeDevice->bodyGetPosition(m_iBodyId);
+}
+
 CIrrOdeGeom *CIrrOdeBody::getGeomFromName(const c8 *sName) {
   irr::core::list<CIrrOdeGeom *>::Iterator it;
   for (it=m_pGeoms.begin(); it!=m_pGeoms.end(); it++) {
