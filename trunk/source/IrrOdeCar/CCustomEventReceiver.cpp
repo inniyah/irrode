@@ -331,7 +331,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         }
         pCar->pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
 
-        irr::f32 fSteer=p->getSteer();
+        irr::f32 fSteer=3.0f * p->getSteer();
         if (pCar->fSteerAngle<fSteer) { pCar->fSteerAngle+=10.0f; if (pCar->fSteerAngle>fSteer) pCar->fSteerAngle=fSteer; }
         if (pCar->fSteerAngle>fSteer) { pCar->fSteerAngle-=10.0f; if (pCar->fSteerAngle<fSteer) pCar->fSteerAngle=fSteer; }
 

@@ -137,11 +137,11 @@ f32 CIrrOdeJointHinge2::getHingeAngle1() {
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle1Rate() {
-  return m_fAngleRate1;
+  return m_pOdeDevice->jointGetHinge2Angle1Rate(m_iJointId);
 }
 
 f32 CIrrOdeJointHinge2::getHingeAngle2Rate() {
-  return m_fAngleRate2;
+  return m_pOdeDevice->jointGetHinge2Angle2Rate(m_iJointId);
 }
 
 u16 CIrrOdeJointHinge2::numParamGroups() const {

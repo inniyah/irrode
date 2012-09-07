@@ -73,12 +73,14 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
              m_bBoost;           /*!< boost on / off */
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
-             m_fSpeed;           /*!< the speed of the car (for the cockpit) */
+             m_fSpeed,           /*!< the speed of the car (for the cockpit) */
+             m_fAngle;           /*!< the sterring angle (for adaptive steer) */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
              m_iBodyId,          /*!< id of the car body */
              m_iBoost;           /*!< remaining boost */
 
-    irr::core::vector3df m_vSuspNeutral;   /*!< the neutral position of the suspension */
+    irr::core::vector3df m_vSuspNeutral,   /*!< the neutral position of the suspension */
+                         m_vWheelOld[2];   /*!< old position of the wheels */
 
     irr::ode::CIrrOdeBody              *m_pCarBody,        /*!< the car's body */
                                        *m_pSuspension,     /*!< the suspension */

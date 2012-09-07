@@ -37,6 +37,9 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
   m_bBoost = false;
   m_bAdapt = true;
 
+  m_vWheelOld[0] = irr::core::vector3df(0.0f,0.0f,0.0f);
+  m_vWheelOld[1] = irr::core::vector3df(0.0f,0.0f,0.0f);
+
   if (m_pCarBody) {
     m_iBodyId=m_pCarBody->getID();
     m_pCarBody->setUserData(this);
@@ -217,18 +220,18 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     irr::f32 v = m_pCarBody->getLinearVelocity().getLength();
 
-    irr::f32 fAngle = 22.5f;
+    m_fAngle = 22.5f;
 
     if (m_bAdapt) {
       if (v>50.0f)
-        fAngle = 10.0f;
+        m_fAngle = 10.0f;
       else
         if (v>5.0f)
-          fAngle = 22.5f - 15.0f * ((v - 5.0f) / 45.0f);
+          m_fAngle = 22.5f - 15.0f * ((v - 5.0f) / 45.0f);
     }
 
     if (m_fSteer!=0.0f)
-      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(fAngle * m_fSteer);
+      for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(m_fAngle * m_fSteer);
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
@@ -424,11 +427,58 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
   if (m_bBoost && m_iBoost > 0  ) iFlags|=CEventCarState::eCarFlagBoost;
   if (m_bAdapt                  ) iFlags|=CEventCarState::eCarFlagAdapt;
 
-  CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(),
-                                            m_pJointSus->getSliderPosition(),
+  irr::f32 fSuspension = m_pJointSus->getSliderPosition();
+  if (fSuspension < -0.25f) fSuspension = -0.25f;
+
+  irr::core::vector3df cPos, v1, v2, r1, r2, vRotBody,
+                       a1 = m_pAxesFront[0]->getPosition(),
+                       a2 = m_pAxesFront[1]->getPosition(),
+                       vDir = m_pCarBody->getRotation().rotationToDirection(irr::core::vector3df(-1.0f, 0.0f, 0.0f)),
+                       vWheel[2], v;
+
+  for (irr::u32 i = 0; i < 2; i++) {
+    m_pFrontWheels[i]->getOdePosition(vWheel[i]);
+    v = vDir.crossProduct(m_vWheelOld[i] - vWheel[i]);
+
+    irr::f32 fRot = m_pFrontWheels[i]->getRotation().Z + v.getLength() * 1080.0f;
+    while (fRot >= 360.0f) fRot -= 360.0f;
+    while (fRot <    0.0f) fRot += 360.0f;
+    m_pFrontWheels[i]->setRotation(irr::core::vector3df(0.0f, 0.0f, fRot));
+    m_vWheelOld[i] = vWheel[i];
+  }
+
+  m_pCarBody->getOdePosition(cPos);
+  m_pCarBody->getOdeRotation(vRotBody);
+  m_pFrontWheels[0]->getOdePosition(v1);
+  m_pFrontWheels[0]->getOdePosition(v2);
+
+  v1 -= cPos;
+  v2 -= cPos;
+
+  irr::core::CMatrix4<irr::f32> cMat, cInv = cMat.setInverseRotationDegrees(vRotBody);
+
+  cInv.rotateVect(r1, v1);
+  cInv.rotateVect(r2, v2);
+
+  irr::core::vector3df vWz;
+
+  m_pFrontWheels[0]->getOdeRotation(vWz);
+
+  irr::f32 p1 = r1.Y < -0.1f ? r1.Y : -0.1f,
+           p2 = r2.Y < -0.1f ? r1.Y : -0.1f;
+
+  m_pAxesFront[0]->setPosition(irr::core::vector3df(a1.X,p1,a1.Z));
+  m_pAxesFront[1]->setPosition(irr::core::vector3df(a2.X,p2,a2.Z));
+
+  irr::f32 fSteer = m_fSteer * m_fAngle;
+
+  m_pAxesFront[0]->setRotation(irr::core::vector3df(0.0f, -fSteer, 0.0f));
+  m_pAxesFront[1]->setRotation(irr::core::vector3df(0.0f, -fSteer, 0.0f));
+
+  CEventCarState *pEvent=new CEventCarState(m_pCarBody->getID(), fSuspension,
                                             m_pAxesRear[0]->getHingeAngle()*180.0f/irr::core::PI,
                                             m_pAxesRear[1]->getHingeAngle()*180.0f/irr::core::PI,
-                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,m_fSteer*180.0f/irr::core::PI,iFlags,m_fSpeed,m_pGearBox->getGear(), m_iBoost);
+                                            m_pGearBox->getRpm(),m_pGearBox->getDiff(),m_fSound,fSteer,iFlags,m_fSpeed,m_pGearBox->getGear(), m_iBoost);
 
   return pEvent;
 }

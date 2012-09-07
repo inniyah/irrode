@@ -35,8 +35,7 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
     irr::gui::IGUIStaticText *m_stDifferential,
                              *m_stCurLap,
                              *m_stLastLap,
-                             *m_stSplit,
-                             *m_stBoost;
+                             *m_stSplit;
     irr::gui::IGUITab   *m_pTab;
     irr::gui::IGUIImage *m_pShiftRed,
                         *m_pShiftGray,
