@@ -38,19 +38,6 @@ CIrrOdeSceneNode::CIrrOdeSceneNode(irr::scene::ISceneNode *parent,irr::scene::IS
   m_iIdent=-1;
   m_pUserData=NULL;
   #ifdef _IRREDIT_PLUGIN
-    m_bDrawEditorMesh=true;
-  	GetModuleFileName(NULL,m_sResources,1024);
-	  if (strstr(m_sResources,"irrEdit.exe"))
-      *strstr(m_sResources,"irrEdit.exe")='\0';
-    else
-      if (strrchr(m_sResources,'\\'))
-        *strrchr(m_sResources,'\\')='\0';
-
-  	strcat(m_sResources,"\\resources\\");
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOde.3ds",m_sResources);
-    m_pMesh=mgr->getMesh(sFileName);
-
     this->setID(getNextId());
 
     if (m_pWorld!=NULL) {
@@ -160,15 +147,6 @@ irr::video::SMaterial &CIrrOdeSceneNode::getMaterial(u32 iIdx) {
 }
 
 void CIrrOdeSceneNode::render() {
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh && m_pMesh->getMesh(0) && m_pMesh->getMesh(0)->getMeshBuffer(0) && m_bDrawEditorMesh) {
-      irr::core::matrix4 tmpMatrix;
-	  tmpMatrix.setTranslation(AbsoluteTransformation.getTranslation());
-      m_pVideoDriver->setMaterial(m_cMat);
-      m_pVideoDriver->setTransform(irr::video::ETS_WORLD,tmpMatrix);
-      m_pSceneManager->getVideoDriver()->drawMeshBuffer(m_pMesh->getMesh(0)->getMeshBuffer(0));
-    }
-  #endif
 }
 
 /**
@@ -210,10 +188,6 @@ void CIrrOdeSceneNode::setUserData(void *p) {
 void *CIrrOdeSceneNode::getUserData() {
   return m_pUserData;
 }
-
-#ifdef _IRREDIT_PLUGIN
-  void CIrrOdeSceneNode::setDrawEditorMesh(bool b) { m_bDrawEditorMesh=b; }
-#endif
 
 void CIrrOdeSceneNode::setParent(irr::scene::ISceneNode *newParent) {
   CIrrOdeWorld *pWorld=reinterpret_cast<CIrrOdeWorld *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_WORLD_ID));

@@ -20,14 +20,6 @@ CIrrOdeGeomCylinder::CIrrOdeGeomCylinder(irr::scene::ISceneNode *parent,irr::sce
   m_iGeomId=0;
   m_fRadius=0.0f;
   m_fLength=0.0f;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeGeomCylinder.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeGeomCylinder::~CIrrOdeGeomCylinder() {

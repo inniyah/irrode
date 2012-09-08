@@ -47,12 +47,6 @@ class CIrrOdeSceneNode : public irr::scene::ISceneNode, public ode::IIrrOdeEvent
 
     irr::scene::ISceneNode *getAncestorOfType(irr::scene::ESCENE_NODE_TYPE iType);    /**< retrieve an ancestor of a given type */
 
-    #ifdef _IRREDIT_PLUGIN
-      irr::scene::IAnimatedMesh *m_pMesh;   /**< the mesh to be renderer in IrrEdit when compiled as plugin */
-  	  c8 m_sResources[1024];    /**> the path name of the resources when copiled as plugin */
-  	  bool m_bDrawEditorMesh;
-    #endif
-
     void cloneChildren(irr::scene::ISceneNode *pNewParent, irr::scene::ISceneManager *pNewManager);
 
     /**

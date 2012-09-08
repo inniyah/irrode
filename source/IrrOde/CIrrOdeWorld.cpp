@@ -37,13 +37,6 @@ CIrrOdeWorld::CIrrOdeWorld(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
 
 	m_cGravity=irr::core::vector3df(0.0f,-10.0f,0.0f);
 	m_bDrawEditorMesh=true;
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeWorld.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeWorld::~CIrrOdeWorld() {
@@ -403,7 +396,6 @@ void CIrrOdeWorld::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttr
   out->addFloat("StepSize",m_pOdeDevice->getStepSize());
   out->addVector3d("Gravity",m_cGravity);
   out->addString("surfaceDefinitions",m_sSurfaceFile.c_str());
-  out->addBool("DrawEditorMesh",m_bDrawEditorMesh);
 }
 
 void CIrrOdeWorld::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
@@ -417,15 +409,6 @@ void CIrrOdeWorld::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAtt
   m_cGravity=in->getAttributeAsVector3d("Gravity");
   m_sSurfaceFile=in->getAttributeAsString("surfaceDefinitions");
   if (irr::core::stringw("")!=m_sSurfaceFile) loadFromFile(m_sSurfaceFile.c_str());
-  m_bDrawEditorMesh=in->getAttributeAsBool("DrawEditorMesh");
-
-  #ifdef _IRREDIT_PLUGIN
-    if (b!=m_bDrawEditorMesh) {
-      irr::core::list<CIrrOdeSceneNode *>::Iterator it;
-      for (it=m_pChildNodes.begin(); it!=m_pChildNodes.end(); it++)
-        (*it)->setDrawEditorMesh(m_bDrawEditorMesh);
-    }
-  #endif
 }
 
 irr::scene::ISceneNode *CIrrOdeWorld::clone(irr::scene::ISceneNode* newParent, irr::scene::ISceneManager* newManager) {
@@ -442,14 +425,6 @@ void CIrrOdeWorld::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   m_iJointGroupId=0;
   pDst->setSpace(m_pWorldSpace);
   pDst->setGravity(m_cGravity);
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeWorld.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 void CIrrOdeWorld::addSpace(CIrrOdeSpace *pSpace) {

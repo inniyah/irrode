@@ -12,14 +12,6 @@ CIrrOdeJointHinge2::CIrrOdeJointHinge2(irr::scene::ISceneNode *parent,irr::scene
                                      CIrrOdeJoint(parent, mgr, id, position, rotation, scale) {
   m_pAxis1=irr::core::vector3df(0,0,1);
   m_pAxis2=irr::core::vector3df(1,0,0);
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeJointHinge2.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
-
   m_fAngle1=0.0f;
   m_fAngleRate1=0.0f;
   m_fAngleRate2=0.0f;

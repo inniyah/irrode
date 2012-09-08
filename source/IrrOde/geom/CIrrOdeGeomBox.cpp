@@ -23,14 +23,6 @@ CIrrOdeGeomBox::CIrrOdeGeomBox(irr::scene::ISceneNode *parent,irr::scene::IScene
   m_fMass=1.0f;
 
   m_bUseAllMeshBuffers=true;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeGeomBox.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeGeomBox::~CIrrOdeGeomBox() {

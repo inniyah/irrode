@@ -9,14 +9,6 @@ CIrrOdeImpulseMotor::CIrrOdeImpulseMotor(irr::scene::ISceneNode *parent,irr::sce
   m_fMaxPower=0;
   m_fPower=0;
   m_vForeward=irr::core::vector3df(1.0f,0.0f,0.0f);
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-      c8 sFileName[1024];
-      sprintf(sFileName,"%sIrrOdeImpulseMotor.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 void CIrrOdeImpulseMotor::step() {

@@ -20,28 +20,13 @@ CIrrOdeGeomTrimesh::CIrrOdeGeomTrimesh(irr::scene::ISceneNode *parent,irr::scene
 
   if (parent) {
     while (m_aParamNames.size()<parent->getMaterialCount()) {
-      /*CIrrOdeSurfaceParameters *pParams=new CIrrOdeSurfaceParameters();
-      CIrrOdeManager::getSharedInstance()->addSurfaceParameter(pParams);
-      pParams->setStatic(m_pBody==NULL);
-      m_aParams.push_back(pParams);*/
       m_aParamNames.push_back("DefaultSurface");
     }
 
     while (m_aParamNames.size()>parent->getMaterialCount()) {
-      /*m_pOdeManager->removeSurfaceParameter(m_aParams[m_aParams.size()-1]);
-      delete m_aParams[m_aParams.size()-1];
-      m_aParams.erase(m_aParams.size()-1);*/
       m_aParamNames.erase(m_aParamNames.size()-1);
     }
   }
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeGeomTrimesh.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeGeomTrimesh::~CIrrOdeGeomTrimesh() {

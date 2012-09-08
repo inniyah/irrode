@@ -15,14 +15,6 @@ CIrrOdeServo::CIrrOdeServo(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
   m_iAxis=0;
   m_fServoPos=0;
   m_pJoint=NULL;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeServo.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeServo::~CIrrOdeServo() {

@@ -19,14 +19,6 @@ CIrrOdeGeomHeightfield::CIrrOdeGeomHeightfield(irr::scene::ISceneNode *parent,ir
   m_iWidthSamples=256;
   m_iDepthSamples=256;
   m_fThickness=1.0f;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeGeomHeightfield.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeGeomHeightfield::~CIrrOdeGeomHeightfield() {
