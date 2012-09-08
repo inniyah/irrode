@@ -586,7 +586,7 @@ void CIrrOdeWorld::removeEventWriter(IIrrOdeEventWriter *p) {
     if (*it==p) {
       m_lChanged.erase(it);
       return;
-    }
+    } 
 }
 
 void CIrrOdeWorld::objectChanged(IIrrOdeEventWriter *p) {
