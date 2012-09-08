@@ -22,14 +22,6 @@ CIrrOdeTorqueMotor::CIrrOdeTorqueMotor(irr::scene::ISceneNode *parent,irr::scene
   m_fPitchFactor=1.0f;
   m_fYawFactor  =1.0f;
   m_fRollFactor =1.0f;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-      c8 sFileName[1024];
-      sprintf(sFileName,"%sIrrOdeTorqueMotor.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 void CIrrOdeTorqueMotor::step() {

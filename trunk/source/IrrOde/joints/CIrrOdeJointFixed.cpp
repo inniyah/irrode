@@ -8,13 +8,6 @@ namespace ode {
 CIrrOdeJointFixed::CIrrOdeJointFixed(irr::scene::ISceneNode *parent,irr::scene::ISceneManager *mgr,s32 id,
                                      const irr::core::vector3df &position,const irr::core::vector3df &rotation,const irr::core::vector3df &scale) :
                                      CIrrOdeJoint(parent, mgr, id, position, rotation, scale) {
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeJointFixed.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 

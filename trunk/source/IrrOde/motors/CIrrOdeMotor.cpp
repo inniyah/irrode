@@ -13,14 +13,6 @@ CIrrOdeMotor::CIrrOdeMotor(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
   m_fVelocity=0.0f;
   m_fForce=0.0f;
   m_pJoint=NULL;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeMotor.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeMotor::~CIrrOdeMotor() {

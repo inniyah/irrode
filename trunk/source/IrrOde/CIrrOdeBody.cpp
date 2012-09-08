@@ -44,14 +44,6 @@ CIrrOdeBody::CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManage
   m_bDampingChanged=false;
 	m_bUpdateGraphics=true;
 
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeBody.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
-
   m_iMass=m_pOdeDevice->massCreate();
   m_pOdeDevice->massSetZero(m_iMass);
   m_bFastMoving=false;
@@ -745,14 +737,6 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setFiniteRotationMode(m_bFiniteRotationMode);
   pDst->setGravityMode(m_iGravityMode);
   m_bParamMaster=false;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-      c8 sFileName[1024];
-      sprintf(sFileName,"%sIrrOdeBody.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 /**

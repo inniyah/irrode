@@ -32,14 +32,6 @@ CIrrOdeSpace::CIrrOdeSpace(irr::scene::ISceneNode *parent,irr::scene::ISceneMana
   m_cCenter=irr::core::vector3df(0,0,0);
   m_cExtents=irr::core::vector3df(0,0,0);
   m_iDepth=0;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-	  c8 sFileName[1024];
-	  sprintf(sFileName,"%sIrrOdeSpace.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 CIrrOdeSpace::~CIrrOdeSpace() {

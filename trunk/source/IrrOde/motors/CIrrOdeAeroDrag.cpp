@@ -25,14 +25,6 @@ CIrrOdeAeroDrag::CIrrOdeAeroDrag(irr::scene::ISceneNode *parent,irr::scene::ISce
   m_fSideToForeward  =0.0f;
   m_fDampMaxVel      =0.0f;
   m_fDampMinVel      =0.0f;
-
-  #ifdef _IRREDIT_PLUGIN
-    if (m_pMesh) {
-      c8 sFileName[1024];
-      sprintf(sFileName,"%sIrrOdeAeroDrag.png",m_sResources);
-      m_cMat.setTexture(0,m_pSceneManager->getVideoDriver()->getTexture(sFileName));
-    }
-  #endif
 }
 
 void CIrrOdeAeroDrag::step() {
