@@ -23,6 +23,7 @@
   #include <CCockpitCar.h>
   #include <CRoadMeshLoader.h>
   #include <CCameraController.h>
+  #include <CVehicle.h>
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -212,7 +213,7 @@ void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, con
   for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax, pWorld);
 }
 
-class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
+class CIrrOdeCar : public irr::IEventReceiver {
   private:
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;
@@ -342,7 +343,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
 
       irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
       CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),m_pSndEngine);
       CCustomEventReceiver::getSharedInstance()->install();
@@ -370,7 +370,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
     }
 
     ~CIrrOdeCar() {
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
     }
 
     void run(CSettings *pSettings) {
@@ -413,19 +412,10 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
         }
       }
 
-      irr::core::list<ISceneNode *> lCars;
-      fillBodyList(lCars,m_pSmgr->getRootSceneNode(),"car",pSettings->getCountOf(0), m_pWorld);
-
-      irr::core::list<ISceneNode *> lPlanes;
-      fillBodyList(lPlanes,m_pSmgr->getRootSceneNode(),"plane",pSettings->getCountOf(1), m_pWorld);
-
-      irr::core::list<ISceneNode *> lTanks;
-      fillBodyList(lTanks,m_pSmgr->getRootSceneNode(),"tank",pSettings->getCountOf(2), m_pWorld);
-
-      irr::core::list<ISceneNode *> lHelis;
-      fillBodyList(lHelis,m_pSmgr->getRootSceneNode(),"heli",pSettings->getCountOf(3), m_pWorld);
-
-      printf("\nvehiclies found:\n\ncars: %i\nplanes: %i\nhelicopters: %i\ntanks: %i\n\n",lCars.size(),lPlanes.size(),lHelis.size(),lTanks.size());
+      irr::u32 iCars   = pSettings->getCountOf(0),
+               iPlanes = pSettings->getCountOf(1),
+               iTanks  = pSettings->getCountOf(2),
+               iHelis  = pSettings->getCountOf(3);
 
       bool bRearCam=pSettings->isActive(6);
       printf("bRearCam=%s\n",bRearCam?"true":"false");
@@ -531,47 +521,14 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
                    m_pMenu=new CMenu      (m_pDevice,m_pController); aStates.push_back(m_pMenu);
       CController *theCtrl=new CController(m_pDevice,m_pController); aStates.push_back(theCtrl );
 
-      list<ISceneNode *>::Iterator it;
+      CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, m_pController, bRearCam, m_iCtrls);
 
-      CRearView *pRearView=NULL;
+      irr::core::list<CIrrOdeCarState *> lVehicles = pVehicles->getVehicles();
+      irr::core::list<CIrrOdeCarState *>::Iterator it;
 
-      if (bRearCam) pRearView=new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode());
-
-      for (it=lPlanes.begin(); it!=lPlanes.end(); it++) {
-        CPlane *p=new CPlane(m_pDevice,*it,m_pController,NULL,pRearView);
-        CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
-        p->setCtrl((const u32 *)m_iCtrls[2]);
-        p->setCockpit(pCockpit);
-        aStates.push_back(p);
-        m_pMenu->addButtonForState(p);
-        m_lCockpits.push_back(pCockpit);
-      }
-
-      for (it=lCars.begin(); it!=lCars.end(); it++) {
-        CCar *p=new CCar(m_pDevice,*it,m_pController,pRearView);
-        CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p->getBody());
-        p->setCockpit(pCarCockpit);
-        p->setCtrl((const u32 *)m_iCtrls[0]);
-        aStates.push_back(p);
-        m_pMenu->addButtonForState(p);
-        m_lCockpits.push_back(pCarCockpit);
-      }
-
-      for (it=lTanks.begin(); it!=lTanks.end(); it++) {
-        CTank *p=new CTank(m_pDevice,*it,m_pController);
-        p->setCtrl((const u32 *)m_iCtrls[1]);
-        aStates.push_back(p);
-        m_pMenu->addButtonForState(p);
-      }
-
-      for (it=lHelis.begin(); it!=lHelis.end(); it++) {
-        CHeli *p=new CHeli(m_pDevice,*it,m_pController,pRearView);
-        CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
-        p->setCtrl((const u32 *)m_iCtrls[2]);
-        p->setCockpit(pCockpit);
-        aStates.push_back(p);
-        m_pMenu->addButtonForState(p);
-        m_lCockpits.push_back(pCockpit);
+      for (it = lVehicles.begin(); it!=lVehicles.end(); it++) {
+        m_pMenu->addButtonForState(*it);
+        aStates.push_back(*it);
       }
 
       //phyiscs initialization
@@ -707,21 +664,6 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       }
 
       return false;
-    }
-
-    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      if (pEvent->getType() == irr::ode::eIrrOdeEventStep) {
-        m_pMenu->setVisible(false);
-        irr::core::list<IRenderToTexture *>::Iterator it;
-        for (it = m_lCockpits.begin(); it!=m_lCockpits.end(); it++) (*it)->update();
-        m_pMenu->setVisible(true);
-      }
-
-      return false;
-    }
-
-    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      return pEvent->getType() == irr::ode::eIrrOdeEventStep;
     }
 };
 

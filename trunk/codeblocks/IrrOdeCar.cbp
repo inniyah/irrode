@@ -122,6 +122,7 @@
 		<Unit filename="..\include\IrrOdeCar\CSettings.h" />
 		<Unit filename="..\include\IrrOdeCar\CTank.h" />
 		<Unit filename="..\include\IrrOdeCar\CTargetSelector.h" />
+		<Unit filename="..\include\IrrOdeCar\CVehicle.h" />
 		<Unit filename="..\include\IrrOdeCar\IRenderToTexture.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\CConnection.h" />
 		<Unit filename="..\include\IrrOdeCar\RoadCreator\CRoadLoader.h" />
@@ -156,6 +157,7 @@
 		<Unit filename="..\source\IrrOdeCar\CSettings.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTank.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CTargetSelector.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CVehicle.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CConnection.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadLoader.cpp" />
 		<Unit filename="..\source\IrrOdeCar\RoadCreator\CRoadMeshLoader.cpp" />
