@@ -105,7 +105,7 @@ void CSettings::createGUI() {
   m_aBodyCount.push_back(cb);
 
   p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"roads"           ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[0]);
-  p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"bumps"           ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
+  p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"road signs"      ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[1]);
   p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"targets"         ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[2]);
   p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"plane course"    ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[3]);
   p=m_pGuiEnv->addCheckBox(false,irr::core::rect<irr::s32>(pos,dim),0,23); m_pGuiEnv->addStaticText(L"forests"         ,irr::core::rect<irr::s32>(pos2,dim2),false,true,0,-1,true); pos.Y+=20; pos2.Y+=20; m_aActiveBodies.push_back(p); p->setChecked(m_aAct[4]);

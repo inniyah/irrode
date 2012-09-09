@@ -431,9 +431,12 @@ class CIrrOdeCar : public irr::IEventReceiver, public irr::ode::IIrrOdeEventList
       printf("bRearCam=%s\n",bRearCam?"true":"false");
 
       if (!pSettings->isActive(0)) removeFromScene("roads"       ,m_pSmgr, m_pWorld);
-      if (!pSettings->isActive(1)) removeFromScene("bumps"       ,m_pSmgr, m_pWorld);
       if (!pSettings->isActive(2)) removeFromScene("targets"     ,m_pSmgr, m_pWorld);
       if (!pSettings->isActive(3)) removeFromScene("plane_course",m_pSmgr, m_pWorld);
+      if (!pSettings->isActive(1)) {
+        removeFromScene("ActiveSigns" ,m_pSmgr, m_pWorld);
+        removeFromScene("PassiveSigns",m_pSmgr, m_pWorld);
+      }
       if ( pSettings->isActive(4)) {
        const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
 
