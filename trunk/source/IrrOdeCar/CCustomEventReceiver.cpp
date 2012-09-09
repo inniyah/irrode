@@ -108,8 +108,10 @@ void CCustomEventReceiver::searchCarNodes(irr::scene::ISceneNode *pNode, SCarNod
   if (!strcmp(pNode->getName(),"CarBody"           )) pCar->pBody          =pNode;
   if (!strcmp(pNode->getName(),"axis_fl"           )) pCar->pFrontAxes[0]  =pNode;
   if (!strcmp(pNode->getName(),"axis_fr"           )) pCar->pFrontAxes[1]  =pNode;
-  if (!strcmp(pNode->getName(),"sc_wheel_fl"       )) { pCar->pFrontWheels[0]=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode); printf("\n\t\t%i\n\n", pNode->getID()); }
-  if (!strcmp(pNode->getName(),"sc_wheel_fr"       )) { pCar->pFrontWheels[1]=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode); printf("\n\t\t%i\n\n", pNode->getID()); }
+  if (!strcmp(pNode->getName(),"steer_l"           )) pCar->pSteer[0]      =pNode;
+  if (!strcmp(pNode->getName(),"steer_r"           )) pCar->pSteer[1]      =pNode;
+  if (!strcmp(pNode->getName(),"wheel_fl"          )) pCar->pFrontWheels[0]=pNode;
+  if (!strcmp(pNode->getName(),"wheel_fr"          )) pCar->pFrontWheels[1]=pNode;
 
   if (!strcmp(pNode->getName(),"smoke_1")) pCar->pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
   if (!strcmp(pNode->getName(),"smoke_2")) pCar->pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
@@ -350,7 +352,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
           pCar->pFrontWheels[i]->setRotation(irr::core::vector3df(0.0f, 0.0f, p->getWheelRot(i)));
           pCar->pFrontAxes  [i]->setPosition(irr::core::vector3df(v.X,p->getWheelPos(i),v.Z));
-          pCar->pFrontAxes  [i]->setRotation(irr::core::vector3df(0.0f, fAngle, 0.0f));
+          pCar->pSteer[i]->setRotation(irr::core::vector3df(0.0f, fAngle, 0.0f));
         }
 
         v=(p->getRightWheel()*core::vector3df(0.0f,0.0f,-1.0f));
