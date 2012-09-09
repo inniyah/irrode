@@ -12,55 +12,115 @@ namespace irrklang {
 };
 
 class CAdvancedParticleSystemNode;
+class CEventPlaneState;
+class CEventTankState;
+class CEventHeliState;
+class CEventCarState;
 
 class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
   protected:
-    typedef struct SPlaneNodes {
-      irr::s32 iNodeId;
-      irr::core::array<irr::scene::ISceneNode *> aYaw, aPitch, aRoll;
-      irrklang::ISound *pEngine,
-                       *pWind;
-      irr::ode::CIrrOdeBody *pPlane;
-    } SPlaneNodes;
+    class CPlaneNodes {
+      private:
+        irr::s32 m_iNodeId;
+        irr::core::array<irr::scene::ISceneNode *> m_aYaw, m_aPitch, m_aRoll;
+        irr::ode::CIrrOdeBody *m_pPlane;
+        irrklang::ISound *m_pEngine,
+                         *m_pWind;
+        irrklang::ISoundEngine *m_pSndEngine;
 
-    typedef struct sTankNodes {
-      irr::ode::CIrrOdeBody *pTank;
-      irrklang::ISound *pEngine;
-      irr::s32 iNodeId;
-      irr::core::array<irr::scene::ISceneNode *> aAxes;
-      irr::scene::ISceneNode *pCannon,
-                             *pTurret;
-    } STankNodes;
+        void searchPlaneNodes(irr::scene::ISceneNode *pNode);
 
-    typedef struct sCarNodes {
-      irr::s32 iNodeId;
-      irr::f32 fSteerAngle;
-      irr::core::vector3df vOldSpeed;
-      irr::scene::ISceneNode *pSuspension,
-                             *pRearWheels[2],
-                             *pFrontAxes[2],
-                             *pFrontWheels[2],
-                             *pSteering,
-                             *pBody,
-                             *pSteer[2];
-      irr::ode::CIrrOdeBody *pCar;
-      CAdvancedParticleSystemNode *pSmoke[2];
-      irrklang::ISound *pEngine,
-                       *pWind,
-                       *pWheels;
-    } SCarNodes;
+      public:
+        CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine);
+        ~CPlaneNodes();
 
-    typedef struct sHeliNodes {
-      irr::s32 iNodeId;
-      irr::ode::CIrrOdeBody *pHeli;
-      irrklang::ISound *pEngine;
-    } SHeliNodes;
+        void handlePlaneEvent(CEventPlaneState *p);
+        irr::s32 getNodeId() { return m_iNodeId; }
+        void triggerUpdateSound();
+    };
 
-    typedef struct sMissileNodes {
-      irr::s32 iNodeId;
-      irr::ode::CIrrOdeBody *pNode;
-      irrklang::ISound *pEngine;
-    } SMissileNodes;
+    class CTankNodes {
+      private:
+        irr::s32 m_iNodeId;
+        irr::ode::CIrrOdeBody *m_pTank;
+        irr::core::array<irr::scene::ISceneNode *> m_aAxes;
+        irr::scene::ISceneNode *m_pCannon,
+                               *m_pTurret;
+        irrklang::ISound *m_pEngine;
+        irrklang::ISoundEngine *m_pSndEngine;
+
+        void searchTankNodes(irr::scene::ISceneNode *pNode);
+      public:
+        CTankNodes(irr::scene::ISceneNode *pTank, irrklang::ISoundEngine *pSndEngine);
+        ~CTankNodes();
+
+        void handleTankEvent(CEventTankState *p);
+        irr::s32 getNodeId() { return m_iNodeId; }
+        void triggerUpdateSound();
+    };
+
+    class CCarNodes {
+      private:
+        irr::s32 m_iNodeId;
+        irr::f32 m_fSteerAngle;
+        irr::core::vector3df m_vOldSpeed;
+        irr::scene::ISceneNode *m_pSuspension,
+                               *m_pRearWheels[2],
+                               *m_pFrontAxes[2],
+                               *m_pFrontWheels[2],
+                               *m_pSteering,
+                               *m_pBody,
+                               *m_pSteer[2];
+        irr::ode::CIrrOdeBody *m_pCar;
+        CAdvancedParticleSystemNode *m_pSmoke[2];
+        irrklang::ISoundEngine *m_pSndEngine;
+        irrklang::ISound *m_pEngine,
+                         *m_pWind,
+                         *m_pWheels;
+
+        irr::video::ITexture *m_pRearLights[2];
+        void searchCarNodes(irr::scene::ISceneNode *pNode);
+
+      public:
+        CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2]);
+        ~CCarNodes();
+
+        void handleCarEvent(CEventCarState *p);
+        irr::s32 getNodeId() { return m_iNodeId; }
+        void triggerUpdateSound();
+    };
+
+    class CHeliNodes {
+      private:
+        irr::s32 m_iNodeId;
+        irr::ode::CIrrOdeBody *m_pHeli;
+        irrklang::ISound *m_pEngine;
+        irrklang::ISoundEngine *m_pSndEngine;
+
+      public:
+        CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine);
+        ~CHeliNodes();
+
+        void handleHeliEvent(CEventHeliState *p);
+        irr::s32 getNodeId() { return m_iNodeId; }
+        void triggerUpdateSound();
+    };
+
+    class CMissileNodes {
+      private:
+        irr::s32 m_iNodeId;
+        irr::ode::CIrrOdeBody *m_pNode;
+        irrklang::ISound *m_pEngine;
+        irrklang::ISoundEngine *m_pSndEngine;
+
+      public:
+        CMissileNodes(irr::scene::ISceneNode *pMissile, irrklang::ISoundEngine *pSndEngine, irr::ode::CIrrOdeEventNodeCloned *p);
+        ~CMissileNodes();
+
+        void handleMissileEvent(irr::ode::IIrrOdeEvent *p);
+        irr::s32 getNodeId() { return m_iNodeId; }
+        void triggerUpdateSound();
+    };
 
     irr::IrrlichtDevice *m_pDevice;
     irr::ode::CIrrOdeManager *m_pOdeManager;
@@ -75,15 +135,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     CCustomEventReceiver();
     ~CCustomEventReceiver();
 
-    irr::core::list<SPlaneNodes   *> m_lPlanes;
-    irr::core::list<STankNodes    *> m_lTanks;
-    irr::core::list<SCarNodes     *> m_lCars;
-    irr::core::list<SHeliNodes    *> m_lHelis;
-    irr::core::list<SMissileNodes *> m_lMissiles;
-
-    void searchPlaneNodes(irr::scene::ISceneNode *pNode, SPlaneNodes *pPlane);
-    void searchTankNodes(irr::scene::ISceneNode *pNode, STankNodes *pTank);
-    void searchCarNodes(irr::scene::ISceneNode *pNode, SCarNodes *pCar);
+    irr::core::list<CPlaneNodes   *> m_lPlanes;
+    irr::core::list<CTankNodes    *> m_lTanks;
+    irr::core::list<CCarNodes     *> m_lCars;
+    irr::core::list<CHeliNodes    *> m_lHelis;
+    irr::core::list<CMissileNodes *> m_lMissiles;
 
     /**
      * This method deactivates all particles systems that are children of a node
@@ -97,7 +153,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
      */
     void hideAnimatedMesh(irr::scene::ISceneNode *pNode);
 
-    void updateSound(irrklang::ISound *pSound, irr::ode::CIrrOdeBody *pBody);
+    static void updateSound(irrklang::ISound *pSound, irr::ode::CIrrOdeBody *pBody);
   public:
     static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr, irrklang::ISoundEngine *pSndEngine);
 
