@@ -70,7 +70,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *
 
     m_pGearBox = new CGearBox(m_pMotor, m_pAxesRear);
 
-    irr::c8 sWheelNames[][20]={ "wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr" };
+    irr::c8 sWheelNames[][20]={ "geom_wheel_fl", "geom_wheel_fr", "wheel_rl", "wheel_rr" };
     for (irr::u32 i=0; i<4; i++)
       m_pWheels[i]=reinterpret_cast<irr::ode::CIrrOdeGeomSphere *>(m_pCarBody->getChildByName(sWheelNames[i],m_pCarBody));
 
@@ -458,7 +458,14 @@ irr::ode::IIrrOdeEvent *CCar::writeEvent() {
     m_pFrontWheels[i]->getOdePosition(vWheel[i]);
     v = vDir.crossProduct(m_vWheelOld[i] - vWheel[i]);
 
-    fRot[i] = m_pFrontWheels[i]->getRotation().Z + v.getLength() * 1080.0f;
+    irr::core::vector3df vRot;
+    m_pFrontWheels[i]->getOdeRotation(vRot);
+
+    if (m_fSpeed < 0.0f)
+      fRot[i] = vRot.Z - v.getLength() * 1080.0f;
+    else
+      fRot[i] = vRot.Z + v.getLength() * 1080.0f;
+
     while (fRot[i] >= 360.0f) fRot[i] -= 360.0f;
     while (fRot[i] <    0.0f) fRot[i] += 360.0f;
     m_vWheelOld[i] = vWheel[i];

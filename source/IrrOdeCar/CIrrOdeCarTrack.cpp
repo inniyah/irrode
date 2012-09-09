@@ -41,8 +41,6 @@ bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             if (m_iNextCp==0) {
               CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
               irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              //m_pCockpit->setLastLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
-              //m_pCockpit->setSplitTime(0.0f);
             }
           m_iNextCp=1;
           m_iLastLapStep=m_iCurStep;
@@ -52,7 +50,6 @@ bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             if (m_iNextCp!=0) {
               CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,1);
               irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              //m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
             }
             m_iNextCp=0;
           }
@@ -60,14 +57,12 @@ bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             if (iId==99) {
               CEventLapTime *p=new CEventLapTime(0,m_iBodyId,3);
               irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-              //m_pCockpit->cancelLap();
               m_iNextCp=-1;
             }
             else {
               if (m_iNextCp==iId) {
                 CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,2);
                 irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-                //m_pCockpit->setSplitTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
                 m_iNextCp++;
               }
             }
