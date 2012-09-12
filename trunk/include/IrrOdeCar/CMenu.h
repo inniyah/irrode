@@ -24,7 +24,7 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
      * constructor
      * @param pDevice the Irrlicht device
      */
-    CMenu(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl);
+    CMenu(irr::IrrlichtDevice *pDevice);
     virtual ~CMenu();   /*!< the destructor */
 
     virtual void activate();    /*!< state activation */
@@ -46,6 +46,8 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     virtual irr::ode::CIrrOdeBody *getBody() { return NULL; }
 
     void setVisible(bool b) { m_pTab->setVisible(b); }
+
+    virtual enumStateType getType() { return eStateMenu; }
 };
 
 #endif

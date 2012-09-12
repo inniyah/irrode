@@ -7,12 +7,10 @@
 
   #include "CCar.h"
   #include "CTank.h"
-  #include "CMenu.h"
   #include "CHeli.h"
   #include "CPlane.h"
   #include "CController.h"
   #include "CIrrOdeCarState.h"
-  #include "CConfigFileManager.h"
   #include "CProgressBar.h"
   #include "irrCC.h"
   #include "CProjectile.h"
@@ -22,8 +20,7 @@
   #include <CCockpitPlane.h>
   #include <CCockpitCar.h>
   #include <CRoadMeshLoader.h>
-  #include <CCameraController.h>
-  #include <CVehicle.h>
+  #include <CControlReceiver.h>
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -172,55 +169,8 @@ void replaceMaterials(scene::ISceneNode *pNode, s32 iNewMaterial) {
   }
 }
 
-void removeFromScene(const c8 *sName, ISceneManager *smgr, irr::ode::CIrrOdeWorld *pWorld) {
-  ISceneNode *pNode=smgr->getSceneNodeFromName(sName);
-  if (pNode!=NULL) {
-    pWorld->removeTreeFromPhysics(pNode);
-    s32 iNodeId=pNode->getID();
-    pNode->remove();
-
-    irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-  }
-}
-
-void removeFromScene(ISceneNode *pNode, irr::ode::CIrrOdeWorld *pWorld) {
-  pWorld->removeTreeFromPhysics(pNode);
-  s32 iNodeId=pNode->getID();
-  pNode->remove();
-
-  irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-}
-
-void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax, irr::ode::CIrrOdeWorld *pWorld) {
-  if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
-    irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
-    if (p->getOdeClassname().equals_ignore_case(sClassName)) {
-      printf("%s found (%i)\n",sClassName,aPlanes.size());
-      if (aPlanes.size()<iMax)
-        aPlanes.push_back(pNode);
-      else {
-        removeFromScene(pNode, pWorld);
-        return;
-      }
-    }
-  }
-
-  irr::core::list<ISceneNode *> children=pNode->getChildren();
-  irr::core::list<ISceneNode *>::Iterator it;
-
-  for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax, pWorld);
-}
-
 class CIrrOdeCar : public irr::IEventReceiver {
   private:
-    irr::gui::IGUIStaticText  *m_pRecording,
-                              *m_pSaveFile;
-    irr::ode::CIrrOdeRecorder *m_pRecorder;
-    irr::ode::CIrrOdeWorld    *m_pWorld;
-    irr::u32 m_iCount;
-
     irr::IrrlichtDevice *m_pDevice;
 
     video::IVideoDriver  *m_pDriver;
@@ -228,101 +178,29 @@ class CIrrOdeCar : public irr::IEventReceiver {
     gui::IGUIEnvironment *m_pGui;
 
     irrklang::ISoundEngine *m_pSndEngine;
-    CMenu *m_pMenu;
-
-    CIrrCC *m_pController;
-
-    CIrrOdeCarState *m_pActive;
-
-    irr::u32 m_iCtrls[4][32];  //an array for all the controls we are going to define
-
-    bool m_bHelp,
-         m_bSwitchToMenu;
 
     irr::core::list<IRenderToTexture *> m_lCockpits;
 
-    CCameraController *m_pCamCtrl;
+    CControlReceiver *m_pCtrlReceiver;
 
-    void initControls() {
-      //first up: the car's controls
-      m_iCtrls[0][eCarForeward           ]=m_pController->addItem(0,stringw(L"Foreward"             ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      m_iCtrls[0][eCarBackward           ]=m_pController->addItem(0,stringw(L"Backward"             ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[0][eCarLeft               ]=m_pController->addItem(0,stringw(L"Left"                 ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[0][eCarRight              ]=m_pController->addItem(0,stringw(L"Right"                ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      m_iCtrls[0][eCarFlip               ]=m_pController->addItem(0,stringw(L"Flip"                 ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[0][eCarDifferential       ]=m_pController->addItem(0,stringw(L"Toggle Differential"  ),KEY_KEY_D ,CIrrCC::eCtrlButton);
-      m_iCtrls[0][eCarShiftUp            ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_W ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[0][eCarShiftDown          ]=m_pController->addItem(0,stringw(L"Shift Up"             ),KEY_KEY_S ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[0][eCarBoost              ]=m_pController->addItem(0,stringw(L"Boost"                ),KEY_KEY_B ,CIrrCC::eCtrlButton);
-      m_iCtrls[0][eCarAdapSteer          ]=m_pController->addItem(0,stringw(L"Adaptive Steer"       ),KEY_KEY_A ,CIrrCC::eCtrlToggleButton);
-
-      //we need two axes for the car: acceleration and steering
-      m_pController->createAxis(m_iCtrls[0][eCarForeward],m_iCtrls[0][eCarBackward]);
-      m_pController->createAxis(m_iCtrls[0][eCarLeft    ],m_iCtrls[0][eCarRight   ]);
-
-      //next up: the tank
-      m_iCtrls[1][eTankForeward     ]=m_pController->addItem(1,stringw(L"Foreward"         ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankBackward     ]=m_pController->addItem(1,stringw(L"Backward"         ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankLeft         ]=m_pController->addItem(1,stringw(L"Left"             ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankRight        ]=m_pController->addItem(1,stringw(L"Right"            ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankCannonLeft   ]=m_pController->addItem(1,stringw(L"Cannon Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankCannonRight  ]=m_pController->addItem(1,stringw(L"Cannon Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankCannonUp     ]=m_pController->addItem(1,stringw(L"Cannon Up"        ),KEY_KEY_W ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankCannonDown   ]=m_pController->addItem(1,stringw(L"Cannon Down"      ),KEY_KEY_S ,CIrrCC::eCtrlAxis);
-      m_iCtrls[1][eTankFire         ]=m_pController->addItem(1,stringw(L"Fire"             ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[1][eTankFlip         ]=m_pController->addItem(1,stringw(L"Flip"             ),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[1][eTankFastCollision]=m_pController->addItem(1,stringw(L"Fast Collision"   ),KEY_KEY_F ,CIrrCC::eCtrlToggleButton);
-
-      //this time we're gonna create four axes: acceleration, steering, turret movement and cannon angle
-      m_pController->createAxis(m_iCtrls[1][eTankForeward  ],m_iCtrls[1][eTankBackward   ]);
-      m_pController->createAxis(m_iCtrls[1][eTankLeft      ],m_iCtrls[1][eTankRight      ]);
-      m_pController->createAxis(m_iCtrls[1][eTankCannonUp  ],m_iCtrls[1][eTankCannonDown ]);
-      m_pController->createAxis(m_iCtrls[1][eTankCannonLeft],m_iCtrls[1][eTankCannonRight]);
-
-      m_iCtrls[2][eAeroPitchUp      ]=m_pController->addItem(2,stringw("Pitch Up"      ),KEY_DOWN  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroPitchDown    ]=m_pController->addItem(2,stringw("Pitch Down"    ),KEY_UP    ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroRollLeft     ]=m_pController->addItem(2,stringw("Roll Left"     ),KEY_LEFT  ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroRollRight    ]=m_pController->addItem(2,stringw("Roll Right"    ),KEY_RIGHT ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroYawLeft      ]=m_pController->addItem(2,stringw("Yaw Left"      ),KEY_KEY_A ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroYawRight     ]=m_pController->addItem(2,stringw("Yaw Right"     ),KEY_KEY_D ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroPowerUp      ]=m_pController->addItem(2,stringw("Power Up"      ),KEY_KEY_W ,CIrrCC::eCtrlFader);
-      m_iCtrls[2][eAeroPowerDown    ]=m_pController->addItem(2,stringw("Power Down"    ),KEY_KEY_S ,CIrrCC::eCtrlFader);
-      m_iCtrls[2][eAeroPowerZero    ]=m_pController->addItem(2,stringw("Power Zero"    ),KEY_KEY_Z ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[2][eAeroBrake        ]=m_pController->addItem(2,stringw("Wheel Brake"   ),KEY_KEY_B ,CIrrCC::eCtrlAxis);
-      m_iCtrls[2][eAeroFirePrimary  ]=m_pController->addItem(2,stringw("Fire Primary"  ),KEY_SPACE ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[2][eAeroFireSecondary]=m_pController->addItem(2,stringw("Fire Secondary"),KEY_RETURN,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[2][eAeroSelectTarget ]=m_pController->addItem(2,stringw("Select Target" ),KEY_KEY_T ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[2][eAeroAutoPilot    ]=m_pController->addItem(2,stringw("Autopilot"     ),KEY_KEY_P ,CIrrCC::eCtrlToggleButton);
-      m_iCtrls[2][eAeroFlip         ]=m_pController->addItem(2,stringw("Flip"          ),KEY_KEY_L ,CIrrCC::eCtrlToggleButton);
-
-      m_pController->createAxis(m_iCtrls[2][eAeroYawLeft ],m_iCtrls[2][eAeroYawRight ]);
-      m_pController->createAxis(m_iCtrls[2][eAeroRollLeft],m_iCtrls[2][eAeroRollRight]);
-      m_pController->createAxis(m_iCtrls[2][eAeroPitchUp ],m_iCtrls[2][eAeroPitchDown]);
-
-      m_pController->createFader(m_iCtrls[2][eAeroPowerUp],m_iCtrls[2][eAeroPowerDown],10,0.01f);
-
-      m_iCtrls[3][eCameraLeft      ] = m_pController->addItem(3, stringw("Camera Left"               ), KEY_KEY_Y, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraRight     ] = m_pController->addItem(3, stringw("Camera Right"              ), KEY_KEY_C, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraUp        ] = m_pController->addItem(3, stringw("Camera Up"                 ), KEY_KEY_F, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraDown      ] = m_pController->addItem(3, stringw("Camera Down"               ), KEY_KEY_V, CIrrCC::eCtrlAxis);
-      m_iCtrls[3][eCameraCenter    ] = m_pController->addItem(3, stringw("Center Camera"             ), KEY_KEY_X, CIrrCC::eCtrlButton);
-      m_iCtrls[3][eCameraInternal  ] = m_pController->addItem(3, stringw("Toggle Internal"           ), KEY_KEY_I, CIrrCC::eCtrlToggleButton);
-      m_iCtrls[3][eCameraButtonMove] = m_pController->addItem(3, stringw("Push Button for Mouse Move"), KEY_KEY_M, CIrrCC::eCtrlToggleButton);
-
-      m_pController->createAxis(m_iCtrls[3][eCameraLeft], m_iCtrls[3][eCameraRight]);
-      m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
-    }
-
-    void initWorld(irr::scene::ISceneNode *pNode) {
-      if (pNode->getType() == (irr::scene::ESCENE_NODE_TYPE)irr::ode::IRR_ODE_WORLD_ID) {
-        m_pWorld = reinterpret_cast<irr::ode::CIrrOdeWorld *>(pNode);
-        return;
+    void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax, irr::ode::CIrrOdeWorld *pWorld) {
+      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
+        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+        if (p->getOdeClassname().equals_ignore_case(sClassName)) {
+          printf("%s found (%i)\n",sClassName,aPlanes.size());
+          if (aPlanes.size()<iMax)
+            aPlanes.push_back(pNode);
+          else {
+            m_pCtrlReceiver->removeFromScene(pNode);
+            return;
+          }
+        }
       }
 
-      irr::core::list<irr::scene::ISceneNode *> children = pNode->getChildren();
-      irr::core::list<irr::scene::ISceneNode *>::Iterator it;
+      irr::core::list<ISceneNode *> children=pNode->getChildren();
+      irr::core::list<ISceneNode *>::Iterator it;
 
-      for (it = children.begin(); it != children.end(); it++) initWorld(*it);
+      for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax, pWorld);
     }
 
   public:
@@ -333,13 +211,9 @@ class CIrrOdeCar : public irr::IEventReceiver {
       m_pSmgr   = m_pDevice->getSceneManager  ();
       m_pGui    = m_pDevice->getGUIEnvironment();
 
+      m_pCtrlReceiver = NULL;
+
       m_pSndEngine=irrklang::createIrrKlangDevice();
-
-      m_bSwitchToMenu = false;
-      m_bHelp = false;
-      m_iCount = 0;
-
-      m_pActive=NULL;
 
       irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
@@ -347,26 +221,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
       CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),m_pSndEngine);
       CCustomEventReceiver::getSharedInstance()->install();
 
-      irr::core::dimension2d<irr::u32> cSize=m_pDriver->getScreenSize();
-      irr::core::rect<irr::s32> cRect=irr::core::rect<irr::s32>(cSize.Width/2-100,25,cSize.Width/2+100,40);
-      m_pSaveFile=m_pGui->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
-      m_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
-      m_pSaveFile->setVisible(false);
-
-      m_pRecorder  = NULL;
-      m_pRecording = m_pGui->addStaticText(L"Recording"       , core::rect<s32>(cSize.Width/2 - 100, 10, cSize.Width/2 + 100, 30), true); m_pRecording->setVisible(false);
-      m_pSaveFile  = m_pGui->addStaticText(L"Saving Replay...", core::rect<s32>(cSize.Width/2 - 100, 35, cSize.Width/2 + 100, 55), true); m_pSaveFile ->setVisible(false);
-
-      m_pController=new CIrrCC(m_pDevice);
-      m_pController->setSetsCanConflict(false);
-      m_pController->setAllowFKeys(false);
-      m_pController->setAllowMouse(false);
-      CConfigFileManager::getSharedInstance()->addReader(m_pController);
-      CConfigFileManager::getSharedInstance()->addWriter(m_pController);
-
       m_pDevice->setEventReceiver(this);
-
-      m_pCamCtrl = NULL;
     }
 
     ~CIrrOdeCar() {
@@ -378,8 +233,6 @@ class CIrrOdeCar : public irr::IEventReceiver {
       irr::ode::CIrrOdeEventProgress *p=new irr::ode::CIrrOdeEventProgress(0,0);
       pProg->onEvent(p);
       delete p;
-
-      initControls();
 
       //register the IrrOde scene node factory
       irr::ode::CIrrOdeSceneNodeFactory cFactory(m_pSmgr);
@@ -403,8 +256,6 @@ class CIrrOdeCar : public irr::IEventReceiver {
       //load the scene
       irr::ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",m_pSmgr);
 
-      initWorld(m_pSmgr->getRootSceneNode());
-
       for (irr::u32 i=0; i<m_pSmgr->getMeshCache()->getMeshCount(); i++) {
         irr::scene::IAnimatedMesh *p=m_pSmgr->getMeshCache()->getMeshByIndex(i);
         for (irr::u32 j=0; j<p->getMeshBufferCount(); j++) {
@@ -418,14 +269,15 @@ class CIrrOdeCar : public irr::IEventReceiver {
                iHelis  = pSettings->getCountOf(3);
 
       bool bRearCam=pSettings->isActive(6);
-      printf("bRearCam=%s\n",bRearCam?"true":"false");
 
-      if (!pSettings->isActive(0)) removeFromScene("roads"       ,m_pSmgr, m_pWorld);
-      if (!pSettings->isActive(2)) removeFromScene("targets"     ,m_pSmgr, m_pWorld);
-      if (!pSettings->isActive(3)) removeFromScene("plane_course",m_pSmgr, m_pWorld);
+      m_pCtrlReceiver = new CControlReceiver(m_pDevice, NULL, m_pSndEngine);
+
+      if (!pSettings->isActive(0)) m_pCtrlReceiver->removeFromScene("roads"       ,m_pSmgr);
+      if (!pSettings->isActive(2)) m_pCtrlReceiver->removeFromScene("targets"     ,m_pSmgr);
+      if (!pSettings->isActive(3)) m_pCtrlReceiver->removeFromScene("plane_course",m_pSmgr);
       if (!pSettings->isActive(1)) {
-        removeFromScene("ActiveSigns" ,m_pSmgr, m_pWorld);
-        removeFromScene("PassiveSigns",m_pSmgr, m_pWorld);
+        m_pCtrlReceiver->removeFromScene("ActiveSigns" ,m_pSmgr);
+        m_pCtrlReceiver->removeFromScene("PassiveSigns",m_pSmgr);
       }
       if ( pSettings->isActive(4)) {
        const c8 sForests[][255]={ "RandomForest1", "RandomForest2", "Forest1", "Forest2" };
@@ -464,11 +316,11 @@ class CIrrOdeCar : public irr::IEventReceiver {
       }
       if (!pSettings->isActive(5)) {
         printf("removing terrain trimesh...\n");
-        removeFromScene("terrain_trimesh",m_pSmgr, m_pWorld);
+        m_pCtrlReceiver->removeFromScene("terrain_trimesh",m_pSmgr);
       }
       else {
         printf("removing terrain heightfield...\n");
-        removeFromScene("terrain_heightfield",m_pSmgr, m_pWorld);
+        m_pCtrlReceiver->removeFromScene("terrain_heightfield",m_pSmgr);
       }
 
       bool bUseShader=pSettings->getSelectedDriver()==video::EDT_OPENGL;
@@ -504,9 +356,6 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       delete pSettings;
 
-      m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController, irr::ode::CIrrOdeManager::getSharedInstance());
-      m_pCamCtrl->setCtrl(m_iCtrls[3]);
-
       //modify the textures of the car segment and the tank segment to
       IAnimatedMeshSceneNode *pNode=(IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("car_segment");
       if (pNode) pNode->getMaterial(0).getTextureMatrix(0).setTextureScale(50.0f,50.0f);
@@ -518,18 +367,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
       //create the necessary state objects
       array<CIrrOdeCarState *> aStates;
 
-                   m_pMenu=new CMenu      (m_pDevice,m_pController); aStates.push_back(m_pMenu);
-      CController *theCtrl=new CController(m_pDevice,m_pController); aStates.push_back(theCtrl );
-
-      CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, m_pController, bRearCam, m_iCtrls);
-
-      irr::core::list<CIrrOdeCarState *> lVehicles = pVehicles->getVehicles();
-      irr::core::list<CIrrOdeCarState *>::Iterator it;
-
-      for (it = lVehicles.begin(); it!=lVehicles.end(); it++) {
-        m_pMenu->addButtonForState(*it);
-        aStates.push_back(*it);
-      }
+      m_pCtrlReceiver->createMenu(iCars, iPlanes, iHelis, iTanks, bRearCam);
 
       //phyiscs initialization
       irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
@@ -538,40 +376,21 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
 
       //set the menu state to active
-      m_pActive=m_pMenu;
-      m_pActive->activate();
-
-      CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
+      //m_pActive=m_pMenu;
+      //m_pActive->activate();
 
       m_pDriver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
       enableFog(m_pSmgr->getRootSceneNode());
 
       u32 iFrames=0,iTotalFps=0;
+      m_pCtrlReceiver->start();
 
       //let's run the loop
       while(m_pDevice->run()) {
         //step the simulation
         irr::ode::CIrrOdeManager::getSharedInstance()->step();
 
-        //call the update method of the currently active state
-        u32 iSwitch=m_pActive->update();
-
-        if (m_bSwitchToMenu) {
-          iSwitch = 1;
-          m_bSwitchToMenu = false;
-        }
-
-        //change the active state if wished, i.e. a value other than zero was returned
-        if (iSwitch) {
-          iSwitch--;
-          m_pActive->deactivate();
-          m_pActive=aStates[iSwitch];
-          m_pActive->activate();
-          m_pCamCtrl->setTarget(m_pActive->getBody());
-          iSwitch=0;
-        }
-
-        m_pCamCtrl->update();
+        m_pCtrlReceiver->update();
 
         //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
         m_pDriver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
@@ -579,7 +398,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         m_pSmgr->drawAll();
         m_pGui->drawAll();
 
-        m_pActive->drawSpecifics();
+        //m_pActive->drawSpecifics();
 
         m_pDriver->endScene();
         int fps = m_pDriver->getFPS();
@@ -599,10 +418,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
           m_pDevice->setWindowCaption(str.c_str());
           lastFPS = fps;
         }
-        if (m_pSaveFile->isVisible() && m_pDevice->getTimer()->getTime()>m_iCount) m_pSaveFile->setVisible(false);
       }
 
-      CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
       //drop the world so it is destroyed
@@ -618,51 +435,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
     }
 
     virtual bool OnEvent(const irr::SEvent &event) {
-      if (m_pController!=NULL) m_pController->OnEvent(event);
-      if (m_pCamCtrl   !=NULL) m_pCamCtrl   ->OnEvent(event);
-
-      if (m_pActive) m_pActive->OnEvent(event);
-
-      if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
-        if (event.KeyInput.PressedDown) {
-          switch (event.KeyInput.Key) {
-            //if F1 is pressed the help text should be toggled
-            case irr::KEY_F1:
-              m_bHelp=!m_bHelp;
-              return true;
-              break;
-
-            case irr::KEY_F2:
-              if (m_pRecorder==NULL) {
-                printf("starting recording...\n");
-                m_pRecorder=new irr::ode::CIrrOdeRecorder(m_pDevice,"IrrOdeCar");
-                m_pRecorder->startRecording();
-                m_pRecording->setVisible(true);
-              }
-              else {
-                printf("stopping recording...\n");
-                m_pRecorder->stopRecording();
-                m_pRecorder->saveRecording("../../data/replay/car.rec");
-                delete m_pRecorder;
-                m_pRecorder=NULL;
-                m_pRecording->setVisible(false);
-                m_pSaveFile->setVisible(true);
-                m_iCount=m_pDevice->getTimer()->getTime()+3000;
-              }
-              break;
-
-            //if TAB is pressed the program shall return to the vehicle selection menu
-            case irr::KEY_TAB:
-              m_bSwitchToMenu=true;
-              return true;
-              break;
-
-            default:
-              break;
-          }
-        }
-      }
-
+      if (m_pCtrlReceiver!=NULL) m_pCtrlReceiver->OnEvent(event);
       return false;
     }
 };

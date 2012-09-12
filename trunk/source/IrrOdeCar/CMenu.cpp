@@ -1,7 +1,7 @@
   #include "CMenu.h"
   #include "CProjectile.h"
 
-CMenu::CMenu(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu","../../data/irrOdeVehicleHelp.txt", pCtrl) {
+CMenu::CMenu(irr::IrrlichtDevice *pDevice) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu") {
   irr::gui::IGUIButton *b=NULL;
 
   m_cDim=irr::core::dimension2di(128,30);
@@ -64,22 +64,8 @@ void CMenu::deactivate() {
 }
 
 irr::u32 CMenu::update() {
-  //show the info text and the buttons if help is visible
-  if (!m_bHelp && m_pHelp->isVisible()) {
-    irr::core::list<irr::gui::IGUIButton *>::Iterator i;
-    for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(true);
-  }
-
-  //hide the info text and the buttons if help is visible
-  if (m_bHelp && !m_pHelp->isVisible()) {
-    irr::core::list<irr::gui::IGUIButton *>::Iterator i;
-    for (i=m_aButtons.begin(); i!=m_aButtons.end(); i++) (*i)->setVisible(false);
-  }
-
-  //call superclass update
-  CIrrOdeCarState::update();
-
   //return 0 if no state change is wanted, new state index+1 otherwise
+  CIrrOdeCarState::update();
   return m_iMenuSelect;
 }
 
