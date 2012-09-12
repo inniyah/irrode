@@ -12,20 +12,7 @@ class CCockpitCar;
 class CIrrOdeCarTrack;
 class CAdvancedParticleSystemNode;
 
-enum eCarCtrl {
-  eCarForeward,
-  eCarBackward,
-  eCarLeft,
-  eCarRight,
-  eCarFlip,
-  eCarDifferential,
-  eCarShiftUp,
-  eCarShiftDown,
-  eCarBoost,
-  eCarAdapSteer
-};
-
-class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
+class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
   protected:
     class CGearBox {
       protected:
@@ -113,7 +100,7 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
     void applyAeroEffect();
 
   public:
-    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);    /*!< the car's constructor */
+    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);    /*!< the car's constructor */
     virtual ~CCar();                                                                         /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */

@@ -11,7 +11,7 @@
   #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pRView) {
+CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice,pNode,pRView, pInputQueue) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders

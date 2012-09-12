@@ -270,7 +270,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       bool bRearCam=pSettings->isActive(6);
 
-      m_pCtrlReceiver = new CControlReceiver(m_pDevice, NULL, m_pSndEngine);
+      m_pCtrlReceiver = new CControlReceiver(m_pDevice, new irr::ode::CIrrOdeEventQueue(), m_pSndEngine);
 
       if (!pSettings->isActive(0)) m_pCtrlReceiver->removeFromScene("roads"       ,m_pSmgr);
       if (!pSettings->isActive(2)) m_pCtrlReceiver->removeFromScene("targets"     ,m_pSmgr);

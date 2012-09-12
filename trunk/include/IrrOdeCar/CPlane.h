@@ -26,7 +26,7 @@ class CPlane : public CAeroVehicle {
     CIrrOdeCarTrack *m_pLap;
 
   public:
-    CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView);
+    CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CPlane();
 
     virtual void odeStep(irr::u32 iStep);

@@ -38,7 +38,7 @@ void CVehicle::fillBodyList(irr::core::list<irr::scene::ISceneNode *> &aVehicles
   for (it=children.begin(); it!=children.end(); it++) fillBodyList(aVehicles,*it,sClassName,iMax, pWorld);
 }
 
-CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView) {
+CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView, irr::ode::IIrrOdeEventQueue *pInputQueue) {
   m_pDevice = pDevice;
   m_pWorld = pWorld;
 
@@ -58,7 +58,7 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   if (bRearView) pRearView=new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode());
 
   for (it=m_lPlanes.begin(); it!=m_lPlanes.end(); it++) {
-    CPlane *p=new CPlane(m_pDevice,*it,NULL,pRearView);
+    CPlane *p=new CPlane(m_pDevice,*it,NULL,pRearView, pInputQueue);
     CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
     p->setCockpit(pCockpit);
     m_lCockpits.push_back(pCockpit);
@@ -66,7 +66,7 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   }
 
   for (it=m_lCars.begin(); it!=m_lCars.end(); it++) {
-    CCar *p=new CCar(m_pDevice,*it,pRearView);
+    CCar *p=new CCar(m_pDevice,*it,pRearView, pInputQueue);
     CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p->getBody());
     p->setCockpit(pCarCockpit);
     m_lCockpits.push_back(pCarCockpit);
@@ -74,12 +74,12 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   }
 
   for (it=m_lTanks.begin(); it!=m_lTanks.end(); it++) {
-    CTank *p=new CTank(m_pDevice,*it);
+    CTank *p=new CTank(m_pDevice,*it, pInputQueue);
     m_lVehicles.push_back(p);
   }
 
   for (it=m_lHelis.begin(); it!=m_lHelis.end(); it++) {
-    CHeli *p=new CHeli(m_pDevice,*it,pRearView);
+    CHeli *p=new CHeli(m_pDevice,*it,pRearView, pInputQueue);
     CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
     p->setCockpit(pCockpit);
     m_lCockpits.push_back(pCockpit);

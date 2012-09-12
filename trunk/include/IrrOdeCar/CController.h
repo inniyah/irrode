@@ -30,6 +30,9 @@ class CController : public CIrrOdeCarState, public irr::IEventReceiver {
     virtual irr::ode::CIrrOdeBody *getBody() { return NULL; }
 
     virtual enumStateType getType() { return eStateCtrl; }
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *p) { return false; }
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *p) { return false; }
 };
 
 #endif

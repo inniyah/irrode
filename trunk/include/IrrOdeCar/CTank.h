@@ -10,23 +10,9 @@ namespace irrklang {
   class ISound;
 }
 
-enum eTankCtrl {
-  eTankForeward,
-  eTankBackward,
-  eTankLeft,
-  eTankRight,
-  eTankCannonLeft,
-  eTankCannonRight,
-  eTankCannonUp,
-  eTankCannonDown,
-  eTankFire,
-  eTankFlip,
-  eTankFastCollision
-};
-
 class CProjectile;
 
-class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
+class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
   protected:
     bool m_bBrake,
          m_bFollowTurret,
@@ -54,7 +40,7 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
     int getAcc  ();
 
   public:
-    CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
+    CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CTank();
 
     virtual void activate();

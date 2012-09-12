@@ -10,25 +10,7 @@ class CAutoPilot;
 class CCockpitPlane;
 class CTargetSelector;
 
-enum eAerealControls {
-  eAeroPitchUp,
-  eAeroPitchDown,
-  eAeroRollLeft,
-  eAeroRollRight,
-  eAeroYawLeft,
-  eAeroYawRight,
-  eAeroPowerUp,
-  eAeroPowerDown,
-  eAeroPowerZero,
-  eAeroBrake,
-  eAeroFirePrimary,
-  eAeroFireSecondary,
-  eAeroSelectTarget,
-  eAeroAutoPilot,
-  eAeroFlip
-};
-
-class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, public irr::ode::IIrrOdeEventWriter {
+class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
   protected:
     irr::f32 m_fPitch,
              m_fRoll,
@@ -74,7 +56,7 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
     void postShotEvent();
 
   public:
-    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);
+    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CAeroVehicle();
 
     virtual void activate();
