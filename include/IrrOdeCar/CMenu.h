@@ -48,6 +48,9 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     void setVisible(bool b) { m_pTab->setVisible(b); }
 
     virtual enumStateType getType() { return eStateMenu; }
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *p) { return false; }
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *p) { return false; }
 };
 
 #endif

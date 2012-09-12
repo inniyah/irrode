@@ -105,12 +105,12 @@ void CControlReceiver::updateVehicle() {
 }
 
 CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine) {
-  m_pDevice    = pDevice;
-  m_pQueue     = pQueue;
-  m_iNode      = 0;
-  m_iCount     = 0;
-  m_eVehicle   = eControlNone;
-  m_pSndEngine = pSndEngine;
+  m_pDevice     = pDevice;
+  m_pInputQueue = pQueue;
+  m_iNode       = 0;
+  m_iCount      = 0;
+  m_eVehicle    = eControlNone;
+  m_pSndEngine  = pSndEngine;
 
   m_pController = new CIrrCC(m_pDevice);
   m_pController->setSetsCanConflict(false);
@@ -167,7 +167,7 @@ void CControlReceiver::setControlledVehicle(irr::s32 iType, irr::s32 iNode) {
 }
 
 void CControlReceiver::createMenu(irr::u32 iCars, irr::u32 iPlanes, irr::u32 iHelis, irr::u32 iTanks, bool bRearCam) {
-  CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, bRearCam);
+  CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, bRearCam, m_pInputQueue);
 
   irr::core::list<CIrrOdeCarState *> lVehicles = pVehicles->getVehicles();
   irr::core::list<CIrrOdeCarState *>::Iterator it;
@@ -206,7 +206,24 @@ void CControlReceiver::update() {
   }
 
   switch (m_eVehicle) {
-    case eControlCar:
+    case eControlCar: {
+        irr::f32 fThrottle = m_pController->get(m_iCtrls[0][eCarForeward]),
+                 fSteer    = m_pController->get(m_iCtrls[0][eCarLeft    ]);
+
+        bool bDifferential = m_pController->get(m_iCtrls[0][eCarDifferential]) != 0.0f,
+             bShiftUp      = m_pController->get(m_iCtrls[0][eCarShiftUp     ]) != 0.0f,
+             bShiftDown    = m_pController->get(m_iCtrls[0][eCarShiftDown   ]) != 0.0f,
+             bFlip         = m_pController->get(m_iCtrls[0][eCarFlip        ]) != 0.0f,
+             bBoost        = m_pController->get(m_iCtrls[0][eCarBoost       ]) != 0.0f,
+             bAdapt        = m_pController->get(m_iCtrls[0][eCarAdapSteer   ]) != 0.0f;
+
+        m_pController->set(m_iCtrls[0][eCarDifferential], 0.0f);
+        m_pController->set(m_iCtrls[0][eCarShiftUp     ], 0.0f);
+        m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
+        m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
+
+        printf("%.2f, %.2f | %s%s%s%s%s%s\n", fThrottle, fSteer, bDifferential?"D":" ", bShiftUp?"U":" ", bShiftDown?"D":" ",bFlip?"F":" ", bBoost?"B":" ", bAdapt?"A":" ");
+      }
       break;
 
     case eControlPlane:

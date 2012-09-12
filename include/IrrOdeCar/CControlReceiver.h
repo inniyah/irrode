@@ -14,6 +14,51 @@ class CController;
 class CIrrCC;
 class CMenu;
 
+enum eCarCtrl {
+  eCarForeward,
+  eCarBackward,
+  eCarLeft,
+  eCarRight,
+  eCarFlip,
+  eCarDifferential,
+  eCarShiftUp,
+  eCarShiftDown,
+  eCarBoost,
+  eCarAdapSteer
+};
+
+enum eAerealControls {
+  eAeroPitchUp,
+  eAeroPitchDown,
+  eAeroRollLeft,
+  eAeroRollRight,
+  eAeroYawLeft,
+  eAeroYawRight,
+  eAeroPowerUp,
+  eAeroPowerDown,
+  eAeroPowerZero,
+  eAeroBrake,
+  eAeroFirePrimary,
+  eAeroFireSecondary,
+  eAeroSelectTarget,
+  eAeroAutoPilot,
+  eAeroFlip
+};
+
+enum eTankCtrl {
+  eTankForeward,
+  eTankBackward,
+  eTankLeft,
+  eTankRight,
+  eTankCannonLeft,
+  eTankCannonRight,
+  eTankCannonUp,
+  eTankCannonDown,
+  eTankFire,
+  eTankFlip,
+  eTankFastCollision
+};
+
 class CControlReceiver : public irr::IEventReceiver {
   private:
     enum eContolledVehicle {
@@ -34,7 +79,7 @@ class CControlReceiver : public irr::IEventReceiver {
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;
 
-    irr::ode::IIrrOdeEventQueue *m_pQueue;
+    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
     irr::ode::CIrrOdeRecorder   *m_pRecorder;
     irr::ode::CIrrOdeWorld      *m_pWorld;
 

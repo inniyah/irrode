@@ -8,7 +8,7 @@
   #include <irrklang.h>
   #include <CEventVehicleState.h>
 
-CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter") {
+CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Helicopter", pInputQueue) {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 

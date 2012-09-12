@@ -21,7 +21,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
   return NULL;
 }
 
-CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CIrrOdeCarState(pDevice,L"Tank") {
+CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Tank", pInputQueue) {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pTankBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;

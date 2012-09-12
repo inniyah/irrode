@@ -17,7 +17,7 @@ enum enumStateType {
  * This class is the base class for all states that are used in this demo. It has three virtual methods
  * that need to be overriden by the actual states, activate, deactivate and update.
  */
-class CIrrOdeCarState {
+class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
   protected:
     bool m_bSwitchToMenu,   /*!< return to menu state */
          m_bActive,
@@ -29,6 +29,7 @@ class CIrrOdeCarState {
     irr::IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     irr::scene::ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
     irr::gui::IGUIEnvironment *m_pGuiEnv;   /*!< the current Irrlicht GUI environment */
+    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
 
     irr::c8 m_sHelpFile[1024];
 
@@ -39,9 +40,9 @@ class CIrrOdeCarState {
      * @param sVehicleName the name of the state (e.g. helicopter)
      * @param sHelpFile the help file. The content of this file is shown in the help screen
      */
-    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName);
+    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName, irr::ode::IIrrOdeEventQueue *pInputQueue);
 
-    virtual ~CIrrOdeCarState() { }   /*!< destructor */
+    virtual ~CIrrOdeCarState();  /*!< destructor */
 
     virtual void activate()=0;    /*!< This method is called on activation of a state */
     virtual void deactivate()=0;  /*!< This method is called on deactivation of a state */

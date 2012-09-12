@@ -22,7 +22,7 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
   }
 }
 
-CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Car") {
+CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Car", pInputQueue) {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);

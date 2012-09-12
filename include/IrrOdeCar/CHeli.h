@@ -7,26 +7,6 @@
 
   #include "CIrrOdeCarState.h"
 
-enum eHeliControls {
-  eHeliYawLeft,
-  eHeliYawRight,
-  eHeliRollLeft,
-  eHeliRollRight,
-  eHeliPitchUp,
-  eHeliPitchDown,
-  eHeliPowerUp,
-  eHeliPowerDown,
-  eHeliFire,
-  eHeliToggleCam,
-  eHeliFlip,
-  eHeliTarget,
-  eHeliAutoPilot,
-  eHeliInternal,
-  eHeliCamLeft,
-  eHeliCamRight,
-  eHeliCamCenter
-};
-
 class CTargetSelector;
 class CCockpitPlane;
 class CProjectile;
@@ -40,7 +20,7 @@ class CHeli : public CAeroVehicle {
     irr::s32 m_iNodeId;
 
   public:
-    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);
+    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CHeli();
 
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }
