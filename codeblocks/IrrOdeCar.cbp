@@ -105,6 +105,8 @@
 		<Unit filename="..\include\IrrOdeCar\CCockpitCar.h" />
 		<Unit filename="..\include\IrrOdeCar\CCockpitPlane.h" />
 		<Unit filename="..\include\IrrOdeCar\CConfigFileManager.h" />
+		<Unit filename="..\include\IrrOdeCar\CControlEvents.h" />
+		<Unit filename="..\include\IrrOdeCar\CControlReceiver.h" />
 		<Unit filename="..\include\IrrOdeCar\CController.h" />
 		<Unit filename="..\include\IrrOdeCar\CCustomEventReceiver.h" />
 		<Unit filename="..\include\IrrOdeCar\CEventVehicleState.h" />
@@ -140,6 +142,7 @@
 		<Unit filename="..\source\IrrOdeCar\CCockpitCar.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCockpitPlane.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CConfigFileManager.cpp" />
+		<Unit filename="..\source\IrrOdeCar\CControlReceiver.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CController.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CCustomEventReceiver.cpp" />
 		<Unit filename="..\source\IrrOdeCar\CEventVehicleState.cpp" />

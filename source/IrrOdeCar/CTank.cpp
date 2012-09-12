@@ -21,7 +21,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
   return NULL;
 }
 
-CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl) : CIrrOdeCarState(pDevice,L"Tank","../../data/irrOdeTankHelp.txt",pCtrl) {
+CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CIrrOdeCarState(pDevice,L"Tank") {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pTankBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;
@@ -96,14 +96,10 @@ void CTank::activate() {
                            up =m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,0.1,0)),
                            tgt=m_pTankBody->getRotation().rotationToDirection(irr::core::vector3df(0,1  ,0));
 
-  loadHelpFile();
-  wchar_t s[1024];
-  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(1));
-  m_pHelp->setText(s);
 }
 
 void CTank::deactivate() {
-  m_pController->reset();
+  //m_pController->reset();
   for (int i=0; i<4; i++) {
     m_pMotor[i]->setVelocity(0);
     m_pMotor[i]->setForce(13);
@@ -148,60 +144,60 @@ irr::u32 CTank::update() {
 bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     if (m_bActive) {
-      irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
-      if (m_pController->get(m_pCtrls[eTankFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
-        m_iLastShot=pStep->getStepNo();
-        //We add a new bullet...
-        irr::core::vector3df rot=m_pCannon->getAbsoluteTransformation().getRotationDegrees(),
-                             pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(irr::core::vector3df(-3.0f,0,0)),
-                             vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(irr::core::vector3df(-350.0f,0.0f,0.0f));
+      //irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
+      //if (m_pController->get(m_pCtrls[eTankFire])!=0.0f && pStep->getStepNo()-m_iLastShot>45) {
+      //  m_iLastShot=pStep->getStepNo();
+      //  //We add a new bullet...
+      //  irr::core::vector3df rot=m_pCannon->getAbsoluteTransformation().getRotationDegrees(),
+      //                       pos=m_pCannon->getAbsolutePosition()+rot.rotationToDirection(irr::core::vector3df(-3.0f,0,0)),
+      //                       vel=m_pTankBody->getLinearVelocity()+rot.rotationToDirection(irr::core::vector3df(-350.0f,0.0f,0.0f));
 
-        new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this);
-      }
+      //  new CProjectile(m_pSmgr,pos,rot,vel,"shell",600,m_pWorld,m_bFastCollision,this);
+      //}
 
-      irr::f32 fVel[4]={ 0.0f, 0.0f, 0.0f, 0.0f },
-               fAcc=m_pController->get(m_pCtrls[eTankBackward]),
-               fSteer=m_pController->get(m_pCtrls[eTankRight]);
+      //irr::f32 fVel[4]={ 0.0f, 0.0f, 0.0f, 0.0f },
+      //         fAcc=m_pController->get(m_pCtrls[eTankBackward]),
+      //         fSteer=m_pController->get(m_pCtrls[eTankRight]);
 
-      if (fAcc!=0.0f) {
-        for (irr::u32 i=0; i<4; i++) fVel[i]=fAcc*25.0f;
-      }
-      else {
-        for (irr::u32 i=0; i<4; i++) fVel[i]=0.0f;
-      }
+      //if (fAcc!=0.0f) {
+      //  for (irr::u32 i=0; i<4; i++) fVel[i]=fAcc*25.0f;
+      //}
+      //else {
+      //  for (irr::u32 i=0; i<4; i++) fVel[i]=0.0f;
+      //}
 
-      if (fSteer!=0.0f) {
-        fVel[0]+=fSteer*25.0f;
-        fVel[1]+=fSteer*25.0f;
-        fVel[2]-=fSteer*25.0f;
-        fVel[3]-=fSteer*25.0f;
-      }
+      //if (fSteer!=0.0f) {
+      //  fVel[0]+=fSteer*25.0f;
+      //  fVel[1]+=fSteer*25.0f;
+      //  fVel[2]-=fSteer*25.0f;
+      //  fVel[3]-=fSteer*25.0f;
+      //}
 
-      irr::f32 cPos=m_pCannonServo->getServoPos(),
-               fElev=m_pController->get(m_pCtrls[eTankCannonUp  ]);
+      //irr::f32 cPos=m_pCannonServo->getServoPos(),
+      //         fElev=m_pController->get(m_pCtrls[eTankCannonUp  ]);
 
-      cPos+=0.5f*fElev;
+      //cPos+=0.5f*fElev;
 
-      if (cPos< -10) cPos= -10;
-      if (cPos>  80) cPos=  80;
+      //if (cPos< -10) cPos= -10;
+      //if (cPos>  80) cPos=  80;
 
-      m_pCannonServo->setServoPos(cPos);
+      //m_pCannonServo->setServoPos(cPos);
 
-      m_pTurretMotor->setVelocity(0.25f*m_pController->get(m_pCtrls[eTankCannonLeft]));
+      //m_pTurretMotor->setVelocity(0.25f*m_pController->get(m_pCtrls[eTankCannonLeft]));
 
-      for (irr::u32 i=0; i<4; i++) {
-        m_pMotor[i]->setVelocity(fVel[i]);
-        m_pMotor[i]->setForce(13);
-      }
+      //for (irr::u32 i=0; i<4; i++) {
+      //  m_pMotor[i]->setVelocity(fVel[i]);
+      //  m_pMotor[i]->setForce(13);
+      //}
 
-      if (m_pController->get(m_pCtrls[eTankFlip])!=0.0f) {
-        m_pTankBody->addForceAtPosition(m_pTankBody->getPosition()+irr::core::vector3df(0.0f,0.2f,0.0f),irr::core::vector3df(0.0f,80.0f,0.0f));
-      }
+      //if (m_pController->get(m_pCtrls[eTankFlip])!=0.0f) {
+      //  m_pTankBody->addForceAtPosition(m_pTankBody->getPosition()+irr::core::vector3df(0.0f,0.2f,0.0f),irr::core::vector3df(0.0f,80.0f,0.0f));
+      //}
 
-      if (m_pController->get(m_pCtrls[eTankFastCollision])) {
-        m_pController->set(m_pCtrls[eTankFastCollision],0.0f);
-        m_bFastCollision=!m_bFastCollision;
-      }
+      //if (m_pController->get(m_pCtrls[eTankFastCollision])) {
+      //  m_pController->set(m_pCtrls[eTankFastCollision],0.0f);
+      //  m_bFastCollision=!m_bFastCollision;
+      //}
 
       irr::core::list<irr::ode::CIrrOdeJointHinge *>::Iterator it;
       bool bMoved=false;

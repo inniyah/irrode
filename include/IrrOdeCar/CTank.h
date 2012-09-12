@@ -47,7 +47,6 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
                                 *m_pTurretHinge;
     irr::s8 m_aAxesAngles[4];
 
-    const irr::u32 *m_pCtrls;
     irr::u32 m_iLastShot;
     irr::f32 m_fSound;
 
@@ -55,7 +54,7 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
     int getAcc  ();
 
   public:
-    CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl);
+    CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
     virtual ~CTank();
 
     virtual void activate();
@@ -65,8 +64,6 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
-    void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
-
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"tank"; return s; }
 
     virtual void drawSpecifics() { }
@@ -74,6 +71,8 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, pub
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
     virtual irr::ode::CIrrOdeBody *getBody();
+
+    virtual enumStateType getType() { return eStateTank; }
 };
 
 #endif

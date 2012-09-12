@@ -26,7 +26,7 @@ class CPlane : public CAeroVehicle {
     CIrrOdeCarTrack *m_pLap;
 
   public:
-    CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView);
+    CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView);
     virtual ~CPlane();
 
     virtual void odeStep(irr::u32 iStep);
@@ -37,6 +37,8 @@ class CPlane : public CAeroVehicle {
 
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
+
+    virtual enumStateType getType() { return eStatePlane; }
 };
 
 #endif

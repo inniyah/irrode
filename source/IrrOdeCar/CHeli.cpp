@@ -9,7 +9,7 @@
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
-CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pRView) {
+CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pRView) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());

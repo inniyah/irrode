@@ -74,7 +74,9 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed,           /*!< the speed of the car (for the cockpit) */
-             m_fAngle;           /*!< the sterring angle (for adaptive steer) */
+             m_fAngle,           /*!< the sterring angle (for adaptive steer) */
+             m_fForeward,        /*!< control of gas pedal */
+             m_fCtrlSteer;       /*!< control of steering */
     irr::s32 m_iThrottle,        /*!< position of the throttle */
              m_iBodyId,          /*!< id of the car body */
              m_iBoost;           /*!< remaining boost */
@@ -99,7 +101,6 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
     CCockpitCar *m_pCockpit;
     CRearView *m_pRView;
 
-    const irr::u32 *m_pCtrls;
     irr::f32 m_fSound,
              m_fOldSlider;
 
@@ -112,8 +113,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
     void applyAeroEffect();
 
   public:
-    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);    /*!< the car's constructor */
-    virtual ~CCar();                                                    /*!< the car's destructor */
+    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);    /*!< the car's constructor */
+    virtual ~CCar();                                                                         /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */
     virtual void deactivate();    /*!< the deactivation method */
@@ -121,8 +122,6 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"car"; return s; }
 
@@ -133,6 +132,8 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListener, publ
 
     virtual irr::ode::CIrrOdeBody *getBody() { return m_pCarBody; }
     void setCockpit(CCockpitCar *p) { m_pCockpit = p; }
+
+    virtual enumStateType getType() { return eStateCar; }
 };
 
 #endif

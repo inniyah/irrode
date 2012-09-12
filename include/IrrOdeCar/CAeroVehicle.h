@@ -47,7 +47,9 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
     bool m_bFirePrimary,
          m_bFireSecondary,
          m_bDataChanged,
-         m_bBrakes;
+         m_bBrakes,
+         m_bPowerZero,
+         m_bFlip;
 
     CRearView *m_pRView;
 
@@ -65,8 +67,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
     CAutoPilot *m_pAutoPilot;
     CTargetSelector *m_pTargetSelector;
 
-    const irr::u32 *m_pCtrls;
-
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
     CCockpitPlane *m_pCockpit;
@@ -74,7 +74,7 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
     void postShotEvent();
 
   public:
-    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
+    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);
     virtual ~CAeroVehicle();
 
     virtual void activate();
@@ -83,8 +83,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventListen
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
     virtual void odeStep(irr::u32 iStep)=0;
 

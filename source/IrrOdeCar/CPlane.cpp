@@ -1,4 +1,4 @@
-  #include "CPlane.h"
+  #include <CPlane.h>
   #include "CCustomEventReceiver.h"
   #include <math.h>
   #include <CProjectile.h>
@@ -11,7 +11,7 @@
   #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pCtrl,pRView) {
+CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView) : CAeroVehicle(pDevice,pNode,pRView) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders

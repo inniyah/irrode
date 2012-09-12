@@ -8,7 +8,7 @@
   #include <irrklang.h>
   #include <CEventVehicleState.h>
 
-CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter","../../data/irrOdeHeliHelp.txt",pCtrl) {
+CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView) : CIrrOdeCarState(pDevice,L"Helicopter") {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
@@ -19,10 +19,18 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
     m_iShotsFired=0;
     m_fCamAngleH=0.0f;
     m_fCamAngleV=0.0f;
-    m_bFirePrimary=false;
-    m_bFireSecondary=false;
-    m_bDataChanged=false;
-    m_bBrakes = false;
+
+    m_fPitch  = 0.0f;
+    m_fYaw    = 0.0f;
+    m_fRoll   = 0.0f;
+    m_fThrust = 0.0f;
+
+    m_bFirePrimary   = false;
+    m_bFireSecondary = false;
+    m_bDataChanged   = false;
+    m_bBrakes        = false;
+    m_bPowerZero     = false;
+    m_bFlip          = false;
 
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
 
@@ -76,18 +84,12 @@ void CAeroVehicle::activate() {
   m_bSwitchToMenu=false;
   m_bActive=true;
 
-  loadHelpFile();
-  wchar_t s[1024];
-  swprintf(s,1023,m_pHelp->getText(),m_pController->getSettingsText(2));
-  m_pHelp->setText(s);
-  m_pController->restoreState((irr::f32 *)m_aCtrlBuffer);
-
   if (m_pCockpit) m_pCockpit->setActive(true);
   if (m_pRView  ) m_pRView  ->setActive(true);
 }
 
 void CAeroVehicle::deactivate() {
-  m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
+  //m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
   m_bActive=false;
 
   if (m_pCockpit) m_pCockpit->setActive(false);
@@ -105,61 +107,61 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         fVelFact=fVel<100.0f?1.0f:fVel>180.0f?0.2f:1.0f-((fVel-100.0f)/100.0f);
 
     if (m_bActive) {
-      irr::f32 fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
-      if (fThrust<m_fThrust-0.001 || fThrust>m_fThrust+0.001) {
-        m_bDataChanged=true;
-        m_fThrust=fThrust;
-      }
+      //irr::f32 fThrust=m_pController->get(m_pCtrls[eAeroPowerUp]);
+      //if (fThrust<m_fThrust-0.001 || fThrust>m_fThrust+0.001) {
+      //  m_bDataChanged=true;
+      //  m_fThrust=fThrust;
+      //}
 
-      if (m_pController->get(m_pCtrls[eAeroPowerZero])) {
-        m_fThrust=0.0f;
-        m_pController->set(m_pCtrls[eAeroPowerUp],0.0f);
-        m_bDataChanged=true;
-      }
+      //if (m_pController->get(m_pCtrls[eAeroPowerZero])) {
+      //  m_fThrust=0.0f;
+      //  m_pController->set(m_pCtrls[eAeroPowerUp],0.0f);
+      //  m_bDataChanged=true;
+      //}
 
-      irr::f32 f;
+      //irr::f32 f;
 
-      f=m_pController->get(m_pCtrls[eAeroPitchUp ]); if (f!=m_fPitch) { m_bDataChanged=true; m_fPitch=f; }
-      f=m_pController->get(m_pCtrls[eAeroRollLeft]); if (f!=m_fRoll ) { m_bDataChanged=true; m_fRoll =f; }
-      f=m_pController->get(m_pCtrls[eAeroYawRight]); if (f!=m_fYaw  ) { m_bDataChanged=true; m_fYaw  =f; }
+      //f=m_pController->get(m_pCtrls[eAeroPitchUp ]); if (f!=m_fPitch) { m_bDataChanged=true; m_fPitch=f; }
+      //f=m_pController->get(m_pCtrls[eAeroRollLeft]); if (f!=m_fRoll ) { m_bDataChanged=true; m_fRoll =f; }
+      //f=m_pController->get(m_pCtrls[eAeroYawRight]); if (f!=m_fYaw  ) { m_bDataChanged=true; m_fYaw  =f; }
 
       if (m_fThrust> 1.0f) { m_bDataChanged=true; m_fThrust =1.0f; }
       if (m_fThrust<-0.0f) { m_bDataChanged=true; m_fThrust/=4.0f; }
 
-      if (m_pController->get(m_pCtrls[eAeroFirePrimary])!=0.0f && pStep->getStepNo()-m_iLastShot1>60) {
-        m_bFirePrimary=true;
-      }
+      //if (m_pController->get(m_pCtrls[eAeroFirePrimary])!=0.0f && pStep->getStepNo()-m_iLastShot1>60) {
+      //  m_bFirePrimary=true;
+      //}
 
-      if (m_pController->get(m_pCtrls[eAeroFireSecondary])!=0.0f && pStep->getStepNo()-m_iLastShot2>30) {
-        m_bFireSecondary=true;
-      }
+      //if (m_pController->get(m_pCtrls[eAeroFireSecondary])!=0.0f && pStep->getStepNo()-m_iLastShot2>30) {
+      //  m_bFireSecondary=true;
+      //}
 
-      bool b = m_pController->get(m_pCtrls[eAeroBrake])>0.2f;
-      m_bDataChanged |= m_bBrakes != b;
-      m_bBrakes = b;
+      //bool b = m_pController->get(m_pCtrls[eAeroBrake])>0.2f;
+      //m_bDataChanged |= m_bBrakes != b;
+      //m_bBrakes = b;
 
-      if (m_pBrakes[0]!=NULL) {
-        m_pBrakes[0]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
-      }
+      //if (m_pBrakes[0]!=NULL) {
+      //  m_pBrakes[0]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
+      //}
 
-      if (m_pBrakes[1]!=NULL) {
-        m_pBrakes[1]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
-      }
+      //if (m_pBrakes[1]!=NULL) {
+      //  m_pBrakes[1]->setForce(50.0f*m_pController->get(m_pCtrls[eAeroBrake]));
+      //}
 
-      if (m_pController->get(m_pCtrls[eAeroFlip])) {
-        m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
-      }
+      //if (m_pController->get(m_pCtrls[eAeroFlip])) {
+      //  m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
+      //}
 
-      if (m_pController->get(m_pCtrls[eAeroAutoPilot])) {
-        m_pController->set(m_pCtrls[eAeroAutoPilot],0.0f);
-        m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
-        m_bDataChanged = true;
-      }
+      //if (m_pController->get(m_pCtrls[eAeroAutoPilot])) {
+      //  m_pController->set(m_pCtrls[eAeroAutoPilot],0.0f);
+      //  m_pAutoPilot->setEnabled(!m_pAutoPilot->isEnabled());
+      //  m_bDataChanged = true;
+      //}
 
-      if (m_pController->get(m_pCtrls[eAeroSelectTarget])) {
-        m_pController->set(m_pCtrls[eAeroSelectTarget],0.0f);
-        m_pTargetSelector->selectOption();
-      }
+      //if (m_pController->get(m_pCtrls[eAeroSelectTarget])) {
+      //  m_pController->set(m_pCtrls[eAeroSelectTarget],0.0f);
+      //  m_pTargetSelector->selectOption();
+      //}
     }
 
     if (m_pAutoPilot->isEnabled()) {

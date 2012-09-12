@@ -40,7 +40,7 @@ class CHeli : public CAeroVehicle {
     irr::s32 m_iNodeId;
 
   public:
-    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CIrrCC *pCtrl, CRearView *pRView);
+    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView);
     virtual ~CHeli();
 
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }
@@ -51,6 +51,8 @@ class CHeli : public CAeroVehicle {
 
     virtual irr::ode::IIrrOdeEvent *writeEvent();
     virtual irr::ode::eEventWriterType getEventWriterType();
+
+    virtual enumStateType getType() { return eStateHeli; }
 };
 
 #endif

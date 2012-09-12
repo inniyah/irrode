@@ -4,7 +4,14 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
 
-class CIrrCC;
+enum enumStateType {
+  eStateMenu,
+  eStateCtrl,
+  eStateCar,
+  eStatePlane,
+  eStateHeli,
+  eStateTank
+};
 
 /**
  * This class is the base class for all states that are used in this demo. It has three virtual methods
@@ -13,7 +20,6 @@ class CIrrCC;
 class CIrrOdeCarState {
   protected:
     bool m_bSwitchToMenu,   /*!< return to menu state */
-         m_bHelp,           /*!< display the help screen */
          m_bActive,
          m_bInitialized;
 
@@ -24,11 +30,8 @@ class CIrrOdeCarState {
     irr::scene::ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
     irr::gui::IGUIEnvironment *m_pGuiEnv;   /*!< the current Irrlicht GUI environment */
 
-    irr::gui::IGUIStaticText *m_pHelp;    /*!< the help text */
-
     irr::c8 m_sHelpFile[1024];
 
-    CIrrCC *m_pController;
   public:
     /**
      * The constructor
@@ -36,7 +39,7 @@ class CIrrOdeCarState {
      * @param sVehicleName the name of the state (e.g. helicopter)
      * @param sHelpFile the help file. The content of this file is shown in the help screen
      */
-    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName, const irr::c8 *sHelpFile, CIrrCC *pCtrl);
+    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName);
 
     virtual ~CIrrOdeCarState() { }   /*!< destructor */
 
@@ -45,8 +48,6 @@ class CIrrOdeCarState {
     virtual irr::u32 update();         /*!< This method is called once per render frame. Subclasses should call this method */
 
     virtual bool OnEvent(const irr::SEvent &event); /*!< Irrlicht event handler. Called by subclasses */
-
-    void loadHelpFile();
 
     bool isInitialized() { return m_bInitialized; }
 
@@ -59,6 +60,8 @@ class CIrrOdeCarState {
     virtual void incHitsTaken() { m_iHitsTaken++; }
 
     virtual irr::ode::CIrrOdeBody *getBody() = 0;
+
+    virtual enumStateType getType() = 0;
 };
 
 #endif

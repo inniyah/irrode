@@ -12,6 +12,8 @@ class CController : public CIrrOdeCarState, public irr::IEventReceiver {
   protected:
     irr::gui::IGUITabControl *m_pTabCtrl;
 
+    CIrrCC *m_pController;
+
   public:
     CController(irr::IrrlichtDevice *pDevice, CIrrCC *pCtrl);  /*!< the constructor */
     virtual ~CController();                               /*!< the destructor */
@@ -26,6 +28,8 @@ class CController : public CIrrOdeCarState, public irr::IEventReceiver {
 
     virtual void drawSpecifics() { }
     virtual irr::ode::CIrrOdeBody *getBody() { return NULL; }
+
+    virtual enumStateType getType() { return eStateCtrl; }
 };
 
 #endif
