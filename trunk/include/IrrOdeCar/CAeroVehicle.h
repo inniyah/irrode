@@ -30,7 +30,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter
          m_bFireSecondary,
          m_bDataChanged,
          m_bBrakes,
-         m_bPowerZero,
          m_bFlip;
 
     CRearView *m_pRView;
