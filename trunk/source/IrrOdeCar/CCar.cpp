@@ -7,6 +7,7 @@
   #include <CRearView.h>
   #include <CEventVehicleState.h>
   #include <CIrrOdeCarTrack.h>
+  #include <CControlEvents.h>
 
   #include <irrCC.h>
 
@@ -28,7 +29,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearVie
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_fSound     = 0.75f;
   m_fOldSlider = 0.0f;
-  m_fForeward  = 0.0f;
   m_fCtrlSteer = 0.0f;
   m_fSteer     = 0.0f;
   m_fSpeed     = 0.0f;
@@ -38,6 +38,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearVie
   m_bGasStation  = false;
   m_bGasLastStep = false;
   m_bBoost       = false;
+  m_bFlip        = false;
   m_bAdapt       = true;
 
   m_vWheelOld[0] = irr::core::vector3df(0.0f,0.0f,0.0f);
@@ -124,7 +125,7 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearVie
     //initialize the members
     m_bHelp=false;
     m_bBrake=false;
-    m_iThrottle=0;
+    m_fThrottle=0.0f;
 
     m_fOldVel=0.0f;
 
@@ -181,6 +182,42 @@ irr::u32 CCar::update() {
 }
 
 bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  if (pEvent->getType() == EVENT_CAR_CONTROLS_ID) {
+    CCarControls *p = reinterpret_cast<CCarControls *>(pEvent);
+    if (p->getNode() == m_iBodyId) {
+      m_fThrottle  = p->getThrottle     ();
+      m_fSteer     = p->getSteer        ();
+      m_bBoost     = p->getBoost        ();
+      m_bFlip      = p->getFlip         ();
+
+      if (p->getShiftUp()) {
+        if (m_pGearBox->shiftUp()) {
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,0.05f,m_pCarBody->getPosition());
+          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        }
+      }
+
+      if (p->getShiftDown()) {
+        if (m_pGearBox->shiftDown()) {
+          CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,1.0f,m_pCarBody->getPosition());
+          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        }
+      }
+
+      if (p->getAdaptiveSteer()) {
+        m_bAdapt = !m_bAdapt;
+      }
+
+      if (p->getDifferential()) {
+        m_pGearBox->toggleDifferential();
+        dataChanged();
+      }
+
+      if (m_fThrottle >  1.0f) m_fThrottle =  1.0f; if (m_fSteer >  1.0f) m_fSteer =  1.0f;
+      if (m_fThrottle < -1.0f) m_fThrottle = -1.0f; if (m_fSteer < -1.0f) m_fSteer = -1.0f;
+    }
+  }
+
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
     if (m_bGasLastStep && !m_bGasStation) {
       const irr::core::vector3df v=m_pCarBody->getPosition();
@@ -200,9 +237,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_fSpeed=-0.3f*(m_pAxesFront[0]->getHingeAngle2Rate()+m_pAxesFront[1]->getHingeAngle2Rate())/2;
 
-    //irr::f32 fForeward=m_bActive?m_pController->get(m_pCtrls[eCarForeward]):0.0f;
-
-    m_pGearBox->update(m_fForeward, m_bBoost && m_iBoost > 0);
+    m_pGearBox->update(m_fThrottle, m_bBoost && m_iBoost > 0);
 
     if (m_bBoost) {
       if (m_iBoost > 0)
@@ -211,8 +246,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else {
       if (m_iBoost < 1800) m_iBoost++;
     }
-
-    //m_fSteer=m_bActive?m_pController->get(m_pCtrls[eCarLeft]):0.0f;
 
     irr::f32 v = m_pCarBody->getLinearVelocity().getLength();
 
@@ -231,7 +264,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else
       for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
 
-    irr::f32 fForeward = m_fForeward;
+    irr::f32 fForeward = m_fThrottle;
 
     if (fForeward < 0.0f) {
       fForeward=-fForeward;
@@ -245,34 +278,11 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     else m_bBrake=false;
 
     if (m_bActive) {
-      //if (m_pController->get(m_pCtrls[eCarShiftUp])) {
-      //  m_pController->set(m_pCtrls[eCarShiftUp],0.0f);
-      //  if (m_pGearBox->shiftUp()) {
-      //    CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,0.05f,m_pCarBody->getPosition());
-      //    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-      //  }
-      //}
-
-      //if (m_pController->get(m_pCtrls[eCarShiftDown])) {
-      //  m_pController->set(m_pCtrls[eCarShiftDown],0.0f);
-      //  if (m_pGearBox->shiftDown()) {
-      //    CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,1.0f,m_pCarBody->getPosition());
-      //    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
-      //  }
-      //}
-
-      //if (m_pController->get(m_pCtrls[eCarAdapSteer])) {
-      //  m_pController->set(m_pCtrls[eCarAdapSteer], 0.0f);
-      //  m_bAdapt = !m_bAdapt;
-      //}
-
-      //m_bBoost = m_pController->get(m_pCtrls[eCarBoost]);
-
-      //if the flip car key was pressed we add a torque to the car in order to turn it back on it's wheels
-      //if (m_pController->get(m_pCtrls[eCarFlip])!=0.0f) {
-      //  irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
-      //  m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,225,0));
-      //}
+      //if the flip car key was pressed we add a force to the car in order to turn it back on it's wheels
+      if (m_bFlip) {
+        irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
+        m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,225,0));
+      }
 
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
                            cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.75f,0.0f)),
@@ -283,12 +293,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_pRView->setCameraParameters(cPos,cTgt,cUp);
         m_pRView->update();
       }
-
-      //if (m_pController->get(m_pCtrls[eCarDifferential])) {
-      //  m_pController->set(m_pCtrls[eCarDifferential],0.0f);
-      //  m_pGearBox->toggleDifferential();
-      //  dataChanged();
-      //}
     }
 
     irr::f32 fVel=m_pCarBody->getLinearVelocity().getLength();
@@ -412,7 +416,7 @@ void CCar::applyAeroEffect() {
 }
 
 bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger || pEvent->getType() == EVENT_CAR_CONTROLS_ID;
 }
 
 irr::ode::IIrrOdeEvent *CCar::writeEvent() {

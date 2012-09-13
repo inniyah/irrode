@@ -20,6 +20,8 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
     void setClient(irr::u16 iClient) { m_iClient = iClient; }
     void setNode  (irr::s32 iNode  ) { m_iNode   = iNode  ; }
 
+    irr::s32 getNode() { return m_iNode; }
+
     irr::u16 getClient() { return m_iClient; }
 };
 
