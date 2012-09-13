@@ -202,6 +202,7 @@ void CControlReceiver::update() {
     m_pActive->activate();
     updateVehicle();
     m_pCamCtrl->setTarget(m_pActive->getBody());
+    m_iNode = m_pActive->getBody() != NULL ? m_pActive->getBody()->getID() : -1;
     iSwitch=0;
   }
 
@@ -222,7 +223,19 @@ void CControlReceiver::update() {
         m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
         m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
 
-        printf("%.2f, %.2f | %s%s%s%s%s%s\n", fThrottle, fSteer, bDifferential?"D":" ", bShiftUp?"U":" ", bShiftDown?"D":" ",bFlip?"F":" ", bBoost?"B":" ", bAdapt?"A":" ");
+        //printf("%.2f, %.2f | %s%s%s%s%s%s\n", fThrottle, fSteer, bDifferential?"D":" ", bShiftUp?"U":" ", bShiftDown?"D":" ",bFlip?"F":" ", bBoost?"B":" ", bAdapt?"A":" ");
+
+        CCarControls *p = new CCarControls(fThrottle, fSteer);
+        p->setDifferential (bDifferential);
+        p->setShifDown     (bShiftDown   );
+        p->setShiftUp      (bShiftUp     );
+        p->setBoost        (bBoost       );
+        p->setFlip         (bFlip        );
+        p->setAdaptiveSteer(bAdapt       );
+
+        p->setNode(m_iNode);
+
+        m_pInputQueue->postEvent(p);
       }
       break;
 

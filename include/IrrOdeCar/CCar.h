@@ -57,15 +57,17 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
              m_bGasLastStep,     /*!< was the car in a gas station in the last step? */
              m_bTouch,           /*!< at least one of the wheels has ground contact */
              m_bAdapt,           /*!< adaptive steer on / off */
-             m_bBoost;           /*!< boost on / off */
+             m_bBoost,           /*!< boost on / off */
+             m_bFlip;
     irr::f32 m_fOldVel,          /*!< old velocity */
              m_fSteer,           /*!< the steering angle */
              m_fSpeed,           /*!< the speed of the car (for the cockpit) */
              m_fAngle,           /*!< the sterring angle (for adaptive steer) */
-             m_fForeward,        /*!< control of gas pedal */
-             m_fCtrlSteer;       /*!< control of steering */
-    irr::s32 m_iThrottle,        /*!< position of the throttle */
-             m_iBodyId,          /*!< id of the car body */
+             m_fCtrlSteer,       /*!< control of steering */
+             m_fThrottle,        /*!< position of the throttle */
+             m_fSound,
+             m_fOldSlider;
+    irr::s32 m_iBodyId,          /*!< id of the car body */
              m_iBoost;           /*!< remaining boost */
 
     irr::core::vector3df m_vSuspNeutral,   /*!< the neutral position of the suspension */
@@ -87,9 +89,6 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
 
     CCockpitCar *m_pCockpit;
     CRearView *m_pRView;
-
-    irr::f32 m_fSound,
-             m_fOldSlider;
 
     irr::core::vector3df m_vOldSpeed;
 
