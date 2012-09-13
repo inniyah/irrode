@@ -119,6 +119,8 @@ class CControlReceiver : public irr::IEventReceiver {
 
     void removeFromScene(irr::scene::ISceneNode *pNode);
     void removeFromScene(const irr::c8 *sName, irr::scene::ISceneManager *smgr);
+
+    void drawSpecifics();
 };
 
 #endif

@@ -120,32 +120,32 @@ class CCarControls : public IControlMessage {
 class CPlaneControls : public IControlMessage {
   public:
     enum ePlaneControlFlags {
-      ePlaneControlPowerUp       = 1,
-      ePlaneControlPowerDown     = 2,
-      ePlaneControlPowerZero     = 4,
-      ePlaneControlBrake         = 8,
-      ePlaneControlSelectTarget  = 16,
-      ePlaneControlFirePrimary   = 32,
-      ePlaneControlFireSecondary = 64,
-      ePlaneControlFlip          = 128,
-      ePlaneControlAutoPilot     = 256
+      ePlaneControlPowerZero     = 1,
+      ePlaneControlBrake         = 2,
+      ePlaneControlSelectTarget  = 8,
+      ePlaneControlFirePrimary   = 16,
+      ePlaneControlFireSecondary = 32,
+      ePlaneControlFlip          = 64,
+      ePlaneControlAutoPilot     = 128
     };
 
   protected:
     irr::f32 m_fYaw,
              m_fPitch,
-             m_fRoll;
-    irr::u16 m_iFlags;
+             m_fRoll,
+             m_fPower;
+    irr::u8  m_iFlags;
 
     void setFlag(bool bValue, irr::u16 iFlag) {
       if (bValue) m_iFlags = m_iFlags | iFlag; else m_iFlags = m_iFlags & ~iFlag;
     }
 
   public:
-    CPlaneControls(irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll) {
+    CPlaneControls(irr::f32 fYaw, irr::f32 fPitch, irr::f32 fRoll, irr::f32 fPower) {
       m_fYaw   = fYaw;
       m_fRoll  = fRoll;
       m_fPitch = fPitch;
+      m_fPower = fPower;
       m_iFlags = 0;
     }
 
@@ -162,6 +162,7 @@ class CPlaneControls : public IControlMessage {
         m_fYaw   = p->getYaw  ();
         m_fPitch = p->getPitch();
         m_fRoll  = p->getRoll ();
+        m_fPower = p->getPower();
         m_iFlags = p->getFlags();
       }
     }
@@ -173,14 +174,13 @@ class CPlaneControls : public IControlMessage {
         m_fYaw   = p->getF32();
         m_fPitch = p->getF32();
         m_fRoll  = p->getF32();
-        m_iFlags = p->getU16();
+        m_fPower = p->getF32();
+        m_iFlags = p->getU8 ();
       }
     }
 
     virtual ~CPlaneControls() { }
 
-    void setPowerUp      (bool b) { setFlag(b, ePlaneControlPowerUp      ); }
-    void setPowerDown    (bool b) { setFlag(b, ePlaneControlPowerDown    ); }
     void setPowerZero    (bool b) { setFlag(b, ePlaneControlPowerZero    ); }
     void setSelectTarget (bool b) { setFlag(b, ePlaneControlSelectTarget ); }
     void setFirePrimary  (bool b) { setFlag(b, ePlaneControlFirePrimary  ); }
@@ -189,8 +189,6 @@ class CPlaneControls : public IControlMessage {
     void setBrake        (bool b) { setFlag(b, ePlaneControlBrake        ); }
     void setAutoPilot    (bool b) { setFlag(b, ePlaneControlAutoPilot    ); }
 
-    bool getPowerUp      () { return m_iFlags & ePlaneControlPowerUp      ; }
-    bool getPowerDown    () { return m_iFlags & ePlaneControlPowerDown    ; }
     bool getPowerZero    () { return m_iFlags & ePlaneControlPowerZero    ; }
     bool getSelectTarget () { return m_iFlags & ePlaneControlSelectTarget ; }
     bool getFirePrimary  () { return m_iFlags & ePlaneControlFirePrimary  ; }
@@ -202,6 +200,7 @@ class CPlaneControls : public IControlMessage {
     irr::f32 getPitch() { return m_fPitch; }
     irr::f32 getYaw  () { return m_fYaw  ; }
     irr::f32 getRoll () { return m_fRoll ; }
+    irr::f32 getPower() { return m_fPower; }
 
     irr::u16 getFlags() { return m_iFlags; }
 
@@ -213,7 +212,8 @@ class CPlaneControls : public IControlMessage {
         m_pSerializer->addF32(m_fYaw  );
         m_pSerializer->addF32(m_fPitch);
         m_pSerializer->addF32(m_fRoll );
-        m_pSerializer->addU16(m_iFlags);
+        m_pSerializer->addF32(m_fPower);
+        m_pSerializer->addU8 (m_iFlags);
       }
       return m_pSerializer;
     }

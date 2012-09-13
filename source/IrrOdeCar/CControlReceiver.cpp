@@ -188,6 +188,7 @@ void CControlReceiver::update() {
 
   //call the update method of the currently active state
   irr::u32 iSwitch=m_pActive->update();
+  m_pActive->drawSpecifics();
 
   if (m_bSwitchToMenu) {
     iSwitch = 1;
@@ -223,9 +224,8 @@ void CControlReceiver::update() {
         m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
         m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
 
-        //printf("%.2f, %.2f | %s%s%s%s%s%s\n", fThrottle, fSteer, bDifferential?"D":" ", bShiftUp?"U":" ", bShiftDown?"D":" ",bFlip?"F":" ", bBoost?"B":" ", bAdapt?"A":" ");
-
         CCarControls *p = new CCarControls(fThrottle, fSteer);
+
         p->setDifferential (bDifferential);
         p->setShifDown     (bShiftDown   );
         p->setShiftUp      (bShiftUp     );
@@ -240,9 +240,41 @@ void CControlReceiver::update() {
       break;
 
     case eControlPlane:
-      break;
+    case eControlHeli: {
+        irr::f32 fPower = m_pController->get(m_iCtrls[2][eAeroPowerUp  ]),
+                 fPitch = m_pController->get(m_iCtrls[2][eAeroPitchUp  ]),
+                 fRoll  = m_pController->get(m_iCtrls[2][eAeroRollLeft ]),
+                 fYaw   = m_pController->get(m_iCtrls[2][eAeroYawRight ]);
 
-    case eControlHeli:
+        bool bPowerZero = m_pController->get(m_iCtrls[2][eAeroPowerZero    ]),
+             bSelTarget = m_pController->get(m_iCtrls[2][eAeroSelectTarget ]),
+             bFirePrim  = m_pController->get(m_iCtrls[2][eAeroFirePrimary  ]),
+             bFireSec   = m_pController->get(m_iCtrls[2][eAeroFireSecondary]),
+             bFlip      = m_pController->get(m_iCtrls[2][eAeroFlip         ]),
+             bBrake     = m_pController->get(m_iCtrls[2][eAeroBrake        ]),
+             bAutoPilot = m_pController->get(m_iCtrls[2][eAeroAutoPilot    ]);
+
+        m_pController->set(m_iCtrls[2][eAeroSelectTarget ], 0.0f);
+        m_pController->set(m_iCtrls[2][eAeroFirePrimary  ], 0.0f);
+        m_pController->set(m_iCtrls[2][eAeroFireSecondary], 0.0f);
+        m_pController->set(m_iCtrls[2][eAeroAutoPilot    ], 0.0f);
+
+        CPlaneControls *p = new CPlaneControls(fYaw, fPitch, fRoll, fPower);
+
+        p->setPowerZero    (bPowerZero);
+        p->setSelectTarget (bSelTarget);
+        p->setFirePrimary  (bFirePrim );
+        p->setFireSecondary(bFireSec  );
+        p->setFlip         (bFlip     );
+        p->setBrake        (bBrake    );
+        p->setAutoPilot    (bAutoPilot);
+
+        if (bPowerZero) m_pController->set(m_iCtrls[2][eAeroPowerUp], 0.0f);
+
+        p->setNode(m_iNode);
+
+        m_pInputQueue->postEvent(p);
+      }
       break;
 
     case eControlTank:
@@ -320,4 +352,8 @@ void CControlReceiver::removeFromScene(irr::scene::ISceneNode *pNode) {
 
   irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+}
+
+void CControlReceiver::drawSpecifics() {
+  if (m_pActive != NULL) m_pActive->drawSpecifics();
 }

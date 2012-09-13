@@ -398,7 +398,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         m_pSmgr->drawAll();
         m_pGui->drawAll();
 
-        //m_pActive->drawSpecifics();
+        m_pCtrlReceiver->drawSpecifics();
 
         m_pDriver->endScene();
         int fps = m_pDriver->getFPS();
