@@ -16,14 +16,14 @@ class IIrrOdeEventListener {
      * This method is called when an event is posted
      * @param pEvent the posted event
      */
-    virtual bool onEvent(IIrrOdeEvent *pEvent)=0;
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent)=0;
 
     /**
      * This method is called to see whether or not an event is handled by this irr::core::listener
      * @param pEvent the event in question
      * @return "true" if the irr::core::listener handles the event, "false" otherwise
      */
-    virtual bool handlesEvent(IIrrOdeEvent *pEvent)=0;
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent)=0;
 };
 
 } //namespace ode

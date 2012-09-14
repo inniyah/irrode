@@ -131,7 +131,7 @@ irr::u32 CTank::update() {
 }
 
 bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  if (pEvent->getType() == EVENT_TANK_CONTROLS_ID) {
+  if (pEvent->getType() == eCtrlMsgTank) {
     CTankControls *p = reinterpret_cast<CTankControls *>(pEvent);
     if (p->getNode() == m_pTankBody->getID()) {
       m_fCannonLeft = p->getCannonLeft();
@@ -255,7 +255,7 @@ bool CTank::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CTank::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType() == EVENT_TANK_CONTROLS_ID;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType() == eCtrlMsgTank;
 }
 
 irr::ode::IIrrOdeEvent *CTank::writeEvent() {

@@ -182,7 +182,7 @@ irr::u32 CCar::update() {
 }
 
 bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  if (pEvent->getType() == EVENT_CAR_CONTROLS_ID) {
+  if (pEvent->getType() == eCtrlMsgCar) {
     CCarControls *p = reinterpret_cast<CCarControls *>(pEvent);
     if (p->getNode() == m_iBodyId) {
       m_fThrottle  = p->getThrottle     ();
@@ -416,7 +416,7 @@ void CCar::applyAeroEffect() {
 }
 
 bool CCar::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger || pEvent->getType() == EVENT_CAR_CONTROLS_ID;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType()==irr::ode::eIrrOdeEventTrigger || pEvent->getType() == eCtrlMsgCar;
 }
 
 irr::ode::IIrrOdeEvent *CCar::writeEvent() {

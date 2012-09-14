@@ -1,8 +1,11 @@
-  #include "CMenu.h"
-  #include "CProjectile.h"
+  #include <CMenu.h>
+  #include <CProjectile.h>
+  #include <CControlEvents.h>
 
-CMenu::CMenu(irr::IrrlichtDevice *pDevice) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu", NULL) {
+CMenu::CMenu(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu", NULL) {
   irr::gui::IGUIButton *b=NULL;
+
+  m_pInputQueue = pInputQueue;
 
   m_cDim=irr::core::dimension2di(128,30);
   m_cPos=irr::core::position2di(5,5);
@@ -75,7 +78,16 @@ bool CMenu::OnEvent(const irr::SEvent &event) {
   if (event.EventType==irr::EET_GUI_EVENT) {
     if (event.GUIEvent.EventType==irr::gui::EGET_BUTTON_CLICKED) {
       //the ID of the button is the return value necessary to switch to the wanted state
-      m_iMenuSelect=event.GUIEvent.Caller->getID();
+      irr::s32 iSelect=event.GUIEvent.Caller->getID();
+      if (iSelect < 100)
+        m_iMenuSelect = iSelect;
+      else {
+        printf("request vehicle %i\n",iSelect);
+        CRequestVehicle *p = new CRequestVehicle();
+        p->setNode(iSelect);
+
+        m_pInputQueue->postEvent(p);
+      }
     }
   }
 
@@ -94,10 +106,12 @@ void CMenu::setBtnEnabled(irr::u32 iNum, bool b) {
 
 void CMenu::addButtonForState(CIrrOdeCarState *pState) {
   irr::gui::IGUIButton *b=NULL;
-
+  irr::ode::CIrrOdeBody *pBody = pState->getBody();
   //create the buttons necessary to select the vehicle to control
-  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),m_pTab,m_iIdx++,L"");
+  b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),m_pTab,pBody == NULL ? m_iIdx : pBody->getID(),L"");
   b->setVisible(false);
+
+  m_iIdx++;
 
   irr::core::stringw sBtn = "../../data/textures/buttons/";
   sBtn += pState->getButton();

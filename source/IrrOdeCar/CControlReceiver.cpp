@@ -125,7 +125,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   initControls();
 
   CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
-  m_pMenu = new CMenu(m_pDevice); m_aStates.push_back(m_pMenu);
+  m_pMenu = new CMenu(m_pDevice, m_pInputQueue); m_aStates.push_back(m_pMenu);
   m_pActive = m_pMenu;
 
   m_pCtrlDialog = new CController(m_pDevice,m_pController); m_aStates.push_back(m_pCtrlDialog);
@@ -146,11 +146,13 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
 
   initWorld(m_pDevice->getSceneManager()->getRootSceneNode());
 
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
   m_iActive = 0;
 }
 
 CControlReceiver::~CControlReceiver() {
   CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
+  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CControlReceiver::setControlledVehicle(irr::s32 iType, irr::s32 iNode) {
@@ -183,6 +185,32 @@ void CControlReceiver::start() {
   updateVehicle();
 }
 
+void CControlReceiver::switchToState(irr::s32 iNewState) {
+  m_pActive->deactivate();
+
+  if (iNewState > 1000) {
+    for (irr::u32 i = 0; i < m_aStates.size(); i++) {
+      CIrrOdeCarState *p = m_aStates[i];
+      if (p->getBody() != NULL && p->getBody()->getID() == iNewState) {
+        iNewState = i;
+        printf("switch to state %i\n", iNewState);
+        break;
+      }
+    }
+  }
+
+  if (iNewState > 1000) {
+    printf("no vehicle found with ID %i\n", iNewState);
+    return;
+  }
+
+  m_pActive=m_aStates[iNewState];
+  m_pActive->activate();
+  updateVehicle();
+  m_pCamCtrl->setTarget(m_pActive->getBody());
+  m_iNode = m_pActive->getBody() != NULL ? m_pActive->getBody()->getID() : -1;
+}
+
 void CControlReceiver::update() {
   m_pCamCtrl->update();
 
@@ -198,13 +226,7 @@ void CControlReceiver::update() {
   //change the active state if wished, i.e. a value other than zero was returned
   if (iSwitch) {
     iSwitch--;
-    m_pActive->deactivate();
-    m_pActive=m_aStates[iSwitch];
-    m_pActive->activate();
-    updateVehicle();
-    m_pCamCtrl->setTarget(m_pActive->getBody());
-    m_iNode = m_pActive->getBody() != NULL ? m_pActive->getBody()->getID() : -1;
-    iSwitch=0;
+    switchToState(iSwitch);
   }
 
   switch (m_eVehicle) {
@@ -382,4 +404,19 @@ void CControlReceiver::removeFromScene(irr::scene::ISceneNode *pNode) {
 
 void CControlReceiver::drawSpecifics() {
   if (m_pActive != NULL) m_pActive->drawSpecifics();
+}
+
+bool CControlReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  if (pEvent->getType() == eCtrlMsgVehicleApproved) {
+    CVehicleApproved *p = reinterpret_cast<CVehicleApproved *>(pEvent);
+    if (p->getClient() == 0) {
+      printf("Got Vehicle %i\n", p->getNode());
+      switchToState((p->getNode()));
+    }
+  }
+  return false;
+}
+
+bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
+  return pEvent->getType() == eCtrlMsgVehicleApproved;
 }
