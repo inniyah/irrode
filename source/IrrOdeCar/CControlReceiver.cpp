@@ -224,18 +224,19 @@ void CControlReceiver::update() {
         m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
         m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
 
-        CCarControls *p = new CCarControls(fThrottle, fSteer);
+        CCarControls *pCar = new CCarControls(fThrottle, fSteer);
 
-        p->setDifferential (bDifferential);
-        p->setShifDown     (bShiftDown   );
-        p->setShiftUp      (bShiftUp     );
-        p->setBoost        (bBoost       );
-        p->setFlip         (bFlip        );
-        p->setAdaptiveSteer(bAdapt       );
+        pCar->setDifferential (bDifferential);
+        pCar->setShifDown     (bShiftDown   );
+        pCar->setShiftUp      (bShiftUp     );
+        pCar->setBoost        (bBoost       );
+        pCar->setFlip         (bFlip        );
+        pCar->setAdaptiveSteer(bAdapt       );
 
-        p->setNode(m_iNode);
+        pCar->setNode(m_iNode);
+        pCar->setClient(0);
 
-        m_pInputQueue->postEvent(p);
+        m_pInputQueue->postEvent(pCar);
       }
       break;
 
@@ -259,25 +260,49 @@ void CControlReceiver::update() {
         m_pController->set(m_iCtrls[2][eAeroFireSecondary], 0.0f);
         m_pController->set(m_iCtrls[2][eAeroAutoPilot    ], 0.0f);
 
-        CPlaneControls *p = new CPlaneControls(fYaw, fPitch, fRoll, fPower);
+        CPlaneControls *pPlane = new CPlaneControls(fYaw, fPitch, fRoll, fPower);
 
-        p->setPowerZero    (bPowerZero);
-        p->setSelectTarget (bSelTarget);
-        p->setFirePrimary  (bFirePrim );
-        p->setFireSecondary(bFireSec  );
-        p->setFlip         (bFlip     );
-        p->setBrake        (bBrake    );
-        p->setAutoPilot    (bAutoPilot);
+        pPlane->setPowerZero    (bPowerZero);
+        pPlane->setSelectTarget (bSelTarget);
+        pPlane->setFirePrimary  (bFirePrim );
+        pPlane->setFireSecondary(bFireSec  );
+        pPlane->setFlip         (bFlip     );
+        pPlane->setBrake        (bBrake    );
+        pPlane->setAutoPilot    (bAutoPilot);
 
         if (bPowerZero) m_pController->set(m_iCtrls[2][eAeroPowerUp], 0.0f);
 
-        p->setNode(m_iNode);
+        pPlane->setNode(m_iNode);
+        pPlane->setClient(0);
 
-        m_pInputQueue->postEvent(p);
+        m_pInputQueue->postEvent(pPlane);
       }
       break;
 
-    case eControlTank:
+    case eControlTank: {
+        irr::f32 fThrottle   = m_pController->get(m_iCtrls[1][eTankForeward  ]),
+                 fSteer      = m_pController->get(m_iCtrls[1][eTankLeft      ]),
+                 fCannonLeft = m_pController->get(m_iCtrls[1][eTankCannonLeft]),
+                 fCannonUp   = m_pController->get(m_iCtrls[1][eTankCannonUp  ]);
+
+        bool bFire          = m_pController->get(m_iCtrls[1][eTankFire         ]),
+             bFlip          = m_pController->get(m_iCtrls[1][eTankFlip         ]),
+             bFastCollision = m_pController->get(m_iCtrls[1][eTankFastCollision]);
+
+        CTankControls *pTank = new CTankControls(fThrottle, fSteer, fCannonLeft, fCannonUp);
+
+        pTank->setFire         (bFire         );
+        pTank->setFlip         (bFlip         );
+        pTank->setFastCollision(bFastCollision);
+
+        if (bFastCollision) m_pController->set(m_iCtrls[1][eTankFastCollision], 0.0f);
+        if (bFire         ) m_pController->set(m_iCtrls[1][eTankFire         ], 0.0f);
+
+        pTank->setNode(m_iNode);
+        pTank->setClient(0);
+
+        m_pInputQueue->postEvent(pTank);
+      }
       break;
 
     case eControlNone:
