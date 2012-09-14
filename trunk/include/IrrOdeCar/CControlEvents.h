@@ -7,6 +7,51 @@
   #define EVENT_PLANE_CONTROLS_ID (irr::ode::eIrrOdeEventUser + 1025)
   #define EVENT_TANK_CONTROLS_ID (irr::ode::eIrrOdeEventUser + 1026)
 
+enum eCarCtrl {
+  eCarForeward,
+  eCarBackward,
+  eCarLeft,
+  eCarRight,
+  eCarFlip,
+  eCarDifferential,
+  eCarShiftUp,
+  eCarShiftDown,
+  eCarBoost,
+  eCarAdapSteer
+};
+
+enum eAerealControls {
+  eAeroPitchUp,
+  eAeroPitchDown,
+  eAeroRollLeft,
+  eAeroRollRight,
+  eAeroYawLeft,
+  eAeroYawRight,
+  eAeroPowerUp,
+  eAeroPowerDown,
+  eAeroPowerZero,
+  eAeroBrake,
+  eAeroFirePrimary,
+  eAeroFireSecondary,
+  eAeroSelectTarget,
+  eAeroAutoPilot,
+  eAeroFlip
+};
+
+enum eTankCtrl {
+  eTankForeward,
+  eTankBackward,
+  eTankLeft,
+  eTankRight,
+  eTankCannonLeft,
+  eTankCannonRight,
+  eTankCannonUp,
+  eTankCannonDown,
+  eTankFire,
+  eTankFlip,
+  eTankFastCollision
+};
+
 class IControlMessage : public irr::ode::IIrrOdeEvent {
   protected:
     irr::u16 m_iClient;
@@ -228,18 +273,16 @@ class CPlaneControls : public IControlMessage {
 class CTankControls : public IControlMessage {
   public:
     enum eTankControlFlags {
-      eTankControlCannonLeft    = 1,
-      eTankControlCannonRight   = 2,
-      eTankControlCannonUp      = 4,
-      eTankControlCannonDown    = 8,
-      eTankControlFire          = 16,
-      eTankControlFlip          = 32,
-      eTankControlFastCollision = 64
+      eTankControlFire          = 1,
+      eTankControlFlip          = 2,
+      eTankControlFastCollision = 4
     };
 
   protected:
     irr::f32 m_fThrottle,
-             m_fSteer;
+             m_fSteer,
+             m_fCannonLeft,
+             m_fCannonUp;
     irr::u8 m_iFlags;
 
     void setFlag(bool bValue, irr::u8 iFlag) {
@@ -247,57 +290,59 @@ class CTankControls : public IControlMessage {
     }
 
   public:
-    CTankControls(irr::f32 fThrottle, irr::f32 fSteer) {
-      m_fThrottle = fThrottle;
-      m_fSteer    = fSteer;
-      m_iFlags    = 0;
+    CTankControls(irr::f32 fThrottle, irr::f32 fSteer, irr::f32 fCannonLeft, irr::f32 fCannonUp) {
+      m_fThrottle   = fThrottle;
+      m_fSteer      = fSteer;
+      m_fCannonLeft = fCannonLeft;
+      m_fCannonUp   = fCannonUp;
+      m_iFlags      = 0;
     }
 
     CTankControls() {
-      m_fThrottle = 0;
-      m_fSteer    = 0;
-      m_iFlags    = 0;
+      m_fThrottle   = 0;
+      m_fSteer      = 0;
+      m_fCannonLeft = 0;
+      m_fCannonUp   = 0;
+      m_iFlags      = 0;
     }
 
     CTankControls(irr::ode::IIrrOdeEvent *pEvent) {
       if (pEvent->getType() == EVENT_TANK_CONTROLS_ID) {
         CTankControls *p = reinterpret_cast<CTankControls *>(pEvent);
-        m_fThrottle = p->getThrottle();
-        m_fSteer    = p->getSteer   ();
-        m_iFlags    = p->getFlags   ();
+        m_fThrottle   = p->getThrottle  ();
+        m_fSteer      = p->getSteer     ();
+        m_fCannonLeft = p->getCannonLeft();
+        m_fCannonUp   = p->getCannonUp  ();
+        m_iFlags      = p->getFlags     ();
       }
     }
 
     CTankControls(irr::ode::CSerializer *p) {
       irr::u16 iType = p->getU16();
       if (iType == EVENT_TANK_CONTROLS_ID) {
-        m_iNode     = p->getS32();
-        m_fThrottle = p->getF32();
-        m_fSteer    = p->getF32();
-        m_iFlags    = p->getU16();
+        m_iNode       = p->getS32();
+        m_fThrottle   = p->getF32();
+        m_fSteer      = p->getF32();
+        m_fCannonLeft = p->getF32();
+        m_fCannonUp   = p->getF32();
+        m_iFlags      = p->getU16();
       }
     }
 
     virtual ~CTankControls() { }
 
-    void setCannonLeft   (bool b) { setFlag(b, eTankControlCannonLeft   ); }
-    void setCannonRight  (bool b) { setFlag(b, eTankControlCannonRight  ); }
-    void setCannonUp     (bool b) { setFlag(b, eTankControlCannonUp     ); }
-    void setCannonDown   (bool b) { setFlag(b, eTankControlCannonDown   ); }
     void setFire         (bool b) { setFlag(b, eTankControlFire         ); }
     void setFlip         (bool b) { setFlag(b, eTankControlFlip         ); }
     void setFastCollision(bool b) { setFlag(b, eTankControlFastCollision); }
 
-    bool getCannonLeft   () { return m_iFlags & eTankControlCannonLeft   ; }
-    bool getCannonRight  () { return m_iFlags & eTankControlCannonRight  ; }
-    bool getCannonUp     () { return m_iFlags & eTankControlCannonUp     ; }
-    bool getCannonDown   () { return m_iFlags & eTankControlCannonDown   ; }
     bool getFire         () { return m_iFlags & eTankControlFire         ; }
     bool getFlip         () { return m_iFlags & eTankControlFlip         ; }
     bool getFastCollision() { return m_iFlags & eTankControlFastCollision; }
 
-    irr::f32 getThrottle() { return m_fThrottle; }
-    irr::f32 getSteer   () { return m_fSteer   ; }
+    irr::f32 getThrottle  () { return m_fThrottle  ; }
+    irr::f32 getSteer     () { return m_fSteer     ; }
+    irr::f32 getCannonLeft() { return m_fCannonLeft; }
+    irr::f32 getCannonUp  () { return m_fCannonUp  ; }
 
     irr::u8 getFlags() { return m_iFlags; }
 
@@ -308,6 +353,8 @@ class CTankControls : public IControlMessage {
         m_pSerializer->addS32(m_iNode);
         m_pSerializer->addF32(m_fThrottle);
         m_pSerializer->addF32(m_fSteer);
+        m_pSerializer->addF32(m_fCannonLeft);
+        m_pSerializer->addF32(m_fCannonUp);
         m_pSerializer->addU8 (m_iFlags);
       }
       return m_pSerializer;

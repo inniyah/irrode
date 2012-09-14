@@ -17,11 +17,16 @@ class CTank : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
     bool m_bBrake,
          m_bFollowTurret,
          m_bFastCollision,
-         m_bFollowBullet;
+         m_bFlip,
+         m_bFire;
     irr::video::ITexture *m_pTextures[2];
 
     irr::f32 m_fCannonAngle,
-             m_fTurretAngle;
+             m_fTurretAngle,
+             m_fThrottle,
+             m_fSteer,
+             m_fCannonLeft,
+             m_fCannonUp;
 
     irr::ode::CIrrOdeMotor *m_pMotor[4];
     irr::ode::CIrrOdeBody *m_pTankBody,*m_pTurret,*m_pCannon;
