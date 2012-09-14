@@ -319,7 +319,8 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
   m_pController->OnEvent(event);
   m_pCamCtrl   ->OnEvent(event);
 
-  if (m_pActive == m_pMenu) m_pMenu->OnEvent(event);
+  if (m_pActive == m_pMenu      ) m_pMenu      ->OnEvent(event);
+  if (m_pActive == m_pCtrlDialog) m_pCtrlDialog->OnEvent(event);;
 
   if (event.EventType==irr::EET_KEY_INPUT_EVENT) {
     if (event.KeyInput.PressedDown) {
