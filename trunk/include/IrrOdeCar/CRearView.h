@@ -12,7 +12,7 @@ class CRearView : public IRenderToTexture {
     irr::IrrlichtDevice *m_pDevice;
 
   public:
-    CRearView(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ICameraSceneNode *pCam);
+    CRearView(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ICameraSceneNode *pCam, irr::scene::ISceneNode *pNode);
     virtual ~CRearView();
 
     virtual void update();

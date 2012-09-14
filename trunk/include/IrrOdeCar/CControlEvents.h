@@ -5,6 +5,7 @@
 
 enum enControlMessageIDs {
   eCtrlMsgRequestVehicle = irr::ode::eIrrOdeEventUser + 1024,
+  eCtrlMsgLeaveVehicle,
   eCtrlMsgVehicleApproved,
   eCtrlMsgCar,
   eCtrlMsgPlane,
@@ -77,6 +78,44 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
     irr::s32 getNode() { return m_iNode; }
 
     irr::u16 getClient() { return m_iClient; }
+};
+
+class CLeaveVehicle : public IControlMessage {
+  public:
+    CLeaveVehicle() : IControlMessage() { }
+
+    CLeaveVehicle(irr::ode::IIrrOdeEvent *pEvent) {
+      if (pEvent->getType() == eCtrlMsgLeaveVehicle) {
+        CLeaveVehicle *p = reinterpret_cast<CLeaveVehicle *>(pEvent);
+        m_iNode   = p->getNode  ();
+        m_iClient = p->getClient();
+      }
+    }
+
+    CLeaveVehicle(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
+      irr::u16 iType = p->getU16();
+      if (iType == eCtrlMsgLeaveVehicle) {
+        m_iNode   = p->getS32();
+        m_iClient = p->getU16();
+      }
+    }
+
+    virtual irr::u16 getType() { return eCtrlMsgLeaveVehicle; }
+
+    virtual irr::ode::IIrrOdeEvent *clone() { return new CLeaveVehicle(this); }
+
+    virtual const irr::c8 *toString() { sprintf(m_sString, "CLeaveVehicle: %i leaves %i.", m_iClient, m_iNode); return m_sString; }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+        m_pSerializer->addU16(eCtrlMsgLeaveVehicle);
+        m_pSerializer->addS32(m_iNode);
+        m_pSerializer->addU16(m_iClient);
+      }
+      return m_pSerializer;
+    }
 };
 
 class CVehicleApproved : public IControlMessage {

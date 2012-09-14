@@ -20,11 +20,11 @@ enum enumStateType {
 class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
   protected:
     bool m_bSwitchToMenu,   /*!< return to menu state */
-         m_bActive,
          m_bInitialized;
 
     irr::s32 m_iHitsScored,
-        m_iHitsTaken;
+             m_iHitsTaken,
+             m_iControllerBy;
 
     irr::IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     irr::scene::ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
@@ -63,6 +63,9 @@ class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
     virtual irr::ode::CIrrOdeBody *getBody() = 0;
 
     virtual enumStateType getType() = 0;
+
+    void setControlledBy(irr::s32 i) { m_iControllerBy = i; }
+    irr::s32 getControlledBy() { return m_iControllerBy; }
 };
 
 #endif

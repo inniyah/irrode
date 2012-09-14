@@ -57,12 +57,8 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
 
   irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
-  CRearView *pRearView=NULL;
-
-  if (bRearView) pRearView=new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode());
-
   for (it=m_lPlanes.begin(); it!=m_lPlanes.end(); it++) {
-    CPlane *p=new CPlane(m_pDevice,*it,NULL,pRearView, pInputQueue);
+    CPlane *p=new CPlane(m_pDevice,*it,NULL,bRearView ? new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode(), *it) : NULL, pInputQueue);
     CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
     p->setCockpit(pCockpit);
     m_lCockpits.push_back(pCockpit);
@@ -70,7 +66,7 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   }
 
   for (it=m_lCars.begin(); it!=m_lCars.end(); it++) {
-    CCar *p=new CCar(m_pDevice,*it,pRearView, pInputQueue);
+    CCar *p=new CCar(m_pDevice,*it,bRearView ? new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode(), *it) : NULL, pInputQueue);
     CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p->getBody());
     p->setCockpit(pCarCockpit);
     m_lCockpits.push_back(pCarCockpit);
@@ -83,7 +79,7 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   }
 
   for (it=m_lHelis.begin(); it!=m_lHelis.end(); it++) {
-    CHeli *p=new CHeli(m_pDevice,*it,pRearView, pInputQueue);
+    CHeli *p=new CHeli(m_pDevice,*it,bRearView ? new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode(), *it) : NULL, pInputQueue);
     CCockpitPlane *pCockpit=new CCockpitPlane(m_pDevice,"instruments",p->getBody());
     p->setCockpit(pCockpit);
     m_lCockpits.push_back(pCockpit);
@@ -114,11 +110,33 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (p->getBody() != NULL && p->getBody()->getID() == pEvt->getNode()) {
         printf("Vehicle is \"%s\"\n", p->getBody()->getName());
 
-        CVehicleApproved *pOk = new CVehicleApproved();
-        pOk->setNode  (pEvt->getNode  ());
-        pOk->setClient(pEvt->getClient());
+        if (p->getControlledBy() == -1) {
+          p->setControlledBy(pEvt->getClient());
+          CVehicleApproved *pOk = new CVehicleApproved();
+          pOk->setNode  (pEvt->getNode  ());
+          pOk->setClient(pEvt->getClient());
 
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pOk);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pOk);
+          return false;
+        }
+        else printf("Sorry ... vehicle is occupied by %i.\n", p->getControlledBy());
+      }
+    }
+  }
+
+  if (pEvent->getType() == eCtrlMsgLeaveVehicle) {
+    CLeaveVehicle *pEvt = reinterpret_cast<CLeaveVehicle *>(pEvent);
+    printf("%i leaves vehicle %i\n", pEvt->getClient(), pEvt->getNode());
+    irr::core::list<CIrrOdeCarState *>::Iterator it;
+    for (it = m_lVehicles.begin(); it != m_lVehicles.end(); it++) {
+      CIrrOdeCarState *p = *it;
+      if (p->getBody() != NULL && p->getBody()->getID() == pEvt->getNode()) {
+        printf("Vehicle is \"%s\"\n", p->getBody()->getName());
+        if (p->getControlledBy() == pEvt->getClient()) {
+          printf("OK, vehicle occupied by correct client ... abandon!\n");
+          p->setControlledBy(-1);
+          return false;
+        }
       }
     }
   }
@@ -127,5 +145,5 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CVehicle::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == eCtrlMsgRequestVehicle;
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == eCtrlMsgRequestVehicle || pEvent->getType() == eCtrlMsgLeaveVehicle;
 }
