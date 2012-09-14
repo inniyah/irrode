@@ -97,7 +97,7 @@ void CAeroVehicle::deactivate() {
 }
 
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  if (pEvent->getType() == EVENT_PLANE_CONTROLS_ID) {
+  if (pEvent->getType() == eCtrlMsgPlane) {
     CPlaneControls *p = reinterpret_cast<CPlaneControls *>(pEvent);
     if (p->getNode() == m_pBody->getID()) {
       irr::f32 f;
@@ -196,7 +196,7 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CAeroVehicle::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType() == EVENT_PLANE_CONTROLS_ID;
+  return pEvent->getType()==irr::ode::eIrrOdeEventStep || pEvent->getType() == eCtrlMsgPlane;
 }
 
 void CAeroVehicle::incHitsScored() {

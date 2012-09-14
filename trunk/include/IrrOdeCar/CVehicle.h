@@ -13,6 +13,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
     irr::IrrlichtDevice *m_pDevice;
     irr::scene::ISceneManager *m_pSmgr;
     irr::ode::CIrrOdeWorld *m_pWorld;
+    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
 
     irr::core::list<irr::scene::ISceneNode *> m_lCars,
                                               m_lPlanes,

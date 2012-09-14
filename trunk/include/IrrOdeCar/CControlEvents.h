@@ -3,9 +3,13 @@
 
   #include <irrode.h>
 
-  #define EVENT_CAR_CONTROLS_ID (irr::ode::eIrrOdeEventUser + 1024)
-  #define EVENT_PLANE_CONTROLS_ID (irr::ode::eIrrOdeEventUser + 1025)
-  #define EVENT_TANK_CONTROLS_ID (irr::ode::eIrrOdeEventUser + 1026)
+enum enControlMessageIDs {
+  eCtrlMsgRequestVehicle = irr::ode::eIrrOdeEventUser + 1024,
+  eCtrlMsgVehicleApproved,
+  eCtrlMsgCar,
+  eCtrlMsgPlane,
+  eCtrlMsgTank
+};
 
 enum eCarCtrl {
   eCarForeward,
@@ -58,6 +62,11 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
     irr::s32 m_iNode;
 
   public:
+    IControlMessage() {
+      m_iClient = 0;
+      m_iNode = 0;
+    }
+
     virtual ~IControlMessage() {
       m_iClient = 0;
     }
@@ -68,6 +77,82 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
     irr::s32 getNode() { return m_iNode; }
 
     irr::u16 getClient() { return m_iClient; }
+};
+
+class CVehicleApproved : public IControlMessage {
+  public:
+    CVehicleApproved() : IControlMessage() { }
+
+    CVehicleApproved(irr::ode::IIrrOdeEvent *pEvent) {
+      if (pEvent->getType() == eCtrlMsgVehicleApproved) {
+        CVehicleApproved *p = reinterpret_cast<CVehicleApproved *>(pEvent);
+        m_iNode   = p->getNode  ();
+        m_iClient = p->getClient();
+      }
+    }
+
+    CVehicleApproved(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
+      irr::u16 iType = p->getU16();
+      if (iType == eCtrlMsgVehicleApproved) {
+        m_iNode   = p->getS32();
+        m_iClient = p->getU16();
+      }
+    }
+
+    virtual irr::u16 getType() { return eCtrlMsgVehicleApproved; }
+
+    virtual irr::ode::IIrrOdeEvent *clone() { return new CVehicleApproved(this); }
+
+    virtual const irr::c8 *toString() { sprintf(m_sString, "CVehicleApproved: client %i, vehicle %i\n", m_iClient, m_iNode); return m_sString; }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer->addU16(eCtrlMsgVehicleApproved);
+        m_pSerializer->addS32(m_iNode  );
+        m_pSerializer->addU16(m_iClient);
+      }
+      return m_pSerializer;
+    }
+};
+
+class CRequestVehicle : public IControlMessage {
+  public:
+    CRequestVehicle() : IControlMessage() {
+    }
+
+    CRequestVehicle(irr::ode::IIrrOdeEvent *pEvent) {
+      if (pEvent->getType() == eCtrlMsgRequestVehicle) {
+        CRequestVehicle *p = reinterpret_cast<CRequestVehicle *>(pEvent);
+        m_iClient = p->getClient();
+        m_iNode   = p->getNode();
+      }
+    }
+
+    CRequestVehicle(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
+      irr::u16 iType = p->getU16();
+      if (iType == eCtrlMsgRequestVehicle) {
+        m_iNode = p->getS32();
+      }
+    }
+
+    virtual ~CRequestVehicle() { }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+        m_pSerializer->addU16(eCtrlMsgRequestVehicle);
+        m_pSerializer->addS32(m_iNode);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::u16 getType() { return eCtrlMsgRequestVehicle; }
+
+    virtual irr::ode::IIrrOdeEvent *clone() { return new CRequestVehicle(this); }
+
+    virtual const irr::c8 *toString() { sprintf(m_sString, "CRequestVehicle: %i", m_iNode); return m_sString; }
 };
 
 class CCarControls : public IControlMessage {
@@ -104,17 +189,20 @@ class CCarControls : public IControlMessage {
     }
 
     CCarControls(irr::ode::IIrrOdeEvent *pEvent) {
-      if (pEvent->getType() == EVENT_CAR_CONTROLS_ID) {
+      if (pEvent->getType() == eCtrlMsgCar) {
         CCarControls *p = reinterpret_cast<CCarControls *>(pEvent);
         m_fThrottle = p->getThrottle();
         m_fSteer    = p->getSteer   ();
         m_iFlags    = p->getFlags   ();
+        m_iClient   = p->getClient  ();
+        m_iNode     = p->getNode    ();
       }
     }
 
     CCarControls(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
       irr::u16 iType = p->getU16();
-      if (iType == EVENT_CAR_CONTROLS_ID) {
+      if (iType == eCtrlMsgCar) {
         m_iNode     = p->getS32();
         m_fThrottle = p->getF32();
         m_fSteer    = p->getF32();
@@ -146,16 +234,16 @@ class CCarControls : public IControlMessage {
     virtual irr::ode::CSerializer *serialize() {
       if (m_pSerializer == NULL) {
         m_pSerializer = new irr::ode::CSerializer();
-        m_pSerializer->addU16(EVENT_CAR_CONTROLS_ID);
+        m_pSerializer->addU16(eCtrlMsgCar);
         m_pSerializer->addS32(m_iNode);
         m_pSerializer->addF32(m_fThrottle);
         m_pSerializer->addF32(m_fSteer);
-        m_pSerializer->addU8(m_iFlags);
+        m_pSerializer->addU8 (m_iFlags);
       }
       return m_pSerializer;
     }
 
-    virtual irr::u16 getType() { return EVENT_CAR_CONTROLS_ID; }
+    virtual irr::u16 getType() { return eCtrlMsgCar; }
 
     virtual irr::ode::IIrrOdeEvent *clone() { return new CCarControls(this); }
 
@@ -202,25 +290,28 @@ class CPlaneControls : public IControlMessage {
     }
 
     CPlaneControls(irr::ode::IIrrOdeEvent *pEvent) {
-      if (pEvent->getType() == EVENT_PLANE_CONTROLS_ID) {
+      if (pEvent->getType() == eCtrlMsgPlane) {
         CPlaneControls *p = reinterpret_cast<CPlaneControls *>(pEvent);
-        m_fYaw   = p->getYaw  ();
-        m_fPitch = p->getPitch();
-        m_fRoll  = p->getRoll ();
-        m_fPower = p->getPower();
-        m_iFlags = p->getFlags();
+        m_fYaw    = p->getYaw   ();
+        m_fPitch  = p->getPitch ();
+        m_fRoll   = p->getRoll  ();
+        m_fPower  = p->getPower ();
+        m_iFlags  = p->getFlags ();
+        m_iNode   = p->getNode  ();
+        m_iClient = p->getClient();
       }
     }
 
     CPlaneControls(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
       irr::u16 iType = p->getU16();
-      if (iType == EVENT_PLANE_CONTROLS_ID) {
-        m_iNode  = p->getS32();
-        m_fYaw   = p->getF32();
-        m_fPitch = p->getF32();
-        m_fRoll  = p->getF32();
-        m_fPower = p->getF32();
-        m_iFlags = p->getU8 ();
+      if (iType == eCtrlMsgPlane) {
+        m_iNode   = p->getS32();
+        m_fYaw    = p->getF32();
+        m_fPitch  = p->getF32();
+        m_fRoll   = p->getF32();
+        m_fPower  = p->getF32();
+        m_iFlags  = p->getU8 ();
       }
     }
 
@@ -252,7 +343,7 @@ class CPlaneControls : public IControlMessage {
     virtual irr::ode::CSerializer *serialize() {
       if (m_pSerializer == NULL) {
         m_pSerializer = new irr::ode::CSerializer();
-        m_pSerializer->addU16(EVENT_PLANE_CONTROLS_ID);
+        m_pSerializer->addU16(eCtrlMsgPlane);
         m_pSerializer->addS32(m_iNode );
         m_pSerializer->addF32(m_fYaw  );
         m_pSerializer->addF32(m_fPitch);
@@ -263,7 +354,7 @@ class CPlaneControls : public IControlMessage {
       return m_pSerializer;
     }
 
-    virtual irr::u16 getType() { return EVENT_PLANE_CONTROLS_ID; }
+    virtual irr::u16 getType() { return eCtrlMsgPlane; }
 
     virtual irr::ode::IIrrOdeEvent *clone() { return new CPlaneControls(this); }
 
@@ -307,19 +398,22 @@ class CTankControls : public IControlMessage {
     }
 
     CTankControls(irr::ode::IIrrOdeEvent *pEvent) {
-      if (pEvent->getType() == EVENT_TANK_CONTROLS_ID) {
+      if (pEvent->getType() == eCtrlMsgTank) {
         CTankControls *p = reinterpret_cast<CTankControls *>(pEvent);
         m_fThrottle   = p->getThrottle  ();
         m_fSteer      = p->getSteer     ();
         m_fCannonLeft = p->getCannonLeft();
         m_fCannonUp   = p->getCannonUp  ();
         m_iFlags      = p->getFlags     ();
+        m_iClient     = p->getClient    ();
+        m_iNode       = p->getNode      ();
       }
     }
 
     CTankControls(irr::ode::CSerializer *p) {
+      p->resetBufferPos();
       irr::u16 iType = p->getU16();
-      if (iType == EVENT_TANK_CONTROLS_ID) {
+      if (iType == eCtrlMsgTank) {
         m_iNode       = p->getS32();
         m_fThrottle   = p->getF32();
         m_fSteer      = p->getF32();
@@ -349,7 +443,7 @@ class CTankControls : public IControlMessage {
     virtual irr::ode::CSerializer *serialize() {
       if (m_pSerializer == NULL) {
         m_pSerializer = new irr::ode::CSerializer();
-        m_pSerializer->addU16(EVENT_TANK_CONTROLS_ID);
+        m_pSerializer->addU16(eCtrlMsgTank);
         m_pSerializer->addS32(m_iNode);
         m_pSerializer->addF32(m_fThrottle);
         m_pSerializer->addF32(m_fSteer);
@@ -360,7 +454,7 @@ class CTankControls : public IControlMessage {
       return m_pSerializer;
     }
 
-    virtual irr::u16 getType() { return EVENT_TANK_CONTROLS_ID; }
+    virtual irr::u16 getType() { return eCtrlMsgTank; }
 
     virtual irr::ode::IIrrOdeEvent *clone() { return new CTankControls(this); }
 

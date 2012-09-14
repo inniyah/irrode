@@ -5,6 +5,7 @@
   #include <CHeli.h>
   #include <CCar.h>
 
+  #include <CControlEvents.h>
   #include <CCockpitPlane.h>
   #include <CCockpitCar.h>
   #include <CRearView.h>
@@ -41,6 +42,9 @@ void CVehicle::fillBodyList(irr::core::list<irr::scene::ISceneNode *> &aVehicles
 CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView, irr::ode::IIrrOdeEventQueue *pInputQueue) {
   m_pDevice = pDevice;
   m_pWorld = pWorld;
+
+  m_pInputQueue = pInputQueue;
+  m_pInputQueue->addEventListener(this);
 
   m_pSmgr = pDevice->getSceneManager();
 
@@ -91,6 +95,7 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
 
 CVehicle::~CVehicle() {
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  m_pInputQueue->removeEventListener(this);
 }
 
 bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
@@ -99,9 +104,28 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     for (it = m_lCockpits.begin(); it!=m_lCockpits.end(); it++) (*it)->update();
   }
 
+  if (pEvent->getType() == eCtrlMsgRequestVehicle) {
+    CRequestVehicle *pEvt = reinterpret_cast<CRequestVehicle *>(pEvent);
+    printf("Client %i requests vehicle %i\n", pEvt->getClient(), pEvt->getNode());
+
+    irr::core::list<CIrrOdeCarState *>::Iterator it;
+    for (it = m_lVehicles.begin(); it != m_lVehicles.end(); it++) {
+      CIrrOdeCarState *p = *it;
+      if (p->getBody() != NULL && p->getBody()->getID() == pEvt->getNode()) {
+        printf("Vehicle is \"%s\"\n", p->getBody()->getName());
+
+        CVehicleApproved *pOk = new CVehicleApproved();
+        pOk->setNode  (pEvt->getNode  ());
+        pOk->setClient(pEvt->getClient());
+
+        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pOk);
+      }
+    }
+  }
+
   return true;
 }
 
 bool CVehicle::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == irr::ode::eIrrOdeEventStep;
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == eCtrlMsgRequestVehicle;
 }

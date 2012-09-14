@@ -14,7 +14,7 @@ class CController;
 class CIrrCC;
 class CMenu;
 
-class CControlReceiver : public irr::IEventReceiver {
+class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   private:
     enum eContolledVehicle {
       eControlNone,
@@ -56,6 +56,7 @@ class CControlReceiver : public irr::IEventReceiver {
     void initWorld(irr::scene::ISceneNode *pNode);
     void updateVehicle();
 
+    void switchToState(irr::s32 iNewState);
   public:
     CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine);
     ~CControlReceiver();
@@ -76,6 +77,9 @@ class CControlReceiver : public irr::IEventReceiver {
     void removeFromScene(const irr::c8 *sName, irr::scene::ISceneManager *smgr);
 
     void drawSpecifics();
+
+    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
+    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 };
 
 #endif
