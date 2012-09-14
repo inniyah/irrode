@@ -152,16 +152,12 @@ CCar::~CCar() {
 //This method is called when the state is activated.
 void CCar::activate() {
   m_bSwitchToMenu=false;
-  m_bActive=true;
 
   if (m_pCockpit) m_pCockpit->setActive(true);
   if (m_pRView  ) m_pRView  ->setActive(true);
 }
 
 void CCar::deactivate() {
-  m_bActive=false;
-  //m_pController->reset();
-
   for (irr::u32 i=0; i<2; i++) {
     m_pMotor[i]->setVelocity(0.0f);
     m_pMotor[i]->setForce(5.0f);
@@ -277,22 +273,20 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
     else m_bBrake=false;
 
-    if (m_bActive) {
-      //if the flip car key was pressed we add a force to the car in order to turn it back on it's wheels
-      if (m_bFlip) {
-        irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
-        m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,225,0));
-      }
+    //if the flip car key was pressed we add a force to the car in order to turn it back on it's wheels
+    if (m_bFlip) {
+      irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
+      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,225,0));
+    }
 
+    if (m_pRView!=NULL && m_pRView->isActive()) {
       irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
                            cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.75f,0.0f)),
                            cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(1.0f,0.0f,0.0f)),
                            cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
 
-      if (m_pRView!=NULL) {
-        m_pRView->setCameraParameters(cPos,cTgt,cUp);
-        m_pRView->update();
-      }
+      m_pRView->setCameraParameters(cPos,cTgt,cUp);
+      m_pRView->update();
     }
 
     irr::f32 fVel=m_pCarBody->getLinearVelocity().getLength();

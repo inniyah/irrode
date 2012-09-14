@@ -147,7 +147,6 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   initWorld(m_pDevice->getSceneManager()->getRootSceneNode());
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-  m_iActive = 0;
 }
 
 CControlReceiver::~CControlReceiver() {
@@ -186,7 +185,12 @@ void CControlReceiver::start() {
 }
 
 void CControlReceiver::switchToState(irr::s32 iNewState) {
-  m_pActive->deactivate();
+  if (m_iNode > 1000) {
+    CLeaveVehicle *p = new CLeaveVehicle();
+    p->setClient(0);
+    p->setNode(m_iNode);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  }
 
   if (iNewState > 1000) {
     for (irr::u32 i = 0; i < m_aStates.size(); i++) {
@@ -204,6 +208,7 @@ void CControlReceiver::switchToState(irr::s32 iNewState) {
     return;
   }
 
+  m_pActive->deactivate();
   m_pActive=m_aStates[iNewState];
   m_pActive->activate();
   updateVehicle();

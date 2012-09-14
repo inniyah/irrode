@@ -82,16 +82,12 @@ CAeroVehicle::~CAeroVehicle() {
 
 void CAeroVehicle::activate() {
   m_bSwitchToMenu=false;
-  m_bActive=true;
 
   if (m_pCockpit) m_pCockpit->setActive(true);
   if (m_pRView  ) m_pRView  ->setActive(true);
 }
 
 void CAeroVehicle::deactivate() {
-  //m_pController->dumpState((irr::f32 *)m_aCtrlBuffer);
-  m_bActive=false;
-
   if (m_pCockpit) m_pCockpit->setActive(false);
   if (m_pRView  ) m_pRView  ->setActive(false);
 }
@@ -131,21 +127,19 @@ bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         fVel=m_pAero->getForewardVel(),
         fVelFact=fVel<100.0f?1.0f:fVel>180.0f?0.2f:1.0f-((fVel-100.0f)/100.0f);
 
-    if (m_bActive) {
-      if (m_fThrust> 1.0f) { m_bDataChanged=true; m_fThrust =1.0f; }
-      if (m_fThrust<-0.0f) { m_bDataChanged=true; m_fThrust/=4.0f; }
+    if (m_fThrust> 1.0f) { m_bDataChanged=true; m_fThrust =1.0f; }
+    if (m_fThrust<-0.0f) { m_bDataChanged=true; m_fThrust/=4.0f; }
 
-      if (m_pBrakes[0]!=NULL) {
-        m_pBrakes[0]->setForce(m_bBrakes ? 50.0f : 0.0f);
-      }
+    if (m_pBrakes[0]!=NULL) {
+      m_pBrakes[0]->setForce(m_bBrakes ? 50.0f : 0.0f);
+    }
 
-      if (m_pBrakes[1]!=NULL) {
-        m_pBrakes[1]->setForce(m_bBrakes ? 50.0f : 0.0f);
-      }
+    if (m_pBrakes[1]!=NULL) {
+      m_pBrakes[1]->setForce(m_bBrakes ? 50.0f : 0.0f);
+    }
 
-      if (m_bFlip) {
-        m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
-      }
+    if (m_bFlip) {
+      m_pBody->addForceAtPosition(m_pBody->getPosition()+irr::core::vector3df(0.0f,1.5f,0.0f),irr::core::vector3df(0.0f,15.0f,0.0f));
     }
 
     if (m_pAutoPilot->isEnabled()) {

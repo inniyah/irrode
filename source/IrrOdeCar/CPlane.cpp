@@ -57,43 +57,41 @@ CPlane::~CPlane() {
 }
 
 void CPlane::odeStep(irr::u32 iStep) {
-  if (m_bActive) {
-    if (m_bFirePrimary) {
-      m_iLastShot1=iStep;
-      //We add a new bomb...
-      irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
-                rot=m_pBody->getRotation(),vel=m_pBody->getLinearVelocity();
+  if (m_bFirePrimary) {
+    m_iLastShot1=iStep;
+    //We add a new bomb...
+    irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(m_bLeftMissile?4.0f:-4.0f,-1.0f,-2.0f)),
+              rot=m_pBody->getRotation(),vel=m_pBody->getLinearVelocity();
 
-      m_bLeftMissile=!m_bLeftMissile;
+    m_bLeftMissile=!m_bLeftMissile;
 
-      CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
-      p->setTarget(m_pTargetSelector->getTarget());
-      incShotsFired();
-      //if (m_bActive) m_pCockpit->setShotsFired(m_iShotsFired);
-      m_bFirePrimary=false;
-    }
+    CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
+    p->setTarget(m_pTargetSelector->getTarget());
+    incShotsFired();
+    //m_pCockpit->setShotsFired(m_iShotsFired);
+    m_bFirePrimary=false;
+  }
 
-    if (m_bFireSecondary) {
-      m_iLastShot2=iStep;
-      //We add a new bullet...
-      irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.2f,1.5f,-11.0f)),
-                rot=m_pBody->getRotation(),
-                vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,-350.0f));
+  if (m_bFireSecondary) {
+    m_iLastShot2=iStep;
+    //We add a new bullet...
+    irr::core::vector3df pos=m_pBody->getAbsolutePosition()+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.2f,1.5f,-11.0f)),
+              rot=m_pBody->getRotation(),
+              vel=m_pBody->getLinearVelocity().getLength()*m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f))+m_pBody->getRotation().rotationToDirection(irr::core::vector3df(0.0f,0.0f,-350.0f));
 
-      new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
-      incShotsFired();
-      m_bFireSecondary=false;
-    }
+    new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
+    incShotsFired();
+    m_bFireSecondary=false;
+  }
 
+  if (m_pRView && m_pRView->isActive()) {
     irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
                          cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.35f,2.5f)),
                          cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
                          cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
 
-    if (m_pRView) {
-      m_pRView->setCameraParameters(cPos,cTgt,cUp);
-      m_pRView->update();
-    }
+    m_pRView->setCameraParameters(cPos,cTgt,cUp);
+    m_pRView->update();
   }
 
   if (m_bDataChanged) {

@@ -24,13 +24,11 @@ CController::~CController() {
 }
 
 void CController::activate() {
-  m_bActive=true;
   m_bSwitchToMenu=false;
   m_pTabCtrl->setVisible(true);
 }
 
 void CController::deactivate() {
-  m_bActive=false;
   m_pTabCtrl->setVisible(false);
 }
 
