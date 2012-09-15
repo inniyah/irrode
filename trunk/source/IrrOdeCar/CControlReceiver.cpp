@@ -149,7 +149,6 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
 }
 
 CControlReceiver::~CControlReceiver() {
-  CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 

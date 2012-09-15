@@ -419,6 +419,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
+      CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
+
       //drop the world so it is destroyed
       m_pDevice->drop();
 
