@@ -212,7 +212,13 @@ void CControlReceiver::update() {
   m_pCamCtrl->update();
 
   //call the update method of the currently active state
-  m_pActive->update();
+  irr::u32 iSelect = m_pActive->update();
+
+  if (iSelect != 0) {
+    printf("Select: %i\n", iSelect);
+    switchToState(iSelect - 1);
+  }
+
   m_pActive->drawSpecifics();
 
   switch (m_eVehicle) {

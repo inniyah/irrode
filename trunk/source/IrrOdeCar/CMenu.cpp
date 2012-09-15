@@ -69,7 +69,9 @@ void CMenu::deactivate() {
 irr::u32 CMenu::update() {
   //return 0 if no state change is wanted, new state index+1 otherwise
   CIrrOdeCarState::update();
-  return m_iMenuSelect;
+  irr::u32 iRet = m_iMenuSelect;
+  m_iMenuSelect = 0;
+  return iRet;
 }
 
 bool CMenu::OnEvent(const irr::SEvent &event) {
