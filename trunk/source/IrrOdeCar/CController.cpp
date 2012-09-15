@@ -24,7 +24,6 @@ CController::~CController() {
 }
 
 void CController::activate() {
-  m_bSwitchToMenu=false;
   m_pTabCtrl->setVisible(true);
 }
 

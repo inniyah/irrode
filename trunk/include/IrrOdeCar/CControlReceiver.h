@@ -26,7 +26,8 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
 
     irr::IrrlichtDevice *m_pDevice;
 
-    irr::s32 m_iNode;
+    irr::s32 m_iNode,
+             m_iClient;
     irr::u32 m_iCtrls[4][32],  //an array for all the controls we are going to define
              m_iCount;
     irr::core::array<CIrrOdeCarState *> m_aStates;
@@ -45,8 +46,7 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     CIrrCC          *m_pController;
     CMenu           *m_pMenu;
 
-    bool m_bSwitchToMenu,
-         m_bUpdate;
+    bool m_bUpdate;
 
     CCameraController *m_pCamCtrl;
     CController       *m_pCtrlDialog;

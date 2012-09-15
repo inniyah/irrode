@@ -19,8 +19,7 @@ enum enumStateType {
  */
 class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
   protected:
-    bool m_bSwitchToMenu,   /*!< return to menu state */
-         m_bInitialized;
+    bool m_bInitialized;
 
     irr::s32 m_iHitsScored,
              m_iHitsTaken,

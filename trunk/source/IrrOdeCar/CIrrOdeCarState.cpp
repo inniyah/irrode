@@ -6,9 +6,6 @@ CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sV
   m_pSmgr=m_pDevice->getSceneManager();
   m_pGuiEnv=m_pDevice->getGUIEnvironment();
 
-  //hide the help text and don't switch back to menu ... for now
-  m_bSwitchToMenu=false;
-
   m_iHitsScored=0;
   m_iHitsTaken=0;
   m_iControllerBy = -1;
@@ -27,9 +24,5 @@ bool CIrrOdeCarState::OnEvent(const irr::SEvent &event) {
 }
 
 irr::u32 CIrrOdeCarState::update() {
-  irr::u32 iRet=0;
-
-  //If the menu should be activated we return 1 (index of the menu+1)
-  if (m_bSwitchToMenu) iRet=1;
-  return iRet;
+  return 0;
 }

@@ -126,16 +126,24 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
   if (pEvent->getType() == eCtrlMsgLeaveVehicle) {
     CLeaveVehicle *pEvt = reinterpret_cast<CLeaveVehicle *>(pEvent);
-    printf("%i leaves vehicle %i\n", pEvt->getClient(), pEvt->getNode());
-    irr::core::list<CIrrOdeCarState *>::Iterator it;
-    for (it = m_lVehicles.begin(); it != m_lVehicles.end(); it++) {
-      CIrrOdeCarState *p = *it;
-      if (p->getBody() != NULL && p->getBody()->getID() == pEvt->getNode()) {
-        printf("Vehicle is \"%s\"\n", p->getBody()->getName());
-        if (p->getControlledBy() == pEvt->getClient()) {
-          printf("OK, vehicle occupied by correct client ... abandon!\n");
-          p->setControlledBy(-1);
-          return false;
+    if (pEvt->getAnswer() == 0) {
+      printf("%i leaves vehicle %i\n", pEvt->getClient(), pEvt->getNode());
+      irr::core::list<CIrrOdeCarState *>::Iterator it;
+      for (it = m_lVehicles.begin(); it != m_lVehicles.end(); it++) {
+        CIrrOdeCarState *p = *it;
+        if (p->getBody() != NULL && p->getBody()->getID() == pEvt->getNode()) {
+          printf("Vehicle is \"%s\"\n", p->getBody()->getName());
+          if (p->getControlledBy() == pEvt->getClient()) {
+            printf("OK, vehicle occupied by correct client ... abandon!\n");
+
+            CLeaveVehicle *pLeave = new CLeaveVehicle(1);
+            pLeave->setNode(p->getBody()->getID());
+            pLeave->setClient(p->getControlledBy());
+            irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pLeave);
+
+            p->setControlledBy(-1);
+            return false;
+          }
         }
       }
     }

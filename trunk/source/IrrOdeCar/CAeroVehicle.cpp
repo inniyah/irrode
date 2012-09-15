@@ -81,8 +81,6 @@ CAeroVehicle::~CAeroVehicle() {
 }
 
 void CAeroVehicle::activate() {
-  m_bSwitchToMenu=false;
-
   if (m_pCockpit) m_pCockpit->setActive(true);
   if (m_pRView  ) m_pRView  ->setActive(true);
 }
@@ -95,7 +93,7 @@ void CAeroVehicle::deactivate() {
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType() == eCtrlMsgPlane) {
     CPlaneControls *p = reinterpret_cast<CPlaneControls *>(pEvent);
-    if (p->getNode() == m_pBody->getID()) {
+    if (p->getNode() == m_pBody->getID() && p->getClient() == m_iControllerBy) {
       irr::f32 f;
 
       f = p->getPower(); if (f != m_fThrust) { m_fThrust = f; m_bDataChanged = true; }

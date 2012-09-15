@@ -109,6 +109,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   m_pInputQueue = pQueue;
   m_iNode       = 0;
   m_iCount      = 0;
+  m_iClient     = 0;
   m_eVehicle    = eControlNone;
   m_pSndEngine  = pSndEngine;
 
@@ -119,8 +120,6 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
 
   CConfigFileManager::getSharedInstance()->addReader(m_pController);
   CConfigFileManager::getSharedInstance()->addWriter(m_pController);
-
-  m_bSwitchToMenu = false;
 
   initControls();
 
@@ -185,11 +184,9 @@ void CControlReceiver::start() {
 }
 
 void CControlReceiver::switchToState(irr::s32 iNewState) {
-  if (m_iNode > 1000) {
-    CLeaveVehicle *p = new CLeaveVehicle();
-    p->setClient(0);
-    p->setNode(m_iNode);
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  printf("\nSwitch to State %i\n\n", iNewState);
+  if (iNewState == 0) {
+    printf("where am i?\n");
   }
 
   if (iNewState > 1000) {
@@ -220,19 +217,8 @@ void CControlReceiver::update() {
   m_pCamCtrl->update();
 
   //call the update method of the currently active state
-  irr::u32 iSwitch=m_pActive->update();
+  m_pActive->update();
   m_pActive->drawSpecifics();
-
-  if (m_bSwitchToMenu) {
-    iSwitch = 1;
-    m_bSwitchToMenu = false;
-  }
-
-  //change the active state if wished, i.e. a value other than zero was returned
-  if (iSwitch) {
-    iSwitch--;
-    switchToState(iSwitch);
-  }
 
   switch (m_eVehicle) {
     case eControlCar: {
@@ -372,9 +358,16 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu
-        case irr::KEY_TAB:
-          m_bSwitchToMenu=true;
-          return true;
+        case irr::KEY_TAB: {
+            if (m_iNode != -1) {
+              printf("requesting vehicle leave from server (%i).\n", m_iNode);
+              CLeaveVehicle *p = new CLeaveVehicle((irr::u8)0);
+              p->setClient(0);
+              p->setNode(m_iNode);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+            }
+            else switchToState(0);
+          }
           break;
 
         default:
@@ -416,12 +409,22 @@ bool CControlReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     CVehicleApproved *p = reinterpret_cast<CVehicleApproved *>(pEvent);
     if (p->getClient() == 0) {
       printf("Got Vehicle %i\n", p->getNode());
-      switchToState((p->getNode()));
+      switchToState(p->getNode());
+    }
+  }
+
+  if (pEvent->getType() == eCtrlMsgLeaveVehicle) {
+    CLeaveVehicle *p = reinterpret_cast<CLeaveVehicle *>(pEvent);
+    if (p->getClient() == m_iClient) {
+      if (p->getAnswer() == 1) {
+        printf("OK ... leaving vehicle.\n");
+        switchToState(0);
+      }
     }
   }
   return false;
 }
 
 bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == eCtrlMsgVehicleApproved;
+  return pEvent->getType() == eCtrlMsgVehicleApproved || pEvent->getType() == eCtrlMsgLeaveVehicle;
 }
