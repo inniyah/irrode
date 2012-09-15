@@ -396,6 +396,9 @@ class CIrrOdeCar : public irr::IEventReceiver {
         m_pDriver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
 
         m_pSmgr->drawAll();
+
+        m_pDriver->setMaterial(m_pDriver->getMaterial2D());   //Fix the flipped texture problem
+
         m_pGui->drawAll();
 
         m_pCtrlReceiver->drawSpecifics();

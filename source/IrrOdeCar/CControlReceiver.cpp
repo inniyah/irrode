@@ -184,11 +184,6 @@ void CControlReceiver::start() {
 }
 
 void CControlReceiver::switchToState(irr::s32 iNewState) {
-  printf("\nSwitch to State %i\n\n", iNewState);
-  if (iNewState == 0) {
-    printf("where am i?\n");
-  }
-
   if (iNewState > 1000) {
     for (irr::u32 i = 0; i < m_aStates.size(); i++) {
       CIrrOdeCarState *p = m_aStates[i];
