@@ -29,7 +29,9 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     irr::s32 m_iNode,
              m_iClient;
     irr::u32 m_iCtrls[4][32],  //an array for all the controls we are going to define
-             m_iCount;
+             m_iCount,
+             m_iLastEvent;
+    irr::ITimer *m_pTimer;
     irr::core::array<CIrrOdeCarState *> m_aStates;
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;

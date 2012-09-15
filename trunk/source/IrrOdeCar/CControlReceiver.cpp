@@ -110,6 +110,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   m_iNode       = 0;
   m_iCount      = 0;
   m_iClient     = 0;
+  m_iLastEvent  = 0;
   m_eVehicle    = eControlNone;
   m_pSndEngine  = pSndEngine;
 
@@ -142,6 +143,8 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   m_pSaveFile=m_pDevice->getGUIEnvironment()->addStaticText(L"Replay file saved.",cRect,true,true,0,-1,true);
   m_pSaveFile->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
   m_pSaveFile->setVisible(false);
+
+  m_pTimer = m_pDevice->getTimer();
 
   initWorld(m_pDevice->getSceneManager()->getRootSceneNode());
 
@@ -189,6 +192,7 @@ void CControlReceiver::switchToState(irr::s32 iNewState) {
       if (p->getBody() != NULL && p->getBody()->getID() == iNewState) {
         iNewState = i;
         printf("switch to state %i\n", iNewState);
+        m_iLastEvent = m_pTimer->getTime();
         break;
       }
     }
@@ -220,106 +224,111 @@ void CControlReceiver::update() {
 
   m_pActive->drawSpecifics();
 
-  switch (m_eVehicle) {
-    case eControlCar: {
-        irr::f32 fThrottle = m_pController->get(m_iCtrls[0][eCarForeward]),
-                 fSteer    = m_pController->get(m_iCtrls[0][eCarLeft    ]);
+  if (m_pTimer->getTime() - m_iLastEvent >= 16) {
+    switch (m_eVehicle) {
+      case eControlCar: {
+          irr::f32 fThrottle = m_pController->get(m_iCtrls[0][eCarForeward]),
+                   fSteer    = m_pController->get(m_iCtrls[0][eCarLeft    ]);
 
-        bool bDifferential = m_pController->get(m_iCtrls[0][eCarDifferential]) != 0.0f,
-             bShiftUp      = m_pController->get(m_iCtrls[0][eCarShiftUp     ]) != 0.0f,
-             bShiftDown    = m_pController->get(m_iCtrls[0][eCarShiftDown   ]) != 0.0f,
-             bFlip         = m_pController->get(m_iCtrls[0][eCarFlip        ]) != 0.0f,
-             bBoost        = m_pController->get(m_iCtrls[0][eCarBoost       ]) != 0.0f,
-             bAdapt        = m_pController->get(m_iCtrls[0][eCarAdapSteer   ]) != 0.0f;
+          bool bDifferential = m_pController->get(m_iCtrls[0][eCarDifferential]) != 0.0f,
+               bShiftUp      = m_pController->get(m_iCtrls[0][eCarShiftUp     ]) != 0.0f,
+               bShiftDown    = m_pController->get(m_iCtrls[0][eCarShiftDown   ]) != 0.0f,
+               bFlip         = m_pController->get(m_iCtrls[0][eCarFlip        ]) != 0.0f,
+               bBoost        = m_pController->get(m_iCtrls[0][eCarBoost       ]) != 0.0f,
+               bAdapt        = m_pController->get(m_iCtrls[0][eCarAdapSteer   ]) != 0.0f;
 
-        m_pController->set(m_iCtrls[0][eCarDifferential], 0.0f);
-        m_pController->set(m_iCtrls[0][eCarShiftUp     ], 0.0f);
-        m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
-        m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
+          m_pController->set(m_iCtrls[0][eCarDifferential], 0.0f);
+          m_pController->set(m_iCtrls[0][eCarShiftUp     ], 0.0f);
+          m_pController->set(m_iCtrls[0][eCarShiftDown   ], 0.0f);
+          m_pController->set(m_iCtrls[0][eCarAdapSteer   ], 0.0f);
 
-        CCarControls *pCar = new CCarControls(fThrottle, fSteer);
+          CCarControls *pCar = new CCarControls(fThrottle, fSteer);
 
-        pCar->setDifferential (bDifferential);
-        pCar->setShifDown     (bShiftDown   );
-        pCar->setShiftUp      (bShiftUp     );
-        pCar->setBoost        (bBoost       );
-        pCar->setFlip         (bFlip        );
-        pCar->setAdaptiveSteer(bAdapt       );
+          pCar->setDifferential (bDifferential);
+          pCar->setShifDown     (bShiftDown   );
+          pCar->setShiftUp      (bShiftUp     );
+          pCar->setBoost        (bBoost       );
+          pCar->setFlip         (bFlip        );
+          pCar->setAdaptiveSteer(bAdapt       );
 
-        pCar->setNode(m_iNode);
-        pCar->setClient(0);
+          pCar->setNode(m_iNode);
+          pCar->setClient(0);
 
-        m_pInputQueue->postEvent(pCar);
-      }
-      break;
+          m_pInputQueue->postEvent(pCar);
+          m_iLastEvent = m_pTimer->getTime();
+        }
+        break;
 
-    case eControlPlane:
-    case eControlHeli: {
-        irr::f32 fPower = m_pController->get(m_iCtrls[2][eAeroPowerUp  ]),
-                 fPitch = m_pController->get(m_iCtrls[2][eAeroPitchUp  ]),
-                 fRoll  = m_pController->get(m_iCtrls[2][eAeroRollLeft ]),
-                 fYaw   = m_pController->get(m_iCtrls[2][eAeroYawRight ]);
+      case eControlPlane:
+      case eControlHeli: {
+          irr::f32 fPower = m_pController->get(m_iCtrls[2][eAeroPowerUp  ]),
+                   fPitch = m_pController->get(m_iCtrls[2][eAeroPitchUp  ]),
+                   fRoll  = m_pController->get(m_iCtrls[2][eAeroRollLeft ]),
+                   fYaw   = m_pController->get(m_iCtrls[2][eAeroYawRight ]);
 
-        bool bPowerZero = m_pController->get(m_iCtrls[2][eAeroPowerZero    ]),
-             bSelTarget = m_pController->get(m_iCtrls[2][eAeroSelectTarget ]),
-             bFirePrim  = m_pController->get(m_iCtrls[2][eAeroFirePrimary  ]),
-             bFireSec   = m_pController->get(m_iCtrls[2][eAeroFireSecondary]),
-             bFlip      = m_pController->get(m_iCtrls[2][eAeroFlip         ]),
-             bBrake     = m_pController->get(m_iCtrls[2][eAeroBrake        ]),
-             bAutoPilot = m_pController->get(m_iCtrls[2][eAeroAutoPilot    ]);
+          bool bPowerZero = m_pController->get(m_iCtrls[2][eAeroPowerZero    ]),
+               bSelTarget = m_pController->get(m_iCtrls[2][eAeroSelectTarget ]),
+               bFirePrim  = m_pController->get(m_iCtrls[2][eAeroFirePrimary  ]),
+               bFireSec   = m_pController->get(m_iCtrls[2][eAeroFireSecondary]),
+               bFlip      = m_pController->get(m_iCtrls[2][eAeroFlip         ]),
+               bBrake     = m_pController->get(m_iCtrls[2][eAeroBrake        ]),
+               bAutoPilot = m_pController->get(m_iCtrls[2][eAeroAutoPilot    ]);
 
-        m_pController->set(m_iCtrls[2][eAeroSelectTarget ], 0.0f);
-        m_pController->set(m_iCtrls[2][eAeroFirePrimary  ], 0.0f);
-        m_pController->set(m_iCtrls[2][eAeroFireSecondary], 0.0f);
-        m_pController->set(m_iCtrls[2][eAeroAutoPilot    ], 0.0f);
+          m_pController->set(m_iCtrls[2][eAeroSelectTarget ], 0.0f);
+          m_pController->set(m_iCtrls[2][eAeroFirePrimary  ], 0.0f);
+          m_pController->set(m_iCtrls[2][eAeroFireSecondary], 0.0f);
+          m_pController->set(m_iCtrls[2][eAeroAutoPilot    ], 0.0f);
 
-        CPlaneControls *pPlane = new CPlaneControls(fYaw, fPitch, fRoll, fPower);
+          CPlaneControls *pPlane = new CPlaneControls(fYaw, fPitch, fRoll, fPower);
 
-        pPlane->setPowerZero    (bPowerZero);
-        pPlane->setSelectTarget (bSelTarget);
-        pPlane->setFirePrimary  (bFirePrim );
-        pPlane->setFireSecondary(bFireSec  );
-        pPlane->setFlip         (bFlip     );
-        pPlane->setBrake        (bBrake    );
-        pPlane->setAutoPilot    (bAutoPilot);
+          pPlane->setPowerZero    (bPowerZero);
+          pPlane->setSelectTarget (bSelTarget);
+          pPlane->setFirePrimary  (bFirePrim );
+          pPlane->setFireSecondary(bFireSec  );
+          pPlane->setFlip         (bFlip     );
+          pPlane->setBrake        (bBrake    );
+          pPlane->setAutoPilot    (bAutoPilot);
 
-        if (bPowerZero) m_pController->set(m_iCtrls[2][eAeroPowerUp], 0.0f);
+          if (bPowerZero) m_pController->set(m_iCtrls[2][eAeroPowerUp], 0.0f);
 
-        pPlane->setNode(m_iNode);
-        pPlane->setClient(0);
+          pPlane->setNode(m_iNode);
+          pPlane->setClient(0);
 
-        m_pInputQueue->postEvent(pPlane);
-      }
-      break;
+          m_pInputQueue->postEvent(pPlane);
+          m_iLastEvent = m_pTimer->getTime();
+        }
+        break;
 
-    case eControlTank: {
-        irr::f32 fThrottle   = m_pController->get(m_iCtrls[1][eTankForeward  ]),
-                 fSteer      = m_pController->get(m_iCtrls[1][eTankLeft      ]),
-                 fCannonLeft = m_pController->get(m_iCtrls[1][eTankCannonLeft]),
-                 fCannonUp   = m_pController->get(m_iCtrls[1][eTankCannonUp  ]);
+      case eControlTank: {
+          irr::f32 fThrottle   = m_pController->get(m_iCtrls[1][eTankForeward  ]),
+                   fSteer      = m_pController->get(m_iCtrls[1][eTankLeft      ]),
+                   fCannonLeft = m_pController->get(m_iCtrls[1][eTankCannonLeft]),
+                   fCannonUp   = m_pController->get(m_iCtrls[1][eTankCannonUp  ]);
 
-        bool bFire          = m_pController->get(m_iCtrls[1][eTankFire         ]),
-             bFlip          = m_pController->get(m_iCtrls[1][eTankFlip         ]),
-             bFastCollision = m_pController->get(m_iCtrls[1][eTankFastCollision]);
+          bool bFire          = m_pController->get(m_iCtrls[1][eTankFire         ]),
+               bFlip          = m_pController->get(m_iCtrls[1][eTankFlip         ]),
+               bFastCollision = m_pController->get(m_iCtrls[1][eTankFastCollision]);
 
-        CTankControls *pTank = new CTankControls(fThrottle, fSteer, fCannonLeft, fCannonUp);
+          CTankControls *pTank = new CTankControls(fThrottle, fSteer, fCannonLeft, fCannonUp);
 
-        pTank->setFire         (bFire         );
-        pTank->setFlip         (bFlip         );
-        pTank->setFastCollision(bFastCollision);
+          pTank->setFire         (bFire         );
+          pTank->setFlip         (bFlip         );
+          pTank->setFastCollision(bFastCollision);
 
-        if (bFastCollision) m_pController->set(m_iCtrls[1][eTankFastCollision], 0.0f);
-        if (bFire         ) m_pController->set(m_iCtrls[1][eTankFire         ], 0.0f);
+          if (bFastCollision) m_pController->set(m_iCtrls[1][eTankFastCollision], 0.0f);
+          if (bFire         ) m_pController->set(m_iCtrls[1][eTankFire         ], 0.0f);
 
-        pTank->setNode(m_iNode);
-        pTank->setClient(0);
+          pTank->setNode(m_iNode);
+          pTank->setClient(0);
 
-        m_pInputQueue->postEvent(pTank);
-      }
-      break;
+          m_pInputQueue->postEvent(pTank);
+          m_iLastEvent = m_pTimer->getTime();
+        }
+        break;
 
-    case eControlNone:
-      break;
+      case eControlNone:
+        break;
+    }
   }
   if (m_pSaveFile->isVisible() && m_pDevice->getTimer()->getTime()>m_iCount) m_pSaveFile->setVisible(false);
 }
