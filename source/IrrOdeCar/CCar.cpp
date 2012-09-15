@@ -151,8 +151,6 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
-  m_bSwitchToMenu=false;
-
   if (m_pCockpit) m_pCockpit->setActive(true);
   if (m_pRView  ) m_pRView  ->setActive(true);
 }
@@ -180,7 +178,7 @@ irr::u32 CCar::update() {
 bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType() == eCtrlMsgCar) {
     CCarControls *p = reinterpret_cast<CCarControls *>(pEvent);
-    if (p->getNode() == m_iBodyId) {
+    if (p->getNode() == m_iBodyId && p->getClient() == m_iControllerBy) {
       m_fThrottle  = p->getThrottle     ();
       m_fSteer     = p->getSteer        ();
       m_bBoost     = p->getBoost        ();

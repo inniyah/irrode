@@ -90,8 +90,6 @@ CTank::~CTank() {
 }
 
 void CTank::activate() {
-  m_bSwitchToMenu=false;
-
   irr::core::vector3df rot=!m_bFollowTurret?m_pTankBody->getRotation():m_pTurret->getRotation();
 
   irr::core::vector3df pos=rot.rotationToDirection(irr::core::vector3df(7.5,2.5,0)),

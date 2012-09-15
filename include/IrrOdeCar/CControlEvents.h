@@ -81,14 +81,20 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
 };
 
 class CLeaveVehicle : public IControlMessage {
+  private:
+    irr::u8 m_iAnswer;    /**!< server sets this to "1" to indicate that a client has left a vehicle */
+
   public:
-    CLeaveVehicle() : IControlMessage() { }
+    CLeaveVehicle(irr::u8 iAnswer) : IControlMessage() {
+      m_iAnswer = iAnswer;
+    }
 
     CLeaveVehicle(irr::ode::IIrrOdeEvent *pEvent) {
       if (pEvent->getType() == eCtrlMsgLeaveVehicle) {
         CLeaveVehicle *p = reinterpret_cast<CLeaveVehicle *>(pEvent);
         m_iNode   = p->getNode  ();
         m_iClient = p->getClient();
+        m_iAnswer = p->getAnswer();
       }
     }
 
@@ -98,6 +104,7 @@ class CLeaveVehicle : public IControlMessage {
       if (iType == eCtrlMsgLeaveVehicle) {
         m_iNode   = p->getS32();
         m_iClient = p->getU16();
+        m_iAnswer = p->getU8 ();
       }
     }
 
@@ -113,9 +120,12 @@ class CLeaveVehicle : public IControlMessage {
         m_pSerializer->addU16(eCtrlMsgLeaveVehicle);
         m_pSerializer->addS32(m_iNode);
         m_pSerializer->addU16(m_iClient);
+        m_pSerializer->addU8 (m_iAnswer);
       }
       return m_pSerializer;
     }
+
+    irr::u8 getAnswer() { return m_iAnswer; }
 };
 
 class CVehicleApproved : public IControlMessage {
