@@ -129,6 +129,8 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     virtual void setPosition(const irr::core::vector3df &newPos);  /**< set the body's position */
     virtual void setRotation(const irr::core::vector3df &newRot);  /**< set the body's rotation */
 
+    void setQuaternion(const irr::core::quaternion cQuat);
+
     CIrrOdeBody *getParentBody();  /**< get the parent body */
 
     virtual const wchar_t *getTypeName();  /**< get the object type name */
