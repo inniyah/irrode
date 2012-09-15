@@ -9,7 +9,6 @@
   #include "CTank.h"
   #include "CHeli.h"
   #include "CPlane.h"
-  #include "CController.h"
   #include "CIrrOdeCarState.h"
   #include "CProgressBar.h"
   #include "irrCC.h"
@@ -373,11 +372,6 @@ class CIrrOdeCar : public irr::IEventReceiver {
       irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
 
       delete pProg;
-
-
-      //set the menu state to active
-      //m_pActive=m_pMenu;
-      //m_pActive->activate();
 
       m_pDriver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
       enableFog(m_pSmgr->getRootSceneNode());

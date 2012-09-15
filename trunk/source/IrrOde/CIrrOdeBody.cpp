@@ -1056,5 +1056,15 @@ bool CIrrOdeBody::handlesEvent(IIrrOdeEvent *pEvent) {
   return pEvent->getType()==ode::eIrrOdeEventBodyMoved || pEvent->getType()==ode::eIrrOdeEventBodyRemoved;
 }
 
+void CIrrOdeBody::setQuaternion(const irr::core::quaternion cQuat) {
+  m_pOdeDevice->bodySetQuaternion(m_iBodyId, cQuat);
+
+  irr::core::list<irr::ode::CIrrOdeBody *>::Iterator it;
+  for (it = m_pChildBodies.begin(); it != m_pChildBodies.end(); it++) {
+    irr::ode::CIrrOdeBody *p = *it;
+    p->setQuaternion(cQuat);
+  }
+}
+
 } //namespace ode
 } //namespace irr
