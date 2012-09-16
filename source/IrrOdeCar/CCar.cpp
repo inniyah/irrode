@@ -274,7 +274,7 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     //if the flip car key was pressed we add a force to the car in order to turn it back on it's wheels
     if (m_bFlip) {
       irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
-      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,225,0));
+      m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,350,0));
     }
 
     if (m_pRView!=NULL && m_pRView->isActive()) {
@@ -330,19 +330,17 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     irr::f32 fImpulse=(m_pCarBody->getLinearVelocity()-m_vOldSpeed).getLength();
     if (fImpulse<0.0f) fImpulse=-fImpulse;
 
-    if (m_pCarBody->getCollision()) {
-      if (fImpulse>5.0f) {
-        fImpulse-=5.0f;
-        fImpulse/=50.0f;
-        if (fImpulse>1.0f) fImpulse=1.0f;
+    if (fImpulse > 15.0f) {
+      fImpulse-=15.0f;
+      fImpulse/=50.0f;
+      if (fImpulse>1.0f) fImpulse=1.0f;
 
-        CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
-      }
+      CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
+      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
     }
     else {
-      if (fImpulse > 2.5f) {
-        fImpulse -= 2.5f;
+      if (fImpulse > 1.0f) {
+        fImpulse -= 1.0f;
         fImpulse /= 50.0f;
         if (fImpulse > 1.0f) fImpulse = 1.0f;
 
@@ -494,11 +492,11 @@ CCar::CGearBox::CGearBox(irr::ode::CIrrOdeMotor *pMotor[2], irr::ode::CIrrOdeJoi
   m_bDifferential = true;
   m_bDataChanged = false;
 
-  m_fVelocity[0] = -100.0f; m_fForce[0] =  22.5f;
-  m_fVelocity[1] = -150.0f; m_fForce[1] =  20.0f;
-  m_fVelocity[2] = -200.0f; m_fForce[2] =  17.5f;
-  m_fVelocity[3] = -250.0f; m_fForce[3] =  15.0f;
-  m_fVelocity[4] = -300.0f; m_fForce[4] =  12.5f;
+  m_fVelocity[0] = -100.0f; m_fForce[0] =  40.0f;
+  m_fVelocity[1] = -150.0f; m_fForce[1] =  35.0f;
+  m_fVelocity[2] = -200.0f; m_fForce[2] =  30.0f;
+  m_fVelocity[3] = -250.0f; m_fForce[3] =  25.0f;
+  m_fVelocity[4] = -300.0f; m_fForce[4] =  20.5f;
 }
 
 bool CCar::CGearBox::shiftUp() {
