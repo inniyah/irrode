@@ -17,8 +17,10 @@ void CRearView::update() {
   if (!m_bActive) return;
 
   startRttUpdate();
+  irr::scene::ICameraSceneNode *p = m_pSmgr->getActiveCamera();
   m_pSmgr->setActiveCamera(m_pCam);
   m_pSmgr->drawAll();
+  m_pSmgr->setActiveCamera(p);
   endRttUpdate();
 }
 

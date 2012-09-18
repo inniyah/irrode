@@ -2,14 +2,12 @@
   #include <CProjectile.h>
   #include <CAutoPilot.h>
   #include <irrCC.h>
-  #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
-  #include <CRearView.h>
   #include <irrklang.h>
   #include <CEventVehicleState.h>
   #include <CControlEvents.h>
 
-CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Helicopter", pInputQueue) {
+CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Helicopter", pInputQueue) {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
@@ -69,8 +67,6 @@ CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode 
       printf("%i checkpoints for plane found!\n",m_aCheckPoints.size());
     }
     else printf("no checkpoints for helicopter found!\n");
-    m_pCockpit=NULL;
-    m_pRView=pRView;
   }
 
   for (irr::u32 i=0; i<0xFF; i++) m_aCtrlBuffer[i]=0.0f;
@@ -81,13 +77,9 @@ CAeroVehicle::~CAeroVehicle() {
 }
 
 void CAeroVehicle::activate() {
-  if (m_pCockpit) m_pCockpit->setActive(true);
-  if (m_pRView  ) m_pRView  ->setActive(true);
 }
 
 void CAeroVehicle::deactivate() {
-  if (m_pCockpit) m_pCockpit->setActive(false);
-  if (m_pRView  ) m_pRView  ->setActive(false);
 }
 
 bool CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {

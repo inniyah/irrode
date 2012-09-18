@@ -7,8 +7,6 @@
   #include "CIrrOdeCarState.h"
 
 class CIrrCC;
-class CRearView;
-class CCockpitCar;
 class CIrrOdeCarTrack;
 class CAdvancedParticleSystemNode;
 
@@ -87,9 +85,6 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
     irr::ode::CIrrOdeJointHinge        *m_pAxesRear [2];   /*!< the rear axes */
     irr::ode::CIrrOdeSurfaceParameters *m_pParams   [4];   /*!< the contact parameters */
 
-    CCockpitCar *m_pCockpit;
-    CRearView *m_pRView;
-
     irr::core::vector3df m_vOldSpeed;
 
     CIrrOdeCarTrack *m_pLap;
@@ -99,7 +94,7 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
     void applyAeroEffect();
 
   public:
-    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);    /*!< the car's constructor */
+    CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);    /*!< the car's constructor */
     virtual ~CCar();                                                                         /*!< the car's destructor */
 
     virtual void activate();      /*!< the activation method */
@@ -117,7 +112,6 @@ class CCar : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
     virtual irr::ode::eEventWriterType getEventWriterType();
 
     virtual irr::ode::CIrrOdeBody *getBody() { return m_pCarBody; }
-    void setCockpit(CCockpitCar *p) { m_pCockpit = p; }
 
     virtual enumStateType getType() { return eStateCar; }
 };

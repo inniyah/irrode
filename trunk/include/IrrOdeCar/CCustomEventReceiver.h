@@ -12,6 +12,8 @@ namespace irrklang {
 };
 
 class CAdvancedParticleSystemNode;
+class CCockpitPlane;
+class CCockpitCar;
 class CEventPlaneState;
 class CEventTankState;
 class CEventHeliState;
@@ -37,6 +39,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         void handlePlaneEvent(CEventPlaneState *p);
         irr::s32 getNodeId() { return m_iNodeId; }
         void triggerUpdateSound();
+        irr::ode::CIrrOdeBody *getBody() { return m_pPlane; }
     };
 
     class CTankNodes {
@@ -104,6 +107,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         void handleHeliEvent(CEventHeliState *p);
         irr::s32 getNodeId() { return m_iNodeId; }
         void triggerUpdateSound();
+        irr::ode::CIrrOdeBody *getBody() { return m_pHeli; }
     };
 
     class CMissileNodes {
@@ -130,8 +134,6 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
 
     irrklang::ISoundEngine *m_pSndEngine;
 
-    CCockpitCar *m_pCockpitCar;
-
     CCustomEventReceiver();
     ~CCustomEventReceiver();
 
@@ -140,6 +142,10 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     irr::core::list<CCarNodes     *> m_lCars;
     irr::core::list<CHeliNodes    *> m_lHelis;
     irr::core::list<CMissileNodes *> m_lMissiles;
+
+    CCockpitCar   *m_pCockpitCar;
+    CCockpitPlane *m_pCockpitPlane,
+                  *m_pCockpitHeli;
 
     /**
      * This method deactivates all particles systems that are children of a node

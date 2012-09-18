@@ -1,10 +1,8 @@
   #include <irrlicht.h>
   #include "CCar.h"
   #include <CCustomEventReceiver.h>
-  #include <CCockpitCar.h>
   #include <math.h>
   #include <irrklang.h>
-  #include <CRearView.h>
   #include <CEventVehicleState.h>
   #include <CIrrOdeCarTrack.h>
   #include <CControlEvents.h>
@@ -23,7 +21,7 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
   }
 }
 
-CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Car", pInputQueue) {
+CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Car", pInputQueue) {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
@@ -131,8 +129,6 @@ CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearVie
 
     //we are an IrrOde event listener
     irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-    m_pCockpit=NULL;
-    m_pRView=pRView;
 
     m_pLap = new CIrrOdeCarTrack(m_pCarBody);
 
@@ -151,8 +147,6 @@ CCar::~CCar() {
 
 //This method is called when the state is activated.
 void CCar::activate() {
-  if (m_pCockpit) m_pCockpit->setActive(true);
-  if (m_pRView  ) m_pRView  ->setActive(true);
 }
 
 void CCar::deactivate() {
@@ -162,9 +156,6 @@ void CCar::deactivate() {
   }
 
   for (irr::u32 i=0; i<2; i++) m_pServo[i]->setServoPos(0.0f);
-
-  if (m_pCockpit) m_pCockpit->setActive(false);
-  if (m_pRView  ) m_pRView  ->setActive(false);
 }
 
 //This method is called once for each rendered frame.
@@ -275,16 +266,6 @@ bool CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (m_bFlip) {
       irr::core::vector3df v=m_pCarBody->getAbsoluteTransformation().getRotationDegrees().rotationToDirection(irr::core::vector3df(0,0.3f,0));
       m_pCarBody->addForceAtPosition(m_pCarBody->getPosition()+v,irr::core::vector3df(0,350,0));
-    }
-
-    if (m_pRView!=NULL && m_pRView->isActive()) {
-      irr::core::vector3df cRot=m_pCarBody->getAbsoluteTransformation().getRotationDegrees(),
-                           cPos=m_pCarBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.75f,0.0f)),
-                           cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(1.0f,0.0f,0.0f)),
-                           cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-      m_pRView->setCameraParameters(cPos,cTgt,cUp);
-      m_pRView->update();
     }
 
     irr::f32 fVel=m_pCarBody->getLinearVelocity().getLength();

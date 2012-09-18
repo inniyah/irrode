@@ -1,4 +1,5 @@
   #include <CCameraController.h>
+  #include <CRearView.h>
   #include <irrCC.h>
 
 CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr) {
@@ -37,6 +38,9 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_vPosition  = irr::core::vector3df(3505.0f, 1000.0f, 2490.0f);
   m_vDirection = irr::core::vector3df(   0.0f,    0.0f,    1.0f);
+
+  m_pRearView = new CRearView(m_pDevice,"rearview.jpg",m_pSmgr->addCameraSceneNode(), m_pSmgr->getRootSceneNode());
+  m_pRearView->setActive(true);
 
   m_fCamAngleH = 25.0f;
 }
@@ -94,6 +98,8 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
       m_fExtOffset = 1.0f;
       m_fExtDist   = 3.0f;
+
+      m_vRViewOffset = m_vInternalOffset + irr::core::vector3df(0.0f, 0.15f, 0.0f);
     }
     else
       if (m_pTarget->getOdeClassname() == "tank") {
@@ -104,6 +110,8 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
         m_fExtDist   = 0.4f;
         m_fExtOffset = 0.0f;
+
+        m_vRViewOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
       }
       else
         if (m_pTarget->getOdeClassname() == "heli") {
@@ -124,6 +132,8 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
             m_fExtDist   = 7.5f;
             m_fExtOffset = 1.5f;
+
+            m_vRViewOffset = m_vInternalOffset + irr::core::vector3df(1.75f, 0.1f, 0.0f);
           }
           else setTarget(NULL);
   }
@@ -153,6 +163,11 @@ void CCameraController::update() {
       m_vPosition = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset - (m_fExtFact * m_fExtDist * v - m_fExtFact * m_fExtOffset * irr::core::vector3df(0.0f, 1.0f, 0.0f)));
       m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
       m_vUp = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
+    }
+
+    if (m_pRearView != NULL) {
+      m_pRearView->setCameraParameters(m_vRViewPos, m_vRViewTgt, m_vUp);
+      m_pRearView->update();
     }
   }
   else {
@@ -294,9 +309,18 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     }
   }
 
+  if (pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved) {
+    irr::ode::CIrrOdeEventBodyMoved *p = reinterpret_cast<irr::ode::CIrrOdeEventBodyMoved *>(pEvent);
+
+    if (m_pTarget != NULL && m_pRearView != NULL && p->getBodyId() == m_pTarget->getID()) {
+      m_vRViewPos = p->getNewPosition() + p->getNewRotation().rotationToDirection(m_vRViewOffset);
+      m_vRViewTgt = m_vRViewPos - p->getNewRotation().rotationToDirection(m_vDirection);
+    }
+  }
+
   return false;
 }
 
 bool CCameraController::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-  return pEvent->getType() == irr::ode::eIrrOdeEventStep;
+  return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved;
 }

@@ -5,9 +5,7 @@
   #include <CIrrOdeCarState.h>
   #include <IrrOde.h>
 
-class CRearView;
 class CAutoPilot;
-class CCockpitPlane;
 class CTargetSelector;
 
 class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter {
@@ -32,8 +30,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter
          m_bBrakes,
          m_bFlip;
 
-    CRearView *m_pRView;
-
     irr::ode::CIrrOdeBody *m_pBody;
 
     irr::ode::CIrrOdeImpulseMotor *m_pMotor;
@@ -50,12 +46,10 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter
 
     irr::core::array<irr::scene::ISceneNode *> m_aCheckPoints;
 
-    CCockpitPlane *m_pCockpit;
-
     void postShotEvent();
 
   public:
-    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);
+    CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CAeroVehicle();
 
     virtual void activate();
@@ -68,8 +62,6 @@ class CAeroVehicle : public CIrrOdeCarState, public irr::ode::IIrrOdeEventWriter
     virtual void odeStep(irr::u32 iStep)=0;
 
     irr::ode::CIrrOdeBody *getBody() { return m_pBody; }
-
-    void setCockpit(CCockpitPlane *p) { m_pCockpit = p; }
 
     virtual void incHitsScored();
     virtual void incHitsTaken();

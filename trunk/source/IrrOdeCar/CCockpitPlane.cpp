@@ -7,16 +7,14 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyMoved.h>
 
-CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pNode) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
-  m_iTime = 0;
-  m_iLapStart = 0;
-  m_pObject = pObject;
-  m_iBodyId = m_pObject->getID();
-  m_pTarget = NULL;
-  m_pApTarget = NULL;
-
-  m_bPlane = m_pObject->getOdeClassname() == "plane";
+  m_iTime       = 0;
+  m_iLapStart   = 0;
+  m_iBodyId     = pNode->getID();
+  m_pObject     = NULL;
+  m_pTarget     = NULL;
+  m_pApTarget   = NULL;
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 
@@ -198,7 +196,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
 
   m_iInfoMode = 0;
 
-  irr::u32 iReplace=processTextureReplace(m_pObject);
+  irr::u32 iReplace=processTextureReplace(pNode);
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
@@ -261,19 +259,21 @@ void CCockpitPlane::update() {
       break;
   }
 
-  if (m_pApTarget != NULL && m_pObject != NULL) {
-    irr::f32 f = m_pApTarget->getAbsolutePosition().getDistanceFrom(m_pObject->getAbsolutePosition());
-    wchar_t s[0xFF];
-    swprintf(s,0xFF,L"Target: %i (%.2f)", m_pApTarget->getID()-99999, f);
-    m_stApNextCp->setText(s);
-  }
-  else m_stApNextCp->setText(L"");
+  if (m_pObject != NULL) {
+    if (m_pApTarget != NULL) {
+      irr::f32 f = m_pApTarget->getAbsolutePosition().getDistanceFrom(m_pObject->getAbsolutePosition());
+      wchar_t s[0xFF];
+      swprintf(s,0xFF,L"Target: %i (%.2f)", m_pApTarget->getID()-99999, f);
+      m_stApNextCp->setText(s);
+    }
+    else m_stApNextCp->setText(L"");
 
-  if (m_pTarget != NULL) {
-    irr::core::vector3df v = m_pObject->getPosition() - m_pTarget->getPosition();
-    wchar_t s[0xFF];
-    swprintf(s,0xFF,L"%.2f", v.getLength());
-    m_stTgtDist->setText(s);
+    if (m_pTarget != NULL) {
+      irr::core::vector3df v = m_pObject->getPosition() - m_pTarget->getPosition();
+      wchar_t s[0xFF];
+      swprintf(s,0xFF,L"%.2f", v.getLength());
+      m_stTgtDist->setText(s);
+    }
   }
 
   m_pGuienv->drawAll();
@@ -440,4 +440,9 @@ bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
          pEvent->getType() == EVENT_HELI_STATE_ID             ||
          pEvent->getType() == EVENT_SELECT_TARGET_ID          ||
          pEvent->getType() == EVENT_SHOTS_ID;
+}
+
+void CCockpitPlane::setObject(irr::ode::CIrrOdeBody *p) {
+  m_pObject = p;
+  m_bPlane = m_pObject->getOdeClassname() == "plane";
 }

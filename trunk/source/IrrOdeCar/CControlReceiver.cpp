@@ -437,3 +437,8 @@ bool CControlReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType() == eCtrlMsgVehicleApproved || pEvent->getType() == eCtrlMsgLeaveVehicle;
 }
+
+void CControlReceiver::connect() {
+  CLoginMessage *p = new CLoginMessage();
+  m_pInputQueue->postEvent(p);
+}
