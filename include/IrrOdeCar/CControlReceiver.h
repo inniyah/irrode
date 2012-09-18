@@ -81,6 +81,8 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
+
+    void connect();
 };
 
 #endif

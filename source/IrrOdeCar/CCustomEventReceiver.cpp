@@ -2,15 +2,21 @@
   #include <CEventVehicleState.h>
   #include <CAdvancedParticleSystemNode.h>
   #include <CRandomForestNode.h>
+  #include <CCockpitPlane.h>
+  #include <CCockpitCar.h>
 
   #include <irrklang.h>
 
 CCustomEventReceiver::CCustomEventReceiver() {
-  m_pDevice=NULL;
-  m_pOdeManager=NULL;
   m_bInstalled=false;
-  m_pRearLights[0]=NULL;
-  m_pRearLights[1]=NULL;
+
+  m_pDevice        = NULL;
+  m_pOdeManager    = NULL;
+  m_pRearLights[0] = NULL;
+  m_pRearLights[1] = NULL;
+  m_pCockpitCar    = NULL;
+  m_pCockpitPlane  = NULL;
+  m_pCockpitHeli   = NULL;
 }
 
 CCustomEventReceiver::~CCustomEventReceiver() {
@@ -65,6 +71,10 @@ void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CI
 
   CCustomEventReceiver::getSharedInstance()->m_pRearLights[0]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_off.png");
   CCustomEventReceiver::getSharedInstance()->m_pRearLights[1]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_on.png");
+
+  CCustomEventReceiver::getSharedInstance()->m_pCockpitCar   = new CCockpitCar  (pDevice,"cockpit_car"  ,pDevice->getSceneManager()->getRootSceneNode());
+  CCustomEventReceiver::getSharedInstance()->m_pCockpitPlane = new CCockpitPlane(pDevice,"cockpit_heli" ,pDevice->getSceneManager()->getRootSceneNode());
+  CCustomEventReceiver::getSharedInstance()->m_pCockpitHeli  = new CCockpitPlane(pDevice,"cockpit_plane",pDevice->getSceneManager()->getRootSceneNode());
 }
 
 CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
@@ -226,6 +236,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (p->getBodyId()==pHeli->getNodeId()) {
         pHeli->triggerUpdateSound();
         bDone=true;
+        m_pCockpitHeli->setObject(pHeli->getBody());
       }
     }
 

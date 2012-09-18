@@ -8,10 +8,8 @@
   #include "CIrrOdeCarState.h"
 
 class CTargetSelector;
-class CCockpitPlane;
 class CProjectile;
 class CAutoPilot;
-class CRearView;
 
 class CHeli : public CAeroVehicle {
   protected:
@@ -20,7 +18,7 @@ class CHeli : public CAeroVehicle {
     irr::s32 m_iNodeId;
 
   public:
-    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue);
+    CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
     virtual ~CHeli();
 
     virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }

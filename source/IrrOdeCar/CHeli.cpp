@@ -2,14 +2,12 @@
   #include <CProjectile.h>
   #include <CAutoPilot.h>
   #include <irrCC.h>
-  #include <CCockpitPlane.h>
   #include <CTargetSelector.h>
   #include <irrKlang.h>
-  #include <CRearView.h>
   #include <CEventVehicleState.h>
   #include <CCustomEventReceiver.h>
 
-CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice,pNode,pRView, pInputQueue) {
+CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice, pNode, pInputQueue) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
@@ -42,16 +40,6 @@ void CHeli::odeStep(irr::u32 iStep) {
     p->setTarget(m_pTargetSelector->getTarget());
     m_bLeft=!m_bLeft;
     incShotsFired();
-  }
-
-  if (m_pRView && m_pRView->isActive()) {
-    irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
-                         cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.35f,2.5f)),
-                         cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
-                         cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-    m_pRView->setCameraParameters(cPos,cTgt,cUp);
-    m_pRView->update();
   }
 
   m_fSound=0.75f+0.5*m_pMotor->getPower();

@@ -22,6 +22,7 @@ enum eCameraControls {
 };
 
 class CIrrCC;
+class CRearView;
 
 class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEventListener {
   private:
@@ -30,6 +31,7 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     irr::scene::ICameraSceneNode *m_pCam;
     irr::scene::ISceneManager *m_pSmgr;
     irr::ode::CIrrOdeBody *m_pTarget;
+    CRearView *m_pRearView;
 
     irr::ode::CIrrOdeManager *m_pOdeMngr;
 
@@ -49,7 +51,10 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
                          m_vDirection,
                          m_vPosition,
                          m_vTarget,
-                         m_vUp;
+                         m_vUp,
+                         m_vRViewPos,
+                         m_vRViewTgt,
+                         m_vRViewOffset;
 
     bool m_bInternal,
          m_bRotateXY,

@@ -4,7 +4,9 @@
   #include <irrode.h>
 
 enum enControlMessageIDs {
-  eCtrlMsgRequestVehicle = irr::ode::eIrrOdeEventUser + 1024,
+  eCtrlMsgLogin = irr::ode::eIrrOdeEventUser + 1024,
+  eCtrlMsgLoginOk,
+  eCtrlMsgRequestVehicle,
   eCtrlMsgLeaveVehicle,
   eCtrlMsgVehicleApproved,
   eCtrlMsgCar,
@@ -78,6 +80,29 @@ class IControlMessage : public irr::ode::IIrrOdeEvent {
     irr::s32 getNode() { return m_iNode; }
 
     irr::u16 getClient() { return m_iClient; }
+};
+
+class CLoginMessage : public irr::ode::IIrrOdeEvent {
+  public:
+    CLoginMessage() { }
+
+    CLoginMessage(irr::ode::CSerializer *p) { }
+
+    virtual ~CLoginMessage() { }
+
+    virtual irr::u16 getType() { return eCtrlMsgLogin; }
+
+    virtual irr::ode::CSerializer *serialize() {
+      if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+        m_pSerializer->addU16(eCtrlMsgLogin);
+      }
+      return m_pSerializer;
+    }
+
+    virtual irr::ode::IIrrOdeEvent *clone() { return new CLoginMessage(); }
+
+    virtual const irr::c8 *toString() { sprintf(m_sString, "CLoginMessage"); return m_sString; }
 };
 
 class CLeaveVehicle : public IControlMessage {

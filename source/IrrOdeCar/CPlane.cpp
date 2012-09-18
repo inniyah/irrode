@@ -5,13 +5,11 @@
   #include <irrCC.h>
   #include <CAutoPilot.h>
   #include <CTargetSelector.h>
-  #include <CCockpitPlane.h>
   #include <irrlicht.h>
   #include <irrKlang.h>
-  #include <CRearView.h>
   #include <CIrrOdeCarTrack.h>
 
-CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, CCockpitPlane *pCockpit, CRearView *pRView, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice,pNode,pRView, pInputQueue) {
+CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice, pNode, pInputQueue) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -68,7 +66,6 @@ void CPlane::odeStep(irr::u32 iStep) {
     CProjectile *p=new CProjectile(m_pSmgr,pos,rot,vel,"missile",600,m_pWorld,true,this);
     p->setTarget(m_pTargetSelector->getTarget());
     incShotsFired();
-    //m_pCockpit->setShotsFired(m_iShotsFired);
     m_bFirePrimary=false;
   }
 
@@ -82,16 +79,6 @@ void CPlane::odeStep(irr::u32 iStep) {
     new CProjectile(m_pSmgr,pos,rot,vel,"bullet",600,m_pWorld,true,this);
     incShotsFired();
     m_bFireSecondary=false;
-  }
-
-  if (m_pRView && m_pRView->isActive()) {
-    irr::core::vector3df cRot=m_pBody->getAbsoluteTransformation().getRotationDegrees(),
-                         cPos=m_pBody->getAbsolutePosition()+cRot.rotationToDirection(irr::core::vector3df(1.0f,1.35f,2.5f)),
-                         cTgt=cPos+cRot.rotationToDirection(irr::core::vector3df(0.0f,0.0f,1.0f)),
-                         cUp=cRot.rotationToDirection(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-    m_pRView->setCameraParameters(cPos,cTgt,cUp);
-    m_pRView->update();
   }
 
   if (m_bDataChanged) {
