@@ -12,12 +12,12 @@ namespace irrklang {
 };
 
 class CAdvancedParticleSystemNode;
-class CCockpitPlane;
-class CCockpitCar;
 class CEventPlaneState;
 class CEventTankState;
 class CEventHeliState;
 class CEventCarState;
+class CCockpitPlane;
+class CCockpitCar;
 
 class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
   protected:
@@ -30,10 +30,12 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                          *m_pWind;
         irrklang::ISoundEngine *m_pSndEngine;
 
+        CCockpitPlane *m_pCockpit;
+
         void searchPlaneNodes(irr::scene::ISceneNode *pNode);
 
       public:
-        CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine);
+        CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice);
         ~CPlaneNodes();
 
         void handlePlaneEvent(CEventPlaneState *p);
@@ -81,11 +83,13 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                          *m_pWind,
                          *m_pWheels;
 
+        CCockpitCar *m_pCockpit;
+
         irr::video::ITexture *m_pRearLights[2];
         void searchCarNodes(irr::scene::ISceneNode *pNode);
 
       public:
-        CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2]);
+        CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2], irr::IrrlichtDevice *pDevice);
         ~CCarNodes();
 
         void handleCarEvent(CEventCarState *p);
@@ -100,8 +104,10 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         irrklang::ISound *m_pEngine;
         irrklang::ISoundEngine *m_pSndEngine;
 
+        CCockpitPlane *m_pCockpit;
+
       public:
-        CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine);
+        CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice);
         ~CHeliNodes();
 
         void handleHeliEvent(CEventHeliState *p);
@@ -143,10 +149,6 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     irr::core::list<CHeliNodes    *> m_lHelis;
     irr::core::list<CMissileNodes *> m_lMissiles;
 
-    CCockpitCar   *m_pCockpitCar;
-    CCockpitPlane *m_pCockpitPlane,
-                  *m_pCockpitHeli;
-
     /**
      * This method deactivates all particles systems that are children of a node
      * @param pNode the node
@@ -172,8 +174,6 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
     void addTank (irr::scene::ISceneNode *pTank );
     void addCar  (irr::scene::ISceneNode *pCar  );
     void addHeli (irr::scene::ISceneNode *pHeli );
-
-    void setCockpitCar(CCockpitCar *p) { m_pCockpitCar = p; }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);

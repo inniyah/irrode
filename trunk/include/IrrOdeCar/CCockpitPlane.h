@@ -66,15 +66,13 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
 
   public:
-    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pNode);
+    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject);
     virtual ~CCockpitPlane();
 
     virtual void update();
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
-
-    void setObject(irr::ode::CIrrOdeBody *p);
 };
 
 #endif
