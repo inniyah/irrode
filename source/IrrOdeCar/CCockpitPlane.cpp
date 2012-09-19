@@ -7,14 +7,15 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyMoved.h>
 
-CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pNode) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
   m_iTime       = 0;
   m_iLapStart   = 0;
-  m_iBodyId     = pNode->getID();
-  m_pObject     = NULL;
+  m_iBodyId     = pObject->getID();
+  m_pObject     = pObject;
   m_pTarget     = NULL;
   m_pApTarget   = NULL;
+  m_bPlane      = pObject->getOdeClassname() == "plane";
 
   m_pRttSmgr=m_pSmgr->createNewSceneManager();
 
@@ -196,7 +197,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
 
   m_iInfoMode = 0;
 
-  irr::u32 iReplace=processTextureReplace(pNode);
+  irr::u32 iReplace=processTextureReplace(pObject);
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
@@ -440,9 +441,4 @@ bool CCockpitPlane::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
          pEvent->getType() == EVENT_HELI_STATE_ID             ||
          pEvent->getType() == EVENT_SELECT_TARGET_ID          ||
          pEvent->getType() == EVENT_SHOTS_ID;
-}
-
-void CCockpitPlane::setObject(irr::ode::CIrrOdeBody *p) {
-  m_pObject = p;
-  m_bPlane = m_pObject->getOdeClassname() == "plane";
 }

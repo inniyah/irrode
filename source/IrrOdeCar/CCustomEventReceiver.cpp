@@ -14,9 +14,6 @@ CCustomEventReceiver::CCustomEventReceiver() {
   m_pOdeManager    = NULL;
   m_pRearLights[0] = NULL;
   m_pRearLights[1] = NULL;
-  m_pCockpitCar    = NULL;
-  m_pCockpitPlane  = NULL;
-  m_pCockpitHeli   = NULL;
 }
 
 CCustomEventReceiver::~CCustomEventReceiver() {
@@ -71,10 +68,6 @@ void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CI
 
   CCustomEventReceiver::getSharedInstance()->m_pRearLights[0]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_off.png");
   CCustomEventReceiver::getSharedInstance()->m_pRearLights[1]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_on.png");
-
-  CCustomEventReceiver::getSharedInstance()->m_pCockpitCar   = new CCockpitCar  (pDevice,"cockpit_car"  ,pDevice->getSceneManager()->getRootSceneNode());
-  CCustomEventReceiver::getSharedInstance()->m_pCockpitPlane = new CCockpitPlane(pDevice,"cockpit_heli" ,pDevice->getSceneManager()->getRootSceneNode());
-  CCustomEventReceiver::getSharedInstance()->m_pCockpitHeli  = new CCockpitPlane(pDevice,"cockpit_plane",pDevice->getSceneManager()->getRootSceneNode());
 }
 
 CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
@@ -83,12 +76,12 @@ CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
 }
 
 void CCustomEventReceiver::addPlane(irr::scene::ISceneNode *pPlane) {
-  CCustomEventReceiver::CPlaneNodes *p = new CPlaneNodes(pPlane, m_pSndEngine);
+  CCustomEventReceiver::CPlaneNodes *p = new CPlaneNodes(pPlane, m_pSndEngine, m_pDevice);
   m_lPlanes.push_back(p);
 }
 
 void CCustomEventReceiver::addCar(irr::scene::ISceneNode *pCar) {
-  CCustomEventReceiver::CCarNodes *p = new CCarNodes(pCar, m_pSndEngine, m_pRearLights);
+  CCustomEventReceiver::CCarNodes *p = new CCarNodes(pCar, m_pSndEngine, m_pRearLights, m_pDevice);
   m_lCars.push_back(p);
 }
 
@@ -98,7 +91,7 @@ void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
 }
 
 void CCustomEventReceiver::addHeli(irr::scene::ISceneNode *pHeli) {
-  CCustomEventReceiver::CHeliNodes::CHeliNodes *p = new CHeliNodes(pHeli, m_pSndEngine);
+  CCustomEventReceiver::CHeliNodes::CHeliNodes *p = new CHeliNodes(pHeli, m_pSndEngine, m_pDevice);
   m_lHelis.push_back(p);
 }
 
@@ -236,7 +229,6 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (p->getBodyId()==pHeli->getNodeId()) {
         pHeli->triggerUpdateSound();
         bDone=true;
-        m_pCockpitHeli->setObject(pHeli->getBody());
       }
     }
 
@@ -347,7 +339,7 @@ void CCustomEventReceiver::CCarNodes::searchCarNodes(irr::scene::ISceneNode *pNo
   for (it=children.begin(); it!=children.end(); it++) searchCarNodes(*it);
 }
 
-CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2]) {
+CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2], irr::IrrlichtDevice *pDevice) {
   m_pRearLights[0] = pRearLights[0];
   m_pRearLights[1] = pRearLights[1];
 
@@ -368,6 +360,8 @@ CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklan
 
   m_pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(m_pCar);
+
+  m_pCockpit = new CCockpitCar(pDevice,"cockpit_car", pCar);
 }
 
 CCustomEventReceiver::CCarNodes::~CCarNodes() {
@@ -461,6 +455,8 @@ void CCustomEventReceiver::CCarNodes::handleCarEvent(CEventCarState *p) {
   m_pWheels->setVolume(0.6f * fVol);
   m_pWheels->setPlaybackSpeed(1.0f+(fVol-0.5f));
   updateSound(m_pWheels, m_pCar);
+
+  if (m_pCockpit) m_pCockpit->update();
 }
 
 //Implementation of CPlaneNodes
@@ -477,16 +473,18 @@ void CCustomEventReceiver::CPlaneNodes::searchPlaneNodes(irr::scene::ISceneNode 
   }
 }
 
-CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine) {
+CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice) {
   m_pSndEngine = pSndEngine;
 
   m_iNodeId=pPlane->getID();
   m_pEngine=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  if (m_pEngine) m_pEngine->setMinDistance(100.0f);
+  if (m_pEngine) m_pEngine->setMinDistance(25.0f);
   m_pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pWind) m_pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
   m_pPlane=reinterpret_cast<ode::CIrrOdeBody *>(pPlane);
   searchPlaneNodes(pPlane);
+
+  m_pCockpit = new CCockpitPlane(pDevice,"cockpit_plane", m_pPlane);
 }
 
 CCustomEventReceiver::CPlaneNodes::~CPlaneNodes() {
@@ -523,6 +521,8 @@ void CCustomEventReceiver::CPlaneNodes::handlePlaneEvent(CEventPlaneState *p) {
     m_pEngine->setIsPaused(false);
     m_pWind  ->setIsPaused(false);
   }
+
+  if (m_pCockpit) m_pCockpit->update();
 }
 
 void CCustomEventReceiver::CPlaneNodes::triggerUpdateSound() {
@@ -537,7 +537,7 @@ void CCustomEventReceiver::CPlaneNodes::triggerUpdateSound() {
 }
 
 //Implementation of CHeliNodes
-CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine) {
+CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice) {
   m_pSndEngine = pSndEngine;
 
   m_iNodeId=pHeli->getID();
@@ -548,6 +548,8 @@ CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrk
     m_pEngine->setMaxDistance(200.0f);
     m_pEngine->setVolume(0.5f);
   }
+
+  m_pCockpit = new CCockpitPlane(pDevice,"cockpit_heli", m_pHeli);
 }
 
 CCustomEventReceiver::CHeliNodes::~CHeliNodes() {
@@ -565,6 +567,8 @@ void CCustomEventReceiver::CHeliNodes::handleHeliEvent(CEventHeliState *p) {
   m_pEngine->setPosition(vPos);
   m_pEngine->setPlaybackSpeed(p->getSound());
   m_pEngine->setIsPaused(false);
+
+  if (m_pCockpit) m_pCockpit->update();
 }
 
 void CCustomEventReceiver::CHeliNodes::triggerUpdateSound() {
