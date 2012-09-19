@@ -5,15 +5,12 @@
   #include <irrKlang.h>
   #include <CRearView.h>
 
-  #include "CCar.h"
-  #include "CTank.h"
-  #include "CHeli.h"
-  #include "CPlane.h"
-  #include "CIrrOdeCarState.h"
-  #include "CProgressBar.h"
-  #include "irrCC.h"
-  #include "CProjectile.h"
-  #include "CCustomEventReceiver.h"
+  #include <CEventVehicleState.h>
+  #include <CIrrOdeCarState.h>
+  #include <CProgressBar.h>
+  #include <irrCC.h>
+  #include <CProjectile.h>
+  #include <CCustomEventReceiver.h>
   #include <CRandomForestNode.h>
   #include <CMeshCombiner.h>
   #include <CCockpitPlane.h>

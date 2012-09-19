@@ -4,12 +4,9 @@
   #include <irrCC.h>
   #include <CConfigFileManager.h>
 
-  #include <CCar.h>
-  #include <CTank.h>
   #include <CMenu.h>
   #include <CVehicle.h>
   #include <CController.h>
-  #include <CAeroVehicle.h>
   #include <CCameraController.h>
 
 void CControlReceiver::initControls() {
