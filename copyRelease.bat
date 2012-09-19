@@ -74,6 +74,20 @@ mkdir irrode\source\IrrOdeCar
 copy source\IrrOdeCar\*.* irrode\source\IrrOdeCar
 mkdir irrode\source\IrrOdeRePlayer
 copy source\IrrOdeRePlayer\*.* irrode\source\IrrOdeRePlayer
+mkdir irrode\source\IrrOdeCar\RoadCreator
+copy source\IrrOdeCar\RoadCreator\*.* irrode\source\IrrOdeCar\RoadCreator
+mkdir irrode\source\IrrOdeCar\CodeSnippets
+copy source\IrrOdeCar\CodeSnippets\*.* irrode\source\IrrOdeCar\CodeSnippets
+mkdir irrode\source\IrrOdEditExample
+copy source\IrrOdEditExample\*.* irrode\source\IrrOdEditExample
+mkdir source\IrrOdeRePlayerPlugin
+copy source\IrrOdeRePlayerPlugin\*.* irrode\source\IrrOdeRePlayerPlugin
+mkdir irrode\source\IrrOdeTestBed
+copy source\IrrOdeTestBed\*.* irrode\source\IrrOdeTestBed
+mkdir irrode\source\IrrEditPlugin
+copy source\IrrEditPlugin\*.* irrode\source\IrrEditPlugin
+mkdir irrode\source\IrrOdeRePlayerPlugin
+copy source\IrrOdeRePlayerPlugin\*.* irrode\source\IrrOdeRePlayerPlugin
 
 mkdir irrode\include
 mkdir irrode\include\IrrOde
@@ -88,13 +102,19 @@ mkdir irrode\include\IrrOde\motors
 copy include\IrrOde\motors\*.* irrode\include\IrrOde\motors
 mkdir irrode\include\IrrOde\observer
 copy include\IrrOde\observer\*.* irrode\include\IrrOde\observer
+mkdir irrode\include\IrrOdeRePlayerPlugin
+copy include\IrrOdeRePlayerPlugin\*.* irrode\include\IrrOdeRePlayerPlugin
+mkdir irrode\include\IrrOdeTestBed
+copy include\IrrOdeTestBed\*.* irrode\include\IrrOdeTestBed
 
 mkdir irrode\include\IrrOdeCar
 copy include\IrrOdeCar\*.* irrode\include\IrrOdeCar
 mkdir irrode\include\IrrOdeRePlayer
 copy include\IrrOdeRePlayer\*.* irrode\include\IrrOdeRePlayer
 mkdir irrode\include\IrrOdeCar\RoadCreator
-copy include\IrrOdeCar\RoadCreator irrode\include\IrrOdeCar\RoadCreator
+copy include\IrrOdeCar\RoadCreator\*.* irrode\include\IrrOdeCar\RoadCreator
+mkdir irrode\include\IrrOdeCar\CodeSnippets
+copy include\IrrOdeCar\CodeSnippets\*.* irrode\include\IrrOdeCar\CodeSnippets
 
 mkdir irrode\codeblocks
 copy codeblocks\*.* irrode\codeblocks
