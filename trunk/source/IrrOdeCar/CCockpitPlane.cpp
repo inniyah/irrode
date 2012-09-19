@@ -26,6 +26,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pCam->setTarget(irr::core::vector3df(0,0,0));
   m_pCam->setAspectRatio(-1.0f);
   m_pCam->setNearValue(0.1f);
+  m_pCam->setProjectionMatrix(m_pCam->getProjectionMatrix(), true);
   m_pRttSmgr->setActiveCamera(m_pCam);
 
   irr::scene::IMesh *p=m_pRttSmgr->getMesh("../../data/models/horizon.obj");
