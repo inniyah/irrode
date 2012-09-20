@@ -368,6 +368,8 @@ CCustomEventReceiver::CCarNodes::~CCarNodes() {
   if (m_pEngine) m_pEngine->drop();
   if (m_pWind  ) m_pWind  ->drop();
   if (m_pWheels) m_pWheels->drop();
+
+  if (m_pCockpit) delete m_pCockpit;
 }
 
 void CCustomEventReceiver::CCarNodes::triggerUpdateSound() {
@@ -490,6 +492,8 @@ CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, i
 CCustomEventReceiver::CPlaneNodes::~CPlaneNodes() {
   if (m_pEngine) m_pEngine->drop();
   if (m_pWind  ) m_pWind  ->drop();
+
+  if (m_pCockpit) delete m_pCockpit;
 }
 
 void CCustomEventReceiver::CPlaneNodes::handlePlaneEvent(CEventPlaneState *p) {
@@ -554,6 +558,8 @@ CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrk
 
 CCustomEventReceiver::CHeliNodes::~CHeliNodes() {
   if (m_pEngine) m_pEngine->drop();
+
+  if (m_pCockpit) delete m_pCockpit;
 }
 
 void CCustomEventReceiver::CHeliNodes::handleHeliEvent(CEventHeliState *p) {
