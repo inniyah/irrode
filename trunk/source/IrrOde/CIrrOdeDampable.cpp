@@ -22,9 +22,6 @@ CIrrOdeDampable::CIrrOdeDampable(irr::scene::ISceneNode *parent,irr::scene::ISce
   m_iAutoDisableSteps           =_DEFAULT_AUTO_DISABLE_STEPS            ;
   m_iAutoDisableFlag            =_DEFAULT_AUTO_DISABLE_FLAG             ;
   m_fMaxAngularSpeed            =_DEFAULT_MAX_ANGULAR_SPEED             ;
-
-	m_sParamName=L"";
-	m_bUseDefined=false;
 }
 
 CIrrOdeDampable::~CIrrOdeDampable() {
@@ -36,12 +33,7 @@ CIrrOdeDampable::~CIrrOdeDampable() {
 void CIrrOdeDampable::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttributeReadWriteOptions* options) const {
   CIrrOdeSceneNode::serializeAttributes(out,options);
 
-	out->addString("paramName",irr::core::stringc(m_sParamName).c_str());
-	out->addBool("useDefined",m_bUseDefined);
-
 	CIrrOdeDampable *p=NULL;
-	if (m_bUseDefined) p=CIrrOdeManager::getSharedInstance()->getDampableWithParamName(m_sParamName.c_str());
-
 	if (p==NULL || p==this) {
 		out->addInt("AutoDisableSteps",m_iAutoDisableSteps);
 		out->addInt("AutoDisableFlag" ,m_iAutoDisableFlag );
@@ -60,11 +52,7 @@ void CIrrOdeDampable::serializeAttributes(irr::io::IAttributes* out, irr::io::SA
 void CIrrOdeDampable::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options) {
   CIrrOdeSceneNode::deserializeAttributes(in,options);
 
-	m_sParamName=in->getAttributeAsString("paramName");
-	m_bUseDefined=in->getAttributeAsBool("useDefined");
-
 	CIrrOdeDampable *p=NULL;
-	if (m_bUseDefined) p=CIrrOdeManager::getSharedInstance()->getDampableWithParamName(m_sParamName.c_str());
 
 	if (p!=NULL && p!=this) {
 		m_iAutoDisableSteps=p->getAutoDisableSteps();

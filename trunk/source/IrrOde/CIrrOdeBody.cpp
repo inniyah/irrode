@@ -39,7 +39,6 @@ CIrrOdeBody::CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManage
   m_pParentBody=reinterpret_cast<CIrrOdeBody *>(getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID));
   m_bFiniteRotationMode=false;
   m_iGravityMode=1;
-  m_bParamMaster=false;
   m_pTouching=NULL;
   m_bDampingChanged=false;
 	m_bUpdateGraphics=true;
@@ -666,7 +665,6 @@ void CIrrOdeBody::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttri
 	CIrrOdeDampable::serializeAttributes(out,options);
 
 	out->addBool("Enabled",m_bEnabled);
-  out->addBool("ParamMaster",m_bParamMaster);
 
   out->addInt ("GravityMode"       ,m_iGravityMode       );
   out->addBool("FastMoving"        ,m_bFastMoving        );
@@ -680,7 +678,6 @@ void CIrrOdeBody::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttr
 	CIrrOdeDampable::deserializeAttributes(in,options);
 
 	m_bEnabled=in->getAttributeAsBool("Enabled");
-  m_bParamMaster=in->getAttributeAsBool("ParamMaster");
 
   m_iGravityMode       =in->getAttributeAsInt ("GravityMode"       );
   m_bFastMoving        =in->getAttributeAsBool("FastMoving"        );
@@ -697,23 +694,6 @@ irr::scene::ISceneNode *CIrrOdeBody::clone(irr::scene::ISceneNode* newParent, ir
 
   copyParams(pRet,true);
   return pRet;
-}
-
-/**
- * Set this body to be the parameter master. At physics initialization the body's parameters are copied to all other
- * bodies with the same OdeClassName
- * @param b "true" if the body should be parameter master, "false" otherwise
- */
-void CIrrOdeBody::setParamMaster(bool b) {
-  m_bParamMaster=b;
-}
-
-/**
- * Is this body the parameter master?
- * @return "true" is the body is parameter master, "false" otherwise
- */
-bool CIrrOdeBody::isParamMaster() {
-  return m_bParamMaster;
 }
 
 /**
@@ -736,7 +716,6 @@ void CIrrOdeBody::copyParams(CIrrOdeSceneNode *pDest, bool bRecurse) {
   pDst->setFiniteRotationAxis(m_vFiniteRotationAxis);
   pDst->setFiniteRotationMode(m_bFiniteRotationMode);
   pDst->setGravityMode(m_iGravityMode);
-  m_bParamMaster=false;
 }
 
 /**

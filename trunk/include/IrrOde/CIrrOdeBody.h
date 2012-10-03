@@ -35,7 +35,6 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     irr::core::list<IIrrOdeStepMotor *> m_lStepMotors; /**< irr::core::list of all step motors attached to the body */
     irr::core::list<IIrrOdeMotor *> m_lMotors;         /**< irr::core::list of all motors and servos attached to the body */
     bool m_bEnabled,                        /**< is this body active or not? */
-         m_bParamMaster,                    /**< is this body the parameter master, i.e. does it set the body parameters of other bodies with the same ODE classname? */
          m_bCollision,                      /**< did this body collide in the last simulation step? */
          m_bDampingChanged,                 /**< was one of the damping parameters changed since the last simulation step? */
          m_bFastMoving,                     /**< is this a fast moving body? */
@@ -143,9 +142,6 @@ class CIrrOdeBody : public CIrrOdeDampable, public IIrrOdeEventWriter {
     virtual void deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttributeReadWriteOptions* options);
 
     virtual irr::scene::ISceneNode *clone(irr::scene::ISceneNode* newParent=0, irr::scene::ISceneManager* newManager=0);
-
-    void setParamMaster(bool b);  /**< set this body to be the parameter master for all bodies of the same OdeClassName */
-    bool isParamMaster();         /**< is this body the parameter master? */
 
     virtual void copyParams(CIrrOdeSceneNode *pDest, bool bRecurse=true); /**< copy the parameters to another IrrOdeSceneNode */
     virtual void removeFromPhysics(); /**< remove the body from physics */
