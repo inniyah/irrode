@@ -121,11 +121,6 @@ void CIrrOdeGeom::serializeAttributes(irr::io::IAttributes* out, irr::io::SAttri
 
   out->addFloat("Mass",m_fMass);
 
-  out->addVector3d("CenterOfGravity",m_cCenterOfGravity);
-  out->addVector3d("Inertia_1"      ,m_cInertia1       );
-  out->addVector3d("Inertia_2"      ,m_cInertia2       );
-  out->addVector3d("MassTranslation",m_cMassTranslate  );
-
   out->addBool("collides",m_bCollide);
 	out->addInt("collisionGroup",m_iCollisionGroup);
 	out->addBool("trigger",m_bTrigger);
@@ -141,11 +136,6 @@ void CIrrOdeGeom::deserializeAttributes(irr::io::IAttributes* in, irr::io::SAttr
   }
 
   m_fMass=in->getAttributeAsFloat("Mass");
-
-  m_cCenterOfGravity=in->getAttributeAsVector3d("CenterOfGravity");
-  m_cInertia1       =in->getAttributeAsVector3d("Inertia_1"      );
-  m_cInertia2       =in->getAttributeAsVector3d("Inertia_2"      );
-  m_cMassTranslate  =in->getAttributeAsVector3d("MassTranslation");
 
   m_bCollide=!in->existsAttribute("collides") || in->getAttributeAsBool("collides");
 

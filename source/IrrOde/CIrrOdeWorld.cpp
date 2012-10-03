@@ -111,21 +111,6 @@ void CIrrOdeWorld::initPhysics() {
     #endif
     CIrrOdeBody *b1=*b;
     b1->initPhysics();
-
-    if (b1->isParamMaster()) {
-      #ifdef _TRACE_INIT_PHYSICS
-        printf("CIrrOdeWorld::initPhysics: \"%s\" parameter master of ODE body class \"%s\"\n",b1->getName(),b1->getOdeClassname().c_str());
-      #endif
-      for (ib2=m_pBodies.begin(); ib2!=m_pBodies.end(); ib2++) {
-        CIrrOdeBody *b2=*ib2;
-        if (b1->getOdeClassname()==b2->getOdeClassname()) {
-          #ifdef _TRACE_INIT_PHYSICS
-            printf("CIrrOdeWorld::initPhysics: setting body parameters of \"%s\"\n",b2->getName());
-          #endif
-          b1->copyParams(b2,false);
-        }
-      }
-    }
   }
 
   irr::core::list<irr::ode::IIrrOdeStepMotor *>::Iterator it;
@@ -586,7 +571,7 @@ void CIrrOdeWorld::removeEventWriter(IIrrOdeEventWriter *p) {
     if (*it==p) {
       m_lChanged.erase(it);
       return;
-    } 
+    }
 }
 
 void CIrrOdeWorld::objectChanged(IIrrOdeEventWriter *p) {

@@ -153,25 +153,6 @@ void CIrrOdeManager::initPhysics() {
   m_bPhysicsInitialized=true;
 }
 
-CIrrOdeDampable *CIrrOdeManager::getDampableWithParamName(const wchar_t *sName) {
-  irr::core::list<CIrrOdeWorld *>::Iterator wit;
-  for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) {
-		CIrrOdeWorld *p=*wit;
-		if (!wcscmp(sName,p->getParamName())) return p;
-
-    irr::core::list<CIrrOdeSceneNode *> nodes = p->getIrrOdeNodes();
-    irr::core::list<CIrrOdeSceneNode *>::Iterator it;
-    for (it=nodes.begin(); it!=nodes.end(); it++) {
-      if ((*it)->getType()==irr::ode::IRR_ODE_BODY_ID) {
-        CIrrOdeBody *p=reinterpret_cast<CIrrOdeBody *>(*it);
-        if (!wcscmp(sName,p->getParamName())) return p;
-      }
-    }
-	}
-
-	return NULL;
-}
-
 bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr) {
   pSmgr->clear();
   pSmgr->getMeshCache()->clear();

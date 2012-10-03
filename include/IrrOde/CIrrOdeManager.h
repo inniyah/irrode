@@ -62,7 +62,6 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     void initPhysics();																					/*!< init all dynamic objects */
 
 		u32 getFrameNo() { return m_iFrameNo; }
-    CIrrOdeDampable *getDampableWithParamName(const wchar_t *sName);
 
 		bool physicsInitialized() { return m_bPhysicsInitialized; }
 
