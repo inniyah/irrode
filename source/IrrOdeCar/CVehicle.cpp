@@ -365,7 +365,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         m_iBoost -= 3;
     }
     else {
-      if (m_iBoost < 1800) m_iBoost++;
+      if (m_iBoost < 1800) m_iBoost+=2;
     }
 
     irr::f32 v = m_pCarBody->getLinearVelocity().getLength();
