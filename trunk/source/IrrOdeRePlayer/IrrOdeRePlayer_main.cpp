@@ -67,9 +67,9 @@ int main(int argc, char** argv) {
     driver->beginScene(true, true, irr::video::SColor(0,200,200,200));
 
     smgr->drawAll();
-    pActiveState->setUIVisibility(true);
-    guienv->drawAll();
-    pActiveState->setUIVisibility(false);
+    //pActiveState->setUIVisibility(true);
+    //guienv->drawAll();
+    //pActiveState->setUIVisibility(false);
 
     driver->endScene();
     int fps = driver->getFPS();
