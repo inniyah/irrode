@@ -37,10 +37,15 @@ int main(int argc, char** argv) {
   bool bPluginHandlesCamera = false;
 
   if (pPlugin->dllLoaded()) {
+    printf("plugin installed.");
     pPlugin->pluginInstall(&cManagers);
     bPluginHandlesCamera = pPlugin->pluginHandleCamera();
   }
-  else printf("Plugin not installed!\n");
+  else {
+    printf("Plugin not installed!\n");
+    delete pPlugin;
+    pPlugin = NULL;
+  }
 
   IState *pActiveState=new CReplayerStateReplay(device,"../../data/replay/car.rec", pPlugin);
   pActiveState->activate();
@@ -63,13 +68,14 @@ int main(int argc, char** argv) {
       pSndEngine->setListenerPosition(vLstPos,vLstTgt,irrklang::vec3df(0.0f,0.0f,0.0f),vLstUp);
       pSndEngine->setRolloffFactor(0.125f);
     }
+    else printf("no active camera!\n");
 
     driver->beginScene(true, true, irr::video::SColor(0,200,200,200));
 
     smgr->drawAll();
-    //pActiveState->setUIVisibility(true);
-    //guienv->drawAll();
-    //pActiveState->setUIVisibility(false);
+    pActiveState->setUIVisibility(true);
+    guienv->drawAll();
+    pActiveState->setUIVisibility(false);
 
     driver->endScene();
     int fps = driver->getFPS();
@@ -84,7 +90,7 @@ int main(int argc, char** argv) {
 
   pActiveState->deactivate();
 
-  if (pPlugin->dllLoaded())
+  if (pPlugin != NULL && pPlugin->dllLoaded())
     pPlugin->pluginDestall(&cManagers);
 
   if (pSndEngine) pSndEngine->drop();

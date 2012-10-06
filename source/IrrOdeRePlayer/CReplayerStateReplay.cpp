@@ -21,7 +21,7 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   m_iPos = 0;
 
   m_pPlugin = pPlugin;
-  m_bPluginHandlesCamera = pPlugin->pluginHandleCamera();
+  m_bPluginHandlesCamera = pPlugin != NULL ? pPlugin->pluginHandleCamera() : false;
 
   m_iThisStep = 0;
 
@@ -45,6 +45,7 @@ void CReplayerStateReplay::activate() {
     m_pFreeCam = NULL;
   }
   else {
+    printf("plugin does not handle camera.\n");
     m_pCam=m_pSmgr->addCameraSceneNode();
     m_pFreeCam=m_pSmgr->addCameraSceneNodeFPS();
   }
@@ -72,11 +73,13 @@ void CReplayerStateReplay::activate() {
   m_fCamDist=15.0f;
   m_fCamHeight=0.0f;
   m_pFocusedNode=NULL;
+
+  printf("nodes: %i\n",m_pSmgr->getRootSceneNode()->getChildren().size());
 }
 
 void CReplayerStateReplay::deactivate() {
-  m_pSmgr->clear();
-  m_pGuiEnv->clear();
+  //m_pSmgr->clear();
+  //m_pGuiEnv->clear();
   irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
   m_pCrsCtrl->setVisible(true);
 }
@@ -97,7 +100,7 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     m_pLblStep->setText(s);
     if (!m_bStepTaken) {
       m_bStepTaken = true;
-      m_pPlugin->physicsInitialized();
+      if (m_pPlugin != NULL) m_pPlugin->physicsInitialized();
     }
 
     irr::core::position2df pos=m_pCrsCtrl->getRelativePosition();
@@ -162,7 +165,8 @@ bool CReplayerStateReplay::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (pEvent->getType()==irr::ode::eIrrOdeEventNodeRemoved) {
       irr::ode::CIrrOdeEventNodeRemoved *p=(irr::ode::CIrrOdeEventNodeRemoved *)pEvent;
       irr::scene::ISceneNode *pNode=m_pSmgr->getSceneNodeFromId(p->getRemovedNodeId());
-      if (pNode!=NULL) {
+
+      if (pNode != m_pSmgr->getRootSceneNode() && pNode!=NULL) {
         pNode->setVisible(false);
         removeNode(pNode);
       }
@@ -181,7 +185,7 @@ bool CReplayerStateReplay::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 }
 
 bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
-  if (m_pPlugin->HandleEvent(event)) return true;
+  if (m_pPlugin != NULL && m_pPlugin->HandleEvent(event)) return true;
 
   bool bRet=false;
 
@@ -198,14 +202,8 @@ bool CReplayerStateReplay::OnEvent(const irr::SEvent &event) {
           break;
 
         case irr::KEY_SPACE:
-          if (m_pPlayer->isPaused()) {
-            m_pPlayer->setIsPaused(false);
-            m_pLblPaused->setVisible(false);
-          }
-          else {
-            m_pPlayer->setIsPaused(true);
-            m_pLblPaused->setVisible(true);
-          }
+          m_pLblPaused->setVisible(!m_pPlayer->isPaused());
+          m_pPlayer->setIsPaused(!m_pPlayer->isPaused());
           break;
 
         default: break;

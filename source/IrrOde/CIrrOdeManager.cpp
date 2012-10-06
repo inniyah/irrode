@@ -154,8 +154,8 @@ void CIrrOdeManager::initPhysics() {
 }
 
 bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmgr) {
-  pSmgr->clear();
-  pSmgr->getMeshCache()->clear();
+  //pSmgr->clear();
+  //pSmgr->getMeshCache()->clear();
   bool bRet=pSmgr->loadScene(sScene);
   if (bRet) {
     CIrrOdeEventLoadScene *pEvt=new CIrrOdeEventLoadScene(sScene);
