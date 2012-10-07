@@ -56,9 +56,6 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         if (p->getOdeClassname().equals_ignore_case("plane")) {
           printf("\t\t#### add plane \"%s\"\n",pNode->getName());
           CCustomEventReceiver::getSharedInstance()->addPlane(p);
-          CCockpitPlane *pCockpit = new CCockpitPlane(m_pDevice,"instruments",p);
-          m_lPlaneCockpits.push_back(pCockpit);
-          m_pOdeMngr->getQueue()->addEventListener(pCockpit);
         }
       }
       irr::core::list<ISceneNode *> children=pNode->getChildren();
@@ -87,9 +84,6 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         if (p->getOdeClassname().equals_ignore_case("car")) {
           printf("\t\t#### add car \"%s\"\n",pNode->getName());
           CCustomEventReceiver::getSharedInstance()->addCar(p);
-          CCockpitCar *pCarCockpit=new CCockpitCar(m_pDevice,"z_instru.jpg",p);
-          m_lCarCockpits.push_back(pCarCockpit);
-          m_pOdeMngr->getQueue()->addEventListener(pCarCockpit);
         }
       }
       irr::core::list<ISceneNode *> children=pNode->getChildren();
@@ -103,7 +97,7 @@ class APS_EventListener : public irr::ode::IIrrOdeEventListener {
         irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
         if (p->getOdeClassname().equals_ignore_case("heli")) {
           printf("\t\t#### add heli\"%s\"\n",pNode->getName());
-          CCustomEventReceiver::getSharedInstance()->addCar(p);
+          CCustomEventReceiver::getSharedInstance()->addHeli(p);
         }
       }
       irr::core::list<ISceneNode *> children=pNode->getChildren();

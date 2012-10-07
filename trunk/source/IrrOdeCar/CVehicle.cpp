@@ -1008,6 +1008,7 @@ void CVehicle::CAeroVehicle::deactivate() {
 bool CVehicle::CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   if (pEvent->getType() == eCtrlMsgPlane) {
     CPlaneControls *p = reinterpret_cast<CPlaneControls *>(pEvent);
+
     if (p->getNode() == m_pBody->getID() && p->getClient() == m_iControllerBy) {
       irr::f32 f;
 
@@ -1032,6 +1033,7 @@ bool CVehicle::CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   }
 
   if (pEvent->getType()==irr::ode::eIrrOdeEventStep) {
+    if (m_pAutoPilot->isEnabled()) m_bDataChanged = true;
     irr::ode::CIrrOdeEventStep *pStep=(irr::ode::CIrrOdeEventStep *)pEvent;
     irr::core::vector3df vPos=m_pBody->getAbsolutePosition();
     irr::f32 fMinHeight=50,
@@ -1086,10 +1088,11 @@ bool CVehicle::CAeroVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       fYaw  =m_fYaw  >0.0f?m_fYaw  *m_fYaw  :-m_fYaw  *m_fYaw  ;
     }
 
-    if (m_fPitch==m_fPitch) m_pTorque->setPitch(fPitch);
-    if (m_fRoll ==m_fRoll ) m_pTorque->setRoll (fRoll );
+    if (m_fPitch==m_fPitch) { m_fPitch = fPitch; m_pTorque->setPitch(fPitch); }
+    if (m_fRoll ==m_fRoll ) { m_fRoll  = fRoll ; m_pTorque->setRoll (fRoll ); }
     if (m_fYaw  ==m_fYaw  ) {
       m_pTorque->setYaw(fYaw);
+      m_fYaw = fYaw;
 
       if (m_pSteer!=NULL) m_pSteer->setServoPos(-20.0f*m_fYaw);
     }

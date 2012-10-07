@@ -35,7 +35,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         void searchPlaneNodes(irr::scene::ISceneNode *pNode);
 
       public:
-        CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice);
+        CPlaneNodes(irr::scene::ISceneNode *pPlane, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr);
         ~CPlaneNodes();
 
         void handlePlaneEvent(CEventPlaneState *p);
@@ -77,6 +77,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                                *m_pBody,
                                *m_pSteer[2];
         irr::ode::CIrrOdeBody *m_pCar;
+        irr::ode::CIrrOdeManager *m_pOdeMgr;
         CAdvancedParticleSystemNode *m_pSmoke[2];
         irrklang::ISoundEngine *m_pSndEngine;
         irrklang::ISound *m_pEngine,
@@ -89,7 +90,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         void searchCarNodes(irr::scene::ISceneNode *pNode);
 
       public:
-        CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2], irr::IrrlichtDevice *pDevice);
+        CCarNodes(irr::scene::ISceneNode *pCar, irrklang::ISoundEngine *pSndEngine, irr::video::ITexture *pRearLights[2], irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr);
         ~CCarNodes();
 
         void handleCarEvent(CEventCarState *p);
@@ -107,7 +108,7 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         CCockpitPlane *m_pCockpit;
 
       public:
-        CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice);
+        CHeliNodes(irr::scene::ISceneNode *pHeli, irrklang::ISoundEngine *pSndEngine, irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr);
         ~CHeliNodes();
 
         void handleHeliEvent(CEventHeliState *p);

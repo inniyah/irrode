@@ -47,6 +47,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
                                   *m_pApTarget,
                                   *m_pTarget;
     irr::ode::CIrrOdeBody         *m_pObject;
+    irr::ode::CIrrOdeManager      *m_pOdeMgr;
     irr::scene::ICameraSceneNode  *m_pCam;
     irr::gui::CGUINeedleIndicator *m_pInstruments[6];
 
@@ -66,7 +67,7 @@ class CCockpitPlane : public IRenderToTexture, public irr::ode::IIrrOdeEventList
     void setHorizon(irr::core::vector3df vRot, irr::core::vector3df vUp);
 
   public:
-    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject);
+    CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject, irr::ode::CIrrOdeManager *pOdeMgr);
     virtual ~CCockpitPlane();
 
     virtual void update();

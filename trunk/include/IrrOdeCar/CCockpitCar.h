@@ -29,6 +29,7 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
     bool m_bDifferential,
          m_bLapStarted;
 
+    irr::ode::CIrrOdeManager *m_pOdeMgr;
     irr::gui::CGUINeedleIndicator *m_pMeter,
                                   *m_pRpm,
                                   *m_pDiff;
@@ -49,7 +50,7 @@ class CCockpitCar : public IRenderToTexture, public irr::ode::IIrrOdeEventListen
                         *m_pBoost[10][2];
 
   public:
-    CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody);
+    CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody, irr::ode::CIrrOdeManager *pOdeMgr);
     virtual ~CCockpitCar();
 
     virtual void update();

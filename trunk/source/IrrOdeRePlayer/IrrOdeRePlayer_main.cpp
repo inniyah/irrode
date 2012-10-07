@@ -74,6 +74,7 @@ int main(int argc, char** argv) {
 
     smgr->drawAll();
     pActiveState->setUIVisibility(true);
+    driver->setMaterial(driver->getMaterial2D());   //Fix the flipped texture problem
     guienv->drawAll();
     pActiveState->setUIVisibility(false);
 
