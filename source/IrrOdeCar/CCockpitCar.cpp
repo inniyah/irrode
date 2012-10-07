@@ -6,7 +6,7 @@
   #include <CEventVehicleState.h>
   #include <CIrrOdeManager.h>
 
-CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody, irr::ode::CIrrOdeManager *pOdeMgr) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_pTab=m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,512,512));
 
   m_iBodyId = -1;
@@ -82,11 +82,12 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   irr::u32 iReplace=processTextureReplace(pBody);
   printf("**** CCockpitCar: replaced %i texture (%i, \"%s\").\n",iReplace,(int)pBody,pBody->getName());
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  m_pOdeMgr = pOdeMgr;
+  m_pOdeMgr->getQueue()->addEventListener(this);
 }
 
 CCockpitCar::~CCockpitCar() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  m_pOdeMgr->getQueue()->removeEventListener(this);
 }
 
 void CCockpitCar::update() {

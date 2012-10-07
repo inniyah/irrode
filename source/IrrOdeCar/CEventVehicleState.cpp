@@ -198,7 +198,7 @@ irr::ode::CSerializer *CEventCarState::serialize() {
 }
 
 irr::ode::IIrrOdeEvent *CEventCarState::clone() {
-  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_iFlags,m_fDiff,m_fSound,m_fSteer,m_fRpm,m_fSpeed,m_iGear,m_iBoost, m_fWheelPos, m_fWheelRot);
+  return new CEventCarState(m_iNodeId,m_fSuspension,m_fLeftWheel,m_fRightWheel,m_fRpm, m_fDiff, m_fSound, m_fSteer, m_iFlags, m_fSpeed, m_iGear, m_iBoost, m_fWheelPos, m_fWheelRot);
 }
 
 const irr::c8 *CEventCarState::toString() {

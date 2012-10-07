@@ -182,6 +182,8 @@ class CVehicleApproved : public IControlMessage {
 
     virtual irr::ode::CSerializer *serialize() {
       if (m_pSerializer == NULL) {
+        m_pSerializer = new irr::ode::CSerializer();
+
         m_pSerializer->addU16(eCtrlMsgVehicleApproved);
         m_pSerializer->addS32(m_iNode  );
         m_pSerializer->addU16(m_iClient);

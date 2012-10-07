@@ -7,7 +7,7 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyMoved.h>
 
-CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
+CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject, irr::ode::CIrrOdeManager *pOdeMgr) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
   m_iTime       = 0;
   m_iLapStart   = 0;
@@ -201,8 +201,8 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   irr::u32 iReplace=processTextureReplace(pObject);
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
-  printf("--> %i\n",(int)irr::ode::CIrrOdeManager::getSharedInstance());
+  m_pOdeMgr = pOdeMgr;
+  m_pOdeMgr->getQueue()->addEventListener(this);
 }
 
 CCockpitPlane::~CCockpitPlane() {
