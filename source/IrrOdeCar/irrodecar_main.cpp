@@ -376,6 +376,11 @@ class CIrrOdeCar : public irr::IEventReceiver {
       u32 iFrames=0,iTotalFps=0;
       m_pCtrlReceiver->start();
 
+      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+      irr::core::rect<s32> cLeft = irr::core::rect<s32>(0, 0, cScreenSize.Width, (cScreenSize.Height / 2) - 1),
+                           cRght = irr::core::rect<s32>(0, cScreenSize.Height / 2, cScreenSize.Width, cScreenSize.Height),
+                           cFull = irr::core::rect<s32>(0, 0, cScreenSize.Width, cScreenSize.Height);
+
       //let's run the loop
       while(m_pDevice->run()) {
         //step the simulation
@@ -386,7 +391,20 @@ class CIrrOdeCar : public irr::IEventReceiver {
         //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
         m_pDriver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
 
-        m_pSmgr->drawAll();
+        if (!m_pCtrlReceiver->is3dEnabled()) {
+          m_pCtrlReceiver->updateCamera();
+          m_pDriver->setViewPort(cFull);
+          m_pSmgr->drawAll();
+        }
+        else {
+          m_pCtrlReceiver->updateCamera();
+          m_pDriver->setViewPort(cLeft);
+          m_pSmgr->drawAll();
+
+          m_pCtrlReceiver->updateCamera();
+          m_pDriver->setViewPort(cRght);
+          m_pSmgr->drawAll();
+        }
 
         m_pDriver->setMaterial(m_pDriver->getMaterial2D());   //Fix the flipped texture problem
 

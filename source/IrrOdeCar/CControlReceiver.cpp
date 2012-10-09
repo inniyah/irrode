@@ -209,7 +209,8 @@ void CControlReceiver::switchToState(irr::s32 iNewState) {
 }
 
 void CControlReceiver::update() {
-  m_pCamCtrl->update();
+  m_pCamCtrl->setLeft();
+  m_pCamCtrl->updateRearView();
 
   //call the update method of the currently active state
   irr::u32 iSelect = m_pActive->update();
@@ -363,6 +364,11 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
           }
           break;
 
+        case irr::KEY_F3:
+          m_pCamCtrl->set3d(!m_pCamCtrl->is3d());
+          printf("3d mode %s\n", m_pCamCtrl->is3d() ? "activated" : "disabled");
+          break;
+
         //if TAB is pressed the program shall return to the vehicle selection menu
         case irr::KEY_TAB: {
             if (m_iNode != -1) {
@@ -438,4 +444,12 @@ bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 void CControlReceiver::connect() {
   CLoginMessage *p = new CLoginMessage();
   m_pInputQueue->postEvent(p);
+}
+
+bool CControlReceiver::is3dEnabled() {
+  return m_pCamCtrl->is3d();
+}
+
+void CControlReceiver::updateCamera() {
+  m_pCamCtrl->update();
 }
