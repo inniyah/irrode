@@ -83,6 +83,10 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
     void connect();
+
+    bool is3dEnabled();
+
+    void updateCamera();
 };
 
 #endif

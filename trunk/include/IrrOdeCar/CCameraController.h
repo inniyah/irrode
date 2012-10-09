@@ -60,7 +60,9 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
          m_bRotateXY,
          m_bLeftMouse,
          m_bRghtMouse,
-         m_bButton;
+         m_bButton,
+         m_b3d,
+         m_bLeft;
 
     CIrrCC *m_pController;
 
@@ -80,6 +82,14 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent);
 
     void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
+
+    void set3d(bool b) { m_b3d = b; }
+
+    bool is3d() { return m_b3d; }
+
+    void setLeft() { m_bLeft = true; }
+
+    void updateRearView();
 };
 
 #endif

@@ -43,6 +43,9 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_pRearView->setActive(true);
 
   m_fCamAngleH = 25.0f;
+
+  m_b3d = false;
+  m_bLeft = false;
 }
 
 CCameraController::~CCameraController() {
@@ -139,6 +142,13 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
   }
 }
 
+void CCameraController::updateRearView() {
+  if (m_pRearView != NULL) {
+    m_pRearView->setCameraParameters(m_vRViewPos, m_vRViewTgt, m_vUp);
+    m_pRearView->update();
+  }
+}
+
 void CCameraController::update() {
   m_pSmgr->setActiveCamera(m_pCam);
 
@@ -164,15 +174,24 @@ void CCameraController::update() {
       m_vTarget   = m_pTarget->getPosition() + vRot.rotationToDirection(m_vInternalOffset);
       m_vUp = vRot.rotationToDirection(irr::core::vector3df(0.0f, 1.0f, 0.0f));
     }
-
-    if (m_pRearView != NULL) {
-      m_pRearView->setCameraParameters(m_vRViewPos, m_vRViewTgt, m_vUp);
-      m_pRearView->update();
-    }
   }
   else {
     m_vTarget = m_vPosition + v;
     m_vUp = irr::core::vector3df(0.0f, 1.0f, 0.0f);
+  }
+
+  if (m_b3d) {
+    irr::core::vector3df v1 = m_vTarget - m_vPosition,
+                         vSide = v1.crossProduct(m_vUp);
+
+    if (m_bLeft) {
+      m_vPosition += 0.03f * vSide;
+      m_bLeft = false;
+    }
+    else {
+      m_bLeft = true;
+      m_vPosition -= 0.03f * vSide;
+    }
   }
 
   m_pCam->setPosition(m_vPosition);
