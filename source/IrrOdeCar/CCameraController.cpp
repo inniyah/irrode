@@ -46,6 +46,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_b3d = false;
   m_bLeft = false;
+  m_bFocusNear = false;
 }
 
 CCameraController::~CCameraController() {
@@ -184,13 +185,17 @@ void CCameraController::update() {
     irr::core::vector3df v1 = m_vTarget - m_vPosition,
                          vSide = v1.crossProduct(m_vUp);
 
+    if (m_bFocusNear) {
+      m_vTarget -= 0.5 * v1;
+    }
+
     if (m_bLeft) {
-      m_vPosition += 0.03f * vSide;
+      m_vPosition += 0.01f * vSide;
       m_bLeft = false;
     }
     else {
       m_bLeft = true;
-      m_vPosition -= 0.03f * vSide;
+      m_vPosition -= 0.01f * vSide;
     }
   }
 
@@ -273,6 +278,8 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       m_pController->set(m_pCtrls[eCameraButtonMove],0.0f);
       m_bButton = !m_bButton;
     }
+
+    m_bFocusNear = m_pController->get(m_pCtrls[eCameraNearFocus]) != 0.0f;
 
     if (m_pController->get(m_pCtrls[eCameraInternal])) {
       m_pController->set(m_pCtrls[eCameraInternal], 0.0f);
