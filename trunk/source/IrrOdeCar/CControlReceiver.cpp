@@ -74,6 +74,7 @@ void CControlReceiver::initControls() {
   m_iCtrls[3][eCameraCenter    ] = m_pController->addItem(3, irr::core::stringw("Center Camera"             ), irr::KEY_KEY_X, CIrrCC::eCtrlButton);
   m_iCtrls[3][eCameraInternal  ] = m_pController->addItem(3, irr::core::stringw("Toggle Internal"           ), irr::KEY_KEY_I, CIrrCC::eCtrlToggleButton);
   m_iCtrls[3][eCameraButtonMove] = m_pController->addItem(3, irr::core::stringw("Push Button for Mouse Move"), irr::KEY_KEY_M, CIrrCC::eCtrlToggleButton);
+  m_iCtrls[3][eCameraNearFocus ] = m_pController->addItem(3, irr::core::stringw("Near Focus"                ), irr::KEY_KEY_N, CIrrCC::eCtrlButton);
 
   m_pController->createAxis(m_iCtrls[3][eCameraLeft], m_iCtrls[3][eCameraRight]);
   m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
