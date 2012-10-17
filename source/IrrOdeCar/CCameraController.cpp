@@ -10,6 +10,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_pSmgr = m_pDevice->getSceneManager();
   m_pCam = m_pSmgr->addCameraSceneNode();
   m_pCam->setNearValue(0.1f);
+  //m_pCam->setFOV(110.0f * M_PI / 180);
   m_pController = pCtrl;
 
   m_bInternal = false;
