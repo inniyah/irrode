@@ -48,7 +48,8 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     CIrrCC          *m_pController;
     CMenu           *m_pMenu;
 
-    bool m_bUpdate;
+    bool m_bUpdate,
+         m_bShowFps;
 
     CCameraController *m_pCamCtrl;
     CController       *m_pCtrlDialog;
@@ -85,6 +86,7 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     void connect();
 
     bool is3dEnabled();
+    bool showFps() { return m_bShowFps; }
 
     void updateCamera();
 };
