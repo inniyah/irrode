@@ -117,6 +117,8 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   m_pController->setAllowFKeys(false);
   m_pController->setAllowMouse(false);
 
+  m_bShowFps = false;
+
   CConfigFileManager::getSharedInstance()->addReader(m_pController);
   CConfigFileManager::getSharedInstance()->addWriter(m_pController);
 
@@ -363,6 +365,10 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
             m_pSaveFile->setVisible(true);
             m_iCount=m_pDevice->getTimer()->getTime()+3000;
           }
+          break;
+
+        case irr::KEY_F1:
+          m_bShowFps = !m_bShowFps;
           break;
 
         case irr::KEY_F3:

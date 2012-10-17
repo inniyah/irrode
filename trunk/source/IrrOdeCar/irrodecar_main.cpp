@@ -370,13 +370,17 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       delete pProg;
 
+      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+      irr::gui::IGUIStaticText *pFps = m_pGui->addStaticText(L"FPS", irr::core::rect<s32>(irr::core::position2di(cScreenSize.Width - 305, 5), irr::core::dimension2du(300, 15)), true, false, NULL, -1, true);
+      pFps->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+      pFps->setVisible(false);
+
       m_pDriver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
       enableFog(m_pSmgr->getRootSceneNode());
 
       u32 iFrames=0,iTotalFps=0;
       m_pCtrlReceiver->start();
 
-      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
       irr::core::rect<s32> cLeft = irr::core::rect<s32>(0, 0, cScreenSize.Width, (cScreenSize.Height / 2) - 1),
                            cRght = irr::core::rect<s32>(0, cScreenSize.Height / 2, cScreenSize.Width, cScreenSize.Height),
                            cFull = irr::core::rect<s32>(0, 0, cScreenSize.Width, cScreenSize.Height);
@@ -429,7 +433,10 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
           m_pDevice->setWindowCaption(str.c_str());
           lastFPS = fps;
+
+          pFps->setText(str.c_str());
         }
+        pFps->setVisible(m_pCtrlReceiver->showFps() && !m_pCtrlReceiver->is3dEnabled());
       }
 
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();

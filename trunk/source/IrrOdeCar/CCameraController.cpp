@@ -44,8 +44,8 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_fCamAngleH = 25.0f;
 
-  m_b3d = false;
-  m_bLeft = false;
+  m_b3d      = false;
+  m_bLeft    = false;
   m_bFocusNear = false;
 }
 
