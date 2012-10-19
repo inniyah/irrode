@@ -412,7 +412,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       }
     }
 
-    if ((m_fOldVel<2.0f && fVel>=2.0f) || (m_fOldVel>-2.0f && fVel<=-2.0f)) {
+    if ((m_fOldVel<2.0f && fVel>=2.0f) || (m_fOldVel>-2.0f && fVel<=-2.0f) || m_fThrottle >= 0.1f) {
       for (irr::u32 i=0; i<2; i++) {
         m_pWheels[i  ]->setSurfaceParameter(0,m_pParams[0]);
         m_pWheels[i+2]->setSurfaceParameter(0,m_pParams[2]);
@@ -548,7 +548,7 @@ irr::ode::IIrrOdeEvent *CVehicle::CCar::writeEvent() {
   m_pCarBody->getOdePosition(cPos);
   m_pCarBody->getOdeRotation(vRotBody);
   m_pFrontWheels[0]->getOdePosition(v1);
-  m_pFrontWheels[0]->getOdePosition(v2);
+  m_pFrontWheels[1]->getOdePosition(v2);
 
   v1 -= cPos;
   v2 -= cPos;
@@ -563,6 +563,7 @@ irr::ode::IIrrOdeEvent *CVehicle::CCar::writeEvent() {
 
   irr::f32 fRot[2], fPos[2] = { p1, p2 };
 
+  if (p1 != p2) printf("%.2f, %.2f\n",p1,p2);
   for (irr::u32 i = 0; i < 2; i++) {
     m_pFrontWheels[i]->getOdePosition(vWheel[i]);
     v = vDir.crossProduct(m_vWheelOld[i] - vWheel[i]);
