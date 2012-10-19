@@ -2,7 +2,7 @@
   #include <CRearView.h>
   #include <irrCC.h>
 
-CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr) {
+CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr, irr::f32 fVrAr) {
   m_pDevice = pDevice;
   m_pSndEngine = pSndEngine;
   m_pOdeMngr = pOdeMngr;
@@ -10,11 +10,10 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_pSmgr = m_pDevice->getSceneManager();
   m_pCam = m_pSmgr->addCameraSceneNode();
   m_pCam->setNearValue(0.1f);
-  //m_pCam->setFOV(110.0f * M_PI / 180);
   m_pController = pCtrl;
-
-  m_bInternal = false;
-  m_bButton = true;
+  m_fInitialFOV = m_pCam->getFOV();
+  m_fInitialAR  = m_pCam->getAspectRatio();
+  m_fVrAr       = fVrAr;
 
   m_pOdeMngr->getQueue()->addEventListener(this);
 
@@ -45,9 +44,12 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_fCamAngleH = 25.0f;
 
-  m_b3d      = false;
-  m_bLeft    = false;
+  m_bInternal  = false;
+  m_bButton    = true;
+  m_b3d        = false;
+  m_bLeft      = false;
   m_bFocusNear = false;
+  m_bVr        = false;
 }
 
 CCameraController::~CCameraController() {
@@ -182,7 +184,7 @@ void CCameraController::update() {
     m_vUp = irr::core::vector3df(0.0f, 1.0f, 0.0f);
   }
 
-  if (m_b3d) {
+  if (m_b3d || m_bVr) {
     irr::core::vector3df v1 = m_vTarget - m_vPosition,
                          vSide = v1.crossProduct(m_vUp);
 
@@ -350,4 +352,21 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
 bool CCameraController::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved;
+}
+
+void CCameraController::set3d(bool b) {
+  m_b3d = b;
+}
+
+void CCameraController::setVr(bool b) {
+  m_bVr = b;
+
+  if (b) {
+    m_pCam->setFOV(110.0f * M_PI / 180.0f);
+    m_pCam->setAspectRatio(m_fVrAr);
+  }
+  else {
+    m_pCam->setFOV(m_fInitialFOV);
+    m_pCam->setAspectRatio(m_fInitialAR);
+  }
 }
