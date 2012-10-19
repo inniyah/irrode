@@ -378,6 +378,7 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
 
         case irr::KEY_F4:
           m_pCamCtrl->setVr(!m_pCamCtrl->isVrEnabled());
+          printf("vr mode %s\n", m_pCamCtrl->isVrEnabled() ? "activated" : "disabled");
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu
