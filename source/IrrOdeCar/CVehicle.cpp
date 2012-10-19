@@ -563,7 +563,6 @@ irr::ode::IIrrOdeEvent *CVehicle::CCar::writeEvent() {
 
   irr::f32 fRot[2], fPos[2] = { p1, p2 };
 
-  if (p1 != p2) printf("%.2f, %.2f\n",p1,p2);
   for (irr::u32 i = 0; i < 2; i++) {
     m_pFrontWheels[i]->getOdePosition(vWheel[i]);
     v = vDir.crossProduct(m_vWheelOld[i] - vWheel[i]);
