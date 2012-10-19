@@ -42,7 +42,10 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
              m_fExtOffset,
              m_fExtFact,
              m_fTgtAngleV,
-             m_fTgtAngleH;
+             m_fTgtAngleH,
+             m_fInitialFOV,
+             m_fInitialAR,
+             m_fVrAr;
 
     irr::core::dimension2du m_cScreen;
     irr::core::position2di m_cMousePos;
@@ -64,14 +67,15 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
          m_bButton,
          m_b3d,
          m_bLeft,
-         m_bFocusNear;
+         m_bFocusNear,
+         m_bVr;
 
     CIrrCC *m_pController;
 
     const irr::u32 *m_pCtrls;
 
   public:
-    CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr);
+    CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, CIrrCC *pCtrl, irr::ode::CIrrOdeManager *pOdeMngr, irr::f32 fVrAr);
     virtual ~CCameraController();
 
     void setTarget(irr::ode::CIrrOdeBody *pTarget);
@@ -85,9 +89,11 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
 
     void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
-    void set3d(bool b) { m_b3d = b; }
+    void set3d(bool b);
+    void setVr(bool b);
 
-    bool is3d() { return m_b3d; }
+    bool is3dEnabled() { return m_b3d; }
+    bool isVrEnabled() { return m_bVr; }
 
     void setLeft() { m_bLeft = true; }
 

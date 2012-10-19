@@ -60,7 +60,7 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
 
     void switchToState(irr::s32 iNewState);
   public:
-    CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine);
+    CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr);
     ~CControlReceiver();
 
     void createMenu(irr::u32 iCars, irr::u32 iPlanes, irr::u32 iHelis, irr::u32 iTanks, bool bRearCam);
@@ -86,6 +86,7 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     void connect();
 
     bool is3dEnabled();
+    bool isVrEnabled();
     bool showFps() { return m_bShowFps; }
 
     void updateCamera();

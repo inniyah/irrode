@@ -102,7 +102,7 @@ void CControlReceiver::updateVehicle() {
   }
 }
 
-CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine) {
+CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr) {
   m_pDevice     = pDevice;
   m_pInputQueue = pQueue;
   m_iNode       = 0;
@@ -130,7 +130,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
 
   m_pCtrlDialog = new CController(m_pDevice,m_pController); m_aStates.push_back(m_pCtrlDialog);
 
-  m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController, irr::ode::CIrrOdeManager::getSharedInstance());
+  m_pCamCtrl = new CCameraController(m_pDevice, m_pSndEngine, m_pController, irr::ode::CIrrOdeManager::getSharedInstance(), fVrAr);
   m_pCamCtrl->setCtrl(m_iCtrls[3]);
 
   irr::core::dimension2d<irr::u32> cSize=m_pDevice->getVideoDriver()->getScreenSize();
@@ -372,8 +372,12 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
           break;
 
         case irr::KEY_F3:
-          m_pCamCtrl->set3d(!m_pCamCtrl->is3d());
-          printf("3d mode %s\n", m_pCamCtrl->is3d() ? "activated" : "disabled");
+          m_pCamCtrl->set3d(!m_pCamCtrl->is3dEnabled());
+          printf("3d mode %s\n", m_pCamCtrl->is3dEnabled() ? "activated" : "disabled");
+          break;
+
+        case irr::KEY_F4:
+          m_pCamCtrl->setVr(!m_pCamCtrl->isVrEnabled());
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu
@@ -454,7 +458,11 @@ void CControlReceiver::connect() {
 }
 
 bool CControlReceiver::is3dEnabled() {
-  return m_pCamCtrl->is3d();
+  return m_pCamCtrl->is3dEnabled();
+}
+
+bool CControlReceiver::isVrEnabled() {
+  return m_pCamCtrl->isVrEnabled();
 }
 
 void CControlReceiver::updateCamera() {
