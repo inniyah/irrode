@@ -117,8 +117,6 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   m_pController->setAllowFKeys(false);
   m_pController->setAllowMouse(false);
 
-  m_bShowFps = false;
-
   CConfigFileManager::getSharedInstance()->addReader(m_pController);
   CConfigFileManager::getSharedInstance()->addWriter(m_pController);
 
@@ -368,17 +366,15 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
           break;
 
         case irr::KEY_F1:
-          m_bShowFps = !m_bShowFps;
+          m_pCamCtrl->setShowFps(!m_pCamCtrl->getShowFps());
           break;
 
         case irr::KEY_F3:
-          m_pCamCtrl->set3d(!m_pCamCtrl->is3dEnabled());
-          printf("3d mode %s\n", m_pCamCtrl->is3dEnabled() ? "activated" : "disabled");
+          m_pCamCtrl->toggle3d();
           break;
 
         case irr::KEY_F4:
-          m_pCamCtrl->setVr(!m_pCamCtrl->isVrEnabled());
-          printf("vr mode %s\n", m_pCamCtrl->isVrEnabled() ? "activated" : "disabled");
+          m_pCamCtrl->toggleVr();
           break;
 
         //if TAB is pressed the program shall return to the vehicle selection menu
@@ -456,16 +452,4 @@ bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 void CControlReceiver::connect() {
   CLoginMessage *p = new CLoginMessage();
   m_pInputQueue->postEvent(p);
-}
-
-bool CControlReceiver::is3dEnabled() {
-  return m_pCamCtrl->is3dEnabled();
-}
-
-bool CControlReceiver::isVrEnabled() {
-  return m_pCamCtrl->isVrEnabled();
-}
-
-void CControlReceiver::updateCamera() {
-  m_pCamCtrl->update();
 }
