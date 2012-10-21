@@ -29,6 +29,7 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
   private:
     irrklang::ISoundEngine *m_pSndEngine;
     irr::IrrlichtDevice *m_pDevice;
+    irr::video::IVideoDriver *m_pDriver;
     irr::scene::ICameraSceneNode *m_pCam;
     irr::scene::ISceneManager *m_pSmgr;
     irr::ode::CIrrOdeBody *m_pTarget;
@@ -50,6 +51,7 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
     irr::core::dimension2du m_cScreen;
     irr::core::position2di m_cMousePos;
     irr::gui::ICursorControl *m_pCursor;
+    irr::gui::IGUIStaticText *m_pFps;
 
     irr::core::vector3df m_vInternalOffset,
                          m_vDirection,
@@ -68,7 +70,14 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
          m_b3d,
          m_bLeft,
          m_bFocusNear,
-         m_bVr;
+         m_bVr,
+         m_bShowFps;
+
+    irr::core::rect<irr::s32> m_cLeft,
+                              m_cRght,
+                              m_cFull,
+                              m_cVrLf,
+                              m_cVrRg;
 
     CIrrCC *m_pController;
 
@@ -89,15 +98,19 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
 
     void setCtrl(const irr::u32 *pCtrl) { m_pCtrls=pCtrl; }
 
-    void set3d(bool b);
-    void setVr(bool b);
-
-    bool is3dEnabled() { return m_b3d; }
-    bool isVrEnabled() { return m_bVr; }
+    void toggle3d();
+    void toggleVr();
 
     void setLeft() { m_bLeft = true; }
 
     void updateRearView();
+
+    void render();
+
+    void setFps(const wchar_t *s);
+
+    void setShowFps(bool b);
+    bool getShowFps() { return m_bShowFps; }
 };
 
 #endif

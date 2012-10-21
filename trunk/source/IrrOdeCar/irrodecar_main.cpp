@@ -17,6 +17,7 @@
   #include <CCockpitCar.h>
   #include <CRoadMeshLoader.h>
   #include <CControlReceiver.h>
+  #include <CCameraController.h>
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -372,21 +373,13 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       delete pProg;
 
-      irr::gui::IGUIStaticText *pFps = m_pGui->addStaticText(L"FPS", irr::core::rect<s32>(irr::core::position2di(cScreenSize.Width - 305, 5), irr::core::dimension2du(300, 15)), true, false, NULL, -1, true);
-      pFps->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-      pFps->setVisible(false);
-
       m_pDriver->setFog(g_cFogColor,video::EFT_FOG_LINEAR,g_fMinFog,g_fMaxFog,0.00001f,true,false);
       enableFog(m_pSmgr->getRootSceneNode());
 
       u32 iFrames=0,iTotalFps=0;
       m_pCtrlReceiver->start();
 
-      irr::core::rect<s32> cLeft = irr::core::rect<s32>(0, 0, cScreenSize.Width, (cScreenSize.Height / 2) - 1),
-                           cRght = irr::core::rect<s32>(0, cScreenSize.Height / 2, cScreenSize.Width, cScreenSize.Height),
-                           cFull = irr::core::rect<s32>(0, 0, cScreenSize.Width, cScreenSize.Height),
-                           cVrLf = irr::core::rect<s32>(0, 0, (cScreenSize.Width / 2) - 1, cScreenSize.Height),
-                           cVrRg = irr::core::rect<s32>(cScreenSize.Width / 2, 0, cScreenSize.Width, cScreenSize.Height);
+      CCameraController *pCamCtrl = m_pCtrlReceiver->getCameraController();
 
       //let's run the loop
       while(m_pDevice->run()) {
@@ -397,36 +390,9 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
         //now for the normal Irrlicht stuff ... begin, draw and end scene and update window caption
         m_pDriver->beginScene(true,true,video::SColor(0xFF,0xA0,0xA0,0xC0));
-
-        if (m_pCtrlReceiver->isVrEnabled()) {
-          m_pCtrlReceiver->updateCamera();
-          m_pDriver->setViewPort(cVrLf);
-          m_pSmgr->drawAll();
-
-          m_pCtrlReceiver->updateCamera();
-          m_pDriver->setViewPort(cVrRg);
-          m_pSmgr->drawAll();
-        }
-        else
-          if (m_pCtrlReceiver->is3dEnabled()) {
-            m_pCtrlReceiver->updateCamera();
-            m_pDriver->setViewPort(cLeft);
-            m_pSmgr->drawAll();
-
-            m_pCtrlReceiver->updateCamera();
-            m_pDriver->setViewPort(cRght);
-            m_pSmgr->drawAll();
-          }
-          else {
-            m_pCtrlReceiver->updateCamera();
-            m_pDriver->setViewPort(cFull);
-            m_pSmgr->drawAll();
-          }
-
+        pCamCtrl->render();
         m_pDriver->setMaterial(m_pDriver->getMaterial2D());   //Fix the flipped texture problem
-
         m_pGui->drawAll();
-
         m_pCtrlReceiver->drawSpecifics();
 
         m_pDriver->endScene();
@@ -447,9 +413,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
           m_pDevice->setWindowCaption(str.c_str());
           lastFPS = fps;
 
-          pFps->setText(str.c_str());
+          pCamCtrl->setFps(str.c_str());
         }
-        pFps->setVisible(m_pCtrlReceiver->showFps() && !m_pCtrlReceiver->is3dEnabled() && !m_pCtrlReceiver->isVrEnabled());
       }
 
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();

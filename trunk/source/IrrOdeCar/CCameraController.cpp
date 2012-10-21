@@ -8,6 +8,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_pOdeMngr = pOdeMngr;
 
   m_pSmgr = m_pDevice->getSceneManager();
+  m_pDriver = m_pDevice->getVideoDriver();
   m_pCam = m_pSmgr->addCameraSceneNode();
   m_pCam->setNearValue(0.1f);
   m_pController = pCtrl;
@@ -50,6 +51,19 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_bLeft      = false;
   m_bFocusNear = false;
   m_bVr        = false;
+  m_bShowFps   = false;
+
+  irr::core::dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+
+  m_cFull = irr::core::rect<irr::s32>(0, 0, cScreenSize.Width, cScreenSize.Height);
+  m_cLeft = irr::core::rect<irr::s32>(0, 0, cScreenSize.Width, (cScreenSize.Height / 2));
+  m_cRght = irr::core::rect<irr::s32>(0, cScreenSize.Height / 2, cScreenSize.Width, cScreenSize.Height);
+  m_cVrLf = irr::core::rect<irr::s32>(0, 0, (cScreenSize.Width / 2), cScreenSize.Height);
+  m_cVrRg = irr::core::rect<irr::s32>(cScreenSize.Width / 2, 0, cScreenSize.Width, cScreenSize.Height);
+
+  m_pFps = m_pDevice->getGUIEnvironment()->addStaticText(L"FPS", irr::core::rect<irr::s32>(irr::core::position2di(cScreenSize.Width - 305, 5), irr::core::dimension2du(300, 15)), true, false, NULL, -1, true);
+  m_pFps->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+  m_pFps->setVisible(false);
 }
 
 CCameraController::~CCameraController() {
@@ -354,19 +368,61 @@ bool CCameraController::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType() == irr::ode::eIrrOdeEventStep || pEvent->getType() == irr::ode::eIrrOdeEventBodyMoved;
 }
 
-void CCameraController::set3d(bool b) {
-  m_b3d = b;
+void CCameraController::toggle3d() {
+  m_b3d = !m_b3d;
+  m_pFps->setVisible(m_bShowFps && !m_bVr);
+  printf("3d mode %s\n", m_b3d ? "activated" : "disabled");
 }
 
-void CCameraController::setVr(bool b) {
-  m_bVr = b;
+void CCameraController::toggleVr() {
+  m_bVr = !m_bVr;
+  printf("vr mode %s\n", m_bVr ? "activated" : "disabled");
 
-  if (b) {
+  if (m_bVr) {
+    m_pFps->setVisible(false);
     m_pCam->setFOV(110.0f * M_PI / 180.0f);
     m_pCam->setAspectRatio(m_fVrAr);
   }
   else {
+    m_pFps->setVisible(m_bShowFps && !m_b3d);
     m_pCam->setFOV(m_fInitialFOV);
     m_pCam->setAspectRatio(m_fInitialAR);
   }
+}
+
+void CCameraController::render() {
+  if (m_bVr) {
+    update();
+    m_pDriver->setViewPort(m_cVrLf);
+    m_pSmgr->drawAll();
+
+    update();
+    m_pDriver->setViewPort(m_cVrRg);
+    m_pSmgr->drawAll();
+  }
+  else
+    if (m_b3d) {
+      update();
+      m_pDriver->setViewPort(m_cLeft);
+      m_pSmgr->drawAll();
+
+      update();
+      m_pDriver->setViewPort(m_cRght);
+      m_pSmgr->drawAll();
+    }
+    else {
+      update();
+      m_pDriver->setViewPort(m_cFull);
+      m_pSmgr->drawAll();
+    }
+}
+
+void CCameraController::setFps(const wchar_t *s) {
+  m_pFps->setText(s);
+}
+
+void CCameraController::setShowFps(bool b) {
+  m_bShowFps = b;
+  printf("show FPS: %s\n", b ? "enabled" : "disabled");
+  m_pFps->setVisible(m_bShowFps && !m_bVr && !m_b3d);
 }
