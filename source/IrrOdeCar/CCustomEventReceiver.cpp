@@ -336,6 +336,9 @@ void CCustomEventReceiver::CCarNodes::searchCarNodes(irr::scene::ISceneNode *pNo
   if (!strcmp(pNode->getName(),"smoke_1")) m_pSmoke[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
   if (!strcmp(pNode->getName(),"smoke_2")) m_pSmoke[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
 
+  if (!strcmp(pNode->getName(),"fire_1")) m_pFire[0]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
+  if (!strcmp(pNode->getName(),"fire_2")) m_pFire[1]=reinterpret_cast<CAdvancedParticleSystemNode *>(pNode);
+
   for (it=children.begin(); it!=children.end(); it++) searchCarNodes(*it);
 }
 
@@ -424,18 +427,23 @@ void CCustomEventReceiver::CCarNodes::handleCarEvent(CEventCarState *p) {
   v=(p->getRightWheel()*core::vector3df(0.0f,0.0f,-1.0f));
   m_pRearWheels[1]->setRotation(v);
 
+  if (m_pFire[0]!=NULL && m_pFire[1]!=NULL) {
+    m_pFire[0]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagBoost));
+    m_pFire[1]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagBoost));
+  }
+
   if (m_pSmoke[0]!=NULL && m_pSmoke[1]!=NULL) {
-    m_pSmoke[0]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke | CEventCarState::eCarFlagBoost));
-    m_pSmoke[1]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke | CEventCarState::eCarFlagBoost));
+    m_pSmoke[0]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke));
+    m_pSmoke[1]->setIsActive(p->getFlags()&(CEventCarState::eCarFlagSmoke));
 
-    u32 iMin=(u32)(-p->getRpm()*3.0f),
-        iMax=(u32)(-p->getRpm()*5.0f);
+    u32 iMin=(u32)(-p->getRpm()*2.0f),
+        iMax=(u32)(-p->getRpm()*3.5f);
 
-    if (iMin<250) iMin=250;
-    if (iMax<350) iMax=350;
+    if (iMin<100) iMin=100;
+    if (iMax<250) iMax=250;
 
-    if (iMin>750) iMin=750;
-    if (iMax>750) iMax=750;
+    if (iMin>350) iMin=350;
+    if (iMax>350) iMax=350;
 
     for (u32 i=0; i<2; i++) {
       m_pSmoke[i]->getEmitter()->setMinParticlesPerSecond(iMin);

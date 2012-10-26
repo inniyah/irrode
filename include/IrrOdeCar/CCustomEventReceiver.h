@@ -78,7 +78,8 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
                                *m_pSteer[2];
         irr::ode::CIrrOdeBody *m_pCar;
         irr::ode::CIrrOdeManager *m_pOdeMgr;
-        CAdvancedParticleSystemNode *m_pSmoke[2];
+        CAdvancedParticleSystemNode *m_pSmoke[2],
+                                    *m_pFire[2];
         irrklang::ISoundEngine *m_pSndEngine;
         irrklang::ISound *m_pEngine,
                          *m_pWind,
