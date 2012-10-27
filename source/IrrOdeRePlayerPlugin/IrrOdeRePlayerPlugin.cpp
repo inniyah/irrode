@@ -259,7 +259,7 @@ int DLL_EXPORT handleCamera() {
   g_pCtrl->createAxis(g_iCtrls[eCameraLeft], g_iCtrls[eCameraRight]);
   g_pCtrl->createAxis(g_iCtrls[eCameraUp  ], g_iCtrls[eCameraDown ]);
 
-  g_pCamera = new CCameraController(g_pDevice, g_pSnd, g_pCtrl, g_pOdeMngr);
+  g_pCamera = new CCameraController(g_pDevice, g_pSnd, g_pCtrl, g_pOdeMngr, 1.0f);
   g_pCamera->setCtrl(g_iCtrls);
   return 0;
 }
