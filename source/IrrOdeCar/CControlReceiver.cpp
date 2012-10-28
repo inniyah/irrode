@@ -67,14 +67,15 @@ void CControlReceiver::initControls() {
 
   m_pController->createFader(m_iCtrls[2][eAeroPowerUp],m_iCtrls[2][eAeroPowerDown],10,0.01f);
 
-  m_iCtrls[3][eCameraLeft      ] = m_pController->addItem(3, irr::core::stringw("Camera Left"               ), irr::KEY_KEY_Y, CIrrCC::eCtrlAxis);
-  m_iCtrls[3][eCameraRight     ] = m_pController->addItem(3, irr::core::stringw("Camera Right"              ), irr::KEY_KEY_C, CIrrCC::eCtrlAxis);
-  m_iCtrls[3][eCameraUp        ] = m_pController->addItem(3, irr::core::stringw("Camera Up"                 ), irr::KEY_KEY_F, CIrrCC::eCtrlAxis);
-  m_iCtrls[3][eCameraDown      ] = m_pController->addItem(3, irr::core::stringw("Camera Down"               ), irr::KEY_KEY_V, CIrrCC::eCtrlAxis);
-  m_iCtrls[3][eCameraCenter    ] = m_pController->addItem(3, irr::core::stringw("Center Camera"             ), irr::KEY_KEY_X, CIrrCC::eCtrlButton);
-  m_iCtrls[3][eCameraInternal  ] = m_pController->addItem(3, irr::core::stringw("Toggle Internal"           ), irr::KEY_KEY_I, CIrrCC::eCtrlToggleButton);
-  m_iCtrls[3][eCameraButtonMove] = m_pController->addItem(3, irr::core::stringw("Push Button for Mouse Move"), irr::KEY_KEY_M, CIrrCC::eCtrlToggleButton);
-  m_iCtrls[3][eCameraNearFocus ] = m_pController->addItem(3, irr::core::stringw("Near Focus"                ), irr::KEY_KEY_N, CIrrCC::eCtrlButton);
+  m_iCtrls[3][eCameraLeft        ] = m_pController->addItem(3, irr::core::stringw("Camera Left"               ), irr::KEY_KEY_Y, CIrrCC::eCtrlAxis);
+  m_iCtrls[3][eCameraRight       ] = m_pController->addItem(3, irr::core::stringw("Camera Right"              ), irr::KEY_KEY_C, CIrrCC::eCtrlAxis);
+  m_iCtrls[3][eCameraUp          ] = m_pController->addItem(3, irr::core::stringw("Camera Up"                 ), irr::KEY_KEY_F, CIrrCC::eCtrlAxis);
+  m_iCtrls[3][eCameraDown        ] = m_pController->addItem(3, irr::core::stringw("Camera Down"               ), irr::KEY_KEY_V, CIrrCC::eCtrlAxis);
+  m_iCtrls[3][eCameraCenter      ] = m_pController->addItem(3, irr::core::stringw("Center Camera"             ), irr::KEY_KEY_X, CIrrCC::eCtrlButton);
+  m_iCtrls[3][eCameraInternal    ] = m_pController->addItem(3, irr::core::stringw("Toggle Internal"           ), irr::KEY_KEY_I, CIrrCC::eCtrlToggleButton);
+  m_iCtrls[3][eCameraButtonMove  ] = m_pController->addItem(3, irr::core::stringw("Push Button for Mouse Move"), irr::KEY_KEY_M, CIrrCC::eCtrlToggleButton);
+  m_iCtrls[3][eCameraNearFocus   ] = m_pController->addItem(3, irr::core::stringw("Near Focus"                ), irr::KEY_KEY_N, CIrrCC::eCtrlButton);
+  m_iCtrls[3][eCameraFrontMonitor] = m_pController->addItem(3, irr::core::stringw("Use Rear Cam as Front Cam" ), irr::KEY_KEY_O, CIrrCC::eCtrlToggleButton);
 
   m_pController->createAxis(m_iCtrls[3][eCameraLeft], m_iCtrls[3][eCameraRight]);
   m_pController->createAxis(m_iCtrls[3][eCameraUp  ], m_iCtrls[3][eCameraDown ]);
