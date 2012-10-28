@@ -19,7 +19,8 @@ enum eCameraControls {
   eCameraCenter,
   eCameraInternal,
   eCameraButtonMove,
-  eCameraNearFocus
+  eCameraNearFocus,
+  eCameraFrontMonitor
 };
 
 class CIrrCC;
@@ -60,7 +61,11 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
                          m_vUp,
                          m_vRViewPos,
                          m_vRViewTgt,
-                         m_vRViewOffset;
+                         m_vRViewOffset,
+                         m_vFViewPos,
+                         m_vFViewTgt,
+                         m_vFViewDir,
+                         m_vFViewOffset;
 
     bool m_bInternal,
          m_bRotateXY,
@@ -71,7 +76,8 @@ class CCameraController : public irr::IEventReceiver, public irr::ode::IIrrOdeEv
          m_bLeft,
          m_bFocusNear,
          m_bVr,
-         m_bShowFps;
+         m_bShowFps,
+         m_bFrontMonitor;
 
     irr::core::rect<irr::s32> m_cLeft,
                               m_cRght,

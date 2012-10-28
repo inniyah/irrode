@@ -45,13 +45,14 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 
   m_fCamAngleH = 25.0f;
 
-  m_bInternal  = false;
-  m_bButton    = true;
-  m_b3d        = false;
-  m_bLeft      = false;
-  m_bFocusNear = false;
-  m_bVr        = false;
-  m_bShowFps   = false;
+  m_bInternal     = false;
+  m_bButton       = true;
+  m_b3d           = false;
+  m_bLeft         = false;
+  m_bFocusNear    = false;
+  m_bVr           = false;
+  m_bShowFps      = false;
+  m_bFrontMonitor = false;
 
   irr::core::dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
 
@@ -121,6 +122,8 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
       m_fExtDist   = 3.0f;
 
       m_vRViewOffset = m_vInternalOffset + irr::core::vector3df(0.0f, 0.15f, 0.0f);
+      m_vFViewOffset = m_vRViewOffset;
+      m_vFViewDir = -m_vDirection;
     }
     else
       if (m_pTarget->getOdeClassname() == "tank") {
@@ -133,6 +136,8 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
         m_fExtOffset = 0.0f;
 
         m_vRViewOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
+        m_vFViewOffset = m_vRViewOffset;
+        m_vFViewDir = m_vDirection;
       }
       else
         if (m_pTarget->getOdeClassname() == "heli") {
@@ -143,6 +148,10 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
           m_fExtDist   = 7.0f;
           m_fExtOffset = 2.0f;
+
+          m_vRViewOffset = m_vInternalOffset + irr::core::vector3df( 1.75f,  0.1f,  0.0f);
+          m_vFViewOffset = m_vInternalOffset + irr::core::vector3df( 0.00f, -1.5f, -1.6f);
+          m_vFViewDir = irr::core::vector3df(0.0f, -1.0f, -1.0f);
         }
         else
           if (m_pTarget->getOdeClassname() == "plane") {
@@ -154,7 +163,9 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
             m_fExtDist   = 7.5f;
             m_fExtOffset = 1.5f;
 
-            m_vRViewOffset = m_vInternalOffset + irr::core::vector3df(1.75f, 0.1f, 0.0f);
+            m_vRViewOffset = m_vInternalOffset + irr::core::vector3df( 1.75f,  0.1f,  0.0f);
+            m_vFViewOffset = m_vInternalOffset + irr::core::vector3df( 0.00f, -1.5f, -1.6f);
+            m_vFViewDir = m_vDirection;
           }
           else setTarget(NULL);
   }
@@ -162,7 +173,10 @@ void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {
 
 void CCameraController::updateRearView() {
   if (m_pRearView != NULL) {
-    m_pRearView->setCameraParameters(m_vRViewPos, m_vRViewTgt, m_vUp);
+    if (m_bFrontMonitor)
+      m_pRearView->setCameraParameters(m_vFViewPos, m_vFViewTgt, m_vUp);
+    else
+      m_pRearView->setCameraParameters(m_vRViewPos, m_vRViewTgt, m_vUp);
     m_pRearView->update();
   }
 }
@@ -298,6 +312,11 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     m_bFocusNear = m_pController->get(m_pCtrls[eCameraNearFocus]) != 0.0f;
 
+    if (m_pController->get(m_pCtrls[eCameraFrontMonitor])) {
+      m_pController->set(m_pCtrls[eCameraFrontMonitor], 0.0f);
+      m_bFrontMonitor = !m_bFrontMonitor;
+    }
+
     if (m_pController->get(m_pCtrls[eCameraInternal])) {
       m_pController->set(m_pCtrls[eCameraInternal], 0.0f);
       m_bInternal = !m_bInternal;
@@ -357,6 +376,9 @@ bool CCameraController::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
     if (m_pTarget != NULL && m_pRearView != NULL && p->getBodyId() == m_pTarget->getID()) {
       m_vRViewPos = p->getNewPosition() + p->getNewRotation().rotationToDirection(m_vRViewOffset);
+      m_vFViewPos = p->getNewPosition() + p->getNewRotation().rotationToDirection(m_vFViewOffset);
+
+      m_vFViewTgt = m_vFViewPos + p->getNewRotation().rotationToDirection(m_vFViewDir );
       m_vRViewTgt = m_vRViewPos - p->getNewRotation().rotationToDirection(m_vDirection);
     }
   }
