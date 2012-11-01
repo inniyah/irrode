@@ -28,7 +28,6 @@ class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
     irr::IrrlichtDevice *m_pDevice;    /*!< the Irrlicht device */
     irr::scene::ISceneManager *m_pSmgr;       /*!< the current Irrlicht scene manager */
     irr::gui::IGUIEnvironment *m_pGuiEnv;   /*!< the current Irrlicht GUI environment */
-    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
 
     irr::c8 m_sHelpFile[1024];
 
@@ -39,7 +38,7 @@ class CIrrOdeCarState : public irr::ode::IIrrOdeEventListener {
      * @param sVehicleName the name of the state (e.g. helicopter)
      * @param sHelpFile the help file. The content of this file is shown in the help screen
      */
-    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName, irr::ode::IIrrOdeEventQueue *pInputQueue);
+    CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName);
 
     virtual ~CIrrOdeCarState();  /*!< destructor */
 

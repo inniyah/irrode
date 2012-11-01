@@ -103,9 +103,8 @@ void CControlReceiver::updateVehicle() {
   }
 }
 
-CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr) {
+CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr) {
   m_pDevice     = pDevice;
-  m_pInputQueue = pQueue;
   m_iNode       = 0;
   m_iCount      = 0;
   m_iClient     = 0;
@@ -124,7 +123,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
   initControls();
 
   CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
-  m_pMenu = new CMenu(m_pDevice, m_pInputQueue); m_aStates.push_back(m_pMenu);
+  m_pMenu = new CMenu(m_pDevice); m_aStates.push_back(m_pMenu);
   m_pActive = m_pMenu;
 
   m_pCtrlDialog = new CController(m_pDevice,m_pController); m_aStates.push_back(m_pCtrlDialog);
@@ -147,11 +146,11 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrO
 
   initWorld(m_pDevice->getSceneManager()->getRootSceneNode());
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->addEventListener(this);
 }
 
 CControlReceiver::~CControlReceiver() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->removeEventListener(this);
 }
 
 void CControlReceiver::setControlledVehicle(irr::s32 iType, irr::s32 iNode) {
@@ -168,7 +167,7 @@ void CControlReceiver::setControlledVehicle(irr::s32 iType, irr::s32 iNode) {
 }
 
 void CControlReceiver::createMenu(irr::u32 iCars, irr::u32 iPlanes, irr::u32 iHelis, irr::u32 iTanks, bool bRearCam) {
-  CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, bRearCam, m_pInputQueue);
+  CVehicle *pVehicles = new CVehicle(m_pDevice, iCars, iPlanes, iHelis, iTanks, m_pWorld, bRearCam);
 
   irr::core::list<CIrrOdeCarState *> lVehicles = pVehicles->getVehicles();
   irr::core::list<CIrrOdeCarState *>::Iterator it;
@@ -254,7 +253,7 @@ void CControlReceiver::update() {
           pCar->setNode(m_iNode);
           pCar->setClient(0);
 
-          m_pInputQueue->postEvent(pCar);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(pCar);
           m_iLastEvent = m_pTimer->getTime();
         }
         break;
@@ -294,7 +293,7 @@ void CControlReceiver::update() {
           pPlane->setNode(m_iNode);
           pPlane->setClient(0);
 
-          m_pInputQueue->postEvent(pPlane);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(pPlane);
           m_iLastEvent = m_pTimer->getTime();
         }
         break;
@@ -321,7 +320,7 @@ void CControlReceiver::update() {
           pTank->setNode(m_iNode);
           pTank->setClient(0);
 
-          m_pInputQueue->postEvent(pTank);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(pTank);
           m_iLastEvent = m_pTimer->getTime();
         }
         break;
@@ -385,7 +384,7 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
               CLeaveVehicle *p = new CLeaveVehicle((irr::u8)0);
               p->setClient(0);
               p->setNode(m_iNode);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
             }
             else switchToState(0);
           }
@@ -408,7 +407,7 @@ void CControlReceiver::removeFromScene(const irr::c8 *sName, irr::scene::ISceneM
     pNode->remove();
 
     irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
   }
 }
 
@@ -418,7 +417,7 @@ void CControlReceiver::removeFromScene(irr::scene::ISceneNode *pNode) {
   pNode->remove();
 
   irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
 }
 
 void CControlReceiver::drawSpecifics() {
@@ -452,5 +451,5 @@ bool CControlReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
 
 void CControlReceiver::connect() {
   CLoginMessage *p = new CLoginMessage();
-  m_pInputQueue->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
 }

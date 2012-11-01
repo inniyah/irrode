@@ -104,13 +104,8 @@ class CIrrOdeWorld : public CIrrOdeDampable {
 
     void setStepSize(f32 fStepSize);
     f32 getStepSize();
-    void setQuickStepNumIterations(s32 iIterations);
-    s32 getQuickStepNumIterations();
-    void setQuickStepSOR(f32 fSOR);
-    f32 getQuickStepSOR();
 
     void step(f32 fTime);
-    void quickStep(f32 fTime);
 
     void setGravity(irr::core::vector3df cGravity);
     irr::core::vector3df &getGravity();

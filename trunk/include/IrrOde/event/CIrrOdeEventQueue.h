@@ -20,7 +20,7 @@ class CIrrOdeEventQueue : public IIrrOdeEventQueue {
     CIrrOdeEventQueue();
     virtual ~CIrrOdeEventQueue();
 
-    virtual void postEvent(IIrrOdeEvent *pEvent, bool bDelete=true);
+    virtual void postEvent(IIrrOdeEvent *pEvent);
 
     virtual void addEventListener(IIrrOdeEventListener *pListener);
     virtual void removeEventListener(IIrrOdeEventListener *pListener);

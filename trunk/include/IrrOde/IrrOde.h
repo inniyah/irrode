@@ -61,4 +61,6 @@
 #include <observer/CIrrOdeWorldObserver.h>
 #include <observer/CIrrOdeRecorder.h>
 
+#include <thread/IThread.h>
+
 #endif

@@ -1,5 +1,7 @@
   #include <CVehicle.h>
 
+  #include <thread/IThread.h>
+
   #include <CCustomEventReceiver.h>
   #include <CEventVehicleState.h>
   #include <CTargetSelector.h>
@@ -17,7 +19,7 @@ void CVehicle::removeFromScene(irr::scene::ISceneNode *pNode, irr::ode::CIrrOdeW
   pNode->remove();
 
   irr::ode::CIrrOdeEventNodeRemoved *p=new irr::ode::CIrrOdeEventNodeRemoved(iNodeId);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 }
 
 void CVehicle::fillBodyList(irr::core::list<irr::scene::ISceneNode *> &aVehicles, irr::scene::ISceneNode *pNode, const irr::c8 *sClassName, irr::u32 iMax, irr::ode::CIrrOdeWorld *pWorld) {
@@ -40,12 +42,11 @@ void CVehicle::fillBodyList(irr::core::list<irr::scene::ISceneNode *> &aVehicles
   for (it=children.begin(); it!=children.end(); it++) fillBodyList(aVehicles,*it,sClassName,iMax, pWorld);
 }
 
-CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView, irr::ode::IIrrOdeEventQueue *pInputQueue) {
+CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView) {
   m_pDevice = pDevice;
   m_pWorld = pWorld;
 
-  m_pInputQueue = pInputQueue;
-  m_pInputQueue->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getInputQueue()->addEventListener(this);
 
   m_pSmgr = pDevice->getSceneManager();
 
@@ -59,31 +60,31 @@ CVehicle::CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNu
   irr::core::list<irr::scene::ISceneNode *>::Iterator it;
 
   for (it=m_lPlanes.begin(); it!=m_lPlanes.end(); it++) {
-    CPlane *p=new CPlane(m_pDevice, *it, pInputQueue);
+    CPlane *p=new CPlane(m_pDevice, *it);
     m_lVehicles.push_back(p);
   }
 
   for (it=m_lCars.begin(); it!=m_lCars.end(); it++) {
-    CCar *p=new CCar(m_pDevice,*it, pInputQueue);
+    CCar *p=new CCar(m_pDevice,*it);
     m_lVehicles.push_back(p);
   }
 
   for (it=m_lTanks.begin(); it!=m_lTanks.end(); it++) {
-    CVehicle::CTank *p=new CVehicle::CTank(m_pDevice,*it, pInputQueue);
+    CVehicle::CTank *p=new CVehicle::CTank(m_pDevice,*it);
     m_lVehicles.push_back(p);
   }
 
   for (it=m_lHelis.begin(); it!=m_lHelis.end(); it++) {
-    CHeli *p=new CHeli(m_pDevice,*it, pInputQueue);
+    CHeli *p=new CHeli(m_pDevice,*it);
     m_lVehicles.push_back(p);
   }
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 }
 
 CVehicle::~CVehicle() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
-  m_pInputQueue->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getInputQueue ()->removeEventListener(this);
 }
 
 bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
@@ -103,7 +104,7 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           pOk->setNode  (pEvt->getNode  ());
           pOk->setClient(pEvt->getClient());
 
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pOk);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pOk);
           return false;
         }
         else printf("Sorry ... vehicle is occupied by %i.\n", p->getControlledBy());
@@ -126,7 +127,7 @@ bool CVehicle::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
             CLeaveVehicle *pLeave = new CLeaveVehicle(1);
             pLeave->setNode(p->getBody()->getID());
             pLeave->setClient(p->getControlledBy());
-            irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pLeave);
+            irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pLeave);
 
             p->setControlledBy(-1);
             return false;
@@ -157,7 +158,7 @@ void findNodesOfType(irr::scene::ISceneNode *pParent, irr::scene::ESCENE_NODE_TY
   }
 }
 
-CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Car", pInputQueue) {
+CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CIrrOdeCarState(pDevice,L"Car") {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   //get the car body
   m_pCarBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
@@ -264,7 +265,7 @@ CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode
     m_fOldVel=0.0f;
 
     //we are an IrrOde event listener
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 
     m_pLap = new CIrrOdeCarTrack(m_pCarBody);
 
@@ -277,7 +278,7 @@ CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode
 }
 
 CVehicle::CCar::~CCar() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
   for (irr::u32 i=0; i<4; i++) delete m_pParams[i];
 }
 
@@ -314,14 +315,14 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (p->getShiftUp()) {
         if (m_pGearBox->shiftUp()) {
           CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,0.05f,m_pCarBody->getPosition());
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
         }
       }
 
       if (p->getShiftDown()) {
         if (m_pGearBox->shiftDown()) {
           CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndShift,1.0f,m_pCarBody->getPosition());
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
         }
       }
 
@@ -343,7 +344,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     if (m_bGasLastStep && !m_bGasStation) {
       const irr::core::vector3df v=m_pCarBody->getPosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
     }
 
     m_bGasLastStep = m_bGasStation;
@@ -453,7 +454,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       if (fImpulse>1.0f) fImpulse=1.0f;
 
       CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCrash,fImpulse,m_pCarBody->getPosition());
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->postEvent(pSnd);
     }
     else {
       if (fImpulse > 1.0f) {
@@ -462,7 +463,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         if (fImpulse > 1.0f) fImpulse = 1.0f;
 
         CEventFireSound *pSnd=new CEventFireSound(CEventFireSound::eSndCreaky,fImpulse,m_pCarBody->getPosition());
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pSnd);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pSnd);
       }
     }
 
@@ -495,7 +496,7 @@ bool CVehicle::CCar::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         if (!m_bGasLastStep) {
           const irr::core::vector3df v=pTrig->getPosition();
           CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndBell,2.0f,v);
-          irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+          irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
         }
         m_bGasStation=true;
       }
@@ -749,7 +750,7 @@ void CVehicle::CCar::CGearBox::toggleDifferential() {
 }
 
 //Implementation of CPlane
-CVehicle::CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice, pNode, pInputQueue) {
+CVehicle::CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CAeroVehicle(pDevice, pNode) {
 
   CCustomEventReceiver::getSharedInstance()->addPlane(m_pBody);
   //get the visual rudders
@@ -791,7 +792,7 @@ CVehicle::CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *p
 }
 
 CVehicle::CPlane::~CPlane() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
 void CVehicle::CPlane::odeStep(irr::u32 iStep) {
@@ -835,7 +836,7 @@ void CVehicle::CPlane::odeStep(irr::u32 iStep) {
         if (fVol>1.0f) fVol=1.0f;
         irr::core::vector3df irrPos=m_pAxes[i]->getAbsolutePosition();
         CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
       }
       m_fAngleRate[i]=f;
     }
@@ -849,7 +850,7 @@ void CVehicle::CPlane::odeStep(irr::u32 iStep) {
       if (fVol>1.0f) fVol=1.0f;
       irr::core::vector3df irrPos=m_pSteerAxis->getAbsolutePosition();
       CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndSkid,fVol,irrPos);
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
     }
     m_fAngleRate[2]=f;
   }
@@ -875,7 +876,7 @@ irr::ode::eEventWriterType CVehicle::CPlane::getEventWriterType() {
 
 
 //Implementation of CHeli
-CVehicle::CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CAeroVehicle(pDevice, pNode, pInputQueue) {
+CVehicle::CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CAeroVehicle(pDevice, pNode) {
   m_pAutoPilot=new CAutoPilot(m_pBody,m_pAero,m_pTorque,m_pMotor,m_pRay);
 
   m_pTargetSelector=new CTargetSelector(m_pBody,m_pDevice,m_pAero->getForeward());
@@ -890,7 +891,6 @@ CVehicle::CHeli::CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNo
 }
 
 CVehicle::CHeli::~CHeli() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
 }
 
 void CVehicle::CHeli::odeStep(irr::u32 iStep) {
@@ -930,7 +930,7 @@ irr::ode::eEventWriterType CVehicle::CHeli::getEventWriterType() {
 }
 
 //Implementation of CAeroVehicle
-CVehicle::CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Helicopter", pInputQueue) {
+CVehicle::CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CIrrOdeCarState(pDevice,L"Helicopter") {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
 
@@ -953,7 +953,7 @@ CVehicle::CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::I
     m_bBrakes        = false;
     m_bFlip          = false;
 
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 
     m_pMotor =(irr::ode::CIrrOdeImpulseMotor *)m_pBody->getStepMotorFromName("aero_motor" );
     m_pTorque=(irr::ode::CIrrOdeTorqueMotor  *)m_pBody->getStepMotorFromName("aero_torque");
@@ -996,7 +996,7 @@ CVehicle::CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::I
 }
 
 CVehicle::CAeroVehicle::~CAeroVehicle() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
 void CVehicle::CAeroVehicle::activate() {
@@ -1126,7 +1126,7 @@ void CVehicle::CAeroVehicle::incShotsFired() {
 
 void CVehicle::CAeroVehicle::postShotEvent() {
   CEventShots *p = new CEventShots(m_pBody->getID(), m_iShotsFired, m_iHitsTaken, m_iHitsScored);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 }
 
 //Implementation of CTank
@@ -1146,7 +1146,7 @@ irr::ode::CIrrOdeBody *getChildBodyFromName(irr::ode::CIrrOdeBody *pBody, const 
   return NULL;
 }
 
-CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Tank", pInputQueue) {
+CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode) : CIrrOdeCarState(pDevice,L"Tank") {
   irr::ode::IIrrOdeEventWriter::setWorld(reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("worldNode")));
   m_pTankBody=reinterpret_cast<irr::ode::CIrrOdeBody *>(pNode);
   m_iLastShot=0;
@@ -1204,13 +1204,13 @@ CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNo
     m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
     m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
 
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
     m_bInitialized=true;
   }
 }
 
 CVehicle::CTank::~CTank() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
 void CVehicle::CTank::activate() {

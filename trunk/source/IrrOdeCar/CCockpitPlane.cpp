@@ -6,6 +6,7 @@
   #include <CAutoPilot.h>
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyMoved.h>
+  #include <thread/IThread.h>
 
 CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, irr::ode::CIrrOdeBody *pObject, irr::ode::CIrrOdeManager *pOdeMgr) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_bLapStarted = false;
@@ -202,12 +203,12 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   printf("**** CockpitPlane: replaced %i texture.\n",iReplace);
 
   m_pOdeMgr = pOdeMgr;
-  m_pOdeMgr->getQueue()->addEventListener(this);
+  m_pOdeMgr->getIrrThread()->getInputQueue()->addEventListener(this);
 }
 
 CCockpitPlane::~CCockpitPlane() {
   m_pElement->drop();
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  m_pOdeMgr->getIrrThread()->getInputQueue()->removeEventListener(this);
 }
 
 void CCockpitPlane::update() {

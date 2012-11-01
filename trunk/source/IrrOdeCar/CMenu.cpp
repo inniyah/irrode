@@ -2,10 +2,8 @@
   #include <CProjectile.h>
   #include <CControlEvents.h>
 
-CMenu::CMenu(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pInputQueue) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu", NULL) {
+CMenu::CMenu(irr::IrrlichtDevice *pDevice) : CIrrOdeCarState(pDevice,L"Vehicle Select Menu") {
   irr::gui::IGUIButton *b=NULL;
-
-  m_pInputQueue = pInputQueue;
 
   m_cDim=irr::core::dimension2di(128,30);
   m_cPos=irr::core::position2di(5,5);
@@ -88,7 +86,7 @@ bool CMenu::OnEvent(const irr::SEvent &event) {
         CRequestVehicle *p = new CRequestVehicle();
         p->setNode(iSelect);
 
-        m_pInputQueue->postEvent(p);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
       }
     }
   }

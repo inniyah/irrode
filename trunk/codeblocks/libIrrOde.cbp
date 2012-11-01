@@ -136,6 +136,8 @@
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeRecorder.h" />
 		<Unit filename="..\include\IrrOde\observer\CIrrOdeWorldObserver.h" />
 		<Unit filename="..\include\IrrOde\observer\IEventFactory.h" />
+		<Unit filename="..\include\IrrOde\thread\CFakeThread.h" />
+		<Unit filename="..\include\IrrOde\thread\IThread.h" />
 		<Unit filename="..\source\IrrOde\CIrrOdeBody.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeContactParameters.cpp" />
 		<Unit filename="..\source\IrrOde\CIrrOdeDampable.cpp" />
@@ -187,6 +189,7 @@
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeRePlayer.cpp" />
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeRecorder.cpp" />
 		<Unit filename="..\source\IrrOde\observer\CIrrOdeWorldObserver.cpp" />
+		<Unit filename="..\source\IrrOde\thread\CFakeThread.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

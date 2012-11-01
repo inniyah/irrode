@@ -36,7 +36,6 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
     irr::gui::IGUIStaticText  *m_pRecording,
                               *m_pSaveFile;
 
-    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
     irr::ode::CIrrOdeRecorder   *m_pRecorder;
     irr::ode::CIrrOdeWorld      *m_pWorld;
 
@@ -59,7 +58,7 @@ class CControlReceiver : public irr::IEventReceiver, public irr::ode::IIrrOdeEve
 
     void switchToState(irr::s32 iNewState);
   public:
-    CControlReceiver(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pQueue, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr);
+    CControlReceiver(irr::IrrlichtDevice *pDevice, irrklang::ISoundEngine *pSndEngine, irr::f32 fVrAr);
     ~CControlReceiver();
 
     void createMenu(irr::u32 iCars, irr::u32 iPlanes, irr::u32 iHelis, irr::u32 iTanks, bool bRearCam);

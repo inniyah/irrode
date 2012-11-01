@@ -15,6 +15,7 @@
   #include <event/IIrrOdeEventWriter.h>
   #include <event/CIrrOdeEventJoint.h>
   #include <IIrrOdeDevice.h>
+  #include <thread/CFakeThread.h>
 
   #ifndef _USE_ODE_NULL_DEVICE
     #include <CIrrOdeDevice.h>
@@ -36,10 +37,15 @@ CIrrOdeManager::CIrrOdeManager() {
   #endif
   m_bPhysicsInitialized=false;
 
-  m_pQueue=new CIrrOdeEventQueue();
   m_pDevice=NULL;
   m_pSmgr=NULL;
   m_pTimer=NULL;
+
+  m_pOdeThread = new irr::ode::CFakeThread();
+  m_pIrrThread = new irr::ode::CFakeThread();
+
+  m_pOdeThread->getOutputQueue()->addEventListener(m_pIrrThread);
+  m_pIrrThread->getOutputQueue()->addEventListener(m_pOdeThread);
 }
 
 CIrrOdeManager::~CIrrOdeManager() {
@@ -61,7 +67,7 @@ CIrrOdeManager *CIrrOdeManager::getSharedInstance() {
  */
 void CIrrOdeManager::initODE() {
   CIrrOdeEventInit *pEvent=new CIrrOdeEventInit();
-  m_pQueue->postEvent(pEvent);
+  m_pOdeThread->getOutputQueue()->postEvent(pEvent);
 
   getOdeDevice()->initODE();
 }
@@ -73,7 +79,7 @@ void CIrrOdeManager::closeODE() {
   getOdeDevice()->closeODE();
 
   CIrrOdeEventClose *pEvent=new CIrrOdeEventClose();
-  m_pQueue->postEvent(pEvent);
+  m_pOdeThread->getOutputQueue()->postEvent(pEvent);
 
   irr::core::list<CIrrOdeWorld *>::Iterator wit;
   for (wit=m_lWorlds.begin(); wit!=m_lWorlds.end(); wit++) {
@@ -95,7 +101,7 @@ void CIrrOdeManager::install(IrrlichtDevice *pDevice) {
   m_pTimer=m_pDevice->getTimer();
   while (m_pTimer->isStopped()) m_pTimer->start();
 
-  m_pQueue->addEventListener(this);
+  m_pIrrThread->getInputQueue()->addEventListener(this);
 }
 /**
  * Step the worlds
@@ -159,7 +165,7 @@ bool CIrrOdeManager::loadScene(const c8 *sScene, irr::scene::ISceneManager *pSmg
   bool bRet=pSmgr->loadScene(sScene);
   if (bRet) {
     CIrrOdeEventLoadScene *pEvt=new CIrrOdeEventLoadScene(sScene);
-    m_pQueue->postEvent(pEvt);
+    m_pOdeThread->getOutputQueue()->postEvent(pEvt);
   }
   return bRet;
 }

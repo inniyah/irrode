@@ -5,6 +5,7 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <CEventVehicleState.h>
   #include <CIrrOdeManager.h>
+  #include <thread/IThread.h>
 
 CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::scene::ISceneNode *pBody, irr::ode::CIrrOdeManager *pOdeMgr) : IRenderToTexture(pDevice,sName,irr::core::dimension2d<irr::u32>(512,512)) {
   m_pTab=m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,512,512));
@@ -83,11 +84,11 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   printf("**** CCockpitCar: replaced %i texture (%i, \"%s\").\n",iReplace,(int)pBody,pBody->getName());
 
   m_pOdeMgr = pOdeMgr;
-  m_pOdeMgr->getQueue()->addEventListener(this);
+  m_pOdeMgr->getIrrThread()->getInputQueue()->addEventListener(this);
 }
 
 CCockpitCar::~CCockpitCar() {
-  m_pOdeMgr->getQueue()->removeEventListener(this);
+  m_pOdeMgr->getIrrThread()->getInputQueue()->removeEventListener(this);
 }
 
 void CCockpitCar::update() {
