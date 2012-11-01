@@ -19,14 +19,12 @@ class CMenu : public CIrrOdeCarState, public irr::IEventReceiver {
     irr::core::vector3df m_vCamLookAt;
     irr::gui::IGUITab *m_pTab;
 
-    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
-
   public:
     /**
      * constructor
      * @param pDevice the Irrlicht device
      */
-    CMenu(irr::IrrlichtDevice *pDevice, irr::ode::IIrrOdeEventQueue *pInputQueue);
+    CMenu(irr::IrrlichtDevice *pDevice);
     virtual ~CMenu();   /*!< the destructor */
 
     virtual void activate();    /*!< state activation */

@@ -1,6 +1,6 @@
   #include "CIrrOdeCarState.h"
 
-CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName, irr::ode::IIrrOdeEventQueue *pInputQueue) {
+CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sVehicleName) {
   //initialize the members
   m_pDevice=pDevice;
   m_pSmgr=m_pDevice->getSceneManager();
@@ -11,12 +11,11 @@ CIrrOdeCarState::CIrrOdeCarState(irr::IrrlichtDevice *pDevice, const wchar_t *sV
   m_iControllerBy = -1;
   m_bInitialized=false;
 
-  m_pInputQueue = pInputQueue;
-  if (m_pInputQueue != NULL) m_pInputQueue->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getInputQueue()->addEventListener(this);
 }
 
 CIrrOdeCarState::~CIrrOdeCarState() {
-  if (m_pInputQueue != NULL) m_pInputQueue->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getInputQueue()->removeEventListener(this);
 }
 
 bool CIrrOdeCarState::OnEvent(const irr::SEvent &event) {

@@ -7,6 +7,7 @@
   #include <CAutoPilot.h>
   #include <irrlicht.h>
   #include <irrKlang.h>
+  #include <thread/IThread.h>
   #include <CEventVehicleState.h>
 
 void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
@@ -80,7 +81,7 @@ CProjectile::CProjectile(irr::scene::ISceneManager *pSmgr, irr::core::vector3df 
 
       if (strcmp(sSource,"missile")) {
         CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndFireShell,1.0f,vPos);
-        ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
       }
 
       if (!strcmp(sSource,"bullet")) m_fVolume=0.3f; else m_fVolume=1.0f;
@@ -115,7 +116,7 @@ void CProjectile::step() {
   //if the lifetime has reached 0 ...
   if (m_iTtl<=0 && m_bActive) {
     CEventFireSound *p=new CEventFireSound(CEventFireSound::eSndExplode,m_fVolume,m_pBody->getPosition());
-    ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 
     //... we remove the body
     m_pBody->removeFromPhysics();
@@ -161,11 +162,11 @@ CProjectileManager::CProjectileManager() {
   m_iHits=0;
   m_pLast=NULL;
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 }
 
 CProjectileManager::~CProjectileManager() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
 CProjectileManager *CProjectileManager::getSharedInstance() {

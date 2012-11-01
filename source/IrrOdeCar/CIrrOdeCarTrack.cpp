@@ -9,11 +9,11 @@ CIrrOdeCarTrack::CIrrOdeCarTrack(irr::ode::CIrrOdeBody *pBody) {
   m_iLastLapStep = 0;
   printf("%i: %s\n",m_iBodyId, m_bPlane?"Plane":"Car");
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 }
 
 CIrrOdeCarTrack::~CIrrOdeCarTrack() {
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
 bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
@@ -34,13 +34,13 @@ bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
         if (iId==0) {
           if (m_iNextCp==-1) {
             CEventLapTime *p=new CEventLapTime(0,m_iBodyId,0);
-            irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+            irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
             printf("\t\tStart of Lap: %.2f\n",(((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f);
           }
           else
             if (m_iNextCp==0) {
               CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,0);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
             }
           m_iNextCp=1;
           m_iLastLapStep=m_iCurStep;
@@ -49,20 +49,20 @@ bool CIrrOdeCarTrack::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
           if (iId==50) {
             if (m_iNextCp!=0) {
               CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,1);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
             }
             m_iNextCp=0;
           }
           else
             if (iId==99) {
               CEventLapTime *p=new CEventLapTime(0,m_iBodyId,3);
-              irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+              irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
               m_iNextCp=-1;
             }
             else {
               if (m_iNextCp==iId) {
                 CEventLapTime *p=new CEventLapTime((((float)m_iCurStep)-((float)m_iLastLapStep))*0.016f,m_iBodyId,2);
-                irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+                irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
                 m_iNextCp++;
               }
             }

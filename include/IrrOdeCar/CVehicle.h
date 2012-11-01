@@ -98,8 +98,8 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
         void applyAeroEffect();
 
       public:
-        CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);    /*!< the car's constructor */
-        virtual ~CCar();                                                                         /*!< the car's destructor */
+        CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);    /*!< the car's constructor */
+        virtual ~CCar();                                                      /*!< the car's destructor */
 
         virtual void activate();      /*!< the activation method */
         virtual void deactivate();    /*!< the deactivation method */
@@ -161,7 +161,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
         void postShotEvent();
 
       public:
-        CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
+        CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
         virtual ~CAeroVehicle();
 
         virtual void activate();
@@ -191,7 +191,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
         CIrrOdeCarTrack *m_pLap;
 
       public:
-        CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
+        CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
         virtual ~CPlane();
 
         virtual void odeStep(irr::u32 iStep);
@@ -213,7 +213,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
         irr::s32 m_iNodeId;
 
       public:
-        CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
+        CHeli(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
         virtual ~CHeli();
 
         virtual const irr::core::stringw &getButton() { static irr::core::stringw s=L"heli"; return s; }
@@ -261,7 +261,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
         int getAcc  ();
 
       public:
-        CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode, irr::ode::IIrrOdeEventQueue *pInputQueue);
+        CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode);
         virtual ~CTank();
 
         virtual void activate();
@@ -285,7 +285,6 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
     irr::IrrlichtDevice *m_pDevice;
     irr::scene::ISceneManager *m_pSmgr;
     irr::ode::CIrrOdeWorld *m_pWorld;
-    irr::ode::IIrrOdeEventQueue *m_pInputQueue;
 
     irr::core::list<irr::scene::ISceneNode *> m_lCars,
                                               m_lPlanes,
@@ -297,7 +296,7 @@ class CVehicle : public irr::ode::IIrrOdeEventListener {
     void fillBodyList(irr::core::list<irr::scene::ISceneNode *> &aVehicles, irr::scene::ISceneNode *pNode, const irr::c8 *sClassName, irr::u32 iMax, irr::ode::CIrrOdeWorld *pWorld);
 
   public:
-    CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView, irr::ode::IIrrOdeEventQueue *pInputQueue);
+    CVehicle(irr::IrrlichtDevice *pDevice, irr::u32 iNumCars, irr::u32 iNumPlanes, irr::u32 iNumHelis, irr::u32 iNumTanks, irr::ode::CIrrOdeWorld *pWorld, bool bRearView);
     ~CVehicle();
 
     const irr::core::list<CIrrOdeCarState *>getVehicles() {

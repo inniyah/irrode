@@ -72,7 +72,7 @@ void CAutoPilot::setTarget(irr::scene::ISceneNode *pTarget) {
   m_pTarget=pTarget;
 
   CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, m_pTarget!=NULL?m_pTarget->getID():-1, m_iState);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 
   if (pTarget!=NULL) {
     if (pTarget->getType()==irr::ode::IRR_ODE_BODY_ID)
@@ -438,7 +438,7 @@ void CAutoPilot::setState(eAutoPilotState iState) {
 
   if (m_iState != eApMissile) {
     CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, m_pTarget->getID(), m_iState);
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
   }
 }
 
@@ -449,5 +449,5 @@ void CAutoPilot::setAutoPilotInfo(irr::gui::IGUIStaticText *pInfo) {
 void CAutoPilot::setEnabled(bool b) {
   m_bEnabled=b;
   CEventAutoPilot *p = new CEventAutoPilot(m_pPlane->getID(), m_bEnabled, -1, m_iState);
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 }

@@ -14,7 +14,7 @@ class IIrrOdeEventQueue {
   public:
     virtual ~IIrrOdeEventQueue() { }
 
-    virtual void postEvent(IIrrOdeEvent *pEvent, bool bDelete=true)=0;
+    virtual void postEvent(IIrrOdeEvent *pEvent)=0;
 
     virtual void addEventListener(IIrrOdeEventListener *p)=0;
     virtual void removeEventListener(IIrrOdeEventListener *p)=0;

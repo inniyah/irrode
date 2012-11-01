@@ -40,7 +40,7 @@ class CIrrOdeWorldObserver : public CIrrOdeEventQueue, public IIrrOdeEventListen
     void destall();
 
     //implementation of CIrrOdeEventQueue methods
-    virtual void postEvent(IIrrOdeEvent *pEvent, bool bDelete=true);
+    virtual void postEvent(IIrrOdeEvent *pEvent);
 
     virtual void addEventListener(IIrrOdeEventListener *pListener);
     virtual void removeEventListener(IIrrOdeEventListener *pListener);

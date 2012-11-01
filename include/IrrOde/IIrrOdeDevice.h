@@ -47,7 +47,6 @@ class IIrrOdeDevice {
      * The step functions
      */
     virtual void step(f32 fTime, CIrrOdeWorld *pWorld)=0;
-    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld)=0;
 
     /**
      * The first block of functions are for the ODE world

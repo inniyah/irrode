@@ -7,6 +7,7 @@
   #include <event/IIrrOdeEventQueue.h>
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventNodeCloned.h>
+  #include <thread/IThread.h>
   #include <CIrrOdeManager.h>
 
 namespace irr {
@@ -122,7 +123,7 @@ void CIrrOdeRePlayer::update() {
 
         //printf("%s\n",p2->toString());
         if (p->getType()==eIrrOdeEventStep) bStep=true;
-        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p2);
+        CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p2);
         m_iIt++;
       }
       while (!bStep && m_iIt!=m_lEvents.end());

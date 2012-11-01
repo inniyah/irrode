@@ -21,6 +21,7 @@
   #include <event/CIrrOdeEventJointSlider.h>
   #include <event/CIrrOdeEventJointHinge2.h>
   #include <event/CIrrOdeEventTrigger.h>
+  #include <thread/IThread.h>
 
   #define GETWORLD(i) m_pOdeData[i-1]->m_pWorld
   #define GETJOINT(i) m_pOdeData[i-1]->m_pJoint
@@ -272,13 +273,13 @@ void CIrrOdeDevice::nearCollisionCallback(void *pData, dGeomID iGeom1, dGeomID i
       if (pGeom1->isTrigger() && b2) {
         CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b2);
         CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom1->getTriggerId()!=0?pGeom1->getTriggerId():pGeom1->getID(),pBody->getID(),pGeom1->getAbsolutePosition());
-        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
       }
 
       if (pGeom2->isTrigger() && b1) {
         CIrrOdeBody *pBody=(CIrrOdeBody *)dBodyGetData(b1);
         CIrrOdeEventTrigger *p=new CIrrOdeEventTrigger(pGeom2->getTriggerId()!=0?pGeom2->getTriggerId():pGeom2->getID(),pBody->getID(),pGeom2->getAbsolutePosition());
-        CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
       }
 
       if (pGeom1->doesCollide() && pGeom2->doesCollide()) {
@@ -397,7 +398,7 @@ void CIrrOdeDevice::handleRayEvent(dGeomID theRay, dGeomID theGeom) {
     }
 
     CIrrOdeEventRayHit *pEvent=new CIrrOdeEventRayHit (pBody,pGeom,pRay,pos,contact.depth);
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
+    CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pEvent);
   }
 }
 
@@ -489,7 +490,7 @@ void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld) {
   while (m_fStepTime>0.0f) {
     pWorld->resetCollisionAttributes();
     CIrrOdeEventBeforeStep *pBeforeStepEvent=new CIrrOdeEventBeforeStep();
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pBeforeStepEvent);
+    CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pBeforeStepEvent);
     dSpaceCollide(GETSPACE(pWorld->getSpace()->getSpaceId()),pWorld,&CIrrOdeDevice::nearCollisionCallback);
     dWorldStep(GETWORLD(pWorld->getWorldId()),m_fStepSize);
     dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
@@ -499,27 +500,7 @@ void CIrrOdeDevice::step(f32 fTime, CIrrOdeWorld *pWorld) {
 
     CIrrOdeEventStep *pStepEvent=new CIrrOdeEventStep(m_iStep++);
     pStepEvent->setFrameNo(CIrrOdeManager::getSharedInstance()->getFrameNo());
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pStepEvent);
-
-    pWorld->frameUpdate();
-  }
-}
-
-void CIrrOdeDevice::quickStep(f32 fTime, CIrrOdeWorld *pWorld) {
-  m_fStepTime+=fTime;
-  while (m_fStepTime>0.0f) {
-    pWorld->resetCollisionAttributes();
-    CIrrOdeEventBeforeStep *pBeforeStepEvent=new CIrrOdeEventBeforeStep();
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pBeforeStepEvent);
-    dSpaceCollide(GETSPACE(pWorld->getSpace()->getSpaceId()),pWorld,&CIrrOdeDevice::nearCollisionCallback);
-    dWorldQuickStep(GETWORLD(pWorld->getWorldId()),m_fStepSize);
-    dJointGroupEmpty(GETJGROUP(pWorld->getJointGroupId()));
-    m_fStepTime-=m_fStepSize;
-    pWorld->stepStepMotors();
-
-    CIrrOdeEventStep *pStepEvent=new CIrrOdeEventStep(m_iStep++);
-    pStepEvent->setFrameNo(CIrrOdeManager::getSharedInstance()->getFrameNo());
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pStepEvent);
+    CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pStepEvent);
 
     pWorld->frameUpdate();
   }

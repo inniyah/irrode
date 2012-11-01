@@ -18,6 +18,7 @@
   #include <CRoadMeshLoader.h>
   #include <CControlReceiver.h>
   #include <CCameraController.h>
+  #include <thread/IThread.h>
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -98,14 +99,14 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pText->setDrawBackground(true);
       m_pText->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
 
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->addEventListener(this);
     }
 
     virtual ~CProgress() {
       m_pImg->remove();
       m_pText->remove();
       m_pBar->remove();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->removeEventListener(this);
     }
 
     virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
@@ -237,7 +238,8 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       if (pSettings->isActive(4)) {
         CEventInstallRandomForestPlugin *p=new CEventInstallRandomForestPlugin();
-        irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
+        //delete p;
       }
 
       CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(m_pSmgr);
@@ -269,7 +271,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
 
-      m_pCtrlReceiver = new CControlReceiver(m_pDevice, new irr::ode::CIrrOdeEventQueue(), m_pSndEngine, cScreenSize.Width / (2.0f * cScreenSize.Height));
+      m_pCtrlReceiver = new CControlReceiver(m_pDevice, m_pSndEngine, cScreenSize.Width / (2.0f * cScreenSize.Height));
 
       if (!pSettings->isActive(0)) m_pCtrlReceiver->removeFromScene("roads"       ,m_pSmgr);
       if (!pSettings->isActive(2)) m_pCtrlReceiver->removeFromScene("targets"     ,m_pSmgr);

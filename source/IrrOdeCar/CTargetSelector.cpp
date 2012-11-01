@@ -83,7 +83,7 @@ void CTargetSelector::update() {
     if (f1*5.0f>=f2) {
       m_pTarget=NULL;
       CEventSelectTarget *p = new CEventSelectTarget(m_pCarrier->getID(), -1);
-      irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+      irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
     }
   }
 }
@@ -93,7 +93,7 @@ bool CTargetSelector::selectOption() {
     m_pTarget=m_pOption;
 
     CEventSelectTarget *p = new CEventSelectTarget(m_pCarrier->getID(), m_pOption->getID());
-    irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 
     return true;
   }

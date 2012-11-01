@@ -9,6 +9,7 @@ CIrrOdeManager *CIrrOdeManager::getSharedInstance() {
   #include <event/CIrrOdeEventBodyRemoved.h>
   #include <event/CIrrOdeEventBodyCreated.h>
   #include <event/CIrrOdeEventNodeCloned.h>
+  #include <thread/IThread.h>
   #include <CIrrOdeManager.h>
 
 namespace irr {
@@ -32,15 +33,15 @@ CIrrOdeWorldObserver *CIrrOdeWorldObserver::getSharedInstance() {
 }
 
 void CIrrOdeWorldObserver::install() {
-  CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
 }
 
 void CIrrOdeWorldObserver::destall() {
-  CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->removeEventListener(this);
 }
 
-void CIrrOdeWorldObserver::postEvent(IIrrOdeEvent *pEvent, bool bDelete) {
-  CIrrOdeEventQueue::postEvent(pEvent,bDelete);
+void CIrrOdeWorldObserver::postEvent(IIrrOdeEvent *pEvent) {
+  CIrrOdeEventQueue::postEvent(pEvent);
 }
 
 void CIrrOdeWorldObserver::addEventListener(IIrrOdeEventListener *pListener) {
@@ -120,7 +121,8 @@ bool CIrrOdeWorldObserver::onEvent(IIrrOdeEvent *pEvent) {
     }
   }
 
-  postEvent(pEvent,false);
+  irr::ode::IIrrOdeEvent *p = pEvent->clone();
+  if (p != NULL) postEvent(p);
   return true;
 }
 

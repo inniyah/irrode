@@ -16,7 +16,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
   m_fInitialAR  = m_pCam->getAspectRatio();
   m_fVrAr       = fVrAr;
 
-  m_pOdeMngr->getQueue()->addEventListener(this);
+  m_pOdeMngr->getIrrThread()->getInputQueue()->addEventListener(this);
 
   m_pCursor = m_pDevice->getCursorControl();
 
@@ -68,7 +68,7 @@ CCameraController::CCameraController(irr::IrrlichtDevice *pDevice, irrklang::ISo
 }
 
 CCameraController::~CCameraController() {
-  m_pOdeMngr->getQueue()->removeEventListener(this);
+  m_pOdeMngr->getIrrThread()->getInputQueue()->removeEventListener(this);
 }
 
 void CCameraController::setTarget(irr::ode::CIrrOdeBody *pTarget) {

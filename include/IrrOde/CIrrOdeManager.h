@@ -14,7 +14,7 @@ class CIrrOdeSceneNode;
 class IIrrOdeDevice;
 class IIrrOdeEvent;
 class CIrrOdeWorld;
-class IIrrOdeEventQueue;
+class IThread;
 
 /**
  * @class CIrrOdeManager
@@ -29,7 +29,8 @@ class CIrrOdeManager : public IIrrOdeEventListener {
 
     irr::core::list<irr::ode::CIrrOdeWorld *> m_lWorlds;             /**< the worlds */
 
-    IIrrOdeEventQueue *m_pQueue;
+    IThread *m_pIrrThread,
+            *m_pOdeThread;
 
     ITimer *m_pTimer;                                           /**< the Irrlicht timer */
 
@@ -78,11 +79,12 @@ class CIrrOdeManager : public IIrrOdeEventListener {
     virtual bool onEvent(IIrrOdeEvent *pEvent);
     virtual bool handlesEvent(IIrrOdeEvent *pEvent);
 
-    IIrrOdeEventQueue *getQueue() { return m_pQueue; }
-
     ITimer *getTimer() { return m_pTimer; }
 
     CIrrOdeEventFactory *getEventFactory() { return CIrrOdeEventFactory::getSharedEventFactory(); }
+
+    irr::ode::IThread *getIrrThread() { return m_pIrrThread; }
+    irr::ode::IThread *getOdeThread() { return m_pOdeThread; }
 };
 
 } //namespace ode

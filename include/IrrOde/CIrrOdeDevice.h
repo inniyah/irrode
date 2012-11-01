@@ -97,7 +97,6 @@ class CIrrOdeDevice : public IIrrOdeDevice {
     virtual f32 getStepSize();
 
     virtual void step(f32 f, CIrrOdeWorld *pWorld);
-    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld);
 
     virtual void setContactCalculator(IIrrOdeContactParameters *pCalculator);
     virtual IIrrOdeContactParameters *getContactCalculator();

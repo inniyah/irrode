@@ -36,7 +36,6 @@ class CIrrOdeNullDevice : public IIrrOdeDevice {
     virtual f32 getStepSize() { return m_fStepSize; }
 
     virtual void step(f32 fTime, CIrrOdeWorld *pWorld) { }
-    virtual void quickStep(f32 fTime, CIrrOdeWorld *pWorld) { }
 
     virtual void worldDestroy(u32 iIdx) { }
     virtual u32 worldCreate() { return 1; }

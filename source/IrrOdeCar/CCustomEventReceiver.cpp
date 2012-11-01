@@ -17,18 +17,18 @@ CCustomEventReceiver::CCustomEventReceiver() {
 }
 
 CCustomEventReceiver::~CCustomEventReceiver() {
-  if (m_bInstalled) m_pOdeManager->getQueue()->removeEventListener(this);
+  if (m_bInstalled) m_pOdeManager->getIrrThread()->getInputQueue()->removeEventListener(this);
 }
 
 void CCustomEventReceiver::install() {
   if (m_bInstalled) return;
   m_bInstalled=true;
 
-  m_pOdeManager->getQueue()->addEventListener(this);
+  m_pOdeManager->getIrrThread()->getInputQueue()->addEventListener(this);
 }
 
 void CCustomEventReceiver::destall() {
-  m_pOdeManager->getQueue()->removeEventListener(this);
+  m_pOdeManager->getIrrThread()->getInputQueue()->removeEventListener(this);
 
   while (m_lPlanes.getSize()>0) {
     list<CPlaneNodes *>::Iterator it=m_lPlanes.begin();

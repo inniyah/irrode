@@ -11,6 +11,7 @@
   #include <event/CIrrOdeEventActivationChanged.h>
   #include <motors/IIrrOdeStepMotor.h>
   #include <motors/IIrrOdeMotor.h>
+  #include <thread/IThread.h>
 
 namespace irr {
 namespace ode {
@@ -48,7 +49,7 @@ CIrrOdeBody::CIrrOdeBody(irr::scene::ISceneNode *parent,irr::scene::ISceneManage
   m_bFastMoving=false;
   m_pRay=NULL;
 
-  m_pQueue=CIrrOdeManager::getSharedInstance()->getQueue();
+  m_pQueue=CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue();
 
   CIrrOdeBody *pParent=(CIrrOdeBody *)getAncestorOfType((irr::scene::ESCENE_NODE_TYPE)IRR_ODE_BODY_ID);
   if (pParent!=NULL) pParent->addChildBody(this);

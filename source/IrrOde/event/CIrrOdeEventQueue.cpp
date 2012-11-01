@@ -11,13 +11,13 @@ CIrrOdeEventQueue::~CIrrOdeEventQueue() {
   m_pListeners.clear();
 }
 
-void CIrrOdeEventQueue::postEvent(IIrrOdeEvent *pEvent, bool bDelete) {
+void CIrrOdeEventQueue::postEvent(IIrrOdeEvent *pEvent) {
   irr::core::list<IIrrOdeEventListener *>::Iterator i;
   for (i=m_pListeners.begin(); i!=m_pListeners.end(); i++) {
     if ((*i)->handlesEvent(pEvent))
       (*i)->onEvent(pEvent);
   }
-  if (bDelete) delete pEvent;
+  delete pEvent;
 }
 
 void CIrrOdeEventQueue::addEventListener(IIrrOdeEventListener *pListener) {

@@ -14,6 +14,7 @@
   #include <event/CIrrOdeEventProgress.h>
   #include <event/CIrrOdeEventNodeCloned.h>
   #include <event/CIrrOdeEventNodeRemoved.h>
+  #include <thread/IThread.h>
 
 namespace irr {
 namespace ode {
@@ -278,22 +279,6 @@ f32 CIrrOdeWorld::getStepSize() {
   return m_fStepSize;
 }
 
-void CIrrOdeWorld::setQuickStepNumIterations(s32 iIterations) {
-  if (m_iWorldId) m_pOdeDevice->worldSetQuickStepNumIterations(m_iWorldId,iIterations);
-}
-
-s32 CIrrOdeWorld::getQuickStepNumIterations() {
-  return m_iWorldId?m_pOdeDevice->worldGetQuickStepNumIterations(m_iWorldId):-1;
-}
-
-void CIrrOdeWorld::setQuickStepSOR(f32 fSOR) {
-  if (m_iWorldId) m_pOdeDevice->worldSetQuickStepW(m_iWorldId,fSOR);
-}
-
-f32 CIrrOdeWorld::getQuickStepSOR() {
-  return m_iWorldId?m_pOdeDevice->worldGetQuickStepW(m_iWorldId):0.0f;
-}
-
 void CIrrOdeWorld::frameUpdate() {
   irr::core::list<CIrrOdeBody *>::Iterator i;
   for (i=m_pBodies.begin(); i!=m_pBodies.end(); i++) (*i)->frameUpdate();
@@ -306,13 +291,9 @@ void CIrrOdeWorld::step(f32 fTime) {
   for (cit=m_lChanged.begin(); cit!=m_lChanged.end(); cit++) {
     IIrrOdeEvent *p=m_pOdeDevice->writeEventFor(*cit);
     if (p==NULL) p=(*cit)->writeEvent();
-    if (p) CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+    if (p) CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
   }
   m_lChanged.clear();
-}
-
-void CIrrOdeWorld::quickStep(f32 fTime) {
-  m_pOdeDevice->quickStep(fTime,this);
 }
 
 void CIrrOdeWorld::resetCollisionAttributes() {
@@ -613,7 +594,7 @@ void CIrrOdeWorld::sceneNodeInitialized(CIrrOdeSceneNode *pNode) {
   if (b) {
     m_iNodesInitialized++;
     CIrrOdeEventProgress *pPrg=new CIrrOdeEventProgress (m_iNodesInitialized,m_pSceneNodes.getSize());
-    CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pPrg);
+    CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pPrg);
   }
 }
 
@@ -629,7 +610,7 @@ irr::scene::ISceneNode *CIrrOdeWorld::cloneTree(irr::scene::ISceneNode *pSource,
   irr::scene::ISceneNode *pRet=cloneOdeNode(pSource,newParent,newSmgr);
 
   CIrrOdeEventNodeCloned *pEvent=new CIrrOdeEventNodeCloned(pSource->getID(),pRet->getID());
-  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(pEvent);
+  CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(pEvent);
 
   return pRet;
 }
@@ -649,7 +630,7 @@ void CIrrOdeWorld::removeTreeFromPhysics(irr::scene::ISceneNode *pNode) {
 
 void CIrrOdeWorld::removeSceneNode(irr::scene::ISceneNode *pNode) {
   CIrrOdeEventNodeRemoved *p=new CIrrOdeEventNodeRemoved(pNode);
-  CIrrOdeManager::getSharedInstance()->getQueue()->postEvent(p);
+  CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
 }
 
 bool CIrrOdeWorld::isRegisteredOdeSceneNode(irr::scene::ISceneNode *pNode) {
