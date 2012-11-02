@@ -212,7 +212,7 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
 
   printf("registering event listener...\n");
   g_pListener=new APS_EventListener(pDevice,g_pOdeMngr);
-  g_pOdeMngr->getQueue()->addEventListener(g_pListener);
+  g_pOdeMngr->getIrrThread()->getInputQueue()->addEventListener(g_pListener);
 
   printf("registering event factory...\n");
   g_pEventFactory=new APS_EventFactory();
@@ -230,7 +230,7 @@ int DLL_EXPORT install(irr::IrrlichtDevice *pDevice, void *pUserData) {
 int DLL_EXPORT destall(irr::IrrlichtDevice *pDevice, void *pUserData) {
   SSharedManagers *pManagers=(SSharedManagers *)pUserData;
 
-  ((irr::ode::CIrrOdeManager *)pManagers->m_pOdeManager)->getQueue()->removeEventListener(g_pListener);
+  ((irr::ode::CIrrOdeManager *)pManagers->m_pOdeManager)->getIrrThread()->getInputQueue()->removeEventListener(g_pListener);
   delete g_pListener;
   g_pListener=NULL;
 
