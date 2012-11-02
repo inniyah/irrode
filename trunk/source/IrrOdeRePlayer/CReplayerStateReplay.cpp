@@ -36,7 +36,7 @@ void CReplayerStateReplay::activate() {
 
   m_pLblStep->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->addEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->addEventListener(this);
 
   m_iSteps = m_pPlayer->getNumberOfSteps();
 
@@ -80,7 +80,7 @@ void CReplayerStateReplay::activate() {
 void CReplayerStateReplay::deactivate() {
   //m_pSmgr->clear();
   //m_pGuiEnv->clear();
-  irr::ode::CIrrOdeManager::getSharedInstance()->getQueue()->removeEventListener(this);
+  irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->removeEventListener(this);
   m_pCrsCtrl->setVisible(true);
 }
 

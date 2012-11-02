@@ -238,7 +238,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       if (pSettings->isActive(4)) {
         CEventInstallRandomForestPlugin *p=new CEventInstallRandomForestPlugin();
-        irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getOutputQueue()->postEvent(p);
+        irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
         //delete p;
       }
 
