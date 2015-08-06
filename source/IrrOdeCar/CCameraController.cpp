@@ -192,6 +192,7 @@ void CCameraController::update() {
 
   v.rotateXZBy(m_fCamAngleH);
 
+#ifndef NO_IRRKLANG
   if (m_pTarget != NULL) {
     irr::core::vector3df vRot = m_pTarget->getRotation(),
                          vPos = m_pTarget->getPosition();
@@ -211,6 +212,10 @@ void CCameraController::update() {
     m_vTarget = m_vPosition + v;
     m_vUp = irr::core::vector3df(0.0f, 1.0f, 0.0f);
   }
+#else
+  m_vTarget = m_vPosition + v;
+  m_vUp = irr::core::vector3df(0.0f, 1.0f, 0.0f);
+#endif
 
   if (m_b3d || m_bVr) {
     irr::core::vector3df v1 = m_vTarget - m_vPosition,
@@ -234,6 +239,7 @@ void CCameraController::update() {
   m_pCam->setTarget  (m_vTarget  );
   m_pCam->setUpVector(m_vUp      );
 
+#ifndef NO_IRRKLANG
   if (m_pSndEngine) {
     irr::core::vector3df irrPos=m_pCam->getPosition(),
                          irrTgt=m_pCam->getTarget(),
@@ -248,6 +254,7 @@ void CCameraController::update() {
     m_pSndEngine->setListenerPosition(pos,tgt,vel,up);
     m_pSndEngine->setRolloffFactor(0.125f);
   }
+#endif
 }
 
 bool CCameraController::OnEvent(const irr::SEvent &event) {

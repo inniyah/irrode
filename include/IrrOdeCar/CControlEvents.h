@@ -1,7 +1,7 @@
 #ifndef _C_CONTROL_EVENTS
   #define _C_CONTROL_EVENTS
 
-  #include <irrode.h>
+  #include <IrrOde.h>
 
 enum enControlMessageIDs {
   eCtrlMsgLogin = irr::ode::eIrrOdeEventUser + 1024,

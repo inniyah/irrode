@@ -4,8 +4,9 @@
   #include <CRandomForestNode.h>
   #include <CCockpitPlane.h>
   #include <CCockpitCar.h>
-
+#ifndef NO_IRRKLANG
   #include <irrklang.h>
+#endif
 
 CCustomEventReceiver::CCustomEventReceiver() {
   m_bInstalled=false;
@@ -91,7 +92,7 @@ void CCustomEventReceiver::addTank(irr::scene::ISceneNode *pTank) {
 }
 
 void CCustomEventReceiver::addHeli(irr::scene::ISceneNode *pHeli) {
-  CCustomEventReceiver::CHeliNodes::CHeliNodes *p = new CHeliNodes(pHeli, m_pSndEngine, m_pDevice, m_pOdeManager);
+  CCustomEventReceiver::CHeliNodes *p = new CHeliNodes(pHeli, m_pSndEngine, m_pDevice, m_pOdeManager);
   m_lHelis.push_back(p);
 }
 
@@ -191,6 +192,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       case CEventFireSound::eSndCreaky   : strcpy(s,"../../data/sound/creaky.ogg" ); break;
     }
 
+#ifndef NO_IRRKLANG
     if (s[0]!='\0') {
       irrklang::ISound *pSnd=m_pSndEngine->play3D(s,p->getPosition(),false,true);
       pSnd->setVolume(p->getSound());
@@ -198,6 +200,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
       pSnd->setIsPaused(false);
       pSnd->drop();
     }
+#endif
   }
 
   if (pEvent->getType()==EVENT_HELI_STATE_ID) {
@@ -294,6 +297,7 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return false;
 }
 
+#ifndef NO_IRRKLANG
 void CCustomEventReceiver::updateSound(irrklang::ISound *pSound, irr::ode::CIrrOdeBody *pBody) {
   if (pSound==NULL) return;
 
@@ -306,6 +310,7 @@ void CCustomEventReceiver::updateSound(irrklang::ISound *pSound, irr::ode::CIrrO
   pSound->setVelocity(vVel);
   pSound->setPosition(vPos);
 }
+#endif
 
 bool CCustomEventReceiver::handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
   return pEvent->getType()==EVENT_PLANE_STATE_ID || pEvent->getType()==irr::ode::eIrrOdeEventBodyRemoved ||
@@ -353,6 +358,7 @@ CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklan
 
   m_iNodeId=pCar->getID();
 
+#ifndef NO_IRRKLANG
   m_pEngine = m_pSndEngine->play3D("../../data/sound/car.ogg"    ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   m_pWind   = m_pSndEngine->play3D("../../data/sound/wind.ogg"   ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   m_pWheels = m_pSndEngine->play3D("../../data/sound/rolling.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
@@ -360,6 +366,7 @@ CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklan
   if (m_pEngine) m_pEngine->setMinDistance(25.0f); else printf("\n\t\t**** oops 1\n\n");
   if (m_pWind  ) m_pWind  ->setMinDistance( 0.0f); else printf("\n\t\t**** oops 2\n\n");
   if (m_pWheels) m_pWheels->setMinDistance( 0.0f); else printf("\n\t\t**** oops 3\n\n");
+#endif
 
   m_pCar=reinterpret_cast<ode::CIrrOdeBody *>(pCar);
   searchCarNodes(m_pCar);
@@ -369,26 +376,33 @@ CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklan
 }
 
 CCustomEventReceiver::CCarNodes::~CCarNodes() {
+#ifndef NO_IRRKLANG
   if (m_pEngine) m_pEngine->drop();
   if (m_pWind  ) m_pWind  ->drop();
   if (m_pWheels) m_pWheels->drop();
+#endif
 
   if (m_pCockpit) delete m_pCockpit;
 }
 
 void CCustomEventReceiver::CCarNodes::triggerUpdateSound() {
+#ifndef NO_IRRKLANG
   updateSound(m_pEngine, m_pCar);
+#endif
 
   irr::f32 fVol = m_pCar->getLinearVelocity().getLength();
   if (fVol > 100.0f) fVol = 100.0f;
   fVol /= 100.0f;
   if (fVol < 0.0f) fVol = -fVol;
 
+#ifndef NO_IRRKLANG
   m_pWind->setVolume(fVol / 4.0f);
   updateSound(m_pWind, m_pCar);
+#endif
 }
 
 void CCustomEventReceiver::CCarNodes::handleCarEvent(CEventCarState *p) {
+#ifndef NO_IRRKLANG
   if (m_pEngine!=NULL) {
     core::vector3df irrPos=m_pCar->getPosition(),
                     irrVel=m_pCar->getLinearVelocity();
@@ -404,6 +418,7 @@ void CCustomEventReceiver::CCarNodes::handleCarEvent(CEventCarState *p) {
     m_pWind  ->setIsPaused(false);
     m_pWheels->setIsPaused(false);
   }
+#endif
   m_pSuspension->setPosition(irr::core::vector3df(0.0f,-1.0f,0.0f)*p->getSuspension());
 
   irr::f32 fSteer=3.0f * p->getSteer();
@@ -463,9 +478,11 @@ void CCustomEventReceiver::CCarNodes::handleCarEvent(CEventCarState *p) {
     if (fVol > 1.0f) fVol =  1.0f;
   }
 
+#ifndef NO_IRRKLANG
   m_pWheels->setVolume(0.6f * fVol);
   m_pWheels->setPlaybackSpeed(1.0f+(fVol-0.5f));
   updateSound(m_pWheels, m_pCar);
+#endif
 
   if (m_pCockpit) m_pCockpit->update();
 }
@@ -488,10 +505,12 @@ CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, i
   m_pSndEngine = pSndEngine;
 
   m_iNodeId=pPlane->getID();
+#ifndef NO_IRRKLANG
   m_pEngine=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pEngine) m_pEngine->setMinDistance(25.0f);
   m_pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pWind) m_pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
+#endif
   m_pPlane=reinterpret_cast<ode::CIrrOdeBody *>(pPlane);
   searchPlaneNodes(pPlane);
 
@@ -499,8 +518,10 @@ CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, i
 }
 
 CCustomEventReceiver::CPlaneNodes::~CPlaneNodes() {
+#ifndef NO_IRRKLANG
   if (m_pEngine) m_pEngine->drop();
   if (m_pWind  ) m_pWind  ->drop();
+#endif
 
   if (m_pCockpit) delete m_pCockpit;
 }
@@ -518,6 +539,7 @@ void CCustomEventReceiver::CPlaneNodes::handlePlaneEvent(CEventPlaneState *p) {
   if (m_aYaw.size()>0) m_aYaw[0]->setRotation(vector3df(0,90+10.0f*fYaw, 0));
   if (m_aYaw.size()>1) m_aYaw[1]->setRotation(vector3df(-15.0f*fYaw,13,90));
 
+#ifndef NO_IRRKLANG
   if (m_pEngine!=NULL) {
     core::vector3df irrPos=m_pPlane->getPosition(),
                     irrVel=m_pPlane->getLinearVelocity();
@@ -534,19 +556,24 @@ void CCustomEventReceiver::CPlaneNodes::handlePlaneEvent(CEventPlaneState *p) {
     m_pEngine->setIsPaused(false);
     m_pWind  ->setIsPaused(false);
   }
+#endif
 
   if (m_pCockpit) m_pCockpit->update();
 }
 
 void CCustomEventReceiver::CPlaneNodes::triggerUpdateSound() {
+#ifndef NO_IRRKLANG
   updateSound(m_pEngine,m_pPlane);
+#endif
   irr::f32 fVol = m_pPlane->getLinearVelocity().getLength();
   if (fVol > 100.0f) fVol = 100.0f;
   fVol /= 100.0f;
   if (fVol < 0.0f) fVol = -fVol;
 
+#ifndef NO_IRRKLANG
   m_pWind->setVolume(fVol / 8.0f);
   updateSound(m_pWind, m_pPlane);
+#endif
 }
 
 //Implementation of CHeliNodes
@@ -555,18 +582,23 @@ CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrk
 
   m_iNodeId=pHeli->getID();
   m_pHeli=reinterpret_cast<ode::CIrrOdeBody *>(pHeli);
+
+#ifndef NO_IRRKLANG
   m_pEngine=m_pSndEngine->play3D("../../data/sound/heli.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
 
   if (m_pEngine) {
     m_pEngine->setMaxDistance(200.0f);
     m_pEngine->setVolume(0.5f);
   }
+#endif
 
   m_pCockpit = new CCockpitPlane(pDevice,"cockpit_heli", m_pHeli, pOdeMgr);
 }
 
 CCustomEventReceiver::CHeliNodes::~CHeliNodes() {
+#ifndef NO_IRRKLANG
   if (m_pEngine) m_pEngine->drop();
+#endif
 
   if (m_pCockpit) delete m_pCockpit;
 }
@@ -575,6 +607,7 @@ void CCustomEventReceiver::CHeliNodes::handleHeliEvent(CEventHeliState *p) {
   core::vector3df irrPos=m_pHeli->getPosition(),
                   irrVel=m_pHeli->getLinearVelocity();
 
+#ifndef NO_IRRKLANG
   irrklang::vec3df vPos=irrklang::vec3df(irrPos.X,irrPos.Y,irrPos.Z),
                    vVel=irrklang::vec3df(irrVel.X,irrVel.Y,irrVel.Z);
 
@@ -582,12 +615,15 @@ void CCustomEventReceiver::CHeliNodes::handleHeliEvent(CEventHeliState *p) {
   m_pEngine->setPosition(vPos);
   m_pEngine->setPlaybackSpeed(p->getSound());
   m_pEngine->setIsPaused(false);
+#endif
 
   if (m_pCockpit) m_pCockpit->update();
 }
 
 void CCustomEventReceiver::CHeliNodes::triggerUpdateSound() {
+#ifndef NO_IRRKLANG
   updateSound(m_pEngine,m_pHeli);
+#endif
 }
 
 //Implementation of CTankNodes
@@ -615,17 +651,21 @@ CCustomEventReceiver::CTankNodes::CTankNodes(irr::scene::ISceneNode *pTank, irrk
   m_pCannon=NULL;
   m_iNodeId=pTank->getID();
   m_pTank=reinterpret_cast<ode::CIrrOdeBody *>(pTank);
+#ifndef NO_IRRKLANG
   m_pEngine=m_pSndEngine->play3D("../../data/sound/tank.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pEngine) {
     m_pEngine->setVolume(0.5f);
     m_pEngine->setMinDistance(100.0f);
   }
+#endif
 
   searchTankNodes(pTank);
 }
 
 CCustomEventReceiver::CTankNodes::~CTankNodes() {
+#ifndef NO_IRRKLANG
   if (m_pEngine) m_pEngine->drop();
+#endif
 }
 
 void CCustomEventReceiver::CTankNodes::handleTankEvent(CEventTankState *p) {
@@ -644,16 +684,20 @@ void CCustomEventReceiver::CTankNodes::handleTankEvent(CEventTankState *p) {
     m_pTurret->setRotation(vector3df(0.0f,-f,0.0f));
   }
 
+#ifndef NO_IRRKLANG
   if (m_pEngine) {
     m_pEngine->setIsPaused(false);
     m_pEngine->setVelocity(m_pTank->getLinearVelocity());
     m_pEngine->setPosition(m_pTank->getAbsolutePosition());
     m_pEngine->setPlaybackSpeed(p->getSound());
   }
+#endif
 }
 
 void CCustomEventReceiver::CTankNodes::triggerUpdateSound() {
+#ifndef NO_IRRKLANG
   updateSound(m_pEngine,m_pTank);
+#endif
 }
 
 //Implementation of MissileNodes
@@ -662,20 +706,26 @@ CCustomEventReceiver::CMissileNodes::CMissileNodes(irr::scene::ISceneNode *pMiss
   core::vector3df vPos=pMissile->getPosition();
   m_iNodeId=p->getNewId();
   m_pNode=reinterpret_cast<ode::CIrrOdeBody *>(pMissile);
+#ifndef NO_IRRKLANG
   m_pEngine=m_pSndEngine->play3D("../../data/sound/missile.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),true,true);
   m_pEngine->setIsPaused(false);
+#endif
 }
 
 CCustomEventReceiver::CMissileNodes::~CMissileNodes() {
+#ifndef NO_IRRKLANG
   if (m_pEngine!=NULL) {
     m_pEngine->stop();
     m_pEngine->drop();
   }
+#endif
 }
 
 void CCustomEventReceiver::CMissileNodes::handleMissileEvent(irr::ode::IIrrOdeEvent *p) {
 }
 
 void CCustomEventReceiver::CMissileNodes::triggerUpdateSound() {
+#ifndef NO_IRRKLANG
   updateSound(m_pEngine,m_pNode);
+#endif
 }

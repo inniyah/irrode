@@ -2,7 +2,9 @@
   #define _C_CAMERA_CONTROLLER
 
   #include <irrlicht.h>
+#ifndef NO_IRRKLANG
   #include <irrklang.h>
+#endif
   #include <IrrOde.h>
 
 namespace irr {
@@ -10,6 +12,12 @@ namespace irr {
     class CIrrOdeBody;
   }
 }
+
+#ifdef NO_IRRKLANG
+namespace irrklang {
+  typedef void ISoundEngine;
+}
+#endif
 
 enum eCameraControls {
   eCameraLeft,

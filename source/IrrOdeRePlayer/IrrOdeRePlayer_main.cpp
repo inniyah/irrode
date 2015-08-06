@@ -7,7 +7,9 @@
   #include <CReplayerStateReplay.h>
   #include <SSharedManagers.h>
 
+#ifndef NO_IRRKLANG
   #include <irrklang.h>
+#endif
 
 //Note: move the IrrOde lib to be the first linked lib if you get
 //the unresolved external of the IdentityMaterial

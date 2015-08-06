@@ -1,0 +1,73 @@
+PROGRAM=IrrOdeCar
+LIBRARY=libIrrOde
+DIRECTORY=IrrOdeCar
+
+all: $(LIBRARY).a $(LIBRARY).so $(PROGRAM)
+
+$(LIBRARY).a $(LIBRARY).so:
+	$(MAKE) -f Makefile.IrrOde $(LIBRARY).a $(LIBRARY).so
+
+#C_SOURCES = $(shell find . -name "*.c")
+#CPP_SOURCES = $(shell find . -name "*.cpp")
+
+C_SOURCES = 
+
+CPP_SOURCES = \
+	source/$(DIRECTORY)/CAutoPilot.cpp \
+	source/$(DIRECTORY)/CCameraController.cpp \
+	source/$(DIRECTORY)/CCockpitCar.cpp \
+	source/$(DIRECTORY)/CCockpitPlane.cpp \
+	source/$(DIRECTORY)/CControlReceiver.cpp \
+	source/$(DIRECTORY)/CController.cpp \
+	source/$(DIRECTORY)/CCustomEventReceiver.cpp \
+	source/$(DIRECTORY)/CEventVehicleState.cpp \
+	source/$(DIRECTORY)/CIrrOdeCarState.cpp \
+	source/$(DIRECTORY)/CIrrOdeCarTrack.cpp \
+	source/$(DIRECTORY)/CMenu.cpp \
+	source/$(DIRECTORY)/CProjectile.cpp \
+	source/$(DIRECTORY)/CRearView.cpp \
+	source/$(DIRECTORY)/CSettings.cpp \
+	source/$(DIRECTORY)/CTargetSelector.cpp \
+	source/$(DIRECTORY)/CVehicle.cpp \
+	source/$(DIRECTORY)/CodeSnippets/CConfigFileManager.cpp \
+	source/$(DIRECTORY)/CodeSnippets/CGUINeedleIndicator.cpp \
+	source/$(DIRECTORY)/CodeSnippets/CMeshCombiner.cpp \
+	source/$(DIRECTORY)/CodeSnippets/CProgressBar.cpp \
+	source/$(DIRECTORY)/CodeSnippets/CRandomForestNode.cpp \
+	source/$(DIRECTORY)/CodeSnippets/irrCC.cpp \
+	source/$(DIRECTORY)/RoadCreator/CConnection.cpp \
+	source/$(DIRECTORY)/RoadCreator/CRoadLoader.cpp \
+	source/$(DIRECTORY)/RoadCreator/CRoadMeshLoader.cpp \
+	source/$(DIRECTORY)/RoadCreator/CSegment.cpp \
+	source/$(DIRECTORY)/RoadCreator/CSurface.cpp \
+	source/$(DIRECTORY)/irrodecar_main.cpp
+
+OBJS = $(C_SOURCES:.c=.o) $(CPP_SOURCES:.cpp=.o)
+
+PKG_CONFIG=
+PKG_CONFIG_CFLAGS=`pkg-config --cflags $(PKG_CONFIG) 2>/dev/null`
+PKG_CONFIG_LIBS=`pkg-config --libs $(PKG_CONFIG) 2>/dev/null`
+
+CFLAGS= -O2 -g -Wall
+LDFLAGS= -Wl,-z,defs -Wl,--as-needed -Wl,--no-undefined
+DEFS = -DNO_IRRKLANG
+
+INCS = -I/usr/include/irrlicht/ -Iinclude/IrrOde/ -Iinclude/$(DIRECTORY)/ -Iinclude/$(DIRECTORY)/CodeSnippets/ -Iinclude/$(DIRECTORY)/RoadCreator/
+LIBS = -lIrrlicht -lode -L. -lIrrOde
+
+$(PROGRAM): $(OBJS)
+	g++ $(LDFLAGS) $+ -o $@ $(LIBS) $(PKG_CONFIG_LIBS)
+
+%.o: %.cpp
+	g++ -o $@ -c $+ $(DEFS) $(INCS) $(CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+%.o: %.c
+	gcc -o $@ -c $+ $(DEFS) $(INCS) $(CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+clean:
+	rm -f $(OBJS)
+	rm -f $(PROGRAM)
+	rm -fv `find source/$(DIRECTORY)/ -name "*.so"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*.so*"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*.a"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*~"`

@@ -2,7 +2,7 @@
   #define _C_PROJECTILE
 
   #include <irrlicht.h>
-  #include <irrOde.h>
+  #include <IrrOde.h>
 
 class CAdvancedParticleSystemNode;
 class CIrrOdeCarState;

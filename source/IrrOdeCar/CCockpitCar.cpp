@@ -81,7 +81,7 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_stLastLap=m_pGuienv->addStaticText(L"Last Lap"   ,irr::core::rect<irr::s32>(irr::core::position2di(400,35),irr::core::dimension2di(100,13)),false,true,m_pTab);
 
   irr::u32 iReplace=processTextureReplace(pBody);
-  printf("**** CCockpitCar: replaced %i texture (%i, \"%s\").\n",iReplace,(int)pBody,pBody->getName());
+  printf("**** CCockpitCar: replaced %i texture (%p, \"%s\").\n",iReplace,(void *)pBody,pBody->getName());
 
   m_pOdeMgr = pOdeMgr;
   m_pOdeMgr->getIrrThread()->getInputQueue()->addEventListener(this);

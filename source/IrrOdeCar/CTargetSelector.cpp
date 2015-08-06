@@ -1,7 +1,7 @@
   #include <irrlicht.h>
   #include <CTargetSelector.h>
   #include <CEventVehicleState.h>
-  #include <irrode.h>
+  #include <IrrOde.h>
 
 CTargetSelector::CTargetSelector(irr::ode::CIrrOdeBody *pCarrier, irr::IrrlichtDevice *pDevice, irr::core::vector3df vForeward) {
   m_pDevice=pDevice;

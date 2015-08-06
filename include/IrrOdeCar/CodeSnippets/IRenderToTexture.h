@@ -30,7 +30,7 @@ class IRenderToTexture {
             s.make_lower();
             if (s.find(m_sName.c_str())!=-1) {
               pNode->getMaterial(i).setTexture(j,m_pTarget);
-              printf("--> \"%s\" (%i)\n",pNode->getName(),(int)m_pTarget);
+              printf("--> \"%s\" (%p)\n",pNode->getName(),(void *)m_pTarget);
               iRet++;
             }
           }

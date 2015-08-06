@@ -11,7 +11,9 @@
   #include <CCustomEventReceiver.h>
 
   #include <CRoadMeshLoader.h>
+#ifndef NO_IRRKLANG
   #include <irrklang.h>
+#endif
   #include <CMeshCombiner.h>
   #include <CRandomForestNode.h>
 

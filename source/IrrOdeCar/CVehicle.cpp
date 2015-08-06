@@ -188,14 +188,14 @@ CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode
     m_pAxesFront[0]=reinterpret_cast<irr::ode::CIrrOdeJointHinge2 *>(m_pCarBody->getChildByName("axis_fl",m_pCarBody));
     m_pAxesFront[1]=reinterpret_cast<irr::ode::CIrrOdeJointHinge2 *>(m_pCarBody->getChildByName("axis_fr",m_pCarBody));
 
-    printf("axis_FL=%i\n",(int)m_pAxesFront[0]);
-    printf("axis_FR=%i\n",(int)m_pAxesFront[1]);
+    printf("axis_FL=%p\n",(void *)m_pAxesFront[0]);
+    printf("axis_FR=%p\n",(void *)m_pAxesFront[1]);
 
     m_pAxesRear[0]=reinterpret_cast<irr::ode::CIrrOdeJointHinge *>(m_pCarBody->getChildByName("axis_rl",m_pCarBody));
     m_pAxesRear[1]=reinterpret_cast<irr::ode::CIrrOdeJointHinge *>(m_pCarBody->getChildByName("axis_rr",m_pCarBody));
 
-    printf("axis_RL=%i\n",(int)m_pAxesRear[0]);
-    printf("axis_RR=%i\n",(int)m_pAxesRear[1]);
+    printf("axis_RL=%p\n",(void *)m_pAxesRear[0]);
+    printf("axis_RR=%p\n",(void *)m_pAxesRear[1]);
 
     for (irr::u32 i=0; i<2; i++) {
       irr::c8 s[0xFF];
@@ -235,17 +235,17 @@ CVehicle::CCar::CCar(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNode
     for (irr::u32 i = 0; i < 2; i++)
       m_pFrontWheels[i]=reinterpret_cast<irr::ode::CIrrOdeBody *>(m_pCarBody->getChildByName(sFrontWheelBodies[i],m_pCarBody));
 
-    printf("**** motors: %i, %i\n",(int)m_pMotor[0],(int)m_pMotor[1]);
-    printf("**** front brakes: %i, %i\n",(int)m_pBrkFr[0],(int)m_pBrkFr[1]);
-    printf("**** rear brakes: %i, %i\n",(int)m_pBrkRe[0],(int)m_pBrkRe[1]);
+    printf("**** motors: %p, %p\n",(void *)m_pMotor[0],(void *)m_pMotor[1]);
+    printf("**** front brakes: %p, %p\n",(void *)m_pBrkFr[0],(void *)m_pBrkFr[1]);
+    printf("**** rear brakes: %p, %p\n",(void *)m_pBrkRe[0],(void *)m_pBrkRe[1]);
     printf("**** wheels: ");
-    for (irr::u32 i=0; i<4; i++) printf("%i%s",(int)m_pWheels[i],i<3?", ":"");
+    for (irr::u32 i=0; i<4; i++) printf("%p%s",(void *)m_pWheels[i],i<3?", ":"");
     printf("\n");
-    printf("**** wheel bodies: %i, %i, %i, %i\n",(int)m_pRearWheels[0],(int)m_pRearWheels[1],(int)m_pFrontWheels[0],(int)m_pFrontWheels[1]);
+    printf("**** wheel bodies: %p, %p, %p, %p\n",(void *)m_pRearWheels[0],(void *)m_pRearWheels[1],(void *)m_pFrontWheels[0],(void *)m_pFrontWheels[1]);
     printf("**** params: ");
-    for (irr::u32 i=0; i<4; i++) printf("%i%s",(int)m_pParams[i],i<3?", ":"");
+    for (irr::u32 i=0; i<4; i++) printf("%p%s",(void *)m_pParams[i],i<3?", ":"");
     printf("\n");
-    printf("**** suspension: %i, %i\n",(int)m_pSuspension,(int)m_pJointSus);
+    printf("**** suspension: %p, %p\n",(void *)m_pSuspension,(void *)m_pJointSus);
     printf("**** suspension neutral: (%.2f, %.2f, %.2f)\n",m_vSuspNeutral.X,m_vSuspNeutral.Y,m_vSuspNeutral.Z);
 
     aNodes.clear();
@@ -777,13 +777,13 @@ CVehicle::CPlane::CPlane(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *p
     irr::c8 s[0xFF];
     sprintf(s,"axis%i",i+1);
     m_pAxes[i]=(irr::ode::CIrrOdeJointHinge *)m_pBody->getChildByName(s,m_pBody);
-    printf("%s: %i\n",s,(int)m_pAxes[i]);
+    printf("%s: %p\n",s,(void *)m_pAxes[i]);
     m_fAngleRate[i]=0.0f;
   }
   m_fAngleRate[2]=0.0f;
 
   m_pSteerAxis=(irr::ode::CIrrOdeJointHinge2 *)m_pBody->getChildByName("axisSteer",m_pBody);
-  printf("steer axis: %i\n",(int)m_pSteerAxis);
+  printf("steer axis: %p\n",(void *)m_pSteerAxis);
 
   m_pLap = new CIrrOdeCarTrack(m_pBody);
 
@@ -970,9 +970,9 @@ CVehicle::CAeroVehicle::CAeroVehicle(irr::IrrlichtDevice *pDevice, irr::scene::I
     m_pSteer=(irr::ode::CIrrOdeServo *)m_pBody->getMotorFromName("plane_wheel_steer");
 
     printf("\naero state:\n\n");
-    printf("motors: %i, %i, %i, ray: %i\n\n",(int)m_pMotor,(int)m_pTorque,(int)m_pAero,(int)m_pRay);
-    printf("brakes: %i, %i\n",(int)m_pBrakes[0],(int)m_pBrakes[1]);
-    printf("steer: %i\n",(int)m_pSteer);
+    printf("motors: %p, %p, %p, ray: %p\n\n",(void *)m_pMotor,(void *)m_pTorque,(void *)m_pAero,(void *)m_pRay);
+    printf("brakes: %p, %p\n",(void *)m_pBrakes[0],(void *)m_pBrakes[1]);
+    printf("steer: %p\n",(void *)m_pSteer);
 
     m_fThrust=0;
     m_fPitch=0;
@@ -1166,7 +1166,7 @@ CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNo
     m_pTurretMotor=(irr::ode::CIrrOdeMotor *)m_pTankBody->getMotorFromName("turretMotor");
     m_pCannonServo=(irr::ode::CIrrOdeServo *)m_pTankBody->getMotorFromName("cannonServo");
 
-    printf("\t\tturret motor: %i\n\t\tcannon servo: %i\n",(int)m_pTurretMotor,(int)m_pCannonServo);
+    printf("\t\tturret motor: %p\n\t\tcannon servo: %p\n",(void *)m_pTurretMotor,(void *)m_pCannonServo);
 
     irr::ode::CIrrOdeJointHinge *pAxis=NULL;
 
@@ -1183,14 +1183,14 @@ CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNo
     printf("\ntank state:\n\n");
     printf("axes: ");
     irr::core::list<irr::ode::CIrrOdeJointHinge *>::Iterator it;
-    for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) printf("%i  ",(int)(*it));
+    for (it=m_lAxes.begin(); it!=m_lAxes.end(); it++) printf("%p  ",(void *)(*it));
     printf("\n");
     printf("motors: ");
-    for (irr::u32 i=0; i<4; i++) printf("%i  ",(int)m_pMotor[i]);
+    for (irr::u32 i=0; i<4; i++) printf("%p  ",(void *)m_pMotor[i]);
     printf("\n");
 
-    printf("turret: %i -- axis=%i, motor=%i\n",(int)m_pTurret,(int)m_pTurretHinge,(int)m_pTurretMotor);
-    printf("cannon: %i -- axis=%i, motor=%i\n",(int)m_pCannon,(int)m_pCannonHinge,(int)m_pCannonServo);
+    printf("turret: %p -- axis=%p, motor=%p\n",(void *)m_pTurret,(void *)m_pTurretHinge,(void *)m_pTurretMotor);
+    printf("cannon: %p -- axis=%p, motor=%p\n",(void *)m_pCannon,(void *)m_pCannonHinge,(void *)m_pCannonServo);
 
     m_bFlip         =false;
     m_bFire         =false;

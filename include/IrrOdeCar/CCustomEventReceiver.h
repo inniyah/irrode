@@ -6,10 +6,16 @@
 
   #include <CCockpitCar.h>
 
+#ifndef NO_IRRKLANG
 namespace irrklang {
   class ISoundEngine;
   class ISound;
 };
+#else
+namespace irrklang {
+  typedef void ISoundEngine;
+}
+#endif
 
 class CAdvancedParticleSystemNode;
 class CEventPlaneState;
@@ -26,8 +32,10 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         irr::s32 m_iNodeId;
         irr::core::array<irr::scene::ISceneNode *> m_aYaw, m_aPitch, m_aRoll;
         irr::ode::CIrrOdeBody *m_pPlane;
+#ifndef NO_IRRKLANG
         irrklang::ISound *m_pEngine,
                          *m_pWind;
+#endif
         irrklang::ISoundEngine *m_pSndEngine;
 
         CCockpitPlane *m_pCockpit;
@@ -51,7 +59,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         irr::core::array<irr::scene::ISceneNode *> m_aAxes;
         irr::scene::ISceneNode *m_pCannon,
                                *m_pTurret;
+#ifndef NO_IRRKLANG
         irrklang::ISound *m_pEngine;
+#endif
         irrklang::ISoundEngine *m_pSndEngine;
 
         void searchTankNodes(irr::scene::ISceneNode *pNode);
@@ -81,9 +91,11 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
         CAdvancedParticleSystemNode *m_pSmoke[2],
                                     *m_pFire[2];
         irrklang::ISoundEngine *m_pSndEngine;
+#ifndef NO_IRRKLANG
         irrklang::ISound *m_pEngine,
                          *m_pWind,
                          *m_pWheels;
+#endif
 
         CCockpitCar *m_pCockpit;
 
@@ -103,7 +115,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       private:
         irr::s32 m_iNodeId;
         irr::ode::CIrrOdeBody *m_pHeli;
+#ifndef NO_IRRKLANG
         irrklang::ISound *m_pEngine;
+#endif
         irrklang::ISoundEngine *m_pSndEngine;
 
         CCockpitPlane *m_pCockpit;
@@ -122,7 +136,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
       private:
         irr::s32 m_iNodeId;
         irr::ode::CIrrOdeBody *m_pNode;
+#ifndef NO_IRRKLANG
         irrklang::ISound *m_pEngine;
+#endif
         irrklang::ISoundEngine *m_pSndEngine;
 
       public:
@@ -163,7 +179,9 @@ class CCustomEventReceiver : public irr::ode::IIrrOdeEventListener {
      */
     void hideAnimatedMesh(irr::scene::ISceneNode *pNode);
 
+#ifndef NO_IRRKLANG
     static void updateSound(irrklang::ISound *pSound, irr::ode::CIrrOdeBody *pBody);
+#endif
   public:
     static void setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CIrrOdeManager *pOdeMgr, irrklang::ISoundEngine *pSndEngine);
 

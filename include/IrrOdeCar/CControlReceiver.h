@@ -2,11 +2,17 @@
   #define _C_CONTROL_RECEIVER
 
   #include <irrlicht.h>
-  #include <irrode.h>
+  #include <IrrOde.h>
 
+#ifndef NO_IRRKLANG
 namespace irrklang {
   class ISoundEngine;
 }
+#else
+namespace irrklang {
+  typedef void ISoundEngine;
+}
+#endif
 
 class CCameraController;
 class CIrrOdeCarState;

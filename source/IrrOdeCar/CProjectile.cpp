@@ -6,7 +6,9 @@
   #include <CAdvancedParticleSystemNode.h>
   #include <CAutoPilot.h>
   #include <irrlicht.h>
+#ifndef NO_IRRKLANG
   #include <irrKlang.h>
+#endif
   #include <thread/IThread.h>
   #include <CEventVehicleState.h>
 
@@ -25,7 +27,7 @@ void CProjectile::findParticleSystems(irr::scene::ISceneNode *pNode) {
     }
     if ((*i)->getType()==irr::ode::IRR_ODE_TORQUE_MOTOR_ID) {
       m_pTorque=(irr::ode::CIrrOdeTorqueMotor *)(*i);
-      printf("\t\t**** torque motor: %i!\n",(int)m_pTorque);
+      printf("\t\t**** torque motor: %p!\n",(void *)m_pTorque);
     }
   }
 }

@@ -1,8 +1,10 @@
   #include <irrlicht.h>
-  #include <IrrODE.h>
+  #include <IrrOde.h>
   #include <CSettings.h>
   #include <CAdvancedParticleSystemNode.h>
+#ifndef NO_IRRKLANG
   #include <irrKlang.h>
+#endif
   #include <CRearView.h>
 
   #include <CEventVehicleState.h>
@@ -211,7 +213,11 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       m_pCtrlReceiver = NULL;
 
+#ifndef NO_IRRKLANG
       m_pSndEngine=irrklang::createIrrKlangDevice();
+#else
+      m_pSndEngine=NULL;
+#endif
 
       irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
       irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
@@ -423,10 +429,12 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
       CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
 
+#ifndef NO_IRRKLANG
       //drop the world so it is destroyed
       m_pDevice->drop();
 
       if (m_pSndEngine) m_pSndEngine->drop();
+#endif
 
       //and now some more cleanup...
       for (u32 i=0; i<aStates.size(); i++) {
