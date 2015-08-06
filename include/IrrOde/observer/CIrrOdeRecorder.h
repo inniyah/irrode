@@ -30,7 +30,7 @@ class CIrrOdeRecorder : public IIrrOdeEventListener {
      * @param sAppName the application's name (needed for later identification of the reording application)
      */
     CIrrOdeRecorder(IrrlichtDevice *pDevice, const c8 *sAppName);
-    ~CIrrOdeRecorder();
+    virtual ~CIrrOdeRecorder();
 
     /**
      * Start the recording

@@ -1,0 +1,121 @@
+LIBRARY=libIrrOde
+DIRECTORY=IrrOde
+
+all: $(LIBRARY).a $(LIBRARY).so
+
+MAJOR=0
+MINOR=0
+
+#C_SOURCES = $(shell find . -name "*.c")
+#CPP_SOURCES = $(shell find . -name "*.cpp")
+
+C_SOURCES = 
+
+CPP_SOURCES = \
+	source/$(DIRECTORY)/CIrrOdeBody.cpp \
+	source/$(DIRECTORY)/CIrrOdeContactParameters.cpp \
+	source/$(DIRECTORY)/CIrrOdeDampable.cpp \
+	source/$(DIRECTORY)/CIrrOdeDevice.cpp \
+	source/$(DIRECTORY)/CIrrOdeManager.cpp \
+	source/$(DIRECTORY)/CIrrOdeSceneNode.cpp \
+	source/$(DIRECTORY)/CIrrOdeSceneNodeFactory.cpp \
+	source/$(DIRECTORY)/CIrrOdeSpace.cpp \
+	source/$(DIRECTORY)/CIrrOdeSurfaceParameters.cpp \
+	source/$(DIRECTORY)/CIrrOdeWorld.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventActivationChanged.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventBeforeStep.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventBodyCreated.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventBodyMoved.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventBodyRemoved.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventClose.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventIdentify.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventInit.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventJointHinge.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventJointHinge2.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventJointSlider.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventLoadScene.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventNodeCloned.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventNodeRemoved.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventProgress.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventQueue.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventRayHit.cpp \
+	source/$(DIRECTORY)/event/CIrrOdeEventStep.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeom.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomBox.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomCapsule.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomCylinder.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomHeightfield.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomPlane.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomRay.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomSphere.cpp \
+	source/$(DIRECTORY)/geom/CIrrOdeGeomTrimesh.cpp \
+	source/$(DIRECTORY)/joints/CIrrOdeJoint.cpp \
+	source/$(DIRECTORY)/joints/CIrrOdeJointFixed.cpp \
+	source/$(DIRECTORY)/joints/CIrrOdeJointHinge.cpp \
+	source/$(DIRECTORY)/joints/CIrrOdeJointHinge2.cpp \
+	source/$(DIRECTORY)/joints/CIrrOdeJointSlider.cpp \
+	source/$(DIRECTORY)/motors/CIrrOdeAeroDrag.cpp \
+	source/$(DIRECTORY)/motors/CIrrOdeImpulseMotor.cpp \
+	source/$(DIRECTORY)/motors/CIrrOdeMotor.cpp \
+	source/$(DIRECTORY)/motors/CIrrOdeServo.cpp \
+	source/$(DIRECTORY)/motors/CIrrOdeTorqueMotor.cpp \
+	source/$(DIRECTORY)/observer/CIrrOdeEventFactory.cpp \
+	source/$(DIRECTORY)/observer/CIrrOdeRePlayer.cpp \
+	source/$(DIRECTORY)/observer/CIrrOdeRecorder.cpp \
+	source/$(DIRECTORY)/observer/CIrrOdeWorldObserver.cpp \
+	source/$(DIRECTORY)/thread/CFakeThread.cpp
+
+SHARED_OBJS = $(C_SOURCES:.c=.shared.o) $(CPP_SOURCES:.cpp=.shared.o)
+STATIC_OBJS = $(C_SOURCES:.c=.static.o) $(CPP_SOURCES:.cpp=.static.o)
+
+PKG_CONFIG=
+PKG_CONFIG_CFLAGS=`pkg-config --cflags $(PKG_CONFIG) 2>/dev/null`
+PKG_CONFIG_LIBS=`pkg-config --libs $(PKG_CONFIG) 2>/dev/null`
+
+CFLAGS=-O2 -g -Wall 
+STATIC_CFLAGS= -O2 -g -Wall $(CFLAGS)
+SHARED_CFLAGS= $(STATIC_CFLAGS) -fPIC
+
+LDFLAGS = -Wl,-z,defs -Wl,--as-needed -Wl,--no-undefined
+DEFS = 
+INCS = -I/usr/include/irrlicht/ -Iinclude/$(DIRECTORY)/
+LIBS = -lIrrlicht -lode
+
+$(LIBRARY).so.$(MAJOR).$(MINOR): $(SHARED_OBJS)
+	g++ $(LDFLAGS) -shared \
+		-Wl,-soname,$(LIBRARY).so.$(MAJOR) \
+		-o $(LIBRARY).so.$(MAJOR).$(MINOR) \
+		$+ -o $@ $(LIBS) $(PKG_CONFIG_LIBS)
+
+$(LIBRARY).so: $(LIBRARY).so.$(MAJOR).$(MINOR)
+	rm -f $@.$(MAJOR)
+	ln -s $@.$(MAJOR).$(MINOR) $@.$(MAJOR)
+	rm -f $@
+	ln -s $@.$(MAJOR) $@
+
+$(LIBRARY).a: $(STATIC_OBJS)
+	ar cru $@ $+
+
+%.shared.o: %.cpp
+	g++ -o $@ -c $+ $(DEFS) $(INCS) $(SHARED_CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+%.shared.o: %.c
+	gcc -o $@ -c $+ $(DEFS) $(INCS) $(SHARED_CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+%.so : %.o
+	g++ $(LDFLAGS) -shared $^ -o $@
+
+%.static.o: %.cpp
+	g++ -o $@ -c $+ $(DEFS) $(INCS) $(STATIC_CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+%.static.o: %.c
+	gcc -o $@ -c $+ $(DEFS) $(INCS) $(STATIC_CFLAGS) $(PKG_CONFIG_CFLAGS)
+
+clean:
+	rm -fv $(SHARED_OBJS)
+	rm -fv $(STATIC_OBJS)
+	rm -fv $(LIBRARY).a $(LIBRARY).so $(LIBRARY).so.$(MAJOR) $(LIBRARY).so.$(MAJOR).$(MINOR)
+	rm -fv `find source/$(DIRECTORY)/ -name "*.so"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*.so*"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*.a"`
+	rm -fv `find source/$(DIRECTORY)/ -name "*~"`
