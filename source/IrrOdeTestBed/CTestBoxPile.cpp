@@ -6,7 +6,7 @@ CTestBoxPile::CTestBoxPile(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : ISt
 }
 
 void CTestBoxPile::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_boxpile.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_boxpile.xml");
 
   //init the ODE
   m_pOdeMngr->initODE();

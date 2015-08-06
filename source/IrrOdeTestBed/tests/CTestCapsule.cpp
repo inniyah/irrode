@@ -6,7 +6,7 @@ CTestCapsule::CTestCapsule(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : ISt
 }
 
 void CTestCapsule::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_capsule.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_capsule.xml");
 
   //init the ODE
   m_pOdeMngr->initODE();

@@ -6,7 +6,7 @@ CTestPlane::CTestPlane(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : IState(
 }
 
 void CTestPlane::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_plane.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_plane.xml");
 
   m_pObject =reinterpret_cast<irr::ode::CIrrOdeBody         *>(m_pSmgr->getSceneNodeFromName("plane"      ));
   m_pMotor  =reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("aero_motor" ));

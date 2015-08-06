@@ -30,7 +30,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pCam->setProjectionMatrix(m_pCam->getProjectionMatrix(), true);
   m_pRttSmgr->setActiveCamera(m_pCam);
 
-  irr::scene::IMesh *p=m_pRttSmgr->getMesh("../../data/models/horizon.obj");
+  irr::scene::IMesh *p=m_pRttSmgr->getMesh(DATADIR "/models/horizon.obj");
 
   if (p) {
     m_pHorizon=m_pRttSmgr->addMeshSceneNode(p);
@@ -42,7 +42,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
 
   m_pTab=m_pGuienv->addTab(irr::core::rect<irr::s32>(0,0,512,512));
   m_pGuienv->addImage(m_pElement,irr::core::position2di(224,10),true,m_pTab);
-  m_pGuienv->addImage(m_pDrv->getTexture("../../data/instruments/horizon_mask.png"),irr::core::position2di(224,10),true,m_pTab); //424
+  m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/instruments/horizon_mask.png"),irr::core::position2di(224,10),true,m_pTab); //424
 
   //plane warnlights
   {
@@ -60,7 +60,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
       char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
       for (irr::u32 j=0; j<4; j++) {
         char s[0xFF];
-        sprintf(s,"../../data/warnlights/%s_%s.png",sNames[i],sExts[j]);
+        sprintf(s,DATADIR "/warnlights/%s_%s.png",sNames[i],sExts[j]);
         m_pWarnTexPlane[i][j]=m_pDrv->getTexture(s);
       }
       m_pWarnImgPlane[i]=m_pGuienv->addImage(m_pWarnTexPlane[i][0],cWarnPos[i],true,m_pPlaneWarnings);
@@ -80,7 +80,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
       char sExts[][0xFF]={ "grey", "green", "yellow", "red" };
       for (irr::u32 j=0; j<4; j++) {
         char s[0xFF];
-        sprintf(s,"../../data/warnlights/heli_%s_%s.png",sNames[i],sExts[j]);
+        sprintf(s,DATADIR "/warnlights/heli_%s_%s.png",sNames[i],sExts[j]);
         m_pWarnTexHeli[i][j]=m_pDrv->getTexture(s);
       }
       m_pWarnImgHeli[i]=m_pGuienv->addImage(m_pWarnTexHeli[i][0],cWarnPos[i],true,m_pHeliWarnings);
@@ -88,12 +88,12 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   }
 
   char sInstruments[][0xFF]={
-    "../../data/instruments/speed.png",
-    "../../data/instruments/altitude.png",
-    "../../data/instruments/heading.png",
-    "../../data/instruments/power.png",
-    "../../data/instruments/vario.png",
-    "../../data/instruments/speed_heli.png"
+    DATADIR "/instruments/speed.png",
+    DATADIR "/instruments/altitude.png",
+    DATADIR "/instruments/heading.png",
+    DATADIR "/instruments/power.png",
+    DATADIR "/instruments/vario.png",
+    DATADIR "/instruments/speed_heli.png"
   };
   irr::core::recti cRect[]={
     irr::core::recti(irr::core::position2di( 84, 10),irr::core::dimension2di(128,128)),
@@ -143,7 +143,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
 
   irr::gui::IGUITabControl *pTab=m_pGuienv->addTabControl(irr::core::rect<irr::s32>(irr::core::position2di(10,148),irr::core::dimension2du(202,128)),m_pTab,true,true);
 
-  irr::gui::IGUIFont *pFont=m_pGuienv->getFont("../../data/bigfont.png");
+  irr::gui::IGUIFont *pFont=m_pGuienv->getFont(DATADIR "/bigfont.png");
 
   m_pWeaponInfo = m_pGuienv->addTab(irr::core::rect<irr::s32>(10, 10, 185, 125), pTab);
 
@@ -189,7 +189,7 @@ CCockpitPlane::CCockpitPlane(irr::IrrlichtDevice *pDevice, const char *sName, ir
   m_pLapInfo   ->setVisible(false);
   m_pApInfo    ->setVisible(false);
 
-  m_pGuienv->addImage(m_pDrv->getTexture("../../data/dustbin.png"),irr::core::position2di(169,96),true,pTab);
+  m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/dustbin.png"),irr::core::position2di(169,96),true,pTab);
   m_pTab->setVisible(false);
 
   m_fAltitude=0.0f;

@@ -67,8 +67,8 @@ void CCustomEventReceiver::setMembers(irr::IrrlichtDevice *pDevice, irr::ode::CI
   CCustomEventReceiver::getSharedInstance()->m_pOdeManager=pOdeMgr;
   CCustomEventReceiver::getSharedInstance()->m_pSndEngine=pSndEngine;
 
-  CCustomEventReceiver::getSharedInstance()->m_pRearLights[0]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_off.png");
-  CCustomEventReceiver::getSharedInstance()->m_pRearLights[1]=pDevice->getVideoDriver()->getTexture("../../data/textures/bl_on.png");
+  CCustomEventReceiver::getSharedInstance()->m_pRearLights[0]=pDevice->getVideoDriver()->getTexture(DATADIR "/textures/bl_off.png");
+  CCustomEventReceiver::getSharedInstance()->m_pRearLights[1]=pDevice->getVideoDriver()->getTexture(DATADIR "/textures/bl_on.png");
 }
 
 CCustomEventReceiver *CCustomEventReceiver::getSharedInstance() {
@@ -183,13 +183,13 @@ bool CCustomEventReceiver::onEvent(irr::ode::IIrrOdeEvent *pEvent) {
     char s[0xFF]="";
 
     switch (p->getSound()) {
-      case CEventFireSound::eSndCrash    : strcpy(s,"../../data/sound/crash.ogg"  ); break;
-      case CEventFireSound::eSndExplode  : strcpy(s,"../../data/sound/explode.ogg"); break;
-      case CEventFireSound::eSndFireShell: strcpy(s,"../../data/sound/shot.ogg"   ); break;
-      case CEventFireSound::eSndSkid     : strcpy(s,"../../data/sound/skid.ogg"   ); break;
-      case CEventFireSound::eSndBell     : strcpy(s,"../../data/sound/bell.ogg"   ); break;
-      case CEventFireSound::eSndShift    : strcpy(s,"../../data/sound/shift.ogg"  ); break;
-      case CEventFireSound::eSndCreaky   : strcpy(s,"../../data/sound/creaky.ogg" ); break;
+      case CEventFireSound::eSndCrash    : strcpy(s,DATADIR "/sound/crash.ogg"  ); break;
+      case CEventFireSound::eSndExplode  : strcpy(s,DATADIR "/sound/explode.ogg"); break;
+      case CEventFireSound::eSndFireShell: strcpy(s,DATADIR "/sound/shot.ogg"   ); break;
+      case CEventFireSound::eSndSkid     : strcpy(s,DATADIR "/sound/skid.ogg"   ); break;
+      case CEventFireSound::eSndBell     : strcpy(s,DATADIR "/sound/bell.ogg"   ); break;
+      case CEventFireSound::eSndShift    : strcpy(s,DATADIR "/sound/shift.ogg"  ); break;
+      case CEventFireSound::eSndCreaky   : strcpy(s,DATADIR "/sound/creaky.ogg" ); break;
     }
 
 #ifndef NO_IRRKLANG
@@ -359,9 +359,9 @@ CCustomEventReceiver::CCarNodes::CCarNodes(irr::scene::ISceneNode *pCar, irrklan
   m_iNodeId=pCar->getID();
 
 #ifndef NO_IRRKLANG
-  m_pEngine = m_pSndEngine->play3D("../../data/sound/car.ogg"    ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  m_pWind   = m_pSndEngine->play3D("../../data/sound/wind.ogg"   ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
-  m_pWheels = m_pSndEngine->play3D("../../data/sound/rolling.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pEngine = m_pSndEngine->play3D(DATADIR "/sound/car.ogg"    ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pWind   = m_pSndEngine->play3D(DATADIR "/sound/wind.ogg"   ,irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pWheels = m_pSndEngine->play3D(DATADIR "/sound/rolling.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
 
   if (m_pEngine) m_pEngine->setMinDistance(25.0f); else printf("\n\t\t**** oops 1\n\n");
   if (m_pWind  ) m_pWind  ->setMinDistance( 0.0f); else printf("\n\t\t**** oops 2\n\n");
@@ -506,9 +506,9 @@ CCustomEventReceiver::CPlaneNodes::CPlaneNodes(irr::scene::ISceneNode *pPlane, i
 
   m_iNodeId=pPlane->getID();
 #ifndef NO_IRRKLANG
-  m_pEngine=m_pSndEngine->play3D("../../data/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pEngine=m_pSndEngine->play3D(DATADIR "/sound/plane.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pEngine) m_pEngine->setMinDistance(25.0f);
-  m_pWind = m_pSndEngine->play3D("../../data/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pWind = m_pSndEngine->play3D(DATADIR "/sound/wind.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pWind) m_pWind->setMinDistance(0.0f); else printf("\n\t\t**** oops\n\n");
 #endif
   m_pPlane=reinterpret_cast<ode::CIrrOdeBody *>(pPlane);
@@ -584,7 +584,7 @@ CCustomEventReceiver::CHeliNodes::CHeliNodes(irr::scene::ISceneNode *pHeli, irrk
   m_pHeli=reinterpret_cast<ode::CIrrOdeBody *>(pHeli);
 
 #ifndef NO_IRRKLANG
-  m_pEngine=m_pSndEngine->play3D("../../data/sound/heli.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pEngine=m_pSndEngine->play3D(DATADIR "/sound/heli.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
 
   if (m_pEngine) {
     m_pEngine->setMaxDistance(200.0f);
@@ -652,7 +652,7 @@ CCustomEventReceiver::CTankNodes::CTankNodes(irr::scene::ISceneNode *pTank, irrk
   m_iNodeId=pTank->getID();
   m_pTank=reinterpret_cast<ode::CIrrOdeBody *>(pTank);
 #ifndef NO_IRRKLANG
-  m_pEngine=m_pSndEngine->play3D("../../data/sound/tank.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
+  m_pEngine=m_pSndEngine->play3D(DATADIR "/sound/tank.ogg",irrklang::vec3df(0.0f,0.0f,0.0f),true,true);
   if (m_pEngine) {
     m_pEngine->setVolume(0.5f);
     m_pEngine->setMinDistance(100.0f);
@@ -707,7 +707,7 @@ CCustomEventReceiver::CMissileNodes::CMissileNodes(irr::scene::ISceneNode *pMiss
   m_iNodeId=p->getNewId();
   m_pNode=reinterpret_cast<ode::CIrrOdeBody *>(pMissile);
 #ifndef NO_IRRKLANG
-  m_pEngine=m_pSndEngine->play3D("../../data/sound/missile.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),true,true);
+  m_pEngine=m_pSndEngine->play3D(DATADIR "/sound/missile.ogg",irrklang::vec3df(vPos.X,vPos.Y,vPos.Z),true,true);
   m_pEngine->setIsPaused(false);
 #endif
 }

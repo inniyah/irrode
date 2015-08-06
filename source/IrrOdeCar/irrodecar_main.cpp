@@ -94,7 +94,7 @@ class CProgress : public ode::IIrrOdeEventListener {
 
       m_pImg=m_pGuienv->addImage(core::rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
       m_pImg->setScaleImage(true);
-      m_pImg->setImage(m_pDriver->getTexture("../../data/textures/standby.png"));
+      m_pImg->setImage(m_pDriver->getTexture(DATADIR "/textures/standby.png"));
 
       m_pBar=new CProgressBar(m_pGuienv,core::rect<s32>(core::position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),core::dimension2di(300,30)),-1,NULL);
       m_pText=m_pGuienv->addStaticText(L"",core::rect<s32>(core::position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),core::dimension2di(300,30)),true);
@@ -262,7 +262,7 @@ class CIrrOdeCar : public IEventReceiver {
       ode::CIrrOdeManager::getSharedInstance()->initODE();
 
       //load the scene
-      ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",m_pSmgr);
+      ode::CIrrOdeManager::getSharedInstance()->loadScene(DATADIR "/scenes/IrrOdeCar.xml",m_pSmgr);
 
       for (u32 i=0; i<m_pSmgr->getMeshCache()->getMeshCount(); i++) {
         scene::IAnimatedMesh *p=m_pSmgr->getMeshCache()->getMeshByIndex(i);
@@ -354,8 +354,8 @@ class CIrrOdeCar : public IEventReceiver {
           printf("\n**** compiling GLSL shader ... \n\n");
           CShaderCallBack *pCallback=new CShaderCallBack(m_pDevice);
           s32 iNewMaterial=pGpu->addHighLevelShaderMaterialFromFiles(
-              "../../data/shaders/opengl.vert","vertexMain", video::EVST_VS_1_1,
-              "../../data/shaders/opengl.frag", "pixelMain", video::EPST_PS_1_1,
+              DATADIR "/shaders/opengl.vert","vertexMain", video::EVST_VS_1_1,
+              DATADIR "/shaders/opengl.frag", "pixelMain", video::EPST_PS_1_1,
               pCallback,video::EMT_SOLID);
 
           replaceMaterials(m_pSmgr->getRootSceneNode(),iNewMaterial);
@@ -430,7 +430,7 @@ class CIrrOdeCar : public IEventReceiver {
 
       ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
-      CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
+      CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,DATADIR "/irrOdeCarControls.xml");
 
 #ifndef NO_IRRKLANG
       //drop the world so it is destroyed
@@ -454,7 +454,7 @@ class CIrrOdeCar : public IEventReceiver {
 
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
-  CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",video::SColor(0x00,0x21,0xAD,0x10));
+  CSettings *pSettings=new CSettings(DATADIR "/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",video::SColor(0x00,0x21,0xAD,0x10));
 
   pSettings->setMinResolution(core::dimension2du(640,480));
 

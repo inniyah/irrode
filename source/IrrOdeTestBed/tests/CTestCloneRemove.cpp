@@ -13,7 +13,7 @@ void CTestCloneRemove::activate() {
   m_btnRemoveDynamic=m_pGui->addButton(irr::core::rect<irr::s32>(cPos,cDim),NULL,-1,L"Remove Dynamic"); cPos.Y+=50;
   m_btnClone        =m_pGui->addButton(irr::core::rect<irr::s32>(cPos,cDim),NULL,-1,L"Clone Object"  ); cPos.Y+=25;
   m_btnRemovecloned =m_pGui->addButton(irr::core::rect<irr::s32>(cPos,cDim),NULL,-1,L"Remove Cloned" ); cPos.Y+=25;
-  m_pSmgr->loadScene("../../data/scenes/Testbed_cloneRemove.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_cloneRemove.xml");
 
   m_pWorld   =reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("world"   ));
   m_pTemplate=reinterpret_cast<irr::ode::CIrrOdeBody  *>(m_pSmgr->getSceneNodeFromName("template"));

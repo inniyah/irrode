@@ -6,7 +6,7 @@ CTestSlipstream::CTestSlipstream(irr::IrrlichtDevice *pDevice, IRunner *pRunner)
 }
 
 void CTestSlipstream::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_slipstream.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_slipstream.xml");
 
   m_pWorld = reinterpret_cast<irr::ode::CIrrOdeWorld *>(m_pSmgr->getSceneNodeFromName("world"));
   printf("world=%i\n",(int)m_pWorld);

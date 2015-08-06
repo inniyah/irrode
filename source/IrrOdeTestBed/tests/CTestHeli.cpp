@@ -6,7 +6,7 @@ CTestHeli::CTestHeli(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : IState(pD
 }
 
 void CTestHeli::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_heli.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_heli.xml");
 
   m_pObject =reinterpret_cast<irr::ode::CIrrOdeBody         *>(m_pSmgr->getSceneNodeFromName("heli"       ));
   m_pMotor  =reinterpret_cast<irr::ode::CIrrOdeImpulseMotor *>(m_pSmgr->getSceneNodeFromName("aero_motor" ));

@@ -6,7 +6,7 @@ CTestHelloWorld::CTestHelloWorld(irr::IrrlichtDevice *pDevice, IRunner *pRunner)
 }
 
 void CTestHelloWorld::activate() {
-  m_pSmgr->loadScene("../../data/IrrOdEdit_example.xml");
+  m_pSmgr->loadScene(DATADIR "/IrrOdEdit_example.xml");
 
   //init the ODE
   m_pOdeMngr->initODE();

@@ -6,7 +6,7 @@ CTestCar::CTestCar(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : IState(pDev
 }
 
 void CTestCar::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_car.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_car.xml");
 
   m_pCam=m_pSmgr->addCameraSceneNode();
 

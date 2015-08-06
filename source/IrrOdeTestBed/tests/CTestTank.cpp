@@ -6,7 +6,7 @@ CTestTank::CTestTank(irr::IrrlichtDevice *pDevice, IRunner *pRunner) : IState(pD
 }
 
 void CTestTank::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_tank.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_tank.xml");
 
   m_pCam=m_pSmgr->addCameraSceneNode();
 

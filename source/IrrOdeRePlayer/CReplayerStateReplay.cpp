@@ -16,7 +16,7 @@ CReplayerStateReplay::CReplayerStateReplay(irr::IrrlichtDevice *pDevice, const i
   m_bSceneLoaded=false;
   strcpy(m_sReplay,sReplay);
   m_iRet=0;
-  m_pFont=m_pDevice->getGUIEnvironment()->getFont("../../data/font2.xml");
+  m_pFont=m_pDevice->getGUIEnvironment()->getFont(DATADIR "/font2.xml");
   m_iDirection = 0;
   m_iPos = 0;
 

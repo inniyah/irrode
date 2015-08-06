@@ -6,7 +6,7 @@ CTestFastMoving::CTestFastMoving(irr::IrrlichtDevice *pDevice, IRunner *pRunner)
 }
 
 void CTestFastMoving::activate() {
-  m_pSmgr->loadScene("../../data/scenes/Testbed_fast.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_fast.xml");
 
   //init the ODE
   m_pOdeMngr->initODE();

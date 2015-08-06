@@ -122,7 +122,7 @@ CControlReceiver::CControlReceiver(irr::IrrlichtDevice *pDevice, irrklang::ISoun
 
   initControls();
 
-  CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
+  CConfigFileManager::getSharedInstance()->loadConfig(m_pDevice,DATADIR "/irrOdeCarControls.xml");
   m_pMenu = new CMenu(m_pDevice); m_aStates.push_back(m_pMenu);
   m_pActive = m_pMenu;
 
@@ -356,7 +356,7 @@ bool CControlReceiver::OnEvent(const irr::SEvent &event) {
           else {
             printf("stopping recording...\n");
             m_pRecorder->stopRecording();
-            m_pRecorder->saveRecording("../../data/replay/car.rec");
+            m_pRecorder->saveRecording(DATADIR "/replay/car.rec");
             delete m_pRecorder;
             m_pRecorder=NULL;
             m_pRecording->setVisible(false);

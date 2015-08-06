@@ -14,8 +14,8 @@ CMenu::CMenu(irr::IrrlichtDevice *pDevice) : CIrrOdeCarState(pDevice,L"Vehicle S
   //create the buttons necessary to select the vehicle to control
   b=m_pGuiEnv->addButton(irr::core::rect<irr::s32>(m_cPos,m_cDim),m_pTab,m_iIdx++,L"");
 
-  b->setImage       (m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_off.png"));
-  b->setPressedImage(m_pDevice->getVideoDriver()->getTexture("../../data/textures/buttons/controls_on.png" ));
+  b->setImage       (m_pDevice->getVideoDriver()->getTexture(DATADIR "/textures/buttons/controls_off.png"));
+  b->setPressedImage(m_pDevice->getVideoDriver()->getTexture(DATADIR "/textures/buttons/controls_on.png" ));
   b->setUseAlphaChannel(true);
 
   m_aButtons.push_back(b);
@@ -113,7 +113,7 @@ void CMenu::addButtonForState(CIrrOdeCarState *pState) {
 
   m_iIdx++;
 
-  irr::core::stringw sBtn = "../../data/textures/buttons/";
+  irr::core::stringw sBtn = DATADIR "/textures/buttons/";
   sBtn += pState->getButton();
 
   irr::core::stringw sOn  = sBtn+"_on.png",

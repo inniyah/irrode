@@ -1201,8 +1201,8 @@ CVehicle::CTank::CTank(irr::IrrlichtDevice *pDevice, irr::scene::ISceneNode *pNo
     m_fCannonUp   =0.0f;
     m_fCannonLeft =0.0f;
 
-    m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture("../../data/target.jpg");
-    m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture("../../data/target1.jpg");
+    m_pTextures[0]=m_pDevice->getVideoDriver()->getTexture(DATADIR "/target.jpg");
+    m_pTextures[1]=m_pDevice->getVideoDriver()->getTexture(DATADIR "/target1.jpg");
 
     irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->addEventListener(this);
     m_bInitialized=true;

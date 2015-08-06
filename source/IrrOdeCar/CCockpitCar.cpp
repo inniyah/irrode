@@ -19,14 +19,14 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
   m_pGuienv->addStaticText(L"The Car",irr::core::rect<irr::s32>(5,400,105,25),false,true,m_pTab);
 
   m_pMeter=new irr::gui::CGUINeedleIndicator(m_pGuienv,m_pTab,-1,irr::core::rect<irr::s32>(irr::core::position2di(128,128),irr::core::dimension2di(256,256)));
-  m_pMeter->setBackground(m_pDrv->getTexture("../../data/car/speed_meter.png"));
+  m_pMeter->setBackground(m_pDrv->getTexture(DATADIR "/car/speed_meter.png"));
   m_pMeter->addNeedle(irr::video::SColor(0xFF,0,0,0),0.7f,0.02f,1.0f);
   m_pMeter->setRange(0.0f,100.0f);
   m_pMeter->setAngleRange(0.0f,270.0f);
   m_pMeter->setAngleOffset(90.0f);
 
   m_pRpm=new irr::gui::CGUINeedleIndicator(m_pGuienv,m_pTab,-1,irr::core::rect<irr::s32>(irr::core::position2di(0,0),irr::core::dimension2di(128,128)));
-  m_pRpm->setBackground(m_pDrv->getTexture("../../data/car/rpm.png"));
+  m_pRpm->setBackground(m_pDrv->getTexture(DATADIR "/car/rpm.png"));
   m_pRpm->addNeedle(irr::video::SColor(0xFF,0,0,0),0.7f,0.02f,1.0f);
   m_pRpm->setRange(0.25f,1.75f);
   m_pRpm->setAngleRange(0.0f,270.0f);
@@ -34,27 +34,27 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
 
   m_pDiff=new irr::gui::CGUINeedleIndicator(m_pGuienv,m_pTab,-1,irr::core::rect<irr::s32>(irr::core::position2di(128,0),irr::core::dimension2di(128,128)));
   m_pDiff->addNeedle(irr::video::SColor(0xFF,0,0,0),0.7f,0.02f,1.0f);
-  m_pDiff->setBackground(m_pDrv->getTexture("../../data/car/differential.png"));
+  m_pDiff->setBackground(m_pDrv->getTexture(DATADIR "/car/differential.png"));
   m_pDiff->setRange(-150.0f,150.0f);
   m_pDiff->setAngleRange(-85.0f,85.0f);
   m_pDiff->setAngleOffset(180.0f);
 
-  m_pAdaptRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/adapt_red.png" ),irr::core::position2di(138,300),true,m_pTab);
-  m_pAdaptGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/adapt_gray.png"),irr::core::position2di(138,300),true,m_pTab);
+  m_pAdaptRed =m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/adapt_red.png" ),irr::core::position2di(138,300),true,m_pTab);
+  m_pAdaptGray=m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/adapt_gray.png"),irr::core::position2di(138,300),true,m_pTab);
 
-  m_pShiftRed =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_red.png" ),irr::core::position2di(170,300),true,m_pTab);
-  m_pShiftGray=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/shift_gray.png"),irr::core::position2di(170,300),true,m_pTab);
+  m_pShiftRed =m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/shift_red.png" ),irr::core::position2di(170,300),true,m_pTab);
+  m_pShiftGray=m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/shift_gray.png"),irr::core::position2di(170,300),true,m_pTab);
 
-  m_pBoostYellow=m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_yellow.png"),irr::core::position2di(202,300),true,m_pTab);
-  m_pBoostGray  =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_gray.png"  ),irr::core::position2di(202,300),true,m_pTab);
-  m_pBoostGreen =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_green.png" ),irr::core::position2di(202,300),true,m_pTab);
-  m_pBoostRed   =m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/boost_red.png"   ),irr::core::position2di(202,300),true,m_pTab);
+  m_pBoostYellow=m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/boost_yellow.png"),irr::core::position2di(202,300),true,m_pTab);
+  m_pBoostGray  =m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/boost_gray.png"  ),irr::core::position2di(202,300),true,m_pTab);
+  m_pBoostGreen =m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/boost_green.png" ),irr::core::position2di(202,300),true,m_pTab);
+  m_pBoostRed   =m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/boost_red.png"   ),irr::core::position2di(202,300),true,m_pTab);
 
   irr::core::position2di cPos = irr::core::position2di(146, 334);
 
   for (irr::u32 i = 0; i < 10; i++) {
-    m_pBoost[i][0] = m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/spot_green.png"), cPos, true, m_pTab);
-    m_pBoost[i][1] = m_pGuienv->addImage(m_pDrv->getTexture("../../data/car/spot_red.png"  ), cPos, true, m_pTab);
+    m_pBoost[i][0] = m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/spot_green.png"), cPos, true, m_pTab);
+    m_pBoost[i][1] = m_pGuienv->addImage(m_pDrv->getTexture(DATADIR "/car/spot_red.png"  ), cPos, true, m_pTab);
     m_pBoost[i][1]->setVisible(false);
     cPos.X += 8;
   }
@@ -64,7 +64,7 @@ CCockpitCar::CCockpitCar(irr::IrrlichtDevice *pDevice, const char *sName, irr::s
 
   for (irr::u32 i = 0; i < 7; i++) {
     irr::c8 s[0xFF];
-    sprintf(s, "../../data/car/gear_%i.png",i);
+    sprintf(s, DATADIR "/car/gear_%i.png",i);
     m_pGear[i] = m_pGuienv->addImage(m_pDrv->getTexture(s), irr::core::position2di(323,323), true, m_pTab);
     m_pGear[i]->setVisible(false);
   }

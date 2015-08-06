@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
   irr::ode::CIrrOdeSceneNodeFactory cFactory(smgr);
   smgr->registerSceneNodeFactory(&cFactory);
 
-  smgr->loadScene("../../data/IrrOdEdit_example.xml");
+  smgr->loadScene(DATADIR "/IrrOdEdit_example.xml");
 
   //init the ODE
   irr::ode::CIrrOdeManager::getSharedInstance()->initODE();

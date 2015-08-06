@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
     pPlugin = NULL;
   }
 
-  IState *pActiveState=new CReplayerStateReplay(device,"../../data/replay/car.rec", pPlugin);
+  IState *pActiveState=new CReplayerStateReplay(device,DATADIR "/replay/car.rec", pPlugin);
   pActiveState->activate();
 
   irr::u32 iRet=0;

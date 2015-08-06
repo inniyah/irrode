@@ -1,6 +1,7 @@
 PROGRAM=IrrOdeCar
 LIBRARY=libIrrOde
 DIRECTORY=IrrOdeCar
+DATADIR=./data
 
 all: $(LIBRARY).a $(LIBRARY).so $(PROGRAM)
 
@@ -50,7 +51,7 @@ PKG_CONFIG_LIBS=`pkg-config --libs $(PKG_CONFIG) 2>/dev/null`
 
 CFLAGS= -O2 -g -Wall
 LDFLAGS= -Wl,-z,defs -Wl,--as-needed -Wl,--no-undefined
-DEFS = -DNO_IRRKLANG
+DEFS = -DNO_IRRKLANG -DDATADIR=\"$(DATADIR)\"
 
 INCS = -I/usr/include/irrlicht/ -Iinclude/IrrOde/ -Iinclude/$(DIRECTORY)/ -Iinclude/$(DIRECTORY)/CodeSnippets/ -Iinclude/$(DIRECTORY)/RoadCreator/
 LIBS = -lIrrlicht -lode -L. -lIrrOde

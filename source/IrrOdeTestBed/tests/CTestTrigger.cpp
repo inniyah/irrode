@@ -9,7 +9,7 @@ void CTestTrigger::activate() {
   m_lblTrigger[0]=m_pGui->addStaticText(L"Trigger1",irr::core::rect<irr::s32>(10,10,110,30),true,true,NULL,-1,true);
   m_lblTrigger[1]=m_pGui->addStaticText(L"Trigger2",irr::core::rect<irr::s32>(10,40,110,60),true,true,NULL,-1,true);
   m_lblTrigger[2]=m_pGui->addStaticText(L"Trigger3",irr::core::rect<irr::s32>(10,70,110,90),true,true,NULL,-1,true);
-  m_pSmgr->loadScene("../../data/scenes/Testbed_trigger.xml");
+  m_pSmgr->loadScene(DATADIR "/scenes/Testbed_trigger.xml");
 
   //init the ODE
   m_pOdeMngr->initODE();
