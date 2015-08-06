@@ -1,7 +1,6 @@
   #include <irrlicht.h>
   #include <IrrOde.h>
   #include <CSettings.h>
-  #include <CAdvancedParticleSystemNode.h>
 #ifndef NO_IRRKLANG
   #include <irrKlang.h>
 #endif
@@ -21,6 +20,8 @@
   #include <CControlReceiver.h>
   #include <CCameraController.h>
   #include <thread/IThread.h>
+
+using namespace irr;
 
 video::SColor g_cFogColor=video::SColor(0xFF,0x3A,0x34,0x00);
 f32 g_fMinFog=1750.0f,
@@ -72,14 +73,14 @@ class CShaderCallBack : public video::IShaderConstantSetCallBack {
     }
 };
 
-class CProgress : public irr::ode::IIrrOdeEventListener {
+class CProgress : public ode::IIrrOdeEventListener {
   protected:
     IrrlichtDevice *m_pDevice;
-    IVideoDriver *m_pDriver;
-    IGUIEnvironment *m_pGuienv;
+    video::IVideoDriver *m_pDriver;
+    gui::IGUIEnvironment *m_pGuienv;
 
-    IGUIImage *m_pImg;
-    IGUIStaticText *m_pText;
+    gui::IGUIImage *m_pImg;
+    gui::IGUIStaticText *m_pText;
     CProgressBar *m_pBar;
 
   public:
@@ -89,33 +90,33 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       m_pGuienv=pDevice->getGUIEnvironment();
 
       //let's add a "please stand by" image filling the complete window / screen
-      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+      core::dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
 
-      m_pImg=m_pGuienv->addImage(rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
+      m_pImg=m_pGuienv->addImage(core::rect<s32>(0,0,cScreenSize.Width,cScreenSize.Height));
       m_pImg->setScaleImage(true);
       m_pImg->setImage(m_pDriver->getTexture("../../data/textures/standby.png"));
 
-      m_pBar=new CProgressBar(m_pGuienv,rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),-1,NULL);
-      m_pText=m_pGuienv->addStaticText(L"",rect<s32>(position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),dimension2di(300,30)),true);
-      m_pText->setBackgroundColor(SColor(192,192,192,192));
+      m_pBar=new CProgressBar(m_pGuienv,core::rect<s32>(core::position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),core::dimension2di(300,30)),-1,NULL);
+      m_pText=m_pGuienv->addStaticText(L"",core::rect<s32>(core::position2di(cScreenSize.Width/2-150,cScreenSize.Height-60),core::dimension2di(300,30)),true);
+      m_pText->setBackgroundColor(video::SColor(192,192,192,192));
       m_pText->setDrawBackground(true);
-      m_pText->setTextAlignment(irr::gui::EGUIA_CENTER,irr::gui::EGUIA_CENTER);
+      m_pText->setTextAlignment(gui::EGUIA_CENTER,gui::EGUIA_CENTER);
 
-      irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->addEventListener(this);
+      ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->addEventListener(this);
     }
 
     virtual ~CProgress() {
       m_pImg->remove();
       m_pText->remove();
       m_pBar->remove();
-      irr::ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->removeEventListener(this);
+      ode::CIrrOdeManager::getSharedInstance()->getIrrThread()->getInputQueue()->removeEventListener(this);
     }
 
-    virtual bool onEvent(irr::ode::IIrrOdeEvent *pEvent) {
+    virtual bool onEvent(ode::IIrrOdeEvent *pEvent) {
       bool bRet=false;
 
-      if (pEvent->getType()==irr::ode::eIrrOdeEventProgress) {
-        irr::ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<irr::ode::CIrrOdeEventProgress *>(pEvent);
+      if (pEvent->getType()==ode::eIrrOdeEventProgress) {
+        ode::CIrrOdeEventProgress *pEvt=reinterpret_cast<ode::CIrrOdeEventProgress *>(pEvent);
         wchar_t s[0xFF];
 
         if (pEvt->getCount()==0) {
@@ -128,7 +129,7 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
           m_pBar->setProgress(100*pEvt->getCurrent()/pEvt->getCount());
         }
 
-        m_pDriver->beginScene(true, true, SColor(0,200,200,200));
+        m_pDriver->beginScene(true, true, video::SColor(0,200,200,200));
         m_pGuienv->drawAll();
         m_pDriver->endScene();
       }
@@ -136,8 +137,8 @@ class CProgress : public irr::ode::IIrrOdeEventListener {
       return bRet;
     }
 
-    virtual bool handlesEvent(irr::ode::IIrrOdeEvent *pEvent) {
-      return pEvent->getType()==irr::ode::eIrrOdeEventProgress;
+    virtual bool handlesEvent(ode::IIrrOdeEvent *pEvent) {
+      return pEvent->getType()==ode::eIrrOdeEventProgress;
     }
 };
 
@@ -147,8 +148,8 @@ void enableFog(scene::ISceneNode *pNode) {
       pNode->getMaterial(i).setFlag(video::EMF_FOG_ENABLE,true);
     }
 
-  core::list<ISceneNode *> lChildList=pNode->getChildren();
-  core::list<ISceneNode *>::Iterator it;
+  core::list<scene::ISceneNode *> lChildList=pNode->getChildren();
+  core::list<scene::ISceneNode *>::Iterator it;
 
   for (it=lChildList.begin(); it!=lChildList.end(); it++) enableFog(*it);
 }
@@ -169,9 +170,9 @@ void replaceMaterials(scene::ISceneNode *pNode, s32 iNewMaterial) {
   }
 }
 
-class CIrrOdeCar : public irr::IEventReceiver {
+class CIrrOdeCar : public IEventReceiver {
   private:
-    irr::IrrlichtDevice *m_pDevice;
+    IrrlichtDevice *m_pDevice;
 
     video::IVideoDriver  *m_pDriver;
     scene::ISceneManager *m_pSmgr;
@@ -179,13 +180,13 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
     irrklang::ISoundEngine *m_pSndEngine;
 
-    irr::core::list<IRenderToTexture *> m_lCockpits;
+    core::list<IRenderToTexture *> m_lCockpits;
 
     CControlReceiver *m_pCtrlReceiver;
 
-    void fillBodyList(irr::core::list<ISceneNode *> &aPlanes, ISceneNode *pNode, const c8 *sClassName, u32 iMax, irr::ode::CIrrOdeWorld *pWorld) {
-      if (pNode->getType()==irr::ode::IRR_ODE_BODY_ID) {
-        irr::ode::CIrrOdeBody *p=(irr::ode::CIrrOdeBody *)pNode;
+    void fillBodyList(core::list<scene::ISceneNode *> &aPlanes, scene::ISceneNode *pNode, const c8 *sClassName, u32 iMax, ode::CIrrOdeWorld *pWorld) {
+      if (pNode->getType()==ode::IRR_ODE_BODY_ID) {
+        ode::CIrrOdeBody *p=(ode::CIrrOdeBody *)pNode;
         if (p->getOdeClassname().equals_ignore_case(sClassName)) {
           printf("%s found (%i)\n",sClassName,aPlanes.size());
           if (aPlanes.size()<iMax)
@@ -197,14 +198,14 @@ class CIrrOdeCar : public irr::IEventReceiver {
         }
       }
 
-      irr::core::list<ISceneNode *> children=pNode->getChildren();
-      irr::core::list<ISceneNode *>::Iterator it;
+      core::list<scene::ISceneNode *> children=pNode->getChildren();
+      core::list<scene::ISceneNode *>::Iterator it;
 
       for (it=children.begin(); it!=children.end(); it++) fillBodyList(aPlanes,*it,sClassName,iMax, pWorld);
     }
 
   public:
-    CIrrOdeCar(irr::IrrlichtDevice *pDevice) {
+    CIrrOdeCar(IrrlichtDevice *pDevice) {
       m_pDevice = pDevice;
 
       m_pDriver = m_pDevice->getVideoDriver  ();
@@ -219,10 +220,10 @@ class CIrrOdeCar : public irr::IEventReceiver {
       m_pSndEngine=NULL;
 #endif
 
-      irr::ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
-      irr::ode::CIrrOdeWorldObserver::getSharedInstance()->install();
+      ode::CIrrOdeManager::getSharedInstance()->install(m_pDevice);
+      ode::CIrrOdeWorldObserver::getSharedInstance()->install();
 
-      CCustomEventReceiver::setMembers(m_pDevice,irr::ode::CIrrOdeManager::getSharedInstance(),m_pSndEngine);
+      CCustomEventReceiver::setMembers(m_pDevice,ode::CIrrOdeManager::getSharedInstance(),m_pSndEngine);
       CCustomEventReceiver::getSharedInstance()->install();
 
       m_pDevice->setEventReceiver(this);
@@ -234,48 +235,50 @@ class CIrrOdeCar : public irr::IEventReceiver {
     void run(CSettings *pSettings) {
       CProgress *pProg=new CProgress(m_pDevice);
 
-      irr::ode::CIrrOdeEventProgress *p=new irr::ode::CIrrOdeEventProgress(0,0);
+      ode::CIrrOdeEventProgress *p=new ode::CIrrOdeEventProgress(0,0);
       pProg->onEvent(p);
       delete p;
 
       //register the IrrOde scene node factory
-      irr::ode::CIrrOdeSceneNodeFactory cFactory(m_pSmgr);
+      ode::CIrrOdeSceneNodeFactory cFactory(m_pSmgr);
       m_pSmgr->registerSceneNodeFactory(&cFactory);
 
       if (pSettings->isActive(4)) {
         CEventInstallRandomForestPlugin *p=new CEventInstallRandomForestPlugin();
-        irr::ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
+        ode::CIrrOdeManager::getSharedInstance()->getOdeThread()->getOutputQueue()->postEvent(p);
         //delete p;
       }
 
+#ifdef WITH_PARTICLES
       CAdvancedParticleSystemNodeFactory *cParticleFactory=new CAdvancedParticleSystemNodeFactory(m_pSmgr);
       m_pSmgr->registerSceneNodeFactory(cParticleFactory);
       cParticleFactory->drop();
+#endif
 
       CRoadMeshLoader *pLoader=new CRoadMeshLoader(m_pDevice);
       m_pSmgr->addExternalMeshLoader(pLoader);
 
       //init the ODE
-      irr::ode::CIrrOdeManager::getSharedInstance()->initODE();
+      ode::CIrrOdeManager::getSharedInstance()->initODE();
 
       //load the scene
-      irr::ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",m_pSmgr);
+      ode::CIrrOdeManager::getSharedInstance()->loadScene("../../data/scenes/IrrOdeCar.xml",m_pSmgr);
 
-      for (irr::u32 i=0; i<m_pSmgr->getMeshCache()->getMeshCount(); i++) {
-        irr::scene::IAnimatedMesh *p=m_pSmgr->getMeshCache()->getMeshByIndex(i);
-        for (irr::u32 j=0; j<p->getMeshBufferCount(); j++) {
-          p->getMeshBuffer(j)->setHardwareMappingHint(irr::scene::EHM_STATIC);
+      for (u32 i=0; i<m_pSmgr->getMeshCache()->getMeshCount(); i++) {
+        scene::IAnimatedMesh *p=m_pSmgr->getMeshCache()->getMeshByIndex(i);
+        for (u32 j=0; j<p->getMeshBufferCount(); j++) {
+          p->getMeshBuffer(j)->setHardwareMappingHint(scene::EHM_STATIC);
         }
       }
 
-      irr::u32 iCars   = pSettings->getCountOf(0),
+      u32 iCars   = pSettings->getCountOf(0),
                iPlanes = pSettings->getCountOf(1),
                iTanks  = pSettings->getCountOf(2),
                iHelis  = pSettings->getCountOf(3);
 
       bool bRearCam=pSettings->isActive(6);
 
-      dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
+      core::dimension2du cScreenSize=m_pDevice->getVideoDriver()->getScreenSize();
 
       m_pCtrlReceiver = new CControlReceiver(m_pDevice, m_pSndEngine, cScreenSize.Width / (2.0f * cScreenSize.Height));
 
@@ -295,11 +298,11 @@ class CIrrOdeCar : public irr::IEventReceiver {
           CRandomForest *pForest=(CRandomForest *)p;
           if (pForest!=NULL) {
             CMeshCombiner *pCombine=new CMeshCombiner(0.8f);
-            irr::core::array<irr::scene::IMeshSceneNode *> aMeshSceneNodes;
-            irr::core::array<irr::scene::ISceneNode *> aTrees=pForest->getGeneratedTrees();
+            core::array<scene::IMeshSceneNode *> aMeshSceneNodes;
+            core::array<scene::ISceneNode *> aTrees=pForest->getGeneratedTrees();
 
             for (u32 j=0; j<aTrees.size(); j++) {
-              irr::scene::IMeshSceneNode *p=(irr::scene::IMeshSceneNode *)aTrees[j];
+              scene::IMeshSceneNode *p=(scene::IMeshSceneNode *)aTrees[j];
               aMeshSceneNodes.push_back(p);
             }
 
@@ -308,13 +311,13 @@ class CIrrOdeCar : public irr::IEventReceiver {
             if (aMeshSceneNodes.size()>0) {
               c8 s[0xFF];
               sprintf(s,"MyCombinedTrees_%i",i);
-              irr::scene::IMesh *pCombined=pCombine->combineMeshes(m_pSmgr,m_pDriver,aMeshSceneNodes,s);
+              scene::IMesh *pCombined=pCombine->combineMeshes(m_pSmgr,m_pDriver,aMeshSceneNodes,s);
               if (pCombined!=NULL) {
-                irr::scene::ISceneNode *pRoot=m_pSmgr->getSceneNodeFromName(sForests[i+2]);
-                irr::scene::IMeshSceneNode *pNode=m_pSmgr->addMeshSceneNode(pCombined,pRoot==NULL?m_pSmgr->getRootSceneNode():pRoot);
+                scene::ISceneNode *pRoot=m_pSmgr->getSceneNodeFromName(sForests[i+2]);
+                scene::IMeshSceneNode *pNode=m_pSmgr->addMeshSceneNode(pCombined,pRoot==NULL?m_pSmgr->getRootSceneNode():pRoot);
                 for (u32 i=0; i<pNode->getMaterialCount(); i++) {
-                  pNode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING,false);
-                  pNode->getMaterial(i).MaterialType=irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+                  pNode->getMaterial(i).setFlag(video::EMF_LIGHTING,false);
+                  pNode->getMaterial(i).MaterialType=video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
                 }
               }
             }
@@ -364,20 +367,20 @@ class CIrrOdeCar : public irr::IEventReceiver {
       delete pSettings;
 
       //modify the textures of the car segment and the tank segment to
-      IAnimatedMeshSceneNode *pNode=(IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("car_segment");
+      scene::IAnimatedMeshSceneNode *pNode=(scene::IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("car_segment");
       if (pNode) pNode->getMaterial(0).getTextureMatrix(0).setTextureScale(50.0f,50.0f);
-      pNode=(IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("tank_segment");
+      pNode=(scene::IAnimatedMeshSceneNode *)m_pSmgr->getSceneNodeFromName("tank_segment");
       if (pNode) pNode->getMaterial(0).getTextureMatrix(0).setTextureScale(50.0f,50.0f);
 
       int lastFPS=-1;
 
       //create the necessary state objects
-      array<CIrrOdeCarState *> aStates;
+      core::array<CIrrOdeCarState *> aStates;
 
       m_pCtrlReceiver->createMenu(iCars, iPlanes, iHelis, iTanks, bRearCam);
 
       //phyiscs initialization
-      irr::ode::CIrrOdeManager::getSharedInstance()->initPhysics();
+      ode::CIrrOdeManager::getSharedInstance()->initPhysics();
 
       delete pProg;
 
@@ -392,7 +395,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
       //let's run the loop
       while(m_pDevice->run()) {
         //step the simulation
-        irr::ode::CIrrOdeManager::getSharedInstance()->step();
+        ode::CIrrOdeManager::getSharedInstance()->step();
 
         m_pCtrlReceiver->update();
 
@@ -425,7 +428,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
         }
       }
 
-      irr::ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
+      ode::CIrrOdeWorldObserver::getSharedInstance()->destall();
 
       CConfigFileManager::getSharedInstance()->writeConfig(m_pDevice,"../../data/irrOdeCarControls.xml");
 
@@ -443,7 +446,7 @@ class CIrrOdeCar : public irr::IEventReceiver {
       aStates.clear();
     }
 
-    virtual bool OnEvent(const irr::SEvent &event) {
+    virtual bool OnEvent(const SEvent &event) {
       if (m_pCtrlReceiver!=NULL) m_pCtrlReceiver->OnEvent(event);
       return false;
     }
@@ -451,9 +454,9 @@ class CIrrOdeCar : public irr::IEventReceiver {
 
 int main(int argc, char** argv) {
   //First thing to do: show the graphics options dialog to let the user choose the graphics options
-  CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",SColor(0x00,0x21,0xAD,0x10));
+  CSettings *pSettings=new CSettings("../../data/irrOdeCarSettings.xml",L"irrOdeCar - Graphics Setup",video::SColor(0x00,0x21,0xAD,0x10));
 
-  pSettings->setMinResolution(dimension2du(640,480));
+  pSettings->setMinResolution(core::dimension2du(640,480));
 
   u32 iRet=pSettings->run();
   if (iRet==2) {
@@ -462,7 +465,7 @@ int main(int argc, char** argv) {
   }
 
   //now create the Irrlicht device from the chosen options
-  irr::IrrlichtDevice *pDevice=pSettings->createDeviceFromSettings();
+  IrrlichtDevice *pDevice=pSettings->createDeviceFromSettings();
   pDevice->setWindowCaption(L"IrrODE car demo");
 
   CIrrOdeCar CProgram(pDevice);
